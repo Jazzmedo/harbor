@@ -4,6 +4,7 @@ import { Row } from "@/components/row";
 import type { Meta } from "@/lib/cinemeta";
 import { type Spotlight } from "@/lib/feed/genre-spotlights";
 import { useSeenIdsRef } from "@/lib/feed/seen-ids";
+import { genreEquivalents } from "@/lib/feed/tags";
 import {
   creditToMeta,
   tmdbPerson,
@@ -21,7 +22,6 @@ function spotlightCredits(
   person: { cast: PersonCredit[]; crew: PersonCredit[] },
   spotlight: Spotlight,
   genreId: number,
-  mediaType: "movie" | "tv",
 ): PersonCredit[] {
   const dept = spotlight.dept;
   const jobs = dept === "Directing" ? DIRECTOR_JOBS : dept === "Writing" ? WRITER_JOBS : null;
@@ -31,11 +31,15 @@ function spotlightCredits(
       ? person.cast
       : person.cast.filter((c) => !isCameo(c));
 
-  const accepted = new Set<number>([genreId, ...(spotlight.relatedGenreIds ?? [])]);
+  const related = spotlight.relatedGenreIds ?? [];
+  const accepted = new Set<number>([
+    ...genreEquivalents(genreId),
+    ...related.flatMap(genreEquivalents),
+  ]);
   const matched = pool.filter(
     (c) =>
-      (spotlight.presenter || c.mediaType === mediaType) &&
       !!c.poster &&
+      (spotlight.presenter || c.mediaType !== "tv" || (c.episodeCount ?? 0) >= 2) &&
       (c.genreIds ?? []).some((id) => accepted.has(id)),
   );
 
@@ -82,11 +86,9 @@ function isCameo(c: PersonCredit): boolean {
 export function SpotlightSection({
   spotlight,
   genreId,
-  mediaType,
 }: {
   spotlight: Spotlight;
   genreId: number;
-  mediaType: "movie" | "tv";
 }) {
   const { settings } = useSettings();
   const { openPerson } = useView();
@@ -157,7 +159,7 @@ export function SpotlightSection({
         setProfileUrl(
           p.profilePath ? `https://image.tmdb.org/t/p/h632${p.profilePath}` : null,
         );
-        const credits = spotlightCredits(p, spotlight, genreId, mediaType);
+        const credits = spotlightCredits(p, spotlight, genreId);
         const metas = credits.map(creditToMeta);
         for (const m of metas) seenIdsRef.current.add(m.id);
         setItems(metas);
@@ -171,7 +173,7 @@ export function SpotlightSection({
     return () => {
       cancelled = true;
     };
-  }, [settings.tmdbKey, personId, personLookupDone, genreId, mediaType, spotlight, seenIdsRef, reportDone]);
+  }, [settings.tmdbKey, personId, personLookupDone, genreId, spotlight, seenIdsRef, reportDone]);
 
   if (items && items.length === 0) return null;
 

@@ -1,6 +1,6 @@
 import { selectSpotlights, type Spotlight } from "@/lib/feed/genre-spotlights";
 import { GENRE_TOPICS, type Topic } from "@/lib/feed/genre-topics";
-import { MOVIE_GENRES } from "@/lib/feed/tags";
+import { GENRE_MOVIE_TO_TV, GENRE_TV_TO_MOVIE, MOVIE_GENRES } from "@/lib/feed/tags";
 import type { MetaFilter } from "@/lib/view";
 
 export type StandardRail = {
@@ -9,6 +9,7 @@ export type StandardRail = {
   title: string;
   kicker: string;
   params: Record<string, string>;
+  mediaType?: "movie" | "tv";
   noDedup?: boolean;
 };
 
@@ -17,7 +18,6 @@ export type SpotlightRail = {
   id: string;
   spotlight: Spotlight;
   genreId: number;
-  mediaType: "movie" | "tv";
 };
 
 export type TopicRail = {
@@ -308,7 +308,6 @@ export function railsForFilter(f: MetaFilter): AnyRail[] {
       id: `spotlight-${i}-${spotlights[i].name}`,
       spotlight: spotlights[i],
       genreId: f.id,
-      mediaType: f.mediaType,
     });
   }
 
@@ -324,6 +323,44 @@ export function railsForFilter(f: MetaFilter): AnyRail[] {
       "vote_count.gte": vc(150),
     },
   });
+
+  const companionId =
+    f.mediaType === "movie" ? GENRE_MOVIE_TO_TV[f.id] : GENRE_TV_TO_MOVIE[f.id];
+  if (companionId) {
+    const companionType: "movie" | "tv" = f.mediaType === "movie" ? "tv" : "movie";
+    const word = companionType === "tv" ? "Series" : "Movies";
+    const cg = String(companionId);
+    const companionDate = companionType === "movie" ? "primary_release_date" : "first_air_date";
+    interleavable.push({
+      kind: "standard",
+      id: "companion-trending",
+      mediaType: companionType,
+      title: `Trending ${f.name} ${word}`,
+      kicker: "What's hot right now",
+      params: { with_genres: cg, sort_by: "popularity.desc", "vote_count.gte": vc(40) },
+    });
+    interleavable.push({
+      kind: "standard",
+      id: "companion-top",
+      mediaType: companionType,
+      title: `Top Rated ${f.name} ${word}`,
+      kicker: "Critics + audiences",
+      params: { with_genres: cg, sort_by: "vote_average.desc", "vote_count.gte": vc(200) },
+    });
+    interleavable.push({
+      kind: "standard",
+      id: "companion-recent",
+      mediaType: companionType,
+      title: `Recent ${f.name} ${word}`,
+      kicker: "Last 5 years",
+      params: {
+        with_genres: cg,
+        [`${companionDate}.gte`]: fiveYearsAgo,
+        sort_by: "popularity.desc",
+        "vote_count.gte": vc(80),
+      },
+    });
+  }
 
   if (f.mediaType === "movie" && f.id !== docId) {
     interleavable.push({

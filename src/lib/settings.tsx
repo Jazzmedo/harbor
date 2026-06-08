@@ -119,6 +119,10 @@ export type Settings = {
   homeShowAllAddonRows: boolean;
   libraryBookmarkedOnly: boolean;
   useNativeTitleBar: boolean;
+  closeToTray: boolean;
+  trayAlwaysOnTop: boolean;
+  pauseMinimized: boolean;
+  pauseUnfocused: boolean;
   cwSnapshotRetentionDays: number;
   streamFilterLevel: "strict" | "balanced" | "off";
   blockTrackers: boolean;
@@ -308,6 +312,10 @@ const DEFAULT: Settings = {
   homeShowAllAddonRows: false,
   libraryBookmarkedOnly: true,
   useNativeTitleBar: false,
+  closeToTray: false,
+  trayAlwaysOnTop: false,
+  pauseMinimized: true,
+  pauseUnfocused: false,
   cwSnapshotRetentionDays: 30,
   streamFilterLevel: "strict",
   blockTrackers: true,
@@ -638,6 +646,48 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         .catch((e) => console.warn("[harbor] setDecorations failed", e));
     });
   }, [settings.useNativeTitleBar]);
+
+  useEffect(() => {
+    if (!("__TAURI_INTERNALS__" in window)) return;
+    void import("@tauri-apps/api/core").then(({ invoke }) => {
+      void invoke("tray_set_prefs", {
+        prefs: {
+          closeToTray: settings.closeToTray,
+          alwaysOnTop: settings.trayAlwaysOnTop,
+          pauseMinimized: settings.pauseMinimized,
+          pauseUnfocused: settings.pauseUnfocused,
+        },
+      }).catch((e) => console.warn("[harbor] tray_set_prefs failed", e));
+    });
+  }, [settings.closeToTray, settings.trayAlwaysOnTop, settings.pauseMinimized, settings.pauseUnfocused]);
+
+  useEffect(() => {
+    if (!("__TAURI_INTERNALS__" in window)) return;
+    let unlisten: (() => void) | undefined;
+    let cancelled = false;
+    void import("@tauri-apps/api/event").then(({ listen }) =>
+      listen<{ closeToTray: boolean; alwaysOnTop: boolean; pauseMinimized: boolean; pauseUnfocused: boolean }>(
+        "harbor://tray-prefs",
+        (e) => {
+          const p = e.payload;
+          setSettings((s) => ({
+            ...s,
+            closeToTray: p.closeToTray,
+            trayAlwaysOnTop: p.alwaysOnTop,
+            pauseMinimized: p.pauseMinimized,
+            pauseUnfocused: p.pauseUnfocused,
+          }));
+        },
+      ).then((u) => {
+        if (cancelled) u();
+        else unlisten = u;
+      }),
+    );
+    return () => {
+      cancelled = true;
+      unlisten?.();
+    };
+  }, []);
 
   const update = useCallback((patch: Partial<Settings>) => {
     setSettings((s) => ({ ...s, ...patch }));

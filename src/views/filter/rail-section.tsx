@@ -15,6 +15,7 @@ export function RailSection({ filter, rail }: { filter: MetaFilter; rail: Standa
   const dedup = useDedupOnSeenIds();
   const gate = useContext(SpotlightGateContext);
   const noDedup = rail.noDedup === true;
+  const mediaType = rail.mediaType ?? filter.mediaType;
   const [items, setItems] = useState<Meta[] | null>(null);
   const [page, setPage] = useState(1);
   const [exhausted, setExhausted] = useState(false);
@@ -37,7 +38,7 @@ export function RailSection({ filter, rail }: { filter: MetaFilter; rail: Standa
       let stoppedEarly = false;
       while (!cancelled && collected.length < MIN_INITIAL_FILL && p <= MAX_PAGES) {
         try {
-          const res = await tmdbDiscover(settings.tmdbKey, filter.mediaType, {
+          const res = await tmdbDiscover(settings.tmdbKey, mediaType, {
             ...rail.params,
             page: String(p),
           });
@@ -69,14 +70,14 @@ export function RailSection({ filter, rail }: { filter: MetaFilter; rail: Standa
     return () => {
       cancelled = true;
     };
-  }, [settings.tmdbKey, filter.mediaType, rail.params, dedup, seenIdsRef, noDedup, gate.ready]);
+  }, [settings.tmdbKey, mediaType, rail.params, dedup, seenIdsRef, noDedup, gate.ready]);
 
   const onEndReached = () => {
     if (loadingRef.current || exhausted || !settings.tmdbKey) return;
     if (page >= MAX_PAGES) return;
     const next = page + 1;
     loadingRef.current = true;
-    tmdbDiscover(settings.tmdbKey, filter.mediaType, { ...rail.params, page: String(next) })
+    tmdbDiscover(settings.tmdbKey, mediaType, { ...rail.params, page: String(next) })
       .then((res) => {
         const filtered = res.filter((m) => m.poster);
         let fresh: typeof filtered;

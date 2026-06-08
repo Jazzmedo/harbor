@@ -92,6 +92,26 @@ export async function torrentEngineRemove(infoHash: string, deleteFiles: boolean
   );
 }
 
+const pendingRemovals = new Map<string, number>();
+
+export function scheduleTorrentRemoval(infoHash: string, deleteFiles = false, delayMs = 1200): void {
+  if (!isTauri) return;
+  cancelTorrentRemoval(infoHash);
+  const id = window.setTimeout(() => {
+    pendingRemovals.delete(infoHash);
+    void torrentEngineRemove(infoHash, deleteFiles);
+  }, delayMs);
+  pendingRemovals.set(infoHash, id);
+}
+
+export function cancelTorrentRemoval(infoHash: string): void {
+  const id = pendingRemovals.get(infoHash);
+  if (id != null) {
+    window.clearTimeout(id);
+    pendingRemovals.delete(infoHash);
+  }
+}
+
 export async function torrentEngineSelfTest(): Promise<SelfTestResult | null> {
   if (!isTauri) return null;
   try {

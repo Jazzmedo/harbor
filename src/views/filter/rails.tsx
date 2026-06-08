@@ -17,14 +17,7 @@ export function Rails({ filter }: { filter: MetaFilter }) {
     <>
       {rails.map((r) => {
         if (r.kind === "spotlight") {
-          return (
-            <SpotlightSection
-              key={r.id}
-              spotlight={r.spotlight}
-              genreId={r.genreId}
-              mediaType={r.mediaType}
-            />
-          );
+          return <SpotlightSection key={r.id} spotlight={r.spotlight} genreId={r.genreId} />;
         }
         if (r.kind === "topic") {
           return <TopicSection key={r.id} topic={r.topic} mediaType={r.mediaType} />;

@@ -162,9 +162,10 @@ import { useKeyboardShortcuts } from "./player/hooks/use-keyboard-shortcuts";
 import { useAutoRetry } from "./player/hooks/use-auto-retry";
 import { useEngineStats } from "./player/hooks/use-engine-stats";
 import { isBundledEngineUrl, isLocalEngineUrl } from "@/lib/stremio-server";
-import { torrentEngineRemove } from "@/lib/torrent/local-engine";
+import { cancelTorrentRemoval, scheduleTorrentRemoval, torrentEngineRemove } from "@/lib/torrent/local-engine";
 import { useTrackAutoload } from "./player/hooks/use-track-autoload";
 import { useTrickplay } from "./player/hooks/use-trickplay";
+import { usePauseOnInactive } from "./player/hooks/use-pause-on-inactive";
 import { applySubStyle } from "@/lib/player/sub-style";
 import { useTraktScrobble } from "@/lib/trakt/scrobble-hook";
 import { useVideoDownload } from "./player/hooks/use-video-download";
@@ -272,8 +273,15 @@ export function PlayerView({ src }: { src: PlayerSrc }) {
   useEffect(() => {
     const hash = isLocalEngineUrl(src.url) ? src.streamRef?.infoHash ?? null : null;
     const prev = prevEngineHashRef.current;
-    if (prev && prev !== hash) void torrentEngineRemove(prev, false);
+    if (prev && prev !== hash) {
+      cancelTorrentRemoval(prev);
+      void torrentEngineRemove(prev, false);
+    }
+    if (hash) cancelTorrentRemoval(hash);
     prevEngineHashRef.current = hash;
+    return () => {
+      if (hash) scheduleTorrentRemoval(hash, true);
+    };
   }, [src.url, src.streamRef?.infoHash]);
   const shellSnapRef = useRef(snap);
   const volumeRestoredRef = useRef(false);
@@ -357,6 +365,7 @@ export function PlayerView({ src }: { src: PlayerSrc }) {
 
   const snapRef = useRef(snap);
   snapRef.current = snap;
+  usePauseOnInactive({ bridgeRef, snapRef });
   const wasCastingRef = useRef(false);
   useEffect(() => {
     const casting = !!castDevice;

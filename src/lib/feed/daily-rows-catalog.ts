@@ -2,7 +2,7 @@ import type { Affinity } from "@/lib/discover/types";
 import { providerIdsFor, SERVICES } from "@/lib/providers/streaming";
 import type { StreamingService } from "@/lib/settings";
 import { genreToTmdbId } from "./sections";
-import { DECADES, LANG_TO_COUNTRY, LANGUAGES, MOVIE_GENRES, TV_GENRES, mixSeed } from "./tags";
+import { DECADES, GENRE_MOVIE_TO_TV, LANG_TO_COUNTRY, LANGUAGES, MOVIE_GENRES, TV_GENRES, mixSeed } from "./tags";
 import { normalizedAffinity, weightedPickWithoutReplacement } from "./daily-rows-select";
 import { ANCHORS } from "./daily-rows-anchors";
 import { PEOPLE_TEMPLATES } from "./daily-rows-people";
@@ -252,26 +252,42 @@ const PARAMETERIZED: CatalogEntry[] = [
     dimension: "genre",
     eligible: () => true,
     expand: (affinity, base) => {
-      const names = genreNames(affinity, mixSeed(base, 5), 3);
-      const tvNames = Object.keys(TV_GENRES);
-      const chosen = names.find((n) => TV_GENRES[n] != null) ?? tvNames[0];
-      const floorPrimary: Record<string, string> = {
-        with_genres: String(TV_GENRES[chosen]),
-        "vote_average.gte": "7.5",
-        "vote_count.gte": "200",
-        sort_by: "vote_average.desc",
-      };
-      return [
-        {
-          key: `tv_genre:${chosen}`,
-          title: `Top Rated ${chosen} Series`,
-          kicker: "Critically acclaimed TV",
+      const since = new Date(Date.now() - 540 * 86_400_000).toISOString().slice(0, 10);
+      const names = genreNames(affinity, mixSeed(base, 5), 6);
+      const out: ExpandedRow[] = [];
+      const usedTv = new Set<number>();
+      for (const name of names) {
+        if (out.length >= 3) break;
+        const gid = genreToTmdbId(name);
+        const tvId = gid != null ? GENRE_MOVIE_TO_TV[gid] : TV_GENRES[name];
+        if (tvId == null || usedTv.has(tvId)) continue;
+        usedTv.add(tvId);
+        const isFresh = out.length === 1;
+        const floorPrimary: Record<string, string> = isFresh
+          ? {
+              with_genres: String(tvId),
+              "first_air_date.gte": since,
+              "vote_count.gte": "60",
+              "vote_average.gte": "6.8",
+              sort_by: "popularity.desc",
+            }
+          : {
+              with_genres: String(tvId),
+              "vote_average.gte": "7.5",
+              "vote_count.gte": "200",
+              sort_by: "vote_average.desc",
+            };
+        out.push({
+          key: `tv_genre:${isFresh ? "new" : "top"}:${name}`,
+          title: isFresh ? `New ${name} Series` : `Top Rated ${name} Series`,
+          kicker: isFresh ? "Fresh on TV" : "Critically acclaimed TV",
           mediaType: "tv",
           endpoint: "discover",
           floorPrimary,
           floorRelaxed: relax(floorPrimary),
-        },
-      ];
+        });
+      }
+      return out;
     },
   },
   {

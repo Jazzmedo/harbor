@@ -21,6 +21,7 @@ import {
 } from "@/lib/updater/use-update";
 import { BackupRow } from "./backup-row";
 import { PrivacyRow } from "./privacy-row";
+import { TrayRow } from "./tray-row";
 import { Section } from "./shared";
 import { Signature } from "./signature";
 import { DesktopOnlyBlock } from "./player-panel/internals";
@@ -56,6 +57,15 @@ export function AdvancedPanel() {
       >
         <PrivacyRow />
       </Section>
+
+      {isTauri && (
+        <Section
+          title="System tray"
+          subtitle="Keep Harbor a click away. Close it to the Windows tray instead of quitting, and control it from the tray's right-click menu. These also mirror into the tray menu live."
+        >
+          <TrayRow />
+        </Section>
+      )}
 
       {isTauri && (
         <Section

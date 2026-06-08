@@ -31,6 +31,45 @@ export const TV_GENRES: Record<string, number> = {
   War: 10768,
 };
 
+export const GENRE_MOVIE_TO_TV: Record<number, number> = {
+  28: 10759,
+  12: 10759,
+  878: 10765,
+  14: 10765,
+  10752: 10768,
+  16: 16,
+  35: 35,
+  80: 80,
+  99: 99,
+  18: 18,
+  10751: 10751,
+  9648: 9648,
+  37: 37,
+};
+
+export const GENRE_TV_TO_MOVIE: Record<number, number> = {
+  10759: 28,
+  10765: 878,
+  10768: 10752,
+  16: 16,
+  35: 35,
+  80: 80,
+  99: 99,
+  18: 18,
+  10751: 10751,
+  9648: 9648,
+  37: 37,
+};
+
+export function genreEquivalents(id: number): number[] {
+  const out = new Set<number>([id]);
+  const tv = GENRE_MOVIE_TO_TV[id];
+  if (tv) out.add(tv);
+  const movie = GENRE_TV_TO_MOVIE[id];
+  if (movie) out.add(movie);
+  return [...out];
+}
+
 export type Decade = { label: string; from: string; to: string };
 
 export const DECADES: Decade[] = [

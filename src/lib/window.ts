@@ -5,12 +5,25 @@ import { useEffect, useState } from "react";
 
 const win: Window | null = isTauri() ? getCurrentWindow() : null;
 
+const IS_MAC =
+  typeof navigator !== "undefined" && /Mac|iP(hone|ad|od)/.test(navigator.platform || navigator.userAgent);
+
 function isTauri() {
   return typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
 }
 
 export const minimize = () => win?.minimize();
-export const toggleMaximize = () => win?.toggleMaximize();
+
+export const toggleMaximize = async () => {
+  if (!win) return;
+  if (IS_MAC) {
+    const fs = await win.isFullscreen().catch(() => false);
+    await win.setFullscreen(!fs).catch(() => {});
+    return;
+  }
+  await win.toggleMaximize().catch(() => {});
+};
+
 export const close = () => win?.close();
 
 export function useMaximized(): boolean {
@@ -20,7 +33,7 @@ export function useMaximized(): boolean {
     let cancelled = false;
     let timer: number | null = null;
     const check = () => {
-      win.isMaximized().then((v) => {
+      (IS_MAC ? win.isFullscreen() : win.isMaximized()).then((v) => {
         if (!cancelled) setMaxed(v);
       });
     };

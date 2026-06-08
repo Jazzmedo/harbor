@@ -26,7 +26,14 @@ mod thumbs;
 mod torrent_engine;
 mod trailer;
 mod transcode;
+mod tray;
 mod webview_helpers;
+
+pub(crate) fn shutdown_services(app: &tauri::AppHandle) {
+    cast_server::stop();
+    torrent_engine::stop();
+    discord_rp::shutdown(app);
+}
 
 #[tauri::command]
 async fn deeplink_set_stremio(app: tauri::AppHandle, enabled: bool) -> Result<(), String> {
@@ -283,14 +290,41 @@ pub fn run() {
                 let handle = app.handle().clone();
                 std::thread::spawn(move || discord_rp::run_loop(handle));
             }
+            #[cfg(desktop)]
+            if let Err(e) = tray::build(&app.handle()) {
+                eprintln!("[harbor::tray] build failed: {:?}", e);
+            }
             Ok(())
         })
         .on_window_event(|window, event| {
-            if matches!(event, tauri::WindowEvent::Destroyed) && window.label() == "main" {
-                use tauri::Manager;
-                cast_server::stop();
-                torrent_engine::stop();
-                discord_rp::shutdown(window.app_handle());
+            if window.label() != "main" {
+                return;
+            }
+            use tauri::Manager;
+            match event {
+                tauri::WindowEvent::CloseRequested { api, .. } => {
+                    if tray::close_to_tray() {
+                        api.prevent_close();
+                        let _ = window.hide();
+                    }
+                }
+                tauri::WindowEvent::Focused(focused) => {
+                    use tauri::Emitter;
+                    let minimized = if *focused {
+                        false
+                    } else {
+                        window.is_minimized().unwrap_or(false)
+                            || !window.is_visible().unwrap_or(true)
+                    };
+                    let _ = window.emit(
+                        "harbor://window-activity",
+                        serde_json::json!({ "focused": *focused, "minimized": minimized }),
+                    );
+                }
+                tauri::WindowEvent::Destroyed => {
+                    shutdown_services(window.app_handle());
+                }
+                _ => {}
             }
         })
         .invoke_handler(tauri::generate_handler![
@@ -385,6 +419,7 @@ pub fn run() {
             streams::streams_parse,
             streams::streams_core_version,
             local_lib::harbor_scan_folder,
+            tray::tray_set_prefs,
             deeplink_set_stremio,
             deeplink_is_stremio_registered,
         ])
