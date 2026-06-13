@@ -61,7 +61,7 @@ function Pair({ k, v }: { k: string; v: string }) {
   return (
     <>
       <span className="text-ink-subtle">{k}</span>
-      <span className="truncate text-ink">{v || "—"}</span>
+      <span className="truncate text-ink">{v || "n/a"}</span>
     </>
   );
 }

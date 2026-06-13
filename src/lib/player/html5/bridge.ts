@@ -28,6 +28,7 @@ export function createHtml5Bridge(): PlayerBridge {
   let mediaSessionBound = false;
   let pendingVolume = 1;
   let hls: Hls | null = null;
+  let audioProbeDone = false;
   const subTracks: SubTrack[] = [];
   let activeSubId: string | null = null;
   let subDelaySec = 0;
@@ -39,8 +40,31 @@ export function createHtml5Bridge(): PlayerBridge {
     listeners.forEach((l) => l(next));
   };
 
+  const probeAudio = () => {
+    if (audioProbeDone || !video) return;
+    if (video.paused || video.muted || pendingVolume <= 0) return;
+    if (!Number.isFinite(video.currentTime) || video.currentTime < 2.5) return;
+    if (hls && Array.isArray(hls.audioTracks) && hls.audioTracks.length > 0) {
+      audioProbeDone = true;
+      return;
+    }
+    const c = video as HTMLVideoElement & {
+      webkitAudioDecodedByteCount?: number;
+      webkitVideoDecodedByteCount?: number;
+    };
+    if (typeof c.webkitAudioDecodedByteCount !== "number") {
+      audioProbeDone = true;
+      return;
+    }
+    audioProbeDone = true;
+    if (c.webkitAudioDecodedByteCount === 0 && (c.webkitVideoDecodedByteCount ?? 1) > 0) {
+      snap.noAudio = true;
+    }
+  };
+
   const refreshSnapshot = () => {
     if (!video) return;
+    probeAudio();
     snap.positionSec = Number.isFinite(video.currentTime) ? video.currentTime : 0;
     snap.durationSec = Number.isFinite(video.duration) ? video.duration : 0;
     snap.bufferedSec = bufferedAhead(video);
@@ -357,6 +381,8 @@ export function createHtml5Bridge(): PlayerBridge {
       snap.status = "loading";
       snap.errorCode = null;
       snap.errorMessage = null;
+      snap.noAudio = false;
+      audioProbeDone = false;
       startCueTicker();
       emit();
     },
@@ -484,6 +510,16 @@ export function createHtml5Bridge(): PlayerBridge {
       return true;
     },
     setAudioNormalize() {},
+    setMediaInfo(info) {
+      if (!("mediaSession" in navigator)) return;
+      try {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: info.title,
+          artist: info.artist ?? "Harbor",
+          artwork: info.artwork ? [{ src: info.artwork, sizes: "512x512" }] : [],
+        });
+      } catch {}
+    },
     async screenshot(path) {
       try {
         if (!video || !video.videoWidth) return { ok: false, error: "video not ready" };
@@ -653,6 +689,7 @@ export function createHtml5Bridge(): PlayerBridge {
           ms.setActionHandler("seekbackward", null);
           ms.setActionHandler("seekforward", null);
           ms.setActionHandler("seekto", null);
+          ms.metadata = null;
         } catch {}
         mediaSessionBound = false;
       }

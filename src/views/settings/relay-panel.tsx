@@ -1,27 +1,13 @@
-import { Check, Copy, Download, Loader2, Power, Radio, Wifi, X } from "lucide-react";
-import { useEffect, useState } from "react";
-import { fetch as tauriFetchImpl } from "@tauri-apps/plugin-http";
+import { BookOpen, Check, Copy, Download, Loader2, Power, Radio, ShieldCheck, Wifi, X } from "lucide-react";
+import { useState } from "react";
 import cloudflareLogo from "@/assets/cloudflare.webp";
 import pubRelaySvg from "@/assets/pubrelay.svg";
 import { deleteRelay } from "@/lib/together/cf-deploy";
+import { HARBOR_PUBLIC_RELAY, isPublicRelay } from "@/lib/together/relay-version";
 import { useSettings } from "@/lib/settings";
+import { useRelayHealth } from "./relay-panel/use-relay-health";
 
 const isTauri = typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
-const safeFetch: typeof fetch = (input, init) =>
-  isTauri
-    ? (tauriFetchImpl(input as string, init as RequestInit) as Promise<Response>)
-    : fetch(input, init);
-
-type RelayTest = {
-  ok: boolean;
-  healthMs: number | null;
-  workerVersion: number | null;
-  needsUpdate: boolean;
-  message: string;
-};
-
-const REQUIRED_WORKER_VERSION = 5;
-const HARBOR_PUBLIC_RELAY = "wss://pub.harbor.site";
 
 function isCloudflareRelay(url: string): boolean {
   return /workers\.dev|cloudflare/i.test(url);
@@ -39,25 +25,20 @@ export function TogetherRelayPanel({
   const [stopping, setStopping] = useState(false);
   const [stopError, setStopError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [testing, setTesting] = useState(false);
-  const [testResult, setTestResult] = useState<RelayTest | null>(null);
+  const { testing, testResult, runTest, passive } = useRelayHealth(settings.togetherRelayUrl);
   const [draftUrl, setDraftUrl] = useState("");
   const setShowDocs = (_: boolean) => onOpenDocs();
   const setShowDeploy = (_: boolean) => onOpenDeploy();
 
   const hasUrl = !!settings.togetherRelayUrl;
   const isCfRelay = isCloudflareRelay(settings.togetherRelayUrl);
-  const isPubRelay = hasUrl && settings.togetherRelayUrl.includes("pub.harbor.site");
+  const isPubRelay = hasUrl && isPublicRelay(settings.togetherRelayUrl);
 
   const commitDraftUrl = () => {
     const v = draftUrl.trim();
     if (v) update({ togetherRelayUrl: v });
   };
   const isManaged = settings.togetherCfDeployed && !!settings.togetherCfToken && !!settings.togetherCfAccountId;
-
-  useEffect(() => {
-    setTestResult(null);
-  }, [settings.togetherRelayUrl]);
 
   const copy = async () => {
     if (!settings.togetherRelayUrl) return;
@@ -107,55 +88,6 @@ export function TogetherRelayPanel({
       setStopError(e instanceof Error ? e.message : String(e));
     } finally {
       setStopping(false);
-    }
-  };
-
-  const test = async () => {
-    if (!settings.togetherRelayUrl) return;
-    setTesting(true);
-    setTestResult(null);
-    const httpBase = settings.togetherRelayUrl
-      .replace(/^wss:\/\//i, "https://")
-      .replace(/^ws:\/\//i, "http://")
-      .replace(/\/+$/, "");
-
-    let healthMs: number | null = null;
-    let workerVersion: number | null = null;
-
-    try {
-      const t0 = performance.now();
-      const r1 = await safeFetch(`${httpBase}/health`, { method: "GET" });
-      healthMs = Math.round(performance.now() - t0);
-      if (!r1.ok) throw new Error(`Worker health check returned ${r1.status}`);
-      try {
-        const body = (await r1.json()) as { version?: number };
-        if (typeof body.version === "number") workerVersion = body.version;
-      } catch {
-        workerVersion = 1;
-      }
-
-      const needsUpdate = workerVersion == null || workerVersion < REQUIRED_WORKER_VERSION;
-      const updateNote = needsUpdate
-        ? ` Your relay is running an older version (v${workerVersion ?? "?"}). Redeploy to pick up the latest worker.`
-        : "";
-
-      setTestResult({
-        ok: true,
-        healthMs,
-        workerVersion,
-        needsUpdate,
-        message: `Worker reachable in ${healthMs}ms.${updateNote}`,
-      });
-    } catch (e) {
-      setTestResult({
-        ok: false,
-        healthMs,
-        workerVersion,
-        needsUpdate: false,
-        message: e instanceof Error ? e.message : String(e),
-      });
-    } finally {
-      setTesting(false);
     }
   };
 
@@ -220,7 +152,7 @@ export function TogetherRelayPanel({
                 </span>
               </div>
               <button
-                onClick={test}
+                onClick={runTest}
                 disabled={testing}
                 className="flex h-9 shrink-0 items-center gap-1.5 rounded-lg border border-edge px-3 text-[12.5px] text-ink-muted transition-colors hover:bg-elevated hover:text-ink disabled:opacity-60"
               >
@@ -228,6 +160,45 @@ export function TogetherRelayPanel({
                 {testing ? "Testing…" : "Run test"}
               </button>
             </div>
+            {passive && (
+              <>
+                <div className="h-px bg-edge-soft/60" />
+                <div className="flex items-center justify-between gap-3 rounded-lg px-3 py-2.5">
+                  <div className="flex min-w-0 items-center gap-2.5">
+                    <span
+                      className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${
+                        passive.needsUpdate ? "bg-amber-400/15 text-amber-300" : "bg-accent/15 text-accent"
+                      }`}
+                    >
+                      <ShieldCheck size={13} strokeWidth={2} />
+                    </span>
+                    <div className="flex min-w-0 flex-col">
+                      <span className="text-[13px] font-medium text-ink">
+                        {passive.needsUpdate
+                          ? `Relay version ${passive.version ?? "unknown"}. Update available.`
+                          : `Relay is current (v${passive.version}).`}
+                      </span>
+                      <span className="text-[11.5px] text-ink-subtle">
+                        {passive.needsUpdate
+                          ? isPubRelay
+                            ? "Harbor's public relay updates automatically; nothing to do."
+                            : "Redeploy to pick up the latest Watch Together fixes. The in-app banner clears once the new version is live."
+                          : "Running the latest Watch Together protocol."}
+                      </span>
+                    </div>
+                  </div>
+                  {passive.needsUpdate && !isPubRelay && (
+                    <button
+                      onClick={() => (isManaged ? setShowDeploy(true) : setShowDocs(true))}
+                      className="flex h-9 shrink-0 items-center gap-1.5 rounded-lg border border-edge px-3 text-[12.5px] text-ink-muted transition-colors hover:bg-elevated hover:text-ink"
+                    >
+                      {isManaged ? <Power size={13} strokeWidth={2} /> : <BookOpen size={13} strokeWidth={1.9} />}
+                      {isManaged ? "Redeploy" : "Redeploy instructions"}
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
             {isManaged && (
               <>
                 <div className="h-px bg-edge-soft/60" />
@@ -273,13 +244,13 @@ export function TogetherRelayPanel({
                   <span className="text-[11.5px] text-ink-subtle">{testResult.message}</span>
                 </div>
               </div>
-              {testResult.needsUpdate && isManaged && (
+              {testResult.needsUpdate && !isPubRelay && (
                 <button
-                  onClick={() => setShowDeploy(true)}
+                  onClick={() => (isManaged ? setShowDeploy(true) : setShowDocs(true))}
                   className="ml-7 flex h-8 w-fit items-center gap-1.5 rounded-lg bg-ink px-3 text-[11.5px] font-medium text-canvas transition-transform hover:scale-[1.02]"
                 >
                   <Power size={12} strokeWidth={2} />
-                  Redeploy relay
+                  {isManaged ? "Redeploy relay" : "Redeploy instructions"}
                 </button>
               )}
             </div>

@@ -4,7 +4,7 @@ import { AddonLogo, resolveAddonLogo } from "@/components/addon-logo";
 import { CardArtBackdrop } from "@/components/card-art-backdrop";
 import { installAddon, manifestToConfigureUrl } from "@/lib/addon-store";
 import { openInstallerViewport } from "@/components/installer-viewport";
-import { listAddons, type SAAddon } from "@/lib/providers/stremio-addons";
+import { listAddons, risingEntryFor, useRising, type SAAddon } from "@/lib/providers/stremio-addons";
 import { useTopMovers } from "@/lib/providers/stremio-addons-velocity";
 import { openUrl } from "@/lib/window";
 
@@ -29,7 +29,7 @@ export function CommunityBrowseList({
   onOpen: (manifestId: string) => void;
   onChange?: () => void;
 }) {
-  if (mode === "rising") return <RisingList category={category ?? null} search={search ?? null} installedIds={installedIds} onOpen={onOpen} onChange={onChange} />;
+  if (mode === "rising") return <RisingList category={category ?? null} search={search ?? null} allowAdult={!!allowAdult} installedIds={installedIds} onOpen={onOpen} onChange={onChange} />;
   return <ApiSortedList mode={mode} category={category ?? null} search={search ?? null} allowAdult={!!allowAdult} installedIds={installedIds} onOpen={onOpen} onChange={onChange} />;
 }
 
@@ -56,6 +56,7 @@ function ApiSortedList({
   const [exhausted, setExhausted] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const seenRef = useRef<Set<string>>(new Set());
+  const rising = useRising();
 
   useEffect(() => {
     seenRef.current = new Set();
@@ -111,17 +112,22 @@ function ApiSortedList({
 
   return (
     <div className="flex flex-col gap-2">
-      {items.map((a) => (
-        <CommunityRow
-          key={a.uuid}
-          addon={a}
-          installed={isInstalled(a, installedIds)}
-          showRising={false}
-          showNew={mode === "new" && isNewlyAdded(a.createdAt)}
-          onOpen={onOpen}
-          onChange={onChange}
-        />
-      ))}
+      {items.map((a) => {
+        const r = risingEntryFor(rising, a);
+        return (
+          <CommunityRow
+            key={a.uuid}
+            addon={a}
+            installed={isInstalled(a, installedIds)}
+            showRising={r != null}
+            risingDelta={r?.recentStars}
+            risingWindow={1}
+            showNew={mode === "new" && isNewlyAdded(a.createdAt)}
+            onOpen={onOpen}
+            onChange={onChange}
+          />
+        );
+      })}
       {items.length === 0 && loading && (
         <SkeletonRows />
       )}
@@ -143,18 +149,53 @@ function ApiSortedList({
 function RisingList({
   category,
   search,
+  allowAdult,
   installedIds,
   onOpen,
   onChange,
 }: {
   category: string | null;
   search: string | null;
+  allowAdult: boolean;
   installedIds: Set<string>;
   onOpen: (manifestId: string) => void;
   onChange?: () => void;
 }) {
+  const official = useRising();
   const allMovers = useTopMovers(80);
   const q = search?.trim().toLowerCase() ?? "";
+  const officialFiltered = official.filter((a) => {
+    if (!allowAdult && category !== "nsfw") {
+      const bh = (a.manifest as { behaviorHints?: { adult?: boolean } } | undefined)?.behaviorHints;
+      if (bh?.adult) return false;
+    }
+    if (category && !a.categories.some((c) => c.slug === category)) return false;
+    if (q) {
+      const m = a.manifest as { name?: string; description?: string } | undefined;
+      const name = (m?.name ?? "").toLowerCase();
+      const desc = (m?.description ?? "").toLowerCase();
+      if (!name.includes(q) && !a.slug.toLowerCase().includes(q) && !desc.includes(q)) return false;
+    }
+    return true;
+  });
+  if (officialFiltered.length > 0) {
+    return (
+      <div className="flex flex-col gap-2">
+        {officialFiltered.map((a) => (
+          <CommunityRow
+            key={a.uuid}
+            addon={a}
+            installed={isInstalled(a, installedIds)}
+            showRising
+            risingDelta={a.recentStars}
+            risingWindow={1}
+            onOpen={onOpen}
+            onChange={onChange}
+          />
+        ))}
+      </div>
+    );
+  }
   const movers = allMovers.filter((m) => {
     if (category && !m.community.categories.some((c) => c.slug === category)) return false;
     if (q) {
@@ -295,7 +336,9 @@ function CommunityRow({
             <span className="inline-flex h-5 items-center gap-1 rounded-full bg-rose-500/15 px-1.5 text-[10.5px] font-bold text-rose-300 ring-1 ring-rose-500/40">
               <TrendingUp size={9} strokeWidth={2.6} />+{risingDelta}
               {risingWindow != null && (
-                <span className="ml-0.5 font-medium text-rose-300/70">/ {risingWindow}d</span>
+                <span className="ml-0.5 font-medium text-rose-300/70">
+                  / {risingWindow === 1 ? "24h" : `${risingWindow}d`}
+                </span>
               )}
             </span>
           )}

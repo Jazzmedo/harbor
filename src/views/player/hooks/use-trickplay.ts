@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { getStremioServerUrl } from "@/lib/stremio-server";
+import { isBundledEngineUrl } from "@/lib/stremio-server";
 import { setTrickplayState, trickplaySetUrl, trickplaySpawnEager, trickplayStop } from "@/lib/trickplay";
 import type { PlayerSrc } from "@/lib/view";
 
@@ -10,7 +10,7 @@ export function useTrickplay({ src, enabled }: { src: PlayerSrc; enabled: boolea
       setTrickplayState({ active: false, bufferedOnly: false });
       return;
     }
-    const isTorrent = url.startsWith(getStremioServerUrl());
+    const isTorrent = isBundledEngineUrl(url);
     setTrickplayState({ active: true, bufferedOnly: isTorrent });
     let alive = true;
     void trickplaySetUrl(url).then(() => {

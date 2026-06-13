@@ -1,3 +1,4 @@
+import { isWindowsDesktop } from "@/lib/platform";
 import { useSettings } from "@/lib/settings";
 import { ToggleRow } from "../shared";
 import { Anime4kShaderList } from "./anime4k-shader-list";
@@ -6,6 +7,7 @@ import { DesktopOnlyBlock, isTauri } from "./internals";
 
 export function PlayerEnginePanel() {
   const { settings, update } = useSettings();
+  const strictRemote = !!settings.remoteStreamServerUrl && settings.remoteStreamServerStrict;
 
   const choices: Array<{
     id: "auto" | "html5" | "mpv";
@@ -86,12 +88,14 @@ export function PlayerEnginePanel() {
             value={settings.playerHdrToSdr}
             onChange={(v) => update({ playerHdrToSdr: v })}
           />
-          <ToggleRow
-            label="Line-free video mode"
-            sub="Forces a compatibility present mode that removes a thin bright line some monitors show at the screen edge. Leave OFF unless you see that line: on some GPUs it can cause a white screen. Restart playback to apply."
-            value={settings.playerD3d11Flip}
-            onChange={(v) => update({ playerD3d11Flip: v })}
-          />
+          {isWindowsDesktop() && (
+            <ToggleRow
+              label="Line-free video mode"
+              sub="Forces a compatibility present mode that removes a thin bright line some monitors show at the screen edge. Side effects: 4K playback can drop to a slideshow and HDR content looks dimmer (this mode bypasses the HDR display path). Leave OFF unless you see that line. Restart playback to apply."
+              value={settings.playerD3d11Flip}
+              onChange={(v) => update({ playerD3d11Flip: v })}
+            />
+          )}
           <ToggleRow
             label="Motion smoothing"
             sub="Interpolates frames for smoother panning, best on anime. Needs a display refresh rate above the video's frame rate, and can stutter on weak GPUs. mpv only."
@@ -103,12 +107,14 @@ export function PlayerEnginePanel() {
             sub="When you have no debrid set up, or a torrent isn't cached, stream it straight from the bundled engine on localhost:11470. This connects to peers over your own connection, the same way Stremio's built-in streaming does."
             value={settings.directTorrentStream}
             onChange={(v) => update({ directTorrentStream: v })}
+            lockReason={strictRemote ? "Disabled while strict remote streaming is on" : undefined}
           />
           <ToggleRow
             label="Use Harbor's built-in engine (beta)"
             sub="Stream torrents through Harbor's own Rust peer-to-peer engine instead of the bundled Stremio Server. Falls back automatically if it can't connect. Status and a self-test live in the Local engine card below."
             value={settings.localEngine}
             onChange={(v) => update({ localEngine: v })}
+            lockReason={strictRemote ? "Disabled while strict remote streaming is on" : undefined}
           />
           <ToggleRow
             label="Always re-encode when casting (recommended)"

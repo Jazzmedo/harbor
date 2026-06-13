@@ -1,5 +1,7 @@
-import { AlertTriangle, Eraser } from "lucide-react";
+import { AlertTriangle, ChevronDown, Eraser } from "lucide-react";
+import { useState } from "react";
 import { useSettings, type Settings } from "@/lib/settings";
+import { settingsAnchor } from "../shared";
 import { SubField } from "./internals";
 
 type Field = "customCss" | "customJs" | "customHtml";
@@ -35,6 +37,38 @@ const FIELDS: Array<{
     rows: 5,
   },
 ];
+
+export function CustomCodeCard() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div
+      id={settingsAnchor("Custom code")}
+      className="scroll-mt-28 flex flex-col gap-4 rounded-2xl border border-edge-soft bg-canvas/40 p-4"
+    >
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="flex items-start justify-between gap-3 text-left"
+      >
+        <div className="flex flex-col gap-0.5">
+          <span className="text-[14px] font-medium text-ink">Custom code</span>
+          <span className="text-[12.5px] text-ink-subtle">
+            Power-user knob. Inject your own CSS, JS, and HTML into Harbor. Lives in your local settings; nothing leaves your machine.
+          </span>
+        </div>
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-edge text-ink-muted transition-colors hover:bg-elevated hover:text-ink">
+          <ChevronDown
+            size={14}
+            strokeWidth={2}
+            className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          />
+        </span>
+      </button>
+      {open && <CustomCodePanel />}
+    </div>
+  );
+}
 
 export function CustomCodePanel() {
   const { settings, update } = useSettings();

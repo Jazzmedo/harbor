@@ -1,4 +1,4 @@
-import { getStremioServerUrl } from "@/lib/stremio-server";
+import { getStremioServerUrl, remoteStreamServerUrl } from "@/lib/stremio-server";
 
 export type TorrentFile = {
   idx: number;
@@ -33,6 +33,7 @@ export function buildTorrentStreamUrl(opts: {
   sources?: string[];
   trackers?: string[];
   filename?: string | null;
+  base?: string;
 }): string {
   const idx = opts.fileIdx == null || opts.fileIdx < 0 ? -1 : opts.fileIdx;
   const params = new URLSearchParams();
@@ -40,7 +41,7 @@ export function buildTorrentStreamUrl(opts: {
   for (const t of trackers) params.append("tr", t);
   if (opts.filename) params.set("f", opts.filename);
   const qs = params.toString();
-  return `${getStremioServerUrl()}/${opts.infoHash.toLowerCase()}/${idx}${qs ? `?${qs}` : ""}`;
+  return `${opts.base ?? getStremioServerUrl()}/${opts.infoHash.toLowerCase()}/${idx}${qs ? `?${qs}` : ""}`;
 }
 
 export function isVideoFile(f: TorrentFile): boolean {
@@ -54,6 +55,7 @@ export async function createAndListFiles(
   trackers: string[],
   seriesInfo?: { season?: number | null; episode?: number | null } | null,
   timeoutMs = 15000,
+  base?: string,
 ): Promise<CreatedTorrent | null> {
   const hash = infoHash.toLowerCase();
   const ctrl = new AbortController();
@@ -63,7 +65,7 @@ export async function createAndListFiles(
       ? { season: seriesInfo.season, episode: seriesInfo.episode }
       : {};
   try {
-    const res = await fetch(`${getStremioServerUrl()}/${hash}/create`, {
+    const res = await fetch(`${base ?? getStremioServerUrl()}/${hash}/create`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
@@ -107,7 +109,7 @@ function fileName(f: RawFile): string {
   return "Unknown file";
 }
 
-export function directTorrentEnabled(): boolean {
+export function localTorrentAllowed(): boolean {
   try {
     const raw = localStorage.getItem("harbor.settings");
     if (!raw) return true;
@@ -115,6 +117,11 @@ export function directTorrentEnabled(): boolean {
   } catch {
     return true;
   }
+}
+
+export function directTorrentEnabled(): boolean {
+  if (remoteStreamServerUrl()) return true;
+  return localTorrentAllowed();
 }
 
 export function directStreamAvailable(stream: { infoHash?: string | null }): boolean {

@@ -1,6 +1,7 @@
 import { createHtml5Bridge } from "@/lib/player/html5";
 import { createMpvBridge, probeMpv } from "@/lib/player/mpv";
 import type { PlayerBridge } from "@/lib/player/bridge";
+import { isLinuxDesktop, isMacDesktop } from "@/lib/platform";
 
 export const SYNC_DRIFT_TOLERANCE_S = 0.6;
 export const SYNC_SUPPRESS_MS = 1400;
@@ -8,9 +9,10 @@ export const SYNC_PLAY_LOOKAHEAD_S = 0.4;
 export const SYNC_MAX_AGE_S = 30;
 export const SYNC_SEEK_JUMP_S = 10;
 export const HOST_HEARTBEAT_MS = 1000;
-export const HOST_MAX_WAIT_MS = 12_000;
-export const GUEST_MAX_WAIT_MS = 20_000;
-export const LOBBY_HOLD_MS = 1500;
+export const GUEST_ESCAPE_MS = 45_000;
+export const READY_STALE_MS = 20_000;
+export const SEEK_APPLY_DEBOUNCE_MS = 120;
+export const DURATION_MISMATCH_S = 4;
 export const ROOM_STALL_MS = 9000;
 export const SLOW_LOAD_MS = 50_000;
 export const STUCK_AUTORETRY_MS = 18_000;
@@ -21,6 +23,26 @@ export const CHROME_HIDE_MS_PAUSED = 4500;
 
 export function round2(v: number): number {
   return Math.round(v * 100) / 100;
+}
+
+export function embedFlags(
+  engine: "html5" | "mpv",
+  mpvEmbed: boolean,
+  videoWidth: number,
+  videoHeight: number,
+): { mpvEmbedWindowsActive: boolean; stageBg: string } {
+  const embedOn = engine === "mpv" && mpvEmbed;
+  const mpvEmbedWindowsActive =
+    embedOn &&
+    typeof navigator !== "undefined" &&
+    navigator.userAgent.toLowerCase().includes("windows");
+  const hasFrame = videoWidth > 0 && videoHeight > 0;
+  const macShowing = embedOn && isMacDesktop() && hasFrame;
+  const linuxShowing = embedOn && isLinuxDesktop() && hasFrame;
+  return {
+    mpvEmbedWindowsActive,
+    stageBg: mpvEmbedWindowsActive || macShowing || linuxShowing ? "" : "bg-black",
+  };
 }
 
 export function formatNames(names: string[]): string {

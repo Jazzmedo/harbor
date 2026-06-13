@@ -10,7 +10,7 @@ export function SubtitleOverlay({ text, startSec, scale = 1 }: Props) {
   const { settings } = useSettings();
   if (!text) return null;
 
-  const fontSize = Math.round(clamp(settings.subFontSize, 14, 120) * scale);
+  const fontSize = Math.round(clamp(settings.subFontSize, 16, 120) * scale);
   const marginY = clamp(settings.subMarginY, 0, 50);
   const fontColor = settings.subFontColor || "#FFFFFF";
   const align = settings.subAlignX || "center";

@@ -15,6 +15,7 @@ import {
   type CustomTheme,
 } from "@/lib/custom-themes";
 import { downloadText } from "@/lib/download-text";
+import { importForeignTheme } from "@/lib/theme-import";
 import { isHarborStyleName, parseHarborStyle, serializeHarborStyle } from "@/lib/harborstyle";
 import { useSettings } from "@/lib/settings";
 import { pushActivityHint } from "@/lib/discord/activity-hint";
@@ -62,6 +63,18 @@ export function CustomThemesSection() {
         result = parseHarborStyle(text);
       }
       if (!result.ok) {
+        const foreign = importForeignTheme(text, file.name);
+        if (foreign.ok && foreign.themes.length > 0) {
+          for (const t of foreign.themes) saveCustomTheme(t);
+          const first = foreign.themes[0];
+          setImportedNotice(
+            foreign.themes.length > 1
+              ? `${first.name} +${foreign.themes.length - 1} more (${foreign.format})`
+              : `${first.name} (${foreign.format})`,
+          );
+          update({ theme: { ...settings.theme, preset: first.id as ActiveThemeId } });
+          return;
+        }
         setError(result.error);
         return;
       }
@@ -76,7 +89,8 @@ export function CustomThemesSection() {
   const pickImportFile = () => {
     const input = document.createElement("input");
     input.type = "file";
-    input.accept = ".harborstyle,.json,.txt,.harbortheme.json,application/json,text/plain";
+    input.accept =
+      ".harborstyle,.json,.txt,.harbortheme.json,.yaml,.yml,.ini,.xml,application/json,text/plain";
     input.onchange = () => {
       const f = input.files?.[0];
       if (f) importFile(f);

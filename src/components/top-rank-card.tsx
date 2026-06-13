@@ -3,6 +3,12 @@ import { memo, useMemo } from "react";
 import { awardSourceMeta, findTopAward, parseAwardYear } from "@/lib/anime-awards";
 import type { Meta } from "@/lib/cinemeta";
 import { useContextMenu } from "@/lib/context-menu";
+import {
+  hoverPreviewBlur,
+  hoverPreviewEnter,
+  hoverPreviewFocus,
+  hoverPreviewLeave,
+} from "@/lib/hover-preview/store";
 import { useTmdbImdbId } from "@/lib/providers/tmdb";
 import { useSettings } from "@/lib/settings";
 import { useView } from "@/lib/view";
@@ -55,6 +61,8 @@ export const TopRankCard = memo(function TopRankCard({ meta, rank }: { meta: Met
     <button
       onClick={() => openMeta(meta)}
       onContextMenu={(e) => openContextMenu(e, { kind: "meta", meta })}
+      onFocus={(e) => hoverPreviewFocus(meta, e.currentTarget)}
+      onBlur={(e) => hoverPreviewBlur(e.currentTarget)}
       className="group relative w-full min-w-0"
       style={{ aspectRatio: "228 / 268", containerType: "inline-size" }}
     >
@@ -70,7 +78,12 @@ export const TopRankCard = memo(function TopRankCard({ meta, rank }: { meta: Met
       >
         {rank}
       </span>
-      <div className="absolute right-0 top-0 z-10 w-[60%] transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0.24,1)] group-hover:-translate-y-2">
+      <div
+        data-preview-anchor
+        onPointerEnter={(e) => hoverPreviewEnter(meta, e.currentTarget, e.buttons)}
+        onPointerLeave={(e) => hoverPreviewLeave(e.currentTarget)}
+        className="absolute right-0 top-0 z-10 w-[60%] transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0.24,1)] group-hover:-translate-y-2"
+      >
         <Poster
           src={poster.src}
           onError={poster.onError}
@@ -100,6 +113,8 @@ export const AnimeRankCard = memo(function AnimeRankCard({ meta, rank }: { meta:
     <button
       onClick={() => openMeta(meta)}
       onContextMenu={(e) => openContextMenu(e, { kind: "meta", meta })}
+      onFocus={(e) => hoverPreviewFocus(meta, e.currentTarget)}
+      onBlur={(e) => hoverPreviewBlur(e.currentTarget)}
       className="group relative w-full min-w-0"
       style={{ aspectRatio: "228 / 268", containerType: "inline-size" }}
     >
@@ -114,7 +129,12 @@ export const AnimeRankCard = memo(function AnimeRankCard({ meta, rank }: { meta:
       >
         {rank}
       </span>
-      <div className="absolute right-0 top-0 z-10 w-[60%] transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0.24,1)] group-hover:-translate-y-2">
+      <div
+        data-preview-anchor
+        onPointerEnter={(e) => hoverPreviewEnter(meta, e.currentTarget, e.buttons)}
+        onPointerLeave={(e) => hoverPreviewLeave(e.currentTarget)}
+        className="absolute right-0 top-0 z-10 w-[60%] transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0.24,1)] group-hover:-translate-y-2"
+      >
         <Poster
           src={poster.src}
           onError={poster.onError}

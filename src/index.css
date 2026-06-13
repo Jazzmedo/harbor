@@ -65,9 +65,9 @@ body,
   overflow: hidden;
 }
 
-html[data-os="linux"],
-html[data-os="linux"] body,
-html[data-os="linux"] #root {
+html[data-os="linux"]:not([data-mpv-embed="1"]),
+html[data-os="linux"]:not([data-mpv-embed="1"]) body,
+html[data-os="linux"]:not([data-mpv-embed="1"]) #root {
   background: var(--color-canvas);
 }
 
@@ -450,6 +450,15 @@ body {
 .animate-popover-in {
   animation: popover-in 220ms var(--ease-out) both;
   transform-origin: top right;
+}
+
+@keyframes preview-in {
+  from { opacity: 0; transform: translateY(6px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+
+.animate-preview-in {
+  animation: preview-in 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes pirate-peek {

@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowUp, Check, Eye, EyeOff, Pencil, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Check, Eye, EyeOff, ListOrdered, Pencil, Sparkles, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export function RowControls({
@@ -12,6 +12,12 @@ export function RowControls({
   onRename,
   onResetName,
   isRenamed,
+  numeralsActive,
+  canNumerals,
+  onToggleNumerals,
+  heroActive,
+  canHero,
+  onToggleHero,
 }: {
   name: string;
   hidden: boolean;
@@ -23,6 +29,12 @@ export function RowControls({
   onRename: (next: string) => void;
   onResetName: () => void;
   isRenamed: boolean;
+  numeralsActive?: boolean;
+  canNumerals?: boolean;
+  onToggleNumerals?: () => void;
+  heroActive?: boolean;
+  canHero?: boolean;
+  onToggleHero?: () => void;
 }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(name);
@@ -68,6 +80,46 @@ export function RowControls({
       >
         {hidden ? <EyeOff size={14} strokeWidth={2.2} /> : <Eye size={14} strokeWidth={2.2} />}
       </button>
+      {onToggleNumerals && (
+        <button
+          onClick={onToggleNumerals}
+          disabled={!canNumerals && !numeralsActive}
+          title={
+            numeralsActive
+              ? "Show as a normal row"
+              : canNumerals
+                ? "Show as a Top 10 with big numerals"
+                : "Needs at least 10 titles for the Top 10 look"
+          }
+          className={`flex h-7 w-7 items-center justify-center rounded-lg transition-colors disabled:opacity-30 disabled:hover:bg-transparent ${
+            numeralsActive
+              ? "bg-accent/15 text-accent hover:bg-accent/25"
+              : "text-ink-muted hover:bg-raised hover:text-ink"
+          }`}
+        >
+          <ListOrdered size={14} strokeWidth={2.2} />
+        </button>
+      )}
+      {onToggleHero && (
+        <button
+          onClick={onToggleHero}
+          disabled={!canHero && !heroActive}
+          title={
+            heroActive
+              ? "Stop feeding the hero carousel (back to automatic)"
+              : canHero
+                ? "Feature this catalog in the hero carousel"
+                : "Needs artwork-rich titles to feed the hero"
+          }
+          className={`flex h-7 w-7 items-center justify-center rounded-lg transition-colors disabled:opacity-30 disabled:hover:bg-transparent ${
+            heroActive
+              ? "bg-accent/15 text-accent hover:bg-accent/25"
+              : "text-ink-muted hover:bg-raised hover:text-ink"
+          }`}
+        >
+          <Sparkles size={14} strokeWidth={2.2} />
+        </button>
+      )}
       <div className="mx-1 h-5 w-px bg-edge-soft" />
       {editing ? (
         <>

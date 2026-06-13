@@ -12,7 +12,8 @@ type RawResponse = {
   preview?: RawSpan[];
 };
 
-const cache = new Map<string, SkipSegment[]>();
+const cache = new Map<string, RawResponse | null>();
+const inflight = new Map<string, Promise<RawResponse | null>>();
 
 function pickId(metaId: string): { tmdb?: string; imdb?: string } | null {
   if (metaId.startsWith("tmdb:movie:")) return { tmdb: metaId.slice("tmdb:movie:".length) };
@@ -26,17 +27,38 @@ function spanToSegment(
   kind: SkipKind,
   durationSec: number,
 ): SkipSegment | null {
-  let startMs = span.start_ms ?? 0;
-  let endMs = span.end_ms ?? Math.round(durationSec * 1000);
+  const startMs = span.start_ms ?? 0;
+  const endMs = span.end_ms ?? (durationSec > 0 ? Math.round(durationSec * 1000) : null);
+  if (endMs == null) return null;
   if (!Number.isFinite(startMs) || !Number.isFinite(endMs)) return null;
   if (endMs <= startMs) return null;
-  if (durationSec > 0 && startMs >= durationSec * 1000) return null;
   return {
     kind,
     startSec: startMs / 1000,
     endSec: endMs / 1000,
     source: "introdb",
   };
+}
+
+async function fetchRaw(cacheKey: string): Promise<RawResponse | null> {
+  const hit = cache.get(cacheKey);
+  if (hit !== undefined) return hit;
+  const pending = inflight.get(cacheKey);
+  if (pending) return pending;
+  const p = (async () => {
+    const res = await fetch(`https://api.theintrodb.org/v2/media?${cacheKey}`);
+    if (!res.ok) {
+      cache.set(cacheKey, null);
+      return null;
+    }
+    const json = (await res.json()) as RawResponse;
+    cache.set(cacheKey, json);
+    return json;
+  })().finally(() => {
+    inflight.delete(cacheKey);
+  });
+  inflight.set(cacheKey, p);
+  return p;
 }
 
 export async function fetchIntroDbSegments(
@@ -55,15 +77,8 @@ export async function fetchIntroDbSegments(
     params.set("episode", String(episode.episode));
   }
 
-  const cacheKey = params.toString();
-  if (cache.has(cacheKey)) return cache.get(cacheKey)!;
-
-  const res = await fetch(`https://api.theintrodb.org/v2/media?${cacheKey}`);
-  if (!res.ok) {
-    cache.set(cacheKey, []);
-    return [];
-  }
-  const json = (await res.json()) as RawResponse;
+  const json = await fetchRaw(params.toString());
+  if (!json) return [];
   const out: SkipSegment[] = [];
   const collect = (spans: RawSpan[] | undefined, kind: SkipKind) => {
     if (!spans) return;
@@ -77,6 +92,5 @@ export async function fetchIntroDbSegments(
   collect(json.credits, "outro");
   collect(json.preview, "outro");
   out.sort((a, b) => a.startSec - b.startSec);
-  cache.set(cacheKey, out);
   return out;
 }

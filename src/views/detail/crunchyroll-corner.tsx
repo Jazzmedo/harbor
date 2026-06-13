@@ -26,6 +26,7 @@ export function CrunchyrollAwardsCorner({ name, year }: { name: string; year?: n
   return (
     <button
       type="button"
+      data-hero-awards
       onClick={(e) => {
         e.stopPropagation();
         document

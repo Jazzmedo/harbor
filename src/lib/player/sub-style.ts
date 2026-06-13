@@ -9,7 +9,8 @@ export async function applySubStyle(s: Settings, assActive = false): Promise<voi
   const override = s.subAssOverride;
   const assMargins = assActive && override !== "no" ? "yes" : "no";
   const props: Array<[string, unknown]> = [
-    ["sub-font-size", s.subFontSize],
+    ["sub-font-size", 32],
+    ["sub-scale", Math.min(4, Math.max(0.4, (Number(s.subFontSize) || 32) / 32))],
     ["sub-color", hexToBgr(s.subFontColor)],
     ["sub-border-color", hexToBgr(s.subBorderColor)],
     ["sub-border-size", s.subBorderSize],

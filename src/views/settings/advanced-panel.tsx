@@ -61,7 +61,7 @@ export function AdvancedPanel() {
       {isTauri && (
         <Section
           title="System tray"
-          subtitle="Keep Harbor a click away. Close it to the Windows tray instead of quitting, and control it from the tray's right-click menu. These also mirror into the tray menu live."
+          subtitle="Keep Harbor a click away. Close it to the system tray instead of quitting, and control it from the tray menu. These also mirror into the tray menu live."
         >
           <TrayRow />
         </Section>

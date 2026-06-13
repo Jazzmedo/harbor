@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { AddonLogo, AddonLogoStack } from "@/components/addon-logo";
 import { FlagStack } from "@/components/flag";
 import { FormatBadge } from "@/components/format-badge";
+import { HostMatchChip } from "@/components/host-match-chip";
 import { useDebridClients } from "@/lib/debrid/registry";
 import type { ScoredStream } from "@/lib/streams/types";
 import type { PlayEpisode } from "@/lib/view";
@@ -24,6 +25,7 @@ export function SourceDrawer({
   streams,
   debrids,
   getAddonLogo,
+  matchFor,
   onPlay,
   resolvingId,
   showName,
@@ -37,6 +39,7 @@ export function SourceDrawer({
   streams: ScoredStream[];
   debrids: ReturnType<typeof useDebridClients>;
   getAddonLogo: (addonId: string) => string | null;
+  matchFor?: (s: ScoredStream) => "same" | "close" | null;
   onPlay: (s: ScoredStream) => void;
   resolvingId: string | null;
   showName: string;
@@ -94,6 +97,7 @@ export function SourceDrawer({
               stream={s}
               debrids={debrids}
               addonLogo={getAddonLogo(s.addonId)}
+              match={matchFor ? matchFor(s) : null}
               onPlay={() => onPlay(s)}
               resolving={resolvingId !== null && s.infoHash === resolvingId}
               divider={i > 0}
@@ -137,6 +141,7 @@ function SourceRow({
   stream,
   debrids,
   addonLogo,
+  match,
   onPlay,
   resolving,
   divider,
@@ -146,6 +151,7 @@ function SourceRow({
   stream: ScoredStream;
   debrids: ReturnType<typeof useDebridClients>;
   addonLogo: string | null;
+  match: "same" | "close" | null;
   onPlay: () => void;
   resolving: boolean;
   divider: boolean;
@@ -184,6 +190,7 @@ function SourceRow({
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-3 pt-0.5">
+          <HostMatchChip match={match} />
           {stream.audioLanguages.filter((l) => l.toLowerCase() !== "unknown").length > 0 && (
             <FlagStack
               languages={stream.audioLanguages.filter((l) => l.toLowerCase() !== "unknown")}

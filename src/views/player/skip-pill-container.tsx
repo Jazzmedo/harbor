@@ -1,8 +1,9 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { usePlaybackPosition } from "@/lib/player/playback-clock";
 import { SkipPill } from "@/components/player/skip-pill";
 import { activeSegment, type SkipSegment } from "@/lib/skip-intro";
 import { useSettings } from "@/lib/settings";
+import type { SpoilerMask } from "@/lib/spoilers";
 import type { PlayEpisode } from "@/lib/view";
 
 function nextEpisodeLead(setting: number, durationSec: number): number {
@@ -17,7 +18,9 @@ export function SkipPillContainer({
   hasNextEpisode,
   hasNextEpDisplay,
   nextEp,
+  nextEpMask,
   visible,
+  allowAutoSkip = true,
   onSkip,
   onNextEpisode,
   onCancelAutoNext,
@@ -27,7 +30,9 @@ export function SkipPillContainer({
   hasNextEpisode: boolean;
   hasNextEpDisplay: boolean;
   nextEp: PlayEpisode | null;
+  nextEpMask?: SpoilerMask;
   visible: boolean;
+  allowAutoSkip?: boolean;
   onSkip: (sec: number) => void;
   onNextEpisode: () => void;
   onCancelAutoNext: () => void;
@@ -55,11 +60,24 @@ export function SkipPillContainer({
   const activeSkip = realActiveSkip ?? syntheticOutro;
   const remainingSec = Math.max(0, durationSec - positionSec);
 
+  const autoSkippedRef = useRef<SkipSegment | null>(null);
+  useEffect(() => {
+    autoSkippedRef.current = null;
+  }, [skipSegments]);
+  useEffect(() => {
+    if (!settings.autoSkipIntro || !allowAutoSkip) return;
+    if (!realActiveSkip || realActiveSkip.kind !== "intro") return;
+    if (autoSkippedRef.current === realActiveSkip) return;
+    autoSkippedRef.current = realActiveSkip;
+    onSkip(realActiveSkip.endSec);
+  }, [settings.autoSkipIntro, allowAutoSkip, realActiveSkip, onSkip]);
+
   return (
     <SkipPill
       segment={activeSkip}
       hasNextEp={hasNextEpDisplay}
       nextEp={nextEp}
+      nextEpMask={nextEpMask}
       remainingSec={remainingSec}
       visible={visible}
       onSkip={() => {

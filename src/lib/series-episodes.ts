@@ -54,6 +54,9 @@ async function getAnimeEpisodes(id: string): Promise<PlayEpisode[] | null> {
       overview: v.overview ?? undefined,
     };
     if (v.id) ep.kitsuStreamId = v.id;
+    if (v.imdb_id ?? addonMeta?.imdb_id) ep.imdbId = v.imdb_id ?? addonMeta?.imdb_id;
+    if (v.imdbSeason != null) ep.imdbSeason = v.imdbSeason;
+    if (v.imdbEpisode != null) ep.imdbEpisode = v.imdbEpisode;
     eps.push(ep);
   }
   if (eps.length === 0) return null;

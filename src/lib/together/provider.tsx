@@ -2,7 +2,22 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { useSettings } from "@/lib/settings";
 import { TogetherClient, type RoomEvent, type RoomSnapshot } from "./client";
 import { useSelfIdentity } from "./use-self-identity";
+import { relayOutdated } from "./relay-version";
+import { deriveHostSource, deriveRoomGuestPick, type HostSourceInfo, type LastInviteMeta } from "./room-derive";
+import { applyRoomEvent } from "./provider-events";
+import type {
+  ChatMessage,
+  IncomingDraw,
+  IncomingHostLeaving,
+  IncomingInvite,
+  IncomingParticipantLeft,
+  IncomingSummon,
+  PartialSyncState,
+  RemoteCursor,
+} from "./provider-types";
+import { createCommandSender } from "./seek-coalesce";
 import {
+  WT_PROTO,
   generateRoomCode,
   normalizeRoomCode,
   type ParticipantLocation,
@@ -14,63 +29,17 @@ import {
 
 const CLIENT_ID_KEY = "harbor.together.clientId";
 const NAME_KEY = "harbor.together.name";
-const CHAT_HISTORY_LIMIT = 200;
 
-export type ChatMessage = {
-  from: string;
-  name: string;
-  text: string;
-  at: number;
-};
-
-export type IncomingInvite = {
-  from: string;
-  name: string;
-  invite: PlayInvite;
-  at: number;
-};
-
-export type IncomingHostLeaving = {
-  from: string;
-  name: string;
-  at: number;
-};
-
-export type IncomingParticipantLeft = {
-  clientId: string;
-  name: string;
-  at: number;
-};
-
-export type IncomingSummon = {
-  from: string;
-  name: string;
-  target: SummonTarget;
-  at: number;
-};
-
-export type RemoteCursor = {
-  from: string;
-  name: string;
-  x: number;
-  y: number;
-  visible: boolean;
-  path: string;
-  updatedAt: number;
-};
-
-export type IncomingDraw = {
-  from: string;
-  name: string;
-  strokeId: string;
-  phase: "start" | "point" | "end";
-  x?: number;
-  y?: number;
-  color?: string;
-  path: string;
-};
-
-export type PartialSyncState = Omit<SyncState, "updatedAt" | "updatedBy" | "hostClientId">;
+export type {
+  ChatMessage,
+  IncomingDraw,
+  IncomingHostLeaving,
+  IncomingInvite,
+  IncomingParticipantLeft,
+  IncomingSummon,
+  PartialSyncState,
+  RemoteCursor,
+} from "./provider-types";
 
 type TogetherValue = {
   enabled: boolean;
@@ -116,6 +85,11 @@ type TogetherValue = {
   dismissParticipantLeft: () => void;
   claimHost: (fresh: boolean) => void;
   startRoom: () => void;
+  relayVersion: number | null;
+  relayOutdated: boolean;
+  hostSource: HostSourceInfo | null;
+  roomGuestPick: boolean;
+  lastInviteProto: number;
 };
 
 const Ctx = createContext<TogetherValue | null>(null);
@@ -131,24 +105,6 @@ function loadOrInitClientId(): string {
 
 function loadOrInitName(): string {
   return localStorage.getItem(NAME_KEY) ?? `Guest ${Math.floor(Math.random() * 9000 + 1000)}`;
-}
-
-function inviteMediaKey(invite: PlayInvite): string {
-  return `${invite.mediaId}|${invite.episode?.season ?? ""}|${invite.episode?.episode ?? ""}`;
-}
-
-function pruneMap<V>(m: Map<string, V>, keep: Set<string>): Map<string, V> {
-  let changed = false;
-  for (const k of m.keys()) {
-    if (!keep.has(k)) {
-      changed = true;
-      break;
-    }
-  }
-  if (!changed) return m;
-  const next = new Map<string, V>();
-  for (const [k, v] of m) if (keep.has(k)) next.set(k, v);
-  return next;
 }
 
 export function TogetherProvider({ children }: { children: ReactNode }) {
@@ -168,7 +124,11 @@ export function TogetherProvider({ children }: { children: ReactNode }) {
   const stateListenersRef = useRef<Set<(s: SyncState) => void>>(new Set());
   const commandListenersRef = useRef<Set<(from: string, c: RoomCommand) => void>>(new Set());
   const drawListenersRef = useRef<Set<(e: IncomingDraw) => void>>(new Set());
-  const lastInviteRef = useRef<{ key: string; at: number } | null>(null);
+  const lastInviteRef = useRef<LastInviteMeta | null>(null);
+  const guestPickSettingRef = useRef(settings.togetherGuestsPick);
+  guestPickSettingRef.current = settings.togetherGuestsPick;
+  const commandSenderRef = useRef(createCommandSender((c) => clientRef.current?.sendCommand(c)));
+  useEffect(() => () => commandSenderRef.current.dispose(), []);
 
   const [snapshot, setSnapshot] = useState<RoomSnapshot>({
     state: "disconnected",
@@ -177,6 +137,7 @@ export function TogetherProvider({ children }: { children: ReactNode }) {
     syncState: null,
     hostClientId: null,
     started: false,
+    relayVersion: null,
     lastError: null,
   });
   const [chat, setChat] = useState<ChatMessage[]>([]);
@@ -217,60 +178,24 @@ export function TogetherProvider({ children }: { children: ReactNode }) {
       colorRef.current,
     );
     clientRef.current = c;
-    const off = c.on((e: RoomEvent) => {
-      if (e.kind === "snapshot") {
-        const keep = new Set(e.snapshot.participants.map((p) => p.id));
-        setSnapshot(e.snapshot);
-        setCursorMap((cur) => pruneMap(cur, keep));
-        setPresenceMap((cur) => pruneMap(cur, keep));
-        setParticipantLocations((cur) => pruneMap(cur, keep));
-      } else if (e.kind === "incoming-state") {
-        for (const l of stateListenersRef.current) l(e.state);
-      } else if (e.kind === "incoming-command") {
-        for (const l of commandListenersRef.current) l(e.from, e.command);
-      } else if (e.kind === "chat") {
-        setChat((cur) => [...cur, e].slice(-CHAT_HISTORY_LIMIT));
-      } else if (e.kind === "invite") {
-        lastInviteRef.current = { key: inviteMediaKey(e.invite), at: Date.now() };
-        setIncomingSummon(null);
-        setIncomingInvite({ from: e.from, name: e.name, invite: e.invite, at: e.at });
-      } else if (e.kind === "host-leaving") {
-        setIncomingHostLeaving({ from: e.from, name: e.name, at: e.at });
-      } else if (e.kind === "participant-left") {
-        if (e.clientId !== clientIdRef.current) {
-          setIncomingParticipantLeft({ clientId: e.clientId, name: e.name, at: Date.now() });
-        }
-      } else if (e.kind === "summon") {
-        setIncomingInvite(null);
-        setIncomingSummon({ from: e.from, name: e.name, target: e.target, at: e.at });
-      } else if (e.kind === "cursor") {
-        setCursorMap((cur) => {
-          const next = new Map(cur);
-          next.set(e.from, { from: e.from, name: e.name, x: e.x, y: e.y, visible: e.visible, path: e.path, updatedAt: Date.now() });
-          return next;
-        });
-        setPresenceMap((cur) => {
-          const next = new Map(cur);
-          next.set(e.from, Date.now());
-          return next;
-        });
-      } else if (e.kind === "draw") {
-        for (const l of drawListenersRef.current) l(e);
-      } else if (e.kind === "presence") {
-        setPresenceMap((cur) => {
-          const next = new Map(cur);
-          next.set(e.from, e.activeAt);
-          return next;
-        });
-        if (e.location) {
-          setParticipantLocations((cur) => {
-            const next = new Map(cur);
-            next.set(e.from, e.location!);
-            return next;
-          });
-        }
-      }
-    });
+    const off = c.on((e: RoomEvent) =>
+      applyRoomEvent(e, {
+        clientId: clientIdRef.current,
+        stateListenersRef,
+        commandListenersRef,
+        drawListenersRef,
+        lastInviteRef,
+        setSnapshot,
+        setCursorMap,
+        setPresenceMap,
+        setParticipantLocations,
+        setChat,
+        setIncomingInvite,
+        setIncomingHostLeaving,
+        setIncomingParticipantLeft,
+        setIncomingSummon,
+      }),
+    );
     return () => {
       off();
       c.leave();
@@ -351,7 +276,7 @@ export function TogetherProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const sendCommand = useCallback((command: RoomCommand) => {
-    clientRef.current?.sendCommand(command);
+    commandSenderRef.current.send(command);
   }, []);
 
   const onIncomingCommand = useCallback((cb: (from: string, command: RoomCommand) => void) => {
@@ -366,7 +291,11 @@ export function TogetherProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const sendInvite = useCallback((invite: PlayInvite) => {
-    clientRef.current?.sendInvite(invite);
+    clientRef.current?.sendInvite({
+      ...invite,
+      proto: WT_PROTO,
+      guestPick: guestPickSettingRef.current || undefined,
+    });
   }, []);
 
   const clearInvite = useCallback(() => {
@@ -474,6 +403,11 @@ export function TogetherProvider({ children }: { children: ReactNode }) {
     return !!r && r.key === key && Date.now() - r.at < 60_000;
   }, []);
 
+  const hostSource = useMemo(() => deriveHostSource(snapshot), [snapshot]);
+  const roomGuestPick = deriveRoomGuestPick(snapshot, clientIdRef.current, lastInviteRef.current);
+  const lastInviteProto = lastInviteRef.current?.proto ?? 0;
+  const isRelayOutdated = snapshot.state === "joined" && relayOutdated(snapshot.relayVersion);
+
   const value: TogetherValue = useMemo(
     () => ({
       enabled: !!relayUrl,
@@ -519,6 +453,11 @@ export function TogetherProvider({ children }: { children: ReactNode }) {
       dismissParticipantLeft,
       claimHost,
       startRoom,
+      relayVersion: snapshot.relayVersion,
+      relayOutdated: isRelayOutdated,
+      hostSource,
+      roomGuestPick,
+      lastInviteProto,
     }),
     [
       relayUrl,
@@ -563,6 +502,10 @@ export function TogetherProvider({ children }: { children: ReactNode }) {
       dismissParticipantLeft,
       claimHost,
       startRoom,
+      isRelayOutdated,
+      hostSource,
+      roomGuestPick,
+      lastInviteProto,
     ],
   );
 

@@ -2,6 +2,7 @@ import { Check, ChevronDown, Plus, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import simklLogo from "@/assets/simkl.png";
 import { AnchoredMenu } from "@/components/anchored-menu";
+import { kitsuToMal } from "@/lib/providers/anime-mapping";
 import { SimklApiError } from "@/lib/simkl/client";
 import { stremioIdToSimklTarget } from "@/lib/simkl/ids";
 import { useSimkl } from "@/lib/simkl/provider";
@@ -47,26 +48,37 @@ export function AddToSimklButton({
       setTarget(null);
       return;
     }
-    const resolution = stremioIdToSimklTarget(harborId);
-    if (!resolution.ok) {
-      setTarget(null);
-      return;
-    }
-    let t = resolution.target;
-    if (type === "series" && t.kind === "movie") t = { kind: "show", ids: t.ids };
-    if (type === "movie" && t.kind === "show") t = { kind: "movie", ids: t.ids };
-    setTarget(t);
     let cancelled = false;
     setReady(false);
-    loadSimklStatusMap()
-      .then((map) => {
+    void (async () => {
+      let t: SimklTarget | null = null;
+      const resolution = stremioIdToSimklTarget(harborId);
+      if (resolution.ok) {
+        t = resolution.target;
+      } else if (harborId.startsWith("kitsu:")) {
+        const n = Number(harborId.split(":")[1]);
+        const mal = Number.isFinite(n) ? await kitsuToMal(n).catch(() => null) : null;
+        if (mal != null) t = { kind: "show", ids: { mal } };
+      }
+      if (cancelled) return;
+      if (!t) {
+        setTarget(null);
+        return;
+      }
+      if (type === "series" && t.kind === "movie") t = { kind: "show", ids: t.ids };
+      if (type === "movie" && t.kind === "show") t = { kind: "movie", ids: t.ids };
+      setTarget(t);
+      const malKey =
+        t.kind !== "episode" && t.ids.mal != null ? `mal:${t.ids.mal}` : null;
+      try {
+        const map = await loadSimklStatusMap();
         if (cancelled) return;
-        setStatus(statusForId(map, harborId));
+        setStatus(statusForId(map, harborId) ?? (malKey ? statusForId(map, malKey) : null));
         setReady(true);
-      })
-      .catch(() => {
+      } catch {
         if (!cancelled) setReady(true);
-      });
+      }
+    })();
     return () => {
       cancelled = true;
     };

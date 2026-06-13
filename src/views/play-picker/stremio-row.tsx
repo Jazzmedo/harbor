@@ -1,17 +1,20 @@
 import { Play } from "lucide-react";
 import { AddonLogo } from "@/components/addon-logo";
 import { FormatBadge, streamBadges } from "@/components/format-badge";
+import { HostMatchChip } from "@/components/host-match-chip";
 import type { ScoredStream } from "@/lib/streams/types";
 
 export function StremioRow({
   stream,
   failed,
   addonLogo,
+  match = null,
   onPlay,
 }: {
   stream: ScoredStream;
   failed: boolean;
   addonLogo: string | null;
+  match?: "same" | "close" | null;
   onPlay: () => void;
 }) {
   const addonName = stream.addonName ?? "Source";
@@ -41,8 +44,9 @@ export function StremioRow({
             {description}
           </p>
         )}
-        {badges.length > 0 && (
+        {(badges.length > 0 || match) && (
           <div className="flex flex-wrap items-center gap-1.5">
+            <HostMatchChip match={match} />
             {badges.map((k) => (
               <FormatBadge key={k} kind={k} size="sm" />
             ))}

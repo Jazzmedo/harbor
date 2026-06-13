@@ -52,9 +52,23 @@ export type MpvOptions = {
   getEmbedRect?: () => Promise<MpvRect | null> | MpvRect | null;
 };
 
+const AUDIO_PROFILE_AF: Record<string, string> = {
+  bass: "lavfi=[bass=g=7:f=110:w=0.6]",
+  voice: "lavfi=[equalizer=f=300:t=q:w=1:g=-3,equalizer=f=2800:t=q:w=1:g=5]",
+  "bass-reduce": "lavfi=[bass=g=-8:f=110:w=0.6]",
+  night: "lavfi=[acompressor=ratio=3:threshold=-20dB:attack=20:release=300:makeup=4dB]",
+};
+
 export function createMpvBridge(mpvOptions?: MpvOptions): PlayerBridge {
   let host: HTMLElement | null = null;
   let snap: PlayerSnapshot = { ...emptySnapshot };
+  let profileAf = "";
+  const applyAudioFilters = () => {
+    const parts: string[] = [];
+    if (snap.audioNormalize) parts.push("dynaudnorm=f=200:g=15:m=10:r=0.6");
+    if (profileAf) parts.push(profileAf);
+    invoke("mpv_command", { cmd: ["af", "set", parts.join(",")] }).catch(() => {});
+  };
   const listeners = new Set<(s: PlayerSnapshot) => void>();
   let unlistenEvent: UnlistenFn | null = null;
   let unlistenLog: UnlistenFn | null = null;
@@ -411,10 +425,16 @@ export function createMpvBridge(mpvOptions?: MpvOptions): PlayerBridge {
       }
     },
     setAudioNormalize(on) {
-      const value = on ? "dynaudnorm=f=200:g=15:m=10:r=0.6" : "";
-      invoke("mpv_command", { cmd: ["af", "set", value] }).catch(() => {});
       snap.audioNormalize = on;
+      applyAudioFilters();
       emit();
+    },
+    setAudioProfile(profile) {
+      profileAf = AUDIO_PROFILE_AF[profile] ?? "";
+      applyAudioFilters();
+    },
+    setMediaInfo(info) {
+      invoke("mpv_set_property", { name: "force-media-title", value: info.title }).catch(() => {});
     },
     async screenshot(path) {
       try {
@@ -442,7 +462,7 @@ export function createMpvBridge(mpvOptions?: MpvOptions): PlayerBridge {
         pictureInPicture: true,
         airplay: false,
         chromecast: true,
-        hdrPassthrough: true,
+        hdrPassthrough: false,
         hardwareDecode: true,
       };
     },

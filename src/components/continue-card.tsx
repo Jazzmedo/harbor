@@ -7,6 +7,7 @@ import { tmdbLiteMeta } from "@/lib/providers/tmdb/tmdb-lite";
 import { useContextMenu } from "@/lib/context-menu";
 import { readSnapshot, useSnapshotVersion } from "@/lib/snapshots";
 import { episodeFromVideoId, libraryMetaType, type LibraryItem } from "@/lib/stremio";
+import { useHasNewEpisode } from "@/lib/new-episodes";
 import { useSettings } from "@/lib/settings";
 import { useView } from "@/lib/view";
 
@@ -23,6 +24,7 @@ export const ContinueCard = memo(function ContinueCard({ item, watched = false, 
   settingsRef.current = settings;
   const { open: openContextMenu } = useContextMenu();
   useSnapshotVersion();
+  const newEpisode = useHasNewEpisode(item);
   const snapshot = readSnapshot(item._id);
   const isExternal = item.external === "simkl";
   const dur = item.state?.duration ?? 0;
@@ -185,6 +187,14 @@ export const ContinueCard = memo(function ContinueCard({ item, watched = false, 
             title="Watched on Trakt"
           >
             <Check size={12} strokeWidth={3} />
+          </span>
+        )}
+        {newEpisode && (
+          <span
+            className={`absolute top-2 flex h-6 items-center rounded-full bg-accent/90 px-2 text-[10px] font-bold tracking-[0.1em] text-canvas ${watched ? "left-10" : "left-2"}`}
+            title="New episode released since you last watched"
+          >
+            +1
           </span>
         )}
         {logo && (

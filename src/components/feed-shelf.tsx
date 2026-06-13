@@ -14,12 +14,14 @@ export function FeedShelf({
   onEndReached,
   flagRerun = false,
   scrollKey,
+  onViewAll,
 }: {
   shelf: ShelfMeta;
   items: Meta[] | null;
   onEndReached?: () => void;
   flagRerun?: boolean;
   scrollKey?: string;
+  onViewAll?: () => void;
 }) {
   if (items === null) {
     return (
@@ -34,7 +36,12 @@ export function FeedShelf({
   if (items.length === 0) return null;
 
   return (
-    <Row title={<ShelfTitle shelf={shelf} />} onEndReached={onEndReached} scrollKey={scrollKey}>
+    <Row
+      title={<ShelfTitle shelf={shelf} />}
+      onEndReached={onEndReached}
+      scrollKey={scrollKey}
+      onViewAll={onViewAll}
+    >
       {items.map((m) => (
         <PickCard key={m.id} meta={m} flagRerun={flagRerun} />
       ))}

@@ -80,7 +80,6 @@ export function useBridgeLoad(params: {
           url: playUrl,
           subtitles: src.subtitles,
           notWebReady: src.notWebReady,
-          startAtSec: guestInRoom ? undefined : eligibleForPrompt ? undefined : startSec > 5 ? startSec : undefined,
         });
       } catch (e) {
         if (cancelled) return;
@@ -100,6 +99,11 @@ export function useBridgeLoad(params: {
             setPendingSeekSec(0);
           }
         };
+        return;
+      }
+      if (!guestInRoom && !isLive && startSec > 5) {
+        bridge.pause();
+        setPendingSeekSec(startSec);
         return;
       }
       if (!inRoomRef.current) {

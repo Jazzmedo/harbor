@@ -107,12 +107,12 @@ export function usePlayerBridge(params: {
     if (engine !== "html5") return;
     if (autoFallbackTried) return;
     if (settings.playerEngine !== "auto") return;
-    if (snap.errorCode !== "decode" && snap.errorCode !== "codec") return;
+    if (snap.errorCode !== "decode" && snap.errorCode !== "codec" && !snap.noAudio) return;
     (async () => {
       const probe = await probeMpv();
       if (probe.available) setAutoFallbackTried(true);
     })();
-  }, [engine, autoFallbackTried, snap.errorCode, settings.playerEngine]);
+  }, [engine, autoFallbackTried, snap.errorCode, snap.noAudio, settings.playerEngine]);
 
   return { snap, engine, bridgeReady, bridgeKey };
 }

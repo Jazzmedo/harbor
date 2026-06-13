@@ -37,7 +37,9 @@ export async function fetchAddonStreams(
 ): Promise<Stream[]> {
   const namedTasks: Array<{ name: string; p: Promise<Stream[]> }> = [];
   const skipped: string[] = [];
-  for (const addon of addons) {
+  for (let i = 0; i < addons.length; i++) {
+    const addon = addons[i];
+    const priority = i;
     if (isStatusOnlyAddon(addon)) {
       skipped.push(`${addon.manifest.name}(status-addon)`);
       continue;
@@ -49,7 +51,9 @@ export async function fetchAddonStreams(
     }
     namedTasks.push({
       name: addon.manifest.name,
-      p: fetchOne(addon, req.type, id, signal),
+      p: fetchOne(addon, req.type, id, signal).then((ss) =>
+        ss.map((s) => ({ ...s, addonPriority: priority })),
+      ),
     });
   }
   if (skipped.length > 0) console.info(`[addons] skipped: ${skipped.join(", ")}`);

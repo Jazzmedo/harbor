@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { BackToTop } from "@/components/back-to-top";
 import { PickCard } from "@/components/pick-card";
 import type { Meta } from "@/lib/cinemeta";
+import { layoutHasGlobalBack } from "@/lib/theme";
 import { useScrollMemory, useView, type GridSpec } from "@/lib/view";
 
 const PAGE_CAP = 40;
@@ -56,13 +57,15 @@ export function GridView({ grid }: { grid: GridSpec }) {
     <main ref={scrollRef} className="absolute inset-0 z-30 overflow-y-auto bg-canvas">
       <div className="mx-auto flex w-full max-w-[1700px] flex-col gap-8 px-12 pb-24 pt-24">
         <div className="flex items-center gap-4">
-          <button
-            onClick={goBack}
-            aria-label="Back"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-elevated text-ink-muted transition-colors hover:text-ink"
-          >
-            <ArrowLeft size={18} strokeWidth={2.2} />
-          </button>
+          {!layoutHasGlobalBack() && (
+            <button
+              onClick={goBack}
+              aria-label="Back"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-elevated text-ink-muted transition-colors hover:text-ink"
+            >
+              <ArrowLeft size={18} strokeWidth={2.2} />
+            </button>
+          )}
           <h1 className="font-display text-[30px] font-medium leading-none tracking-tight text-ink">
             {grid.title}
           </h1>

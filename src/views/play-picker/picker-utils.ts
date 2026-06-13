@@ -394,10 +394,14 @@ export function humanError(code: string): string {
       return "None of your debrid services could resolve this stream. Try a different one.";
     case "no-debrid-configured":
       return "Add a debrid provider in Settings first.";
+    case "remote-server-unreachable-strict":
+      return "Remote streaming server unreachable. Strict mode is on, so local fallback is disabled.";
+    case "remote-server-unreachable":
+      return "Remote streaming server unreachable. Check the address in Settings > Player & quality and that the server machine is online.";
     case "engine-not-ready":
       return "Harbor's local streaming engine isn't ready yet. Give it a few seconds and hit Play again.";
     case "direct-torrent-disabled":
-      return "Direct torrent streaming is turned off. Turn it on in Settings > Player to stream torrents without a debrid.";
+      return "Direct torrent streaming is turned off. Turn it on in Settings > Player & quality to stream torrents without a debrid.";
     case "no-source":
       return "This stream has no playable source.";
     case "addon-not-configured":

@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import type { ScoredStream } from "@/lib/streams/types";
+import type { SourceDescriptor } from "@/lib/together/protocol";
 import { hasInstantMarker, streamMatchesLangs } from "./picker-utils";
 
 const AUTO_SETTLE_MS = 1500;
 const HIGH_CONFIDENCE_GRACE_MS = 350;
+const HOST_SOURCE_WAIT_MS = 12_000;
 
 export function useAutoFire(args: {
   autoActive: boolean;
@@ -18,6 +20,8 @@ export function useAutoFire(args: {
   preferredLangs: string[];
   hasStrongAddon: boolean;
   isTorrentioStream: (s: ScoredStream) => boolean;
+  expectHostSource?: boolean;
+  hostSource?: SourceDescriptor | null;
   autoFiredRef: React.MutableRefObject<boolean>;
   setAutoSettleReady: (v: boolean) => void;
   setAutoCancelled: (v: boolean) => void;
@@ -26,12 +30,22 @@ export function useAutoFire(args: {
   const {
     autoActive, attempt, autoCandidates, resolving, autoAttemptIdx, autoSettleReady,
     pipelineDone, firstResultAt, isCached, preferredLangs, hasStrongAddon, isTorrentioStream,
+    expectHostSource, hostSource,
     autoFiredRef, setAutoSettleReady, setAutoCancelled, onPlay,
   } = args;
   const highConfidenceSinceRef = useRef<number | null>(null);
   const [highConfidenceTick, setHighConfidenceTick] = useState(0);
 
+  const [hostWaitElapsed, setHostWaitElapsed] = useState(false);
   useEffect(() => {
+    if (!autoActive || !expectHostSource || hostSource || hostWaitElapsed) return;
+    const t = window.setTimeout(() => setHostWaitElapsed(true), HOST_SOURCE_WAIT_MS);
+    return () => window.clearTimeout(t);
+  }, [autoActive, expectHostSource, hostSource, hostWaitElapsed]);
+  const waitingForHostSource = !!expectHostSource && !hostSource && !hostWaitElapsed;
+
+  useEffect(() => {
+    if (waitingForHostSource) return;
     if (!autoActive || autoFiredRef.current || pipelineDone || autoSettleReady) return;
     const top = autoCandidates[0];
     const langOk = preferredLangs.length === 0 || (top != null && streamMatchesLangs(top, preferredLangs));
@@ -41,7 +55,7 @@ export function useAutoFire(args: {
     }
     const t = window.setTimeout(() => setHighConfidenceTick((n) => n + 1), HIGH_CONFIDENCE_GRACE_MS + 20);
     return () => window.clearTimeout(t);
-  }, [autoActive, pipelineDone, autoSettleReady, autoCandidates, isCached, preferredLangs, hasStrongAddon, isTorrentioStream, autoFiredRef]);
+  }, [autoActive, pipelineDone, autoSettleReady, autoCandidates, isCached, preferredLangs, hasStrongAddon, isTorrentioStream, autoFiredRef, waitingForHostSource]);
 
   useEffect(() => {
     if (!autoActive || autoSettleReady || pipelineDone) return;
@@ -54,6 +68,7 @@ export function useAutoFire(args: {
 
   useEffect(() => {
     if (!autoActive || autoFiredRef.current) return;
+    if (waitingForHostSource) return;
     const top = autoCandidates[0];
     const isFirstAttempt = (attempt ?? 0) === 0 && autoAttemptIdx === 0;
     const langOk = preferredLangs.length === 0 || (top != null && streamMatchesLangs(top, preferredLangs));
@@ -82,5 +97,5 @@ export function useAutoFire(args: {
     }
     autoFiredRef.current = true;
     onPlay(pick, false);
-  }, [autoActive, attempt, autoCandidates, resolving, autoAttemptIdx, autoSettleReady, pipelineDone, isCached, preferredLangs, hasStrongAddon, isTorrentioStream, autoFiredRef, setAutoCancelled, onPlay, highConfidenceTick]);
+  }, [autoActive, attempt, autoCandidates, resolving, autoAttemptIdx, autoSettleReady, pipelineDone, isCached, preferredLangs, hasStrongAddon, isTorrentioStream, autoFiredRef, setAutoCancelled, onPlay, highConfidenceTick, waitingForHostSource]);
 }

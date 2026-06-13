@@ -2,18 +2,21 @@ import { useMemo } from "react";
 import { isStreamDead } from "@/lib/dead-streams";
 import { engineP2pEligible } from "@/lib/torrent/stremio-stream";
 import type { ScoredStream } from "@/lib/streams/types";
+import type { SourceDescriptor } from "@/lib/together/protocol";
+import { buildMatchScores } from "@/lib/together/source-match";
 import { hasInstantMarker, isWatchHub, needsDownload, streamMatchesLangs } from "./picker-utils";
 
 export function useAutoCandidates(args: {
   filteredPicker: { all: ScoredStream[]; primary: ScoredStream | null } | null;
-  previousPlayback: { infoHash?: string | null; fileIdx?: number | null } | null;
+  previousPlayback: { infoHash?: string | null; fileIdx?: number | null; url?: string | null } | null;
   isCached: (s: ScoredStream) => boolean;
   addons: Array<{ manifest?: { id?: string } }> | null;
   hasStrongAddon: boolean;
   isTorrentioStream: (s: ScoredStream) => boolean;
   preferredLangs: string[];
+  hostSource?: SourceDescriptor | null;
 }): ScoredStream[] {
-  const { filteredPicker, previousPlayback, isCached, addons, hasStrongAddon, isTorrentioStream, preferredLangs } = args;
+  const { filteredPicker, previousPlayback, isCached, addons, hasStrongAddon, isTorrentioStream, preferredLangs, hostSource } = args;
   return useMemo(() => {
     if (!filteredPicker) return [];
     const key = (s: ScoredStream) => s.url ?? s.infoHash ?? `${s.addonId}:${s.title ?? ""}`;
@@ -22,6 +25,7 @@ export function useAutoCandidates(args: {
     (addons ?? []).forEach((a, i) => {
       if (a.manifest?.id) addonRank.set(a.manifest.id, i);
     });
+    const matchScores = hostSource ? buildMatchScores(filteredPicker.all, hostSource) : null;
     const previousMatch = previousPlayback
       ? filteredPicker.all.find((s) => {
           if (
@@ -32,10 +36,15 @@ export function useAutoCandidates(args: {
             if (previousPlayback.fileIdx == null || s.fileIdx == null) return true;
             return s.fileIdx === previousPlayback.fileIdx;
           }
+          if (previousPlayback.url && s.url) return s.url === previousPlayback.url;
           return false;
         }) ?? null
       : null;
     const sorted = filteredPicker.all.slice().sort((a, b) => {
+      if (matchScores) {
+        const dm = (matchScores.get(b) ?? 0) - (matchScores.get(a) ?? 0);
+        if (dm !== 0) return dm;
+      }
       const aw = isWatchHub(a) ? 1 : 0;
       const bw = isWatchHub(b) ? 1 : 0;
       if (aw !== bw) return aw - bw;
@@ -75,8 +84,8 @@ export function useAutoCandidates(args: {
       seen.add(k);
       out.push(s);
     };
-    push(previousMatch);
+    if (!matchScores) push(previousMatch);
     for (const s of sorted) push(s);
     return out;
-  }, [filteredPicker, previousPlayback, isCached, addons, hasStrongAddon, isTorrentioStream, preferredLangs]);
+  }, [filteredPicker, previousPlayback, isCached, addons, hasStrongAddon, isTorrentioStream, preferredLangs, hostSource]);
 }

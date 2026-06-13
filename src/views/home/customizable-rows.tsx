@@ -2,6 +2,7 @@ import { ChevronRight } from "lucide-react";
 import { LazyMount } from "@/components/lazy-mount";
 import { PickCard } from "@/components/pick-card";
 import { Row } from "@/components/row";
+import { TopRankCard } from "@/components/top-rank-card";
 import type { HomeRowCustomization } from "@/lib/home-customization";
 import { useView } from "@/lib/view";
 import type { HomeRow } from "./home-types";
@@ -34,6 +35,8 @@ export function CustomizableRows({
   onMove,
   onToggleHidden,
   onRename,
+  onToggleNumerals,
+  onToggleHero,
   onLoadMore,
 }: {
   rows: HomeRow[];
@@ -43,8 +46,11 @@ export function CustomizableRows({
   onMove: (key: string, delta: -1 | 1) => void;
   onToggleHidden: (key: string) => void;
   onRename: (key: string, label: string) => void;
+  onToggleNumerals: (key: string) => void;
+  onToggleHero: (key: string) => void;
   onLoadMore: (key: string) => void;
 }) {
+  const { openGrid } = useView();
   return (
     <>
       {rows.map((row, rowIndex) => {
@@ -52,6 +58,35 @@ export function CustomizableRows({
         if (hidden && !editMode) return null;
         const idx = orderKeys.indexOf(row.key);
         const eager = rowIndex < 2;
+        const viewAll = row.fetcher
+          ? () => openGrid({ title: row.name, fetcher: row.fetcher!, initial: row.metas })
+          : undefined;
+        const ranked =
+          (customization.numerals ?? []).includes(row.key) && row.metas.length >= 10;
+        const rowEl = ranked ? (
+          <Row
+            title={<RowTitle row={row} />}
+            min={180}
+            shape="rank"
+            scrollKey={`home:${row.key}`}
+            onViewAll={viewAll}
+          >
+            {row.metas.slice(0, 10).map((m, i) => (
+              <TopRankCard key={m.id} meta={m} rank={i + 1} />
+            ))}
+          </Row>
+        ) : (
+          <Row
+            title={<RowTitle row={row} />}
+            scrollKey={`home:${row.key}`}
+            onEndReached={row.hasMore ? () => onLoadMore(row.key) : undefined}
+            onViewAll={viewAll}
+          >
+            {row.metas.map((m, i) => (
+              <PickCard key={`${m.id}-${i}`} meta={m} />
+            ))}
+          </Row>
+        );
         return (
           <div
             key={row.key}
@@ -70,33 +105,15 @@ export function CustomizableRows({
                 onRename={(label) => onRename(row.key, label)}
                 onResetName={() => onRename(row.key, "")}
                 isRenamed={row.key in customization.renamed}
+                numeralsActive={(customization.numerals ?? []).includes(row.key)}
+                canNumerals={row.metas.length >= 10}
+                onToggleNumerals={() => onToggleNumerals(row.key)}
+                heroActive={customization.heroSource === row.key}
+                canHero={row.metas.some((m) => m.background || m.poster)}
+                onToggleHero={() => onToggleHero(row.key)}
               />
             )}
-            {!hidden && (
-              eager ? (
-                <Row
-                  title={<RowTitle row={row} />}
-                  scrollKey={`home:${row.key}`}
-                  onEndReached={row.hasMore ? () => onLoadMore(row.key) : undefined}
-                >
-                  {row.metas.map((m, i) => (
-                    <PickCard key={`${m.id}-${i}`} meta={m} />
-                  ))}
-                </Row>
-              ) : (
-                <LazyMount minHeight={340}>
-                  <Row
-                    title={row.name}
-                    scrollKey={`home:${row.key}`}
-                    onEndReached={row.hasMore ? () => onLoadMore(row.key) : undefined}
-                  >
-                    {row.metas.map((m, i) => (
-                      <PickCard key={`${m.id}-${i}`} meta={m} />
-                    ))}
-                  </Row>
-                </LazyMount>
-              )
-            )}
+            {!hidden && (eager ? rowEl : <LazyMount minHeight={340}>{rowEl}</LazyMount>)}
           </div>
         );
       })}

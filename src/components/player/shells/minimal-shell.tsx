@@ -85,12 +85,19 @@ function MinimalTrack({
   const ratio = Math.max(0, Math.min(1, positionSec / duration));
   const trackRef = useRef<HTMLDivElement>(null);
   const [hoverRatio, setHoverRatio] = useState<number | null>(null);
+  const lastEmitAtRef = useRef(0);
+  const lastDragSecRef = useRef<number | null>(null);
 
-  const seekFromClient = (clientX: number) => {
+  const seekFromClient = (clientX: number, final = false) => {
     const r = trackRef.current?.getBoundingClientRect();
     if (!r) return;
     const x = Math.max(0, Math.min(1, (clientX - r.left) / r.width));
-    onSeek(x * duration);
+    const sec = x * duration;
+    lastDragSecRef.current = sec;
+    const now = Date.now();
+    if (!final && now - lastEmitAtRef.current < 150) return;
+    lastEmitAtRef.current = now;
+    onSeek(sec);
   };
 
   return (
@@ -106,6 +113,11 @@ function MinimalTrack({
         const x = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
         setHoverRatio(x);
         if (e.buttons === 1) seekFromClient(e.clientX);
+      }}
+      onPointerUp={(e) => {
+        if (lastDragSecRef.current == null) return;
+        lastDragSecRef.current = null;
+        seekFromClient(e.clientX, true);
       }}
       onPointerLeave={() => setHoverRatio(null)}
       className="pointer-events-auto relative h-1.5 cursor-pointer overflow-hidden rounded-full bg-white/12"

@@ -21,6 +21,7 @@ import { DevErrorTrigger } from "@/components/dev-error-trigger";
 import { ErrorView } from "@/components/error-view";
 import { HarborErrorBoundary } from "@/components/error-boundary";
 import { ContextMenu } from "@/components/context-menu";
+import { HoverPreview } from "@/components/hover-preview";
 import { EmbedViewportRoot } from "@/components/embed-viewport";
 import { InstallerViewportRoot } from "@/components/installer-viewport";
 import { UpdateRoot } from "@/components/update/update-root";
@@ -101,6 +102,7 @@ const FilterView = lazy(() => importFilter().then((m) => ({ default: m.FilterVie
 const GridView = lazy(() => importGrid().then((m) => ({ default: m.GridView })));
 const PersonView = lazy(() => importPerson().then((m) => ({ default: m.PersonView })));
 const CollectionView = lazy(() => importCollection().then((m) => ({ default: m.CollectionView })));
+const CollectionsView = lazy(() => import("@/views/collections").then((m) => ({ default: m.CollectionsView })));
 const PlayPicker = lazy(() => importPlayPicker().then((m) => ({ default: m.PlayPicker })));
 const PlayerView = lazy(() => importPlayer().then((m) => ({ default: m.PlayerView })));
 const Movies = lazy(() => importMovies().then((m) => ({ default: m.Movies })));
@@ -156,21 +158,21 @@ const KEEP_ALIVE_MS = 1500;
 const IDLE_EVICT_MS = 60 * 1000;
 const PRESSURE_EVICT_MS = 1500;
 
-function useKeepAlive(active: boolean, requested: boolean): boolean {
+function useKeepAlive(active: boolean, requested: boolean, pin = false): boolean {
   const [mounted, setMounted] = useState(active && requested);
-  if (requested && active && !mounted) setMounted(true);
+  if (requested && (active || pin) && !mounted) setMounted(true);
   useEffect(() => {
     if (!requested) {
       setMounted(false);
       return;
     }
-    if (active) {
+    if (active || pin) {
       setMounted(true);
       return;
     }
     const t = setTimeout(() => setMounted(false), KEEP_ALIVE_MS);
     return () => clearTimeout(t);
-  }, [active, requested]);
+  }, [active, requested, pin]);
   return mounted;
 }
 
@@ -231,6 +233,7 @@ export function App() {
                       <TogetherLocationPublisher />
                       <DiscordPresence />
                       <ContextMenu />
+                      <HoverPreview />
                       <TopRankModal />
                       <ProfilePickerModal />
                       <SearchOverlay />
@@ -356,7 +359,7 @@ function filterReactKey(f: MetaFilter): string {
 }
 
 function Shell() {
-  const { topKind, service, meta, metaLiveContext, metaEpisodeHint, personId, collectionId, filter, grid, awardType, animeAwardSource, picker, player, setView, goBack } = useView();
+  const { topKind, service, meta, metaLiveContext, metaEpisodeHint, personId, collectionId, filter, grid, awardType, animeAwardSource, picker, player, setView, goBack, stackKinds } = useView();
   const { settings } = useSettings();
   const preview = useThemePreview();
   const layout = useMemo(
@@ -438,6 +441,12 @@ function Shell() {
   const pickerTop = topKind === "picker";
   const personTop = topKind === "person";
   const collectionTop = topKind === "collection";
+  const collectionsIndexTop = topKind === "collections";
+  const collectionsIndexAlive = useKeepAlive(
+    collectionsIndexTop,
+    true,
+    stackKinds.includes("collections"),
+  );
   const detailTop = topKind === "meta";
   const filterTop = topKind === "filter";
   const gridTop = topKind === "grid";
@@ -492,9 +501,13 @@ function Shell() {
   const serviceAlive = useKeepAlive(serviceTop, serviceTop && !!service);
   const detailAlive = useKeepAlive(detailTop, !!meta);
   const personAlive = useKeepAlive(personTop, personId !== null);
-  const collectionAlive = useKeepAlive(collectionTop, collectionId !== null);
+  const collectionAlive = useKeepAlive(
+    collectionTop,
+    collectionId !== null,
+    stackKinds.includes("collection"),
+  );
   const filterAlive = useKeepAlive(filterTop, !!filter);
-  const gridAlive = useKeepAlive(gridTop, !!grid);
+  const gridAlive = useKeepAlive(gridTop, !!grid, stackKinds.includes("grid"));
   const awardAlive = useKeepAlive(awardTop, awardTop);
   const animeAwardAlive = useKeepAlive(animeAwardTop, animeAwardTop && !!animeAwardSource);
   const pickerAlive = useKeepAlive(pickerTop, !!picker);
@@ -647,6 +660,13 @@ function Shell() {
           <div className={layer(gridTop)}>
             <Suspense fallback={null}>
               <GridView key={`grid-${grid.title}`} grid={grid} />
+            </Suspense>
+          </div>
+        )}
+        {collectionsIndexAlive && (
+          <div className={layer(collectionsIndexTop)}>
+            <Suspense fallback={null}>
+              <CollectionsView />
             </Suspense>
           </div>
         )}

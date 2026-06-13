@@ -1,41 +1,20 @@
-import type {
-  ClientMessage,
-  Participant,
-  ParticipantLocation,
-  PlayInvite,
-  RoomCode,
-  RoomCommand,
-  ServerMessage,
-  SummonTarget,
-  SyncState,
+import {
+  WT_PROTO,
+  type ClientMessage,
+  type Participant,
+  type ParticipantLocation,
+  type PlayInvite,
+  type RoomCode,
+  type RoomCommand,
+  type ServerMessage,
+  type SummonTarget,
+  type SyncState,
 } from "./protocol";
+import { diagnoseRelayFailure, type RoomEvent, type RoomSnapshot } from "./client-types";
 
-export type ClientState = "disconnected" | "connecting" | "joined" | "error";
+export type { ClientState, RoomEvent, RoomSnapshot } from "./client-types";
 
-export type RoomSnapshot = {
-  state: ClientState;
-  room: RoomCode | null;
-  participants: Participant[];
-  syncState: SyncState | null;
-  hostClientId: string | null;
-  started: boolean;
-  lastError: string | null;
-};
-
-export type RoomEvent =
-  | { kind: "snapshot"; snapshot: RoomSnapshot }
-  | { kind: "incoming-state"; state: SyncState }
-  | { kind: "incoming-command"; from: string; command: RoomCommand }
-  | { kind: "chat"; from: string; name: string; text: string; at: number }
-  | { kind: "invite"; from: string; name: string; invite: PlayInvite; at: number }
-  | { kind: "host-leaving"; from: string; name: string; at: number }
-  | { kind: "summon"; from: string; name: string; target: SummonTarget; at: number }
-  | { kind: "cursor"; from: string; name: string; x: number; y: number; visible: boolean; path: string }
-  | { kind: "draw"; from: string; name: string; strokeId: string; phase: "start" | "point" | "end"; x?: number; y?: number; color?: string; path: string }
-  | { kind: "presence"; from: string; activeAt: number; location?: ParticipantLocation }
-  | { kind: "participant-left"; clientId: string; name: string }
-  | { kind: "started"; started: boolean };
-
+const AVATAR_MAX_CHARS = 150_000;
 const PING_INTERVAL_MS = 25_000;
 const LIVENESS_TIMEOUT_MS = 40_000;
 const RECONNECT_BASE_MS = 1000;
@@ -44,6 +23,10 @@ const MAX_RENAME_ATTEMPTS = 8;
 const RENAME_RECONNECT_MS = 60;
 const CONNECT_TIMEOUT_MS = 10_000;
 const MAX_FAIL_STREAK = 4;
+
+function capAvatar(avatar: string | null): string | null {
+  return avatar && avatar.length > AVATAR_MAX_CHARS ? null : avatar;
+}
 
 export class TogetherClient {
   private ws: WebSocket | null = null;
@@ -84,7 +67,7 @@ export class TogetherClient {
     this.clientId = clientId;
     this.name = name;
     this.originalName = name;
-    this.avatar = avatar;
+    this.avatar = capAvatar(avatar);
     this.color = color;
     this.snapshot = {
       state: "disconnected",
@@ -93,6 +76,7 @@ export class TogetherClient {
       syncState: null,
       hostClientId: null,
       started: false,
+      relayVersion: null,
       lastError: null,
     };
   }
@@ -114,7 +98,7 @@ export class TogetherClient {
   }
 
   setProfile(avatar: string | null, color: string | null) {
-    this.avatar = avatar;
+    this.avatar = capAvatar(avatar);
     this.color = color;
     if (this.room && this.snapshot.state === "joined") {
       this.send({
@@ -156,7 +140,7 @@ export class TogetherClient {
     this.everJoined = false;
     this.failStreak = 0;
     this.terminal = false;
-    this.update({ state: "connecting", room, lastError: null, started: false });
+    this.update({ state: "connecting", room, lastError: null, started: false, relayVersion: null });
     this.openSocket();
   }
 
@@ -178,6 +162,7 @@ export class TogetherClient {
       syncState: null,
       hostClientId: null,
       started: false,
+      relayVersion: null,
       lastError: null,
     });
   }
@@ -362,6 +347,7 @@ export class TogetherClient {
           syncState: msg.state,
           hostClientId: msg.hostClientId,
           started: msg.started ?? false,
+          relayVersion: typeof msg.relayVersion === "number" ? msg.relayVersion : null,
         });
         this.reconcileHostClaim(msg.hostClientId);
         if (msg.state) {
@@ -386,6 +372,8 @@ export class TogetherClient {
                 mediaTitle: msg.state.mediaTitle ?? "Watch Together",
                 posterUrl: msg.state.posterUrl ?? undefined,
                 episode: msg.state.episode ?? undefined,
+                proto: msg.state.source ? WT_PROTO : undefined,
+                guestPick: msg.state.guestPick === true ? true : undefined,
               },
               at: msg.state.updatedAt ?? Date.now(),
             });
@@ -680,24 +668,7 @@ export class TogetherClient {
       /* ignore */
     }
     this.ws = null;
-    let message =
-      "Couldn't reach the watch together relay after several tries. It may be down or over its daily limit.";
-    try {
-      const res = await fetch(`${this.httpBase()}/health`, { method: "GET" });
-      if (res.status === 429) {
-        message =
-          "The watch together relay is over its daily limit right now. Try again later, or point it at another relay in Settings.";
-      } else if (res.ok) {
-        message =
-          "The relay is reachable but refused the room, most likely over its daily limit. Try again later, or switch relays in Settings.";
-      } else {
-        message = `The relay returned an error (HTTP ${res.status}). Check the relay URL in Settings.`;
-      }
-    } catch {
-      message =
-        "The watch together relay is unreachable. Check the relay URL in Settings or your connection.";
-    }
-    this.update({ state: "error", lastError: message });
+    this.update({ state: "error", lastError: await diagnoseRelayFailure(this.httpBase()) });
   }
 
   private httpBase(): string {

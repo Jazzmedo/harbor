@@ -56,7 +56,7 @@ function finalizeWithRescue(
   const keep: ParsedStream[] = [...picker.all, ...rescued];
   const corpus = computeCorpusStats(keep, score);
   const scored = keep.map((s) => scoreStream(s, score, corpus));
-  const newPicker = rankAndPick(scored, score.activeDebrids, PREFER_AAC);
+  const newPicker = rankAndPick(scored, score.activeDebrids, PREFER_AAC, score.respectAddonOrder === true);
   dlog(`[pipeline] early-leak rescue: restored ${rescued.size} corroborated high-res stream(s)`);
   return { picker: newPicker, rejected: rejected.filter((r) => !rescued.has(r.stream)) };
 }
@@ -92,7 +92,7 @@ export async function runPipeline(
     const { keep, rejected } = applyTrust(parsed, input.trust ?? {});
     const corpus = computeCorpusStats(keep, input.score);
     const scored = keep.map((s) => scoreStream(s, input.score, corpus));
-    const picker = rankAndPick(scored, input.score.activeDebrids, PREFER_AAC);
+    const picker = rankAndPick(scored, input.score.activeDebrids, PREFER_AAC, input.score.respectAddonOrder === true);
     const fin = finalizeWithRescue(picker, rejected, input.trust ?? {}, input.score);
     return { picker: fin.picker, rejected: fin.rejected, raw: { addon: addonStreams, library } };
   };
@@ -208,7 +208,7 @@ export async function runPipeline(
   }
   const corpus = computeCorpusStats(keep, input.score);
   const scored = keep.map((s) => scoreStream(s, input.score, corpus));
-  const picker = rankAndPick(scored, input.score.activeDebrids, PREFER_AAC);
+  const picker = rankAndPick(scored, input.score.activeDebrids, PREFER_AAC, input.score.respectAddonOrder === true);
   const fin = finalizeWithRescue(picker, rejected, input.trust ?? {}, input.score);
   return { picker: fin.picker, rejected: fin.rejected, raw: { addon: addonStreams, library } };
 }

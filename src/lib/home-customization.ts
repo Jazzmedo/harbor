@@ -4,6 +4,8 @@ export type HomeRowCustomization = {
   order: string[];
   hidden: string[];
   renamed: Record<string, string>;
+  numerals: string[];
+  heroSource: string | null;
 };
 
 export function applyHomeRowCustomization(
@@ -88,6 +90,22 @@ export function renameRow(
   return { ...custom, renamed };
 }
 
+export function toggleRowNumerals(
+  custom: HomeRowCustomization,
+  key: string,
+): HomeRowCustomization {
+  const cur = custom.numerals ?? [];
+  const has = cur.includes(key);
+  return { ...custom, numerals: has ? cur.filter((k) => k !== key) : [...cur, key] };
+}
+
+export function toggleHeroSource(
+  custom: HomeRowCustomization,
+  key: string,
+): HomeRowCustomization {
+  return { ...custom, heroSource: custom.heroSource === key ? null : key };
+}
+
 export function resetHomeRows(): HomeRowCustomization {
-  return { order: [], hidden: [], renamed: {} };
+  return { order: [], hidden: [], renamed: {}, numerals: [], heroSource: null };
 }

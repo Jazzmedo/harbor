@@ -66,6 +66,14 @@ export function SearchProvider({ children }: { children: ReactNode }) {
     return a;
   }, [authKey]);
 
+  useEffect(() => {
+    const onAddonsChanged = () => {
+      addonsRef.current = null;
+    };
+    window.addEventListener("harbor:addons-changed", onAddonsChanged);
+    return () => window.removeEventListener("harbor:addons-changed", onAddonsChanged);
+  }, []);
+
   const excludeGenres = useMemo(() => {
     const ids: number[] = [];
     if (hiddenTabs.anime) ids.push(MOVIE_GENRES.Animation);
@@ -97,30 +105,56 @@ export function SearchProvider({ children }: { children: ReactNode }) {
         .then((a) => searchAddonGroups(a, trimmed))
         .catch(() => []);
       const cinemetaPromise = searchCinemeta(trimmed).catch(() => ({ movies: [], series: [] }));
-      Promise.all([tmdbPromise, animePromise, addonPromise, cinemetaPromise, addonGroupsPromise])
-        .then(([r, anime, addon, cine, addonGroups]) => {
-          if (id !== reqIdRef.current) return;
-          const mergedMovies = mergeMetas(mergeMetas(r.movies, addon.movies), cine.movies);
-          const mergedSeries = mergeMetas(mergeMetas(r.series, addon.series), cine.series);
-          const shown = new Set<string>([...mergedMovies, ...mergedSeries].map((m) => m.id));
-          const dedupedGroups = addonGroups
-            .map((g) => ({ ...g, metas: g.metas.filter((m) => !shown.has(m.id)) }))
-            .filter((g) => g.metas.length > 0);
-          setResults({
-            ...r,
-            movies: mergedMovies,
-            series: mergedSeries,
-            liveTv,
-            anime,
-            addonGroups: dedupedGroups,
-            addons: searchAddonIndex(trimmed),
-          });
-          setStatus("done");
+      let tmdbResult: Awaited<typeof tmdbPromise> | null = null;
+      const acc = {
+        anime: [] as Awaited<typeof animePromise>,
+        addon: { movies: [], series: [] } as Awaited<typeof addonPromise>,
+        cine: { movies: [], series: [] } as Awaited<typeof cinemetaPromise>,
+        groups: [] as Awaited<typeof addonGroupsPromise>,
+      };
+      const publish = () => {
+        if (id !== reqIdRef.current || !tmdbResult) return;
+        const mergedMovies = mergeMetas(mergeMetas(tmdbResult.movies, acc.addon.movies), acc.cine.movies);
+        const mergedSeries = mergeMetas(mergeMetas(tmdbResult.series, acc.addon.series), acc.cine.series);
+        const shown = new Set<string>([...mergedMovies, ...mergedSeries].map((m) => m.id));
+        const dedupedGroups = acc.groups
+          .map((g) => ({ ...g, metas: g.metas.filter((m) => !shown.has(m.id)) }))
+          .filter((g) => g.metas.length > 0);
+        setResults({
+          ...tmdbResult,
+          movies: mergedMovies,
+          series: mergedSeries,
+          liveTv,
+          anime: acc.anime,
+          addonGroups: dedupedGroups,
+          addons: searchAddonIndex(trimmed),
+        });
+        setStatus("done");
+      };
+      tmdbPromise
+        .then((r) => {
+          tmdbResult = r;
+          publish();
         })
         .catch(() => {
-          if (id !== reqIdRef.current) return;
-          setStatus("done");
+          if (id === reqIdRef.current) setStatus("done");
         });
+      void animePromise.then((a) => {
+        acc.anime = a;
+        publish();
+      });
+      void addonPromise.then((a) => {
+        acc.addon = a;
+        publish();
+      });
+      void cinemetaPromise.then((c) => {
+        acc.cine = c;
+        publish();
+      });
+      void addonGroupsPromise.then((g) => {
+        acc.groups = g;
+        publish();
+      });
     }, 180);
   }, [query, settings.tmdbKey, settings.iptvPlaylists, excludeGenres, hiddenTabs.anime, hiddenTabs.liveTv, authKey]);
 

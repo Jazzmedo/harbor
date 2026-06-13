@@ -1,6 +1,7 @@
 import { ChevronsRight, FastForward, Play, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { SkipSegment } from "@/lib/skip-intro";
+import type { SpoilerMask } from "@/lib/spoilers";
 import type { PlayEpisode } from "@/lib/view";
 
 const UP_NEXT_WINDOW_SEC = 15;
@@ -9,6 +10,7 @@ export function SkipPill({
   segment,
   hasNextEp,
   nextEp,
+  nextEpMask,
   remainingSec,
   visible,
   onSkip,
@@ -18,6 +20,7 @@ export function SkipPill({
   segment: SkipSegment | null;
   hasNextEp: boolean;
   nextEp: PlayEpisode | null;
+  nextEpMask?: SpoilerMask;
   remainingSec: number;
   visible: boolean;
   onSkip: () => void;
@@ -48,6 +51,7 @@ export function SkipPill({
     return (
       <UpNextCard
         ep={nextEp}
+        mask={nextEpMask}
         remainingSec={remainingSec}
         visible={visible && show}
         onPlay={onNextEpisode}
@@ -89,12 +93,14 @@ export function SkipPill({
 
 function UpNextCard({
   ep,
+  mask,
   remainingSec,
   visible,
   onPlay,
   onCancel,
 }: {
   ep: PlayEpisode;
+  mask?: SpoilerMask;
   remainingSec: number;
   visible: boolean;
   onPlay: () => void;
@@ -106,7 +112,8 @@ function UpNextCard({
     typeof ep.season === "number" && typeof ep.episode === "number"
       ? `S${ep.season} · E${ep.episode}`
       : "Up Next";
-  const title = ep.name?.trim() || epLabel;
+  const title = mask?.title ? epLabel : ep.name?.trim() || epLabel;
+  const hideStill = mask?.thumb === true;
 
   return (
     <div
@@ -118,7 +125,7 @@ function UpNextCard({
     >
       <div className="pointer-events-auto relative flex w-[360px] overflow-hidden rounded-2xl border border-white/15 bg-black/80 shadow-[0_24px_60px_-15px_rgba(0,0,0,0.9)] backdrop-blur-md">
         <div className="relative aspect-[16/10] w-[148px] shrink-0 overflow-hidden bg-white/5">
-          {ep.still ? (
+          {ep.still && !hideStill ? (
             <img
               src={ep.still}
               alt=""

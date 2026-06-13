@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import fanartLogo from "@/assets/addon-logos/fanarttv.svg";
+import mdblistLogo from "@/assets/addon-logos/mdblist.png";
 import harborStyleImg from "@/assets/onboarding/harborstyle.png";
 import traditionalStyleImg from "@/assets/onboarding/traditional.png";
 import omdbLogo from "@/assets/addon-logos/omdb.png";
@@ -51,6 +52,15 @@ export function LibraryPanel({
 }) {
   const { settings, update } = useSettings();
   const { activeProfile, updateProfile } = useProfiles();
+  const [mdblistDraft, setMdblistDraft] = useState(settings.mdblistKey);
+  const [posterSrvDraft, setPosterSrvDraft] = useState(settings.posterBaseUrl);
+  const [extraSaved, setExtraSaved] = useState<"mdblist" | "postersrv" | null>(null);
+  const extraTimerRef = useRef<number | null>(null);
+  const flashExtra = (k: "mdblist" | "postersrv") => {
+    setExtraSaved(k);
+    if (extraTimerRef.current) window.clearTimeout(extraTimerRef.current);
+    extraTimerRef.current = window.setTimeout(() => setExtraSaved(null), 1800);
+  };
   const pushHideContent = (key: "anime" | "sports" | "liveTv" | "adult", value: boolean) => {
     const next = { ...settings.hideContent, [key]: value };
     update({ hideContent: next });
@@ -215,34 +225,45 @@ export function LibraryPanel({
             </>
           }
         />
-        <div className="flex flex-col gap-2 rounded-xl border border-edge-soft bg-canvas/30 p-4">
-          <p className="text-[13.5px] font-semibold text-ink">MDBList · Letterboxd and Trakt scores</p>
-          <p className="text-[12.5px] leading-relaxed text-ink-muted">
-            Free key at mdblist.com. Adds Letterboxd and Trakt community ratings to detail pages,
-            covering what OMDb misses.
-          </p>
-          <input
-            value={settings.mdblistKey}
-            onChange={(e) => update({ mdblistKey: e.target.value.trim() })}
-            placeholder="mdblist api key"
-            spellCheck={false}
-            className="h-10 w-full rounded-lg border border-edge-soft bg-canvas/40 px-3 text-[13px] text-ink outline-none transition-colors focus:border-edge"
-          />
-        </div>
-        <div className="flex flex-col gap-2 rounded-xl border border-edge-soft bg-canvas/30 p-4">
-          <p className="text-[13.5px] font-semibold text-ink">Custom poster service</p>
-          <p className="text-[12.5px] leading-relaxed text-ink-muted">
-            Point posters at any RPDB-compatible server instead of ratingposterdb.com. Leave
-            empty for the default. Your key above is still sent unless the server ignores it.
-          </p>
-          <input
-            value={settings.posterBaseUrl}
-            onChange={(e) => update({ posterBaseUrl: e.target.value })}
-            placeholder="https://posters.example.com"
-            spellCheck={false}
-            className="h-10 w-full rounded-lg border border-edge-soft bg-canvas/40 px-3 text-[13px] text-ink outline-none transition-colors focus:border-edge"
-          />
-        </div>
+        <KeyField
+          label="MDBList · Letterboxd and Trakt scores"
+          placeholder="mdblist api key"
+          value={mdblistDraft}
+          onChange={setMdblistDraft}
+          onSave={() => {
+            update({ mdblistKey: mdblistDraft.trim() });
+            flashExtra("mdblist");
+          }}
+          saved={extraSaved === "mdblist"}
+          iconSrc={mdblistLogo}
+          help={
+            <>
+              Free key at <ExtLink href="https://mdblist.com/preferences/">mdblist.com</ExtLink>.
+              Adds Letterboxd and Trakt community ratings to detail pages, covering what OMDb
+              misses.
+            </>
+          }
+        />
+        <KeyField
+          label="Custom poster service"
+          placeholder="https://posters.example.com or a pattern with {id}"
+          value={posterSrvDraft}
+          onChange={setPosterSrvDraft}
+          onSave={() => {
+            update({ posterBaseUrl: posterSrvDraft.trim() });
+            flashExtra("postersrv");
+          }}
+          saved={extraSaved === "postersrv"}
+          iconSrc={rpdbLogo}
+          help={
+            <>
+              Two formats work: a bare RPDB-compatible server URL (your RPDB key above is still
+              sent), or a full URL pattern from services like BetterPosters containing{" "}
+              <code>{"{id}"}</code>. Patterns may also use <code>{"{imdbId}"}</code>,{" "}
+              <code>{"{tmdbId}"}</code>, and <code>{"{type}"}</code>. Leave empty for the default.
+            </>
+          }
+        />
         <ToggleRow
           label="Hide titles under posters"
           sub="Cleaner grid when your poster service already prints the title on the artwork."
@@ -323,6 +344,12 @@ export function LibraryPanel({
               leading={<MalBadge />}
               value={settings.showMalBadge}
               onChange={(v) => update({ showMalBadge: v })}
+            />
+            <ToggleRow
+              label="Hover preview"
+              sub="Rest the cursor on a poster to peek at the rating, runtime, and story without opening it."
+              value={settings.hoverPreview}
+              onChange={(v) => update({ hoverPreview: v })}
             />
           </div>
 

@@ -152,16 +152,16 @@ export function useAnimeTopPicks(input: {
     (async () => {
       const genres = animeSeedGenres(favoriteGenres);
       const { seeds } = finishedFranchises(libItems);
-      const [recs, sequels, airing, fresh, ...genreLists] = await Promise.all([
-        Promise.resolve(watchHistoryRecs),
-        sequelMetas(seeds),
-        jikanTopAiring(pageFor("airing", seed)).catch(() => [] as Meta[]),
-        jikanNewReleases(pageFor("new", seed)).catch(() => [] as Meta[]),
+      const pageSeed = dayIndex();
+      const [airing, fresh, ...genreLists] = await Promise.all([
+        jikanTopAiring(pageFor("airing", pageSeed)).catch(() => [] as Meta[]),
+        jikanNewReleases(pageFor("new", pageSeed)).catch(() => [] as Meta[]),
         ...genres.map((id) =>
-          jikanByGenre(id, pageFor(`g${id}`, seed)).catch(() => [] as Meta[]),
+          jikanByGenre(id, pageFor(`g${id}`, pageSeed)).catch(() => [] as Meta[]),
         ),
       ]);
       if (cancelled) return;
+      const recs = watchHistoryRecs;
 
       const { skip } = buildExclusion({ heroMetas, continueWatching, libItems });
       const byFranchise = new Map<string, PickEntry>();
@@ -174,7 +174,6 @@ export function useAnimeTopPicks(input: {
         else byFranchise.set(fk, { meta: cleanName(m), score: s });
       };
 
-      for (let i = 0; i < sequels.length; i++) add(sequels[i], "sequel");
       for (let i = 0; i < recs.length; i++) add(recs[i], "rec", i, recs.length);
       const maxGenre = Math.max(0, ...genreLists.map((l) => l.length));
       for (let i = 0; i < maxGenre; i++) {
@@ -183,7 +182,15 @@ export function useAnimeTopPicks(input: {
       for (const m of fresh) add(m, "new");
       for (const m of airing) add(m, "airing");
 
-      if (!cancelled && picksRef.current.length === 0 && byFranchise.size > 0) {
+      if (picksRef.current.length === 0 && byFranchise.size > 0) {
+        setPicks(rankPicks(byFranchise, seed, CAP));
+      }
+
+      const sequels = await sequelMetas(seeds);
+      if (cancelled) return;
+      for (let i = 0; i < sequels.length; i++) add(sequels[i], "sequel");
+
+      if (picksRef.current.length === 0 && byFranchise.size > 0) {
         setPicks(rankPicks(byFranchise, seed, CAP));
       }
 

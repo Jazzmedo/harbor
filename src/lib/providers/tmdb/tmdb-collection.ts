@@ -8,6 +8,7 @@ export type TmdbCollection = {
   poster?: string;
   backdrop?: string;
   parts: Meta[];
+  genreCounts?: Record<number, number>;
 };
 
 const cache = new Map<number, Promise<TmdbCollection | null>>();
@@ -24,6 +25,12 @@ export function tmdbCollection(key: string, id: number): Promise<TmdbCollection 
 async function run(key: string, id: number): Promise<TmdbCollection | null> {
   const raw = await get<any>(key, `collection/${id}`);
   if (!raw) return null;
+  const genreCounts: Record<number, number> = {};
+  for (const p of raw.parts ?? []) {
+    for (const g of p.genre_ids ?? []) {
+      genreCounts[g] = (genreCounts[g] ?? 0) + 1;
+    }
+  }
   const parts: Meta[] = (raw.parts ?? [])
     .map(
       (p: any): Meta => ({
@@ -46,6 +53,7 @@ async function run(key: string, id: number): Promise<TmdbCollection | null> {
     poster: raw.poster_path ? `${IMG}/w342${raw.poster_path}` : undefined,
     backdrop: raw.backdrop_path ? `${IMG}/original${raw.backdrop_path}` : undefined,
     parts,
+    genreCounts,
   };
 }
 
@@ -89,4 +97,33 @@ async function runSearch(key: string, query: string): Promise<number | null> {
   if (exact) return exact.id;
   const contains = results.find((r) => collectionNameMatches(r.name ?? "", query));
   return (contains ?? results[0])?.id ?? null;
+}
+
+export type CollectionHit = { id: number; name: string; backdrop: string | null };
+
+export async function tmdbSearchCollections(
+  key: string,
+  query: string,
+  page = 1,
+): Promise<{ hits: CollectionHit[]; totalPages: number }> {
+  if (!key || !query.trim()) return { hits: [], totalPages: 0 };
+  const raw = await get<{
+    results?: Array<{ id: number; name?: string; backdrop_path?: string | null }>;
+    total_pages?: number;
+  }>(key, "search/collection", { query, page: String(page) });
+  const hits = (raw?.results ?? [])
+    .filter((r) => Number.isFinite(r.id) && r.name)
+    .map((r) => ({
+      id: r.id,
+      name: r.name ?? "",
+      backdrop: r.backdrop_path ? `${IMG}/w780${r.backdrop_path}` : null,
+    }));
+  return { hits, totalPages: Math.min(raw?.total_pages ?? 0, 500) };
+}
+
+export function tmdbCollectionsFeed(
+  key: string,
+  page: number,
+): Promise<{ hits: CollectionHit[]; totalPages: number }> {
+  return tmdbSearchCollections(key, "collection", page);
 }

@@ -10,7 +10,9 @@ import {
   moveRow,
   renameRow,
   resetHomeRows,
+  toggleHeroSource,
   toggleRowHidden,
+  toggleRowNumerals,
   type HomeRowCustomization,
 } from "@/lib/home-customization";
 import { StreamingRail } from "@/components/streaming-rail";
@@ -21,6 +23,7 @@ import { useAuth } from "@/lib/auth";
 import { type Meta } from "@/lib/cinemeta";
 import { useSettings, type StreamingService } from "@/lib/settings";
 import { trackEvent } from "@/lib/discover";
+import { publishResumeStates } from "@/lib/hover-preview/store";
 import { readResumeEntry, saveResumeBatch } from "@/lib/resume";
 import { repairLibraryNames } from "@/lib/stremio-repair";
 import { episodeFromVideoId, isAnimeCwItem, library, libraryPut, type LibraryItem } from "@/lib/stremio";
@@ -74,6 +77,7 @@ export function Home({ active = true }: { active?: boolean }) {
     }
   });
   const [tmdbProvidedByAddon, setTmdbProvidedByAddon] = useState(false);
+  const [addonsTick, setAddonsTick] = useState(0);
   const { isConnected: traktConnected } = useTrakt();
   const { isConnected: simklConnected } = useSimkl();
   const rowsRef = useRef<HomeRow[]>([]);
@@ -115,6 +119,12 @@ export function Home({ active = true }: { active?: boolean }) {
   }, []);
 
   useEffect(() => {
+    const onAddonsChanged = () => setAddonsTick((t) => t + 1);
+    window.addEventListener("harbor:addons-changed", onAddonsChanged);
+    return () => window.removeEventListener("harbor:addons-changed", onAddonsChanged);
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
     (async () => {
       const isClassic = settings.homeMode === "classic";
@@ -151,7 +161,7 @@ export function Home({ active = true }: { active?: boolean }) {
     return () => {
       cancelled = true;
     };
-  }, [authKey, settings.tmdbKey, settings.region, settings.homeMode, settings.homeShowAllAddonRows]);
+  }, [authKey, settings.tmdbKey, settings.tmdbLanguage, settings.region, settings.homeMode, settings.homeShowAllAddonRows, addonsTick]);
 
   useEffect(() => {
     if (settings.hideContent.anime || settings.homeMode === "classic") {
@@ -317,7 +327,10 @@ export function Home({ active = true }: { active?: boolean }) {
           i.state.timeOffset > 0 &&
           !(settings.animeOnlyInAnimeRoom && isAnimeCwItem(i)),
       )
-      .sort((a, b) => ts(b._mtime) - ts(a._mtime));
+      .sort(
+        (a, b) =>
+          ts(b.state?.lastWatched ?? b._mtime) - ts(a.state?.lastWatched ?? a._mtime),
+      );
     const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "").trim();
     const ns = (id: string) => (id.startsWith("tt") ? "tt" : id.split(":")[0]);
     const seenId = new Set<string>();
@@ -337,6 +350,10 @@ export function Home({ active = true }: { active?: boolean }) {
     return out;
   }, [items, simklCw, dismissed, settings.animeOnlyInAnimeRoom]);
   const cwItems = useCwAdvance(continueWatching, settings.tmdbKey, settings.cwAdvanceNext);
+
+  useEffect(() => {
+    publishResumeStates(cwItems);
+  }, [cwItems]);
 
   const onDismissCw = useCallback(
     (id: string) => {
@@ -363,17 +380,48 @@ export function Home({ active = true }: { active?: boolean }) {
     [authKey, items, simklCw],
   );
 
+  const { items: favItems } = useMediaFavorites();
+  const { items: localItems } = useLocalWatchlist();
+  const personalRows = useMemo<HomeRow[]>(() => {
+    const toMetas = (m: Map<string, MediaEntry>): Meta[] =>
+      [...m.values()]
+        .sort((a, b) => b.addedAt - a.addedAt)
+        .map((e) => ({ id: e.id, type: e.type, name: e.name, poster: e.poster }));
+    const out: HomeRow[] = [];
+    if (favItems.size > 0) {
+      out.push({ key: "harbor-favorites", type: "movie", name: "Favorites", metas: toMetas(favItems), page: 1, hasMore: false, noDedup: true });
+    }
+    if (localItems.size > 0) {
+      out.push({ key: "harbor-watchlist", type: "movie", name: "My Watchlist", metas: toMetas(localItems), page: 1, hasMore: false, noDedup: true });
+    }
+    return out;
+  }, [favItems, localItems]);
+
+  const heroSourceRow = useMemo<HomeRow | null>(() => {
+    const key = settings.homeRows.heroSource;
+    if (!key) return null;
+    const all = [...personalRows, ...traktRows, ...simklRows, ...rows, ...animeRows];
+    const hit = all.find((r) => r.key === key);
+    return hit && hit.metas.some((m) => m.background || m.poster) ? hit : null;
+  }, [settings.homeRows.heroSource, personalRows, traktRows, simklRows, rows, animeRows]);
+
   const heroSlides = useMemo<Slide[]>(() => {
+    const pool = heroSourceRow
+      ? [
+          ...heroSourceRow.metas.filter((m) => m.background),
+          ...heroSourceRow.metas.filter((m) => !m.background && m.poster),
+        ]
+      : heroPool;
     const seen = new Set<string>();
     const out: Slide[] = [];
-    for (const m of heroPool) {
+    for (const m of pool) {
       if (seen.has(m.id)) continue;
       seen.add(m.id);
       out.push({ meta: m, rank: { label: m.type === "series" ? "TV" : "Movies", position: out.length + 1 } });
       if (out.length >= 4) break;
     }
     return out;
-  }, [heroPool]);
+  }, [heroPool, heroSourceRow]);
 
   const scrollRef = useRef<HTMLElement>(null);
   const [scrollEl, setScrollEl] = useState<HTMLElement | null>(null);
@@ -415,23 +463,6 @@ export function Home({ active = true }: { active?: boolean }) {
   const top10 = displayed.top10;
   const restRows = displayed.rest;
 
-  const { items: favItems } = useMediaFavorites();
-  const { items: localItems } = useLocalWatchlist();
-  const personalRows = useMemo<HomeRow[]>(() => {
-    const toMetas = (m: Map<string, MediaEntry>): Meta[] =>
-      [...m.values()]
-        .sort((a, b) => b.addedAt - a.addedAt)
-        .map((e) => ({ id: e.id, type: e.type, name: e.name, poster: e.poster }));
-    const out: HomeRow[] = [];
-    if (favItems.size > 0) {
-      out.push({ key: "harbor-favorites", type: "movie", name: "Favorites", metas: toMetas(favItems), page: 1, hasMore: false, noDedup: true });
-    }
-    if (localItems.size > 0) {
-      out.push({ key: "harbor-watchlist", type: "movie", name: "My Watchlist", metas: toMetas(localItems), page: 1, hasMore: false, noDedup: true });
-    }
-    return out;
-  }, [favItems, localItems]);
-
   const homeRowsCustom = settings.homeRows;
   const allCustomizableRows = useMemo(
     () => [...personalRows, ...traktRows, ...simklRows, ...restRows, ...animeRows],
@@ -465,6 +496,14 @@ export function Home({ active = true }: { active?: boolean }) {
   );
   const handleRename = useCallback(
     (key: string, label: string) => mutateHomeRows(renameRow(homeRowsCustom, key, label)),
+    [homeRowsCustom, mutateHomeRows],
+  );
+  const handleToggleNumerals = useCallback(
+    (key: string) => mutateHomeRows(toggleRowNumerals(homeRowsCustom, key)),
+    [homeRowsCustom, mutateHomeRows],
+  );
+  const handleToggleHero = useCallback(
+    (key: string) => mutateHomeRows(toggleHeroSource(homeRowsCustom, key)),
     [homeRowsCustom, mutateHomeRows],
   );
 
@@ -585,6 +624,8 @@ export function Home({ active = true }: { active?: boolean }) {
               onMove={handleMove}
               onToggleHidden={handleToggleHidden}
               onRename={handleRename}
+              onToggleNumerals={handleToggleNumerals}
+              onToggleHero={handleToggleHero}
               onLoadMore={loadMore}
             />
           )}

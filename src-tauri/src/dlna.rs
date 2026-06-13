@@ -310,6 +310,11 @@ fn is_renderer_st(st: &str) -> bool {
         || st.contains("renderingcontrol")
 }
 
+#[tauri::command]
+pub fn lan_ip() -> Option<String> {
+    local_ipv4_interfaces().into_iter().next().map(|ip| ip.to_string())
+}
+
 fn local_ipv4_interfaces() -> Vec<Ipv4Addr> {
     let mut out: Vec<Ipv4Addr> = Vec::new();
     let probe_targets = ["1.1.1.1:80", "8.8.8.8:80", "192.168.1.1:80"];

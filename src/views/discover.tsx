@@ -4,6 +4,7 @@ import { CriticsPick } from "@/components/critics-pick";
 import { LazyMount } from "@/components/lazy-mount";
 import { DiscoveryQueueCta } from "@/components/discovery-queue-cta";
 import { FeaturedBanner } from "@/components/featured-banner";
+import { AwardTiles } from "@/components/award-tiles";
 import { GenreTiles } from "@/components/genre-tiles";
 import { LanguageTiles } from "@/components/language-tiles";
 import { ScrollRootContext } from "@/components/row";
@@ -53,7 +54,7 @@ export function Discover({ active = true }: { active?: boolean }) {
     return () => {
       cancelled = true;
     };
-  }, [settings.tmdbKey, tasteVersion]);
+  }, [settings.tmdbKey, settings.tmdbLanguage, tasteVersion]);
 
   useEffect(() => {
     let cancelled = false;
@@ -153,7 +154,7 @@ export function Discover({ active = true }: { active?: boolean }) {
     return () => {
       cancelled = true;
     };
-  }, [dailyRows]);
+  }, [dailyRows, settings.tmdbLanguage]);
 
   const loadMore = useCallback(
     (railId: string) => {
@@ -218,6 +219,7 @@ export function Discover({ active = true }: { active?: boolean }) {
                   <CriticsPick meta={criticsPick} />
                 </LazyMount>
               )}
+              {i === 4 && <AwardTiles />}
             </Fragment>
           ))}
         </div>

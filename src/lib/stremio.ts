@@ -24,6 +24,7 @@ export type LibraryItem = {
     flaggedWatched?: number;
     watched?: string;
     video_id?: string;
+    lastWatched?: string;
   };
   removed: boolean;
   temp: boolean;

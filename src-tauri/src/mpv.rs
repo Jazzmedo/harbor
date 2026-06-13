@@ -193,6 +193,7 @@ fn apply_pre_init(
     set("volume-max", "600")?;
     let _ = init.set_property("background-color", "#000000");
     let _ = init.set_property("background", "color");
+    let _ = init.set_property("media-controls", "yes");
 
     if let Some(hwnd) = embed_hwnd {
         #[cfg(windows)]

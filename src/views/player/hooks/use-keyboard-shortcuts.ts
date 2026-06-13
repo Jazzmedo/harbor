@@ -14,6 +14,7 @@ export function useKeyboardShortcuts(params: {
   closePlayer: () => void;
   playPauseToggle: () => void;
   seekStep: (delta: number) => void;
+  seekTo: (sec: number) => void;
   toggleFullscreen: () => void;
   cycleSubtitles: () => void;
   setShowStats: (updater: (prev: boolean) => boolean) => void;
@@ -42,6 +43,7 @@ export function useKeyboardShortcuts(params: {
     closePlayer,
     playPauseToggle,
     seekStep,
+    seekTo,
     toggleFullscreen,
     cycleSubtitles,
     setShowStats,
@@ -197,12 +199,12 @@ export function useKeyboardShortcuts(params: {
       }
       if (match("playerStart")) {
         e.preventDefault();
-        bridgeRef.current?.seek(0);
+        seekTo(0);
         return;
       }
       if (match("playerEnd")) {
         e.preventDefault();
-        if (snap.durationSec > 0) bridgeRef.current?.seek(snap.durationSec - 0.5);
+        if (snap.durationSec > 0) seekTo(snap.durationSec - 0.5);
         return;
       }
       if (match("playerStats")) {
@@ -277,14 +279,14 @@ export function useKeyboardShortcuts(params: {
       }
       if (e.key === "0") {
         e.preventDefault();
-        bridgeRef.current?.seek(0);
+        seekTo(0);
         return;
       }
       const digit = parseInt(e.key, 10);
       if (!Number.isNaN(digit) && digit >= 1 && digit <= 9) {
         e.preventDefault();
         if (snap.durationSec > 0) {
-          bridgeRef.current?.seek((snap.durationSec * digit) / 10);
+          seekTo((snap.durationSec * digit) / 10);
         }
         return;
       }
@@ -321,7 +323,7 @@ export function useKeyboardShortcuts(params: {
       window.removeEventListener("blur", onBlur);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [closePlayer, drawMode, snap.muted, snap.volume, snap.rate, snap.durationSec, snap.subDelaySec, overrides, toggleSwitcher, toggleEpisodePanel, toggleGuide, toggleDvr, toggleSleep, onScreenshot, onGifRecord, onToggleCrop, onPanscanUp, onPanscanDown, onPrevChannel]);
+  }, [closePlayer, drawMode, snap.muted, snap.volume, snap.rate, snap.durationSec, snap.subDelaySec, overrides, seekTo, toggleSwitcher, toggleEpisodePanel, toggleGuide, toggleDvr, toggleSleep, onScreenshot, onGifRecord, onToggleCrop, onPanscanUp, onPanscanDown, onPrevChannel]);
 
   return { holdSpeedActive };
 }

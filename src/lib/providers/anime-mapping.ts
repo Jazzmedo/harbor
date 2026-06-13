@@ -166,6 +166,11 @@ export async function kitsuToAnilist(kitsuId: number): Promise<number | null> {
   return arm?.anilist ?? null;
 }
 
+export async function kitsuToMal(kitsuId: number): Promise<number | null> {
+  const arm = await armFromKitsu(kitsuId);
+  return arm?.mal ?? null;
+}
+
 let imdbAnidbIndex: Record<string, number> | null = null;
 
 export async function imdbToKitsu(imdbId: string): Promise<number | null> {

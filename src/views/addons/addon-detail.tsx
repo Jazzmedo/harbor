@@ -1,10 +1,10 @@
-import { Check, Copy, Eye, EyeOff, ExternalLink, Loader2, Settings2, Star, Trash2 } from "lucide-react";
+import { Check, Copy, Eye, EyeOff, ExternalLink, Loader2, Settings2, Star, Trash2, TrendingUp } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { AddonLogo, resolveAddonLogo } from "@/components/addon-logo";
 import { setActiveAddon } from "@/lib/active-addon";
 import { manifestToConfigureUrl, manifestToShareUrl } from "@/lib/addon-store";
 import { categorizeAddon, isAdultAddon, type ResolvedAddon } from "@/lib/addons-store/store";
-import { addonSiteUrl, rateOnSiteUrl } from "@/lib/providers/stremio-addons";
+import { addonSiteUrl, rateOnSiteUrl, risingEntryFor, useRising } from "@/lib/providers/stremio-addons";
 import { useCommunity } from "@/lib/providers/stremio-addons-index";
 import { openInstallerViewport } from "@/components/installer-viewport";
 import { pushActivityHint } from "@/lib/discord/activity-hint";
@@ -52,6 +52,8 @@ export function AddonDetail({
   const [optimisticInstalled, setOptimisticInstalled] = useState<boolean | null>(null);
   const [manifestVisible, setManifestVisible] = useState(false);
   const community = useCommunity(m?.id);
+  const rising = useRising();
+  const risingEntry = community ? risingEntryFor(rising, community) : null;
   const openRate = () => {
     if (!community) return;
     openUrl(rateOnSiteUrl(community.slug));
@@ -199,6 +201,12 @@ export function AddonDetail({
           <h1 className="font-display text-[36px] font-medium leading-tight tracking-tight text-ink">
             {nameOf(resolved)}
           </h1>
+          {risingEntry && (
+            <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-rose-500/15 px-2.5 py-1 text-[11px] font-bold text-rose-300 ring-1 ring-rose-500/40">
+              <TrendingUp size={12} strokeWidth={2.6} />
+              Rising · +{risingEntry.recentStars} star{risingEntry.recentStars === 1 ? "" : "s"} in 24h
+            </span>
+          )}
           {m?.description && <AddonDescription text={m.description} />}
           <div className="mt-3 flex flex-wrap items-center gap-2.5">
             {busy === "remove" ? (

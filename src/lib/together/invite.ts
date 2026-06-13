@@ -8,8 +8,14 @@ export type ParsedInvite = {
   roomCode: string;
 };
 
+export const WEB_JOIN_BASE = "https://app.harbor.site";
+
 export function buildInviteUrl(relayUrl: string, roomCode: string, origin?: string): string {
-  const base = origin ?? (typeof window !== "undefined" ? window.location.origin : "");
+  const local =
+    typeof window !== "undefined" && !("__TAURI_INTERNALS__" in window)
+      ? window.location.origin
+      : WEB_JOIN_BASE;
+  const base = origin ?? local;
   const params = new URLSearchParams();
   params.set(RELAY_PARAM, relayUrl);
   params.set(ROOM_PARAM, roomCode.toUpperCase());

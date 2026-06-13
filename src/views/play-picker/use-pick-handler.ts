@@ -171,7 +171,7 @@ export function usePickHandler({
         url: playUrl,
         title: episode ? episode.name || `Episode ${episode.episode}` : meta.name,
         subtitle: episode
-          ? `${meta.name} · S${episode.season} · E${episode.episode}`
+          ? `${meta.name} · S${episode.imdbSeason ?? episode.season} · E${episode.imdbEpisode ?? episode.episode}`
           : meta.releaseInfo,
         notWebReady: r.data.notWebReady,
         subtitles: r.data.subtitles,

@@ -68,6 +68,10 @@ import { UpcomingCta } from "./detail/upcoming-cta";
 import { Synopsis } from "./detail/synopsis";
 import { CastCard } from "./detail/cast-card";
 import { PreviewIcon } from "./detail/preview-icon";
+import { HeroActionOverflow, useHeroActionOverflow } from "./detail/hero-action-overflow";
+import mdblistLogo from "@/assets/addon-logos/mdblist.png";
+import letterboxdLogo from "@/assets/addon-logos/letterboxd.png";
+import traktLogo from "@/assets/trakt.svg";
 import { TrailerOverlay } from "./detail/trailer-overlay";
 import { SeriesEpisodes } from "./detail/series-episodes";
 import { CinemetaEpisodes } from "./detail/cinemeta-episodes";
@@ -107,6 +111,7 @@ export function DetailView({
   const mdblist = useMdblistScores(
     settings.mdblistKey,
     detail?.imdbId ?? (meta.id.startsWith("tt") ? meta.id : null),
+    meta.type === "movie" ? "movie" : "show",
   );
   const scrollRef = useRef<HTMLElement>(null);
 
@@ -127,6 +132,8 @@ export function DetailView({
   const addonNative = liveContext || isAddonNativeMeta(meta);
   const trailerCandidate =
     detail?.trailerCandidates?.[0] ?? meta.trailerStreams?.[0]?.ytId ?? null;
+  const actionRowRef = useRef<HTMLDivElement | null>(null);
+  const actionStage = useHeroActionOverflow(actionRowRef, [meta.id]);
 
   useEffect(() => {
     let cancelled = false;
@@ -382,7 +389,6 @@ export function DetailView({
   const logo = detail?.logo ?? meta.logo;
   const year = detail?.year ?? meta.releaseInfo;
   const releaseYearNum = parseAwardYear(year);
-  const ratingIsImdb = scores?.imdbRating != null || meta.id.startsWith("tt");
   const rating =
     scores?.imdbRating ?? (meta.id.startsWith("tt") ? meta.imdbRating : undefined) ?? detail?.rating ?? meta.imdbRating;
   const runtime = detail?.runtime;
@@ -576,21 +582,15 @@ export function DetailView({
                 )}
                 {rating && (
                   <Pill
-                    onClick={
-                      isAnime || ratingIsImdb
-                        ? () => {
-                            const id = detail?.imdbId ?? (meta.id.startsWith("tt") ? meta.id : null);
-                            if (id) openUrl(`https://www.imdb.com/title/${id}/`);
-                          }
-                        : undefined
-                    }
+                    onClick={() => {
+                      const id = detail?.imdbId ?? (meta.id.startsWith("tt") ? meta.id : null);
+                      if (id) openUrl(`https://www.imdb.com/title/${id}/`);
+                    }}
                   >
                     {isAnime ? (
                       <MalLogo className="h-[14px] w-auto text-ink-muted" />
-                    ) : ratingIsImdb ? (
-                      <ImdbIcon className="h-[15px] w-auto rounded-[3px]" />
                     ) : (
-                      <Star size={14} strokeWidth={0} fill="currentColor" className="text-accent" />
+                      <ImdbIcon className="h-[15px] w-auto rounded-[3px]" />
                     )}
                     <span className="font-semibold text-ink">{rating}</span>
                   </Pill>
@@ -618,14 +618,30 @@ export function DetailView({
                       if (id) openUrl(`https://letterboxd.com/imdb/${id}/`);
                     }}
                   >
-                    <span className="text-[11px] font-bold tracking-wide text-ink-muted">LB</span>
+                    <img src={letterboxdLogo} alt="Letterboxd" className="h-[14px] w-[14px] rounded-[3px] object-cover" />
                     <span className="font-semibold text-ink">{mdblist.letterboxd.toFixed(1)}</span>
                   </Pill>
                 )}
                 {mdblist?.trakt != null && (
-                  <Pill>
-                    <span className="text-[11px] font-bold tracking-wide text-ink-muted">TRAKT</span>
+                  <Pill
+                    onClick={() => {
+                      const id = detail?.imdbId ?? (meta.id.startsWith("tt") ? meta.id : null);
+                      if (id) openUrl(`https://trakt.tv/search/imdb/${id}`);
+                    }}
+                  >
+                    <img src={traktLogo} alt="Trakt" className="h-[14px] w-[14px] object-contain" />
                     <span className="font-semibold text-ink">{Math.round(mdblist.trakt)}%</span>
+                  </Pill>
+                )}
+                {mdblist?.score != null && (
+                  <Pill
+                    onClick={() => {
+                      const id = detail?.imdbId ?? (meta.id.startsWith("tt") ? meta.id : null);
+                      if (id) openUrl(`https://mdblist.com/${meta.type === "movie" ? "movie" : "show"}/${id}`);
+                    }}
+                  >
+                    <img src={mdblistLogo} alt="" className="h-[14px] w-[14px] rounded-[3px] object-contain" />
+                    <span className="font-semibold text-ink">{Math.round(mdblist.score)}</span>
                   </Pill>
                 )}
                 {runtime && (
@@ -687,7 +703,7 @@ export function DetailView({
                   })
                 )}
               </div>
-              <div className="mt-9 flex gap-3">
+              <div ref={actionRowRef} className="mt-9 flex gap-3">
                 {upcoming ? (
                   <UpcomingCta detail={detail} onTry={smartPlay} />
                 ) : (
@@ -701,80 +717,117 @@ export function DetailView({
                   </button>
                   </PlayModeHint>
                 )}
-                <button
-                  type="button"
-                  onClick={() =>
-                    toggleWatchlist({
-                      id: meta.id,
-                      type: meta.type,
-                      name: title || meta.name,
-                      poster: meta.poster ?? detail?.poster,
-                    })
-                  }
-                  title={traktConnected ? "Synced to Trakt" : "Saved locally. Connect Trakt in Settings to sync."}
-                  className={`flex h-12 items-center gap-2.5 rounded-full border px-6 text-[15px] font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-[transform,background-color,border-color] duration-200 active:scale-[0.98] ${
-                    inWatchlist
-                      ? "border-ink bg-ink/10 text-ink hover:bg-ink/20"
-                      : "border-edge bg-canvas/80 text-ink hover:border-ink-subtle hover:bg-canvas/95"
-                  }`}
-                >
-                  {inWatchlist ? (
-                    <>
-                      <Check size={18} strokeWidth={2.4} />
-                      In Watchlist
-                    </>
-                  ) : (
-                    <>
-                      <Plus size={18} strokeWidth={2} />
-                      Add to Watchlist
-                    </>
-                  )}
-                </button>
-                {isAnime && (
+                {actionStage < 2 && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      toggleWatchlist({
+                        id: meta.id,
+                        type: meta.type,
+                        name: title || meta.name,
+                        poster: meta.poster ?? detail?.poster,
+                      })
+                    }
+                    title={traktConnected ? "Synced to Trakt" : "Saved locally. Connect Trakt in Settings to sync."}
+                    className={`flex h-12 items-center gap-2.5 rounded-full border px-6 text-[15px] font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-[transform,background-color,border-color] duration-200 active:scale-[0.98] ${
+                      inWatchlist
+                        ? "border-ink bg-ink/10 text-ink hover:bg-ink/20"
+                        : "border-edge bg-canvas/80 text-ink hover:border-ink-subtle hover:bg-canvas/95"
+                    }`}
+                  >
+                    {inWatchlist ? (
+                      <>
+                        <Check size={18} strokeWidth={2.4} />
+                        In Watchlist
+                      </>
+                    ) : (
+                      <>
+                        <Plus size={18} strokeWidth={2} />
+                        Add to Watchlist
+                      </>
+                    )}
+                  </button>
+                )}
+                {actionStage < 2 && isAnime && (
                   <AddToAnilistButton
                     harborId={animeCanonicalId ?? meta.id}
                     title={title || meta.name}
                   />
                 )}
-                {!isAnime && (
+                {actionStage < 2 && (
                   <AddToSimklButton
-                    harborId={meta.id}
+                    harborId={isAnime ? (animeCanonicalId ?? meta.id) : meta.id}
                     title={title || meta.name}
                     type={meta.type === "movie" ? "movie" : "series"}
                   />
                 )}
-                <button
-                  type="button"
-                  onClick={() =>
-                    toggleFavorite({
-                      id: meta.id,
-                      type: meta.type,
-                      name: title || meta.name,
-                      poster: meta.poster ?? detail?.poster,
-                    })
-                  }
-                  aria-label={isFav ? "Remove from favorites" : "Add to favorites"}
-                  title={isFav ? "Favorited" : "Favorite"}
-                  className={`group flex h-12 w-12 items-center justify-center rounded-full border transition-[transform,background-color,border-color] duration-200 active:scale-[0.94] ${
-                    isFav
-                      ? "border-accent/55 bg-accent/15 text-accent hover:bg-accent/22"
-                      : "border-edge bg-canvas/80 text-ink hover:border-ink-subtle hover:bg-canvas/95"
-                  }`}
-                >
-                  <Star size={20} strokeWidth={isFav ? 0 : 1.9} fill={isFav ? "currentColor" : "none"} />
-                </button>
-                {trailerCandidate && (
-                  <button
-                    type="button"
-                    onClick={() => setTrailerOpen(true)}
-                    aria-label="Watch trailer"
-                    title="Watch trailer"
-                    className="group flex h-12 w-12 items-center justify-center rounded-full border border-edge bg-canvas/80 text-ink transition-[transform,background-color,border-color] duration-200 hover:border-ink-subtle hover:bg-canvas/95 active:scale-[0.94]"
-                  >
-                    <PreviewIcon size={20} />
-                  </button>
+                {actionStage >= 1 ? (
+                  <HeroActionOverflow
+                    meta={meta}
+                    isFav={isFav}
+                    onToggleFavorite={() =>
+                      toggleFavorite({
+                        id: meta.id,
+                        type: meta.type,
+                        name: title || meta.name,
+                        poster: meta.poster ?? detail?.poster,
+                      })
+                    }
+                    hasTrailer={!!trailerCandidate}
+                    onTrailer={() => setTrailerOpen(true)}
+                    canDownload={meta.type === "movie"}
+                    showSync={actionStage >= 2}
+                    inWatchlist={inWatchlist}
+                    onToggleWatchlist={() =>
+                      toggleWatchlist({
+                        id: meta.id,
+                        type: meta.type,
+                        name: title || meta.name,
+                        poster: meta.poster ?? detail?.poster,
+                      })
+                    }
+                    simkl={{
+                      harborId: isAnime ? (animeCanonicalId ?? meta.id) : meta.id,
+                      type: meta.type === "movie" ? "movie" : "series",
+                    }}
+                    anilist={isAnime ? { harborId: animeCanonicalId ?? meta.id } : null}
+                  />
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        toggleFavorite({
+                          id: meta.id,
+                          type: meta.type,
+                          name: title || meta.name,
+                          poster: meta.poster ?? detail?.poster,
+                        })
+                      }
+                      aria-label={isFav ? "Remove from favorites" : "Add to favorites"}
+                      title={isFav ? "Favorited" : "Favorite"}
+                      className={`group flex h-12 w-12 items-center justify-center rounded-full border transition-[transform,background-color,border-color] duration-200 active:scale-[0.94] ${
+                        isFav
+                          ? "border-accent/55 bg-accent/15 text-accent hover:bg-accent/22"
+                          : "border-edge bg-canvas/80 text-ink hover:border-ink-subtle hover:bg-canvas/95"
+                      }`}
+                    >
+                      <Star size={20} strokeWidth={isFav ? 0 : 1.9} fill={isFav ? "currentColor" : "none"} />
+                    </button>
+                    {trailerCandidate && (
+                      <button
+                        type="button"
+                        onClick={() => setTrailerOpen(true)}
+                        aria-label="Watch trailer"
+                        title="Watch trailer"
+                        className="group flex h-12 w-12 items-center justify-center rounded-full border border-edge bg-canvas/80 text-ink transition-[transform,background-color,border-color] duration-200 hover:border-ink-subtle hover:bg-canvas/95 active:scale-[0.94]"
+                      >
+                        <PreviewIcon size={20} />
+                      </button>
+                    )}
+                    {meta.type === "movie" && <EpisodeDownloadButton meta={meta} variant="bar" />}
+                  </>
                 )}
-                {meta.type === "movie" && <EpisodeDownloadButton meta={meta} variant="bar" />}
                 {liveContext && (
                   <button
                     type="button"
@@ -831,6 +884,7 @@ export function DetailView({
             franchise={franchise}
             currentId={currentFranchiseId}
             scrollRef={scrollRef}
+            trackId={animeCanonicalId ?? undefined}
           />
         )}
 

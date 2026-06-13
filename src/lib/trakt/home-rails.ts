@@ -36,6 +36,11 @@ export async function buildTraktHomeRows(tmdbKey: string): Promise<HomeRow[]> {
     ]);
 
   const rows: HomeRow[] = [];
+  const pager = (items: TraktItem[]) => async (page: number) => {
+    const slice = items.slice((page - 1) * PER_RAIL, page * PER_RAIL);
+    if (slice.length === 0) return [];
+    return hydrateTraktItems(slice, tmdbKey);
+  };
 
   if (watchlistMetas.length >= 4) {
     rows.push({
@@ -46,6 +51,7 @@ export async function buildTraktHomeRows(tmdbKey: string): Promise<HomeRow[]> {
       page: 1,
       hasMore: false,
       noDedup: true,
+      fetcher: pager(watchlist),
     });
   }
 
@@ -58,6 +64,7 @@ export async function buildTraktHomeRows(tmdbKey: string): Promise<HomeRow[]> {
       page: 1,
       hasMore: false,
       noDedup: true,
+      fetcher: pager(upcomingItems),
     });
   }
 
@@ -70,6 +77,7 @@ export async function buildTraktHomeRows(tmdbKey: string): Promise<HomeRow[]> {
       page: 1,
       hasMore: false,
       noDedup: true,
+      fetcher: pager(movieRecs),
     });
   }
 
@@ -82,6 +90,7 @@ export async function buildTraktHomeRows(tmdbKey: string): Promise<HomeRow[]> {
       page: 1,
       hasMore: false,
       noDedup: true,
+      fetcher: pager(showRecs),
     });
   }
 

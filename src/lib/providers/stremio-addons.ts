@@ -326,6 +326,65 @@ export function useCategories(): SACategory[] {
   return categoriesCache && categoriesCache.length > 0 ? categoriesCache : DEFAULT_SA_CATEGORIES;
 }
 
+export type SARisingAddon = SAAddon & { recentStars: number };
+
+export async function listRising(): Promise<SARisingAddon[]> {
+  const key = "rising";
+  const hit = readCache<SARisingAddon[]>(key);
+  if (hit) return hit;
+  const res = await fetch(`${API_BASE}/rising`);
+  if (!res.ok) throw new Error(`stremio-addons rising ${res.status}`);
+  const json = (await res.json()) as { addons?: SARisingAddon[] };
+  const addons = (json.addons ?? []).filter((a) => a && a.manifest);
+  writeCache(key, addons);
+  return addons;
+}
+
+let risingCache: SARisingAddon[] | null = null;
+let risingInflight: Promise<SARisingAddon[]> | null = null;
+const risingSubs = new Set<() => void>();
+
+export function useRising(): SARisingAddon[] {
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    if (!risingCache && !risingInflight) {
+      risingInflight = listRising()
+        .then((addons) => {
+          risingCache = addons;
+          for (const fn of risingSubs) fn();
+          return addons;
+        })
+        .catch(() => [] as SARisingAddon[])
+        .finally(() => {
+          risingInflight = null;
+        });
+    }
+    const fn = () => setTick((x) => x + 1);
+    risingSubs.add(fn);
+    return () => {
+      risingSubs.delete(fn);
+    };
+  }, []);
+  return risingCache ?? [];
+}
+
+export function risingEntryFor(
+  list: SARisingAddon[],
+  a: { uuid?: string; slug?: string; manifestUrl?: string },
+): { rank: number; recentStars: number } | null {
+  for (let i = 0; i < list.length; i++) {
+    const r = list[i];
+    if (
+      (a.uuid && r.uuid === a.uuid) ||
+      (a.slug && r.slug === a.slug) ||
+      (a.manifestUrl && r.manifestUrl === a.manifestUrl)
+    ) {
+      return { rank: i + 1, recentStars: r.recentStars };
+    }
+  }
+  return null;
+}
+
 export function addonSiteUrl(slug: string): string {
   return `${SITE}/addons/${encodeURIComponent(slug)}`;
 }

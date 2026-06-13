@@ -27,12 +27,14 @@ export function AnimeEpisodes({
   franchise,
   currentId,
   scrollRef,
+  trackId,
 }: {
   meta: Meta;
   episodes: KitsuEpisode[];
   franchise: FranchiseEntry[];
   currentId: string;
   scrollRef: React.RefObject<HTMLElement | null>;
+  trackId?: string;
 }) {
   const { isConnected: traktConnected } = useTrakt();
   const [traktWatched, setTraktWatched] = useState<Set<string>>(() => new Set());
@@ -54,7 +56,7 @@ export function AnimeEpisodes({
   }, [traktConnected]);
 
   const { watchedKeys: anilistWatched, completed: anilistCompleted } = useAnilistWatched(
-    meta.id,
+    trackId ?? meta.id,
     episodes,
   );
   const { settings, update } = useSettings();

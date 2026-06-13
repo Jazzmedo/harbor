@@ -1002,8 +1002,19 @@ fn is_cached_scored(s: &ScoredStream, active: &[String]) -> bool {
             .any(|slug| s.parsed.cached.get(slug).copied().unwrap_or(false))
 }
 
-pub fn rank_and_pick(scored: Vec<ScoredStream>, active_debrids: &[String]) -> RankedPicker {
+pub fn rank_and_pick(
+    scored: Vec<ScoredStream>,
+    active_debrids: &[String],
+    respect_addon_order: bool,
+) -> RankedPicker {
     let mut cached_first = scored;
+    if respect_addon_order {
+        cached_first.sort_by(|a, b| {
+            let pa = a.parsed.stream.addon_priority.unwrap_or(u32::MAX);
+            let pb = b.parsed.stream.addon_priority.unwrap_or(u32::MAX);
+            pa.cmp(&pb).then(b.score.total_cmp(&a.score))
+        });
+    }
     cached_first.sort_by(|a, b| {
         let ac = if is_cached_scored(a, active_debrids) { 1 } else { 0 };
         let bc = if is_cached_scored(b, active_debrids) { 1 } else { 0 };
@@ -1278,7 +1289,7 @@ mod tests {
         };
 
         let active = vec!["rd".to_string()];
-        let picker = rank_and_pick(vec![s1, s2, s3], &active);
+        let picker = rank_and_pick(vec![s1, s2, s3], &active, false);
         let primary = picker.primary.as_ref().expect("primary should exist");
         assert_eq!(primary.tier, Tier::Uhd);
         assert_eq!(primary.score, 90.0);
@@ -1309,7 +1320,7 @@ mod tests {
             tier: Tier::Uhd,
         };
         let active = vec!["rd".to_string()];
-        let picker = rank_and_pick(vec![s1, s2], &active);
+        let picker = rank_and_pick(vec![s1, s2], &active, false);
         let primary = picker.primary.as_ref().unwrap();
         assert_eq!(primary.tier, Tier::P1080);
     }
@@ -1333,7 +1344,7 @@ mod tests {
             tier: Tier::P1080,
         };
         let active: Vec<String> = vec![];
-        let picker = rank_and_pick(vec![s1, s2], &active);
+        let picker = rank_and_pick(vec![s1, s2], &active, false);
         let primary = picker.primary.as_ref().unwrap();
         assert_eq!(primary.tier, Tier::P1080);
     }

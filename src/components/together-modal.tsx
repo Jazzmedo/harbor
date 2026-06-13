@@ -1,5 +1,5 @@
-import { Check, Copy, LogOut, MousePointer2, Plus, Send } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Check, Copy, LogOut, MousePointer2, Plus } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import type { Meta } from "@/lib/cinemeta";
 import { useSettings } from "@/lib/settings";
 import { useTogether } from "@/lib/together/provider";
@@ -7,9 +7,12 @@ import { useSelfIdentity } from "@/lib/together/use-self-identity";
 import { useView } from "@/lib/view";
 import { Tooltip } from "@/views/detail/tooltip";
 import { Avatar } from "./together-modal/avatar";
+import { ChatPanel } from "./together-modal/chat-panel";
+import { GuestPickToggle } from "./together-modal/guest-pick-toggle";
 import { InvitePanel } from "./together-modal/invite-panel";
 import { LinkGlyph } from "./together-modal/link-glyph";
 import { ReturnToVideo } from "./together-modal/return-to-video";
+import { TogetherRelayBanner } from "./together-relay-banner";
 
 export function TogetherPopover({
   placement = "below-right",
@@ -24,18 +27,12 @@ export function TogetherPopover({
   const { avatar: selfAvatar, color: selfColor } = useSelfIdentity();
   const [joinCode, setJoinCode] = useState("");
   const [draftName, setDraftName] = useState(displayName);
-  const [chatDraft, setChatDraft] = useState("");
   const [copied, setCopied] = useState(false);
   const [view, setView] = useState<"default" | "link">("default");
-  const chatRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setDraftName(displayName);
   }, [displayName]);
-
-  useEffect(() => {
-    chatRef.current?.scrollTo({ top: chatRef.current.scrollHeight, behavior: "smooth" });
-  }, [chat.length]);
 
   const inSession = snapshot.state === "joined" && !!snapshot.room;
   const connecting = snapshot.state === "connecting";
@@ -76,12 +73,6 @@ export function TogetherPopover({
     } catch {
       /* clipboard blocked */
     }
-  };
-
-  const handleSendChat = () => {
-    if (!chatDraft.trim()) return;
-    sendChat(chatDraft);
-    setChatDraft("");
   };
 
   const commitName = () => {
@@ -146,6 +137,8 @@ export function TogetherPopover({
           </button>
         </Tooltip>
       </header>
+
+      <TogetherRelayBanner />
 
       <div
         key={view}
@@ -306,54 +299,16 @@ export function TogetherPopover({
             </ul>
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <span className="text-[10.5px] uppercase tracking-wider text-ink-subtle">Chat</span>
-            <div
-              ref={chatRef}
-              className="flex h-36 flex-col gap-1.5 overflow-y-auto rounded-lg border border-edge bg-canvas/60 p-2.5"
-            >
-              {chat.length === 0 && (
-                <p className="m-auto text-[11.5px] text-ink-subtle">Say hi.</p>
-              )}
-              {chat.map((m, i) => {
-                const self = m.from === clientId;
-                const peer = snapshot.participants.find((p) => p.id === m.from);
-                const avatarSrc = self ? selfAvatar : peer?.avatar ?? null;
-                const color = self ? selfColor : peer?.color ?? null;
-                return (
-                  <div key={`${m.at}-${i}`} className="flex items-start gap-2">
-                    <Avatar name={m.name} src={avatarSrc} color={color} size={18} />
-                    <div className="flex min-w-0 flex-col">
-                      <span
-                        className="text-[10.5px] font-medium"
-                        style={{ color: color ?? undefined }}
-                      >
-                        {m.name}
-                      </span>
-                      <span className="text-[12.5px] leading-tight text-ink">{m.text}</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="flex gap-2">
-              <input
-                value={chatDraft}
-                onChange={(e) => setChatDraft(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSendChat()}
-                placeholder="Message"
-                className="h-9 flex-1 rounded-lg border border-edge bg-canvas px-2.5 text-[12.5px] text-ink focus:border-accent"
-              />
-              <button
-                onClick={handleSendChat}
-                disabled={!chatDraft.trim()}
-                className="flex h-9 w-9 items-center justify-center rounded-lg bg-ink text-canvas transition-transform hover:scale-[1.05] disabled:opacity-40 disabled:hover:scale-100"
-                aria-label="Send"
-              >
-                <Send size={13} strokeWidth={2.2} />
-              </button>
-            </div>
-          </div>
+          <ChatPanel
+            chat={chat}
+            participants={snapshot.participants}
+            clientId={clientId}
+            selfAvatar={selfAvatar}
+            selfColor={selfColor}
+            onSend={sendChat}
+          />
+
+          {snapshot.hostClientId === clientId && <GuestPickToggle />}
 
           <button
             onClick={() => update({ togetherShareCursors: !settings.togetherShareCursors })}

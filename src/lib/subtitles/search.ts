@@ -92,13 +92,13 @@ function streamMatchScore(r: SubResult, hints: StreamHints | undefined): number 
 
 function sourcePriority(source: SubResult["source"]): number {
   switch (source) {
-    case "opensubtitles":
+    case "addon":
       return 3;
+    case "opensubtitles":
+      return 2;
     case "wyzie":
       return 2;
     case "jimaku":
-      return 2;
-    case "addon":
       return 1;
     default:
       return 0;

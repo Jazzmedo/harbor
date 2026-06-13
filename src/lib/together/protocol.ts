@@ -19,6 +19,17 @@ export type EpisodeRef = {
   imdbEpisode?: number;
 };
 
+export type SourceDescriptor = {
+  title?: string;
+  resolution?: string;
+  sizeBytes?: number;
+  infoHash?: string;
+  fileIdx?: number;
+  durationSec?: number;
+};
+
+export const WT_PROTO = 2;
+
 export type SyncState = {
   mediaId: string | null;
   mediaTitle: string | null;
@@ -27,6 +38,8 @@ export type SyncState = {
   positionSeconds: number;
   playing: boolean;
   speed?: number;
+  source?: SourceDescriptor;
+  guestPick?: boolean;
   updatedAt: number;
   updatedBy: string;
   hostClientId: string | null;
@@ -35,7 +48,7 @@ export type SyncState = {
 export type RoomCommand =
   | { action: "play" }
   | { action: "pause" }
-  | { action: "seek"; positionSeconds: number };
+  | { action: "seek"; positionSeconds: number; seq?: number; at?: number };
 
 export type PlayInvite = {
   mediaId: string;
@@ -46,6 +59,9 @@ export type PlayInvite = {
   backgroundUrl?: string;
   logoUrl?: string;
   episode?: EpisodeRef;
+  proto?: number;
+  guestPick?: boolean;
+  source?: SourceDescriptor;
 };
 
 export type SummonView = "home" | "discover" | "anime" | "queue" | "addons";
@@ -108,7 +124,7 @@ export type ClientMessage =
   | { t: "ping"; room: RoomCode; clientId: string };
 
 export type ServerMessage =
-  | { t: "joined"; room: RoomCode; participants: Participant[]; state: SyncState | null; hostClientId: string | null; started?: boolean; srvAt?: number }
+  | { t: "joined"; room: RoomCode; participants: Participant[]; state: SyncState | null; hostClientId: string | null; started?: boolean; srvAt?: number; relayVersion?: number }
   | { t: "participant-joined"; participant: Participant }
   | { t: "participant-left"; clientId: string; name?: string }
   | { t: "started"; started: boolean }

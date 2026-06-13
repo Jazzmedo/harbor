@@ -7,8 +7,10 @@ const ARM = "https://relations.yuna.moe/api/ids";
 
 const ARM_KEY = "harbor.armcache";
 const ARM_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+const ARM_NEG_TTL_MS = 24 * 60 * 60 * 1000;
+const ARM_TIMEOUT_MS = 3500;
 
-type ArmEntry = { kitsu?: number; anilist?: number; t: number };
+type ArmEntry = { kitsu?: number; anilist?: number; t: number; neg?: boolean };
 type ArmCache = Record<string, ArmEntry>;
 
 function readCache(): ArmCache {
@@ -27,21 +29,47 @@ function writeCache(cache: ArmCache) {
   }
 }
 
+const armMem: ArmCache = readCache();
+const armInflight = new Map<number, Promise<ArmEntry | null>>();
+let armFlushTimer = 0;
+
+function armRemember(malId: number, entry: ArmEntry) {
+  armMem[malId] = entry;
+  window.clearTimeout(armFlushTimer);
+  armFlushTimer = window.setTimeout(() => writeCache(armMem), 600);
+}
+
 async function armLookup(malId: number): Promise<ArmEntry | null> {
-  const cache = readCache();
-  const hit = cache[malId];
-  if (hit && Date.now() - hit.t < ARM_TTL_MS) return hit;
-  try {
-    const r = await fetch(`${ARM}?source=myanimelist&id=${malId}`);
-    if (!r.ok) return null;
-    const j = await r.json();
-    const entry: ArmEntry = { kitsu: j?.kitsu, anilist: j?.anilist, t: Date.now() };
-    cache[malId] = entry;
-    writeCache(cache);
-    return entry;
-  } catch {
-    return null;
+  const hit = armMem[malId];
+  if (hit) {
+    const age = Date.now() - hit.t;
+    if (hit.neg ? age < ARM_NEG_TTL_MS : age < ARM_TTL_MS) return hit.neg ? null : hit;
   }
+  const existing = armInflight.get(malId);
+  if (existing) return existing;
+  const p = (async () => {
+    const ac = new AbortController();
+    const timer = setTimeout(() => ac.abort(), ARM_TIMEOUT_MS);
+    try {
+      const r = await fetch(`${ARM}?source=myanimelist&id=${malId}`, { signal: ac.signal });
+      if (!r.ok) {
+        armRemember(malId, { t: Date.now(), neg: true });
+        return null;
+      }
+      const j = await r.json();
+      const entry: ArmEntry = { kitsu: j?.kitsu, anilist: j?.anilist, t: Date.now() };
+      armRemember(malId, entry);
+      return entry;
+    } catch {
+      armRemember(malId, { t: Date.now(), neg: true });
+      return null;
+    } finally {
+      clearTimeout(timer);
+      armInflight.delete(malId);
+    }
+  })();
+  armInflight.set(malId, p);
+  return p;
 }
 
 type JikanAnime = {
@@ -202,6 +230,52 @@ const inflight = new Map<string, Promise<Meta[]>>();
 const cache = new Map<string, { metas: Meta[]; t: number }>();
 const CACHE_TTL = 6 * 60 * 60 * 1000;
 
+const CATALOG_KEY = "harbor.jikancatalog";
+const CATALOG_MAX = 40;
+const PERSIST_DESC_MAX = 500;
+
+(() => {
+  try {
+    const raw = JSON.parse(localStorage.getItem(CATALOG_KEY) ?? "{}") as Record<
+      string,
+      { metas: Meta[]; t: number }
+    >;
+    const now = Date.now();
+    for (const [k, e] of Object.entries(raw)) {
+      if (e && Array.isArray(e.metas) && now - e.t < CACHE_TTL) cache.set(k, e);
+    }
+  } catch {
+    localStorage.removeItem(CATALOG_KEY);
+  }
+})();
+
+let catalogFlushTimer = 0;
+
+function persistCatalog() {
+  window.clearTimeout(catalogFlushTimer);
+  catalogFlushTimer = window.setTimeout(() => {
+    try {
+      const entries = [...cache.entries()]
+        .sort((a, b) => b[1].t - a[1].t)
+        .slice(0, CATALOG_MAX)
+        .map(([k, e]) => [
+          k,
+          {
+            t: e.t,
+            metas: e.metas.map((m) =>
+              m.description && m.description.length > PERSIST_DESC_MAX
+                ? { ...m, description: `${m.description.slice(0, PERSIST_DESC_MAX)}...` }
+                : m,
+            ),
+          },
+        ]);
+      localStorage.setItem(CATALOG_KEY, JSON.stringify(Object.fromEntries(entries)));
+    } catch {
+      localStorage.removeItem(CATALOG_KEY);
+    }
+  }, 1000);
+}
+
 registerEvictable("jikan-catalog", (aggressive) => {
   if (aggressive) return cache.clear();
   const now = Date.now();
@@ -261,6 +335,7 @@ async function jikanQuery(path: string, params: Record<string, string | number> 
         const items: JikanAnime[] = j?.data ?? [];
         const metas = await metasFromJikan(items);
         cache.set(key, { metas, t: Date.now() });
+        persistCatalog();
         return metas;
       } catch {
         return [];

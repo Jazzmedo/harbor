@@ -1,12 +1,14 @@
 import { FormatBadge, type BadgeKind } from "@/components/format-badge";
 import { useSettings } from "@/lib/settings";
 import {
-  CustomCodePanel,
+  CustomCodeCard,
   DownloadsSection,
   LocalEngineSection,
   PlayModePanel,
   PlayerEnginePanel,
+  RemoteServerSection,
   SeekBarPanel,
+  ServerAddressSection,
   SubtitleStylePanel,
 } from "./player-panel";
 import { Section, ToggleRow } from "./shared";
@@ -116,6 +118,47 @@ export function QualityPanel() {
       </Section>
 
       <Section
+        title="Audio"
+        subtitle="Shape the sound without touching your system EQ. Applies on the mpv engine; the HTML5 engine plays audio untouched."
+      >
+        <ToggleRow
+          label="Normalize loudness"
+          sub="Evens out quiet dialogue and loud action scenes with a dynamic normalizer."
+          value={settings.audioNormalize}
+          onChange={(v) => update({ audioNormalize: v })}
+        />
+        <div>
+          <Segmented
+            value={settings.audioProfile}
+            options={[
+              { value: "off", label: "Flat" },
+              { value: "bass", label: "Bass boost" },
+              { value: "voice", label: "Vocal clarity" },
+              { value: "bass-reduce", label: "Less bass" },
+              { value: "night", label: "Night mode" },
+            ]}
+            onChange={(v) => update({ audioProfile: v })}
+          />
+          <p className="mt-2.5 text-[12.5px] leading-relaxed text-ink-subtle">
+            Night mode gently compresses loud moments for late-night watching. Profiles take
+            effect when the next track loads and stack with the normalizer.
+          </p>
+        </div>
+      </Section>
+
+      <Section
+        title="Skip intros"
+        subtitle="Harbor finds intro and credits timing from AniSkip, TheIntroDB, and the file's own chapters, then shows a Skip button at the right moment."
+      >
+        <ToggleRow
+          label="Auto-skip intros"
+          sub="Jump past openings automatically the moment one starts. The Skip button still shows either way, and seeking back into an intro replays it without skipping again."
+          value={settings.autoSkipIntro}
+          onChange={(v) => update({ autoSkipIntro: v })}
+        />
+      </Section>
+
+      <Section
         title="Next episode prompt"
         subtitle="When the Up Next pill appears before an episode ends. Auto scales to the episode length, so short episodes stop prompting so early. Off hides it."
       >
@@ -137,12 +180,11 @@ export function QualityPanel() {
 
       <LocalEngineSection />
 
-      <Section
-        title="Custom code"
-        subtitle="Power-user knob. Inject your own CSS, JS, and HTML into Harbor. Lives in your local settings; nothing leaves your machine."
-      >
-        <CustomCodePanel />
-      </Section>
+      <ServerAddressSection />
+
+      <RemoteServerSection />
+
+      <CustomCodeCard />
     </>
   );
 }

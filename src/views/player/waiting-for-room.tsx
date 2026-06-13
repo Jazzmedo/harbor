@@ -3,60 +3,96 @@ import waitingAnim from "@/assets/lottie/wt-waiting-white.json";
 import { formatNames } from "./player-utils";
 import type { RoomSnapshot } from "@/lib/together/client";
 
+function readyPillClass(ready: boolean, stale: boolean): string {
+  if (ready) return "bg-emerald-500/15 text-emerald-300";
+  if (stale) return "bg-amber-400/15 text-amber-300";
+  return "bg-white/10 text-white/70";
+}
+
+function readyDotClass(ready: boolean, stale: boolean): string {
+  if (ready) return "bg-emerald-400";
+  if (stale) return "bg-amber-400";
+  return "bg-white/40";
+}
+
 export function WaitingForRoom(props: {
   isHost: boolean;
   notReady: RoomSnapshot["participants"];
   participants: RoomSnapshot["participants"];
   clientId: string;
-  onStartAnyway: () => void;
+  everyoneReady: boolean;
+  staleIds: Set<string>;
+  guestEscapeReady: boolean;
+  onStart: () => void;
+  onPlayWithoutSync: () => void;
   onLeave: () => void;
 }) {
-  const { isHost, notReady, participants, clientId, onStartAnyway, onLeave } = props;
+  const {
+    isHost,
+    notReady,
+    participants,
+    clientId,
+    everyoneReady,
+    staleIds,
+    guestEscapeReady,
+    onStart,
+    onPlayWithoutSync,
+    onLeave,
+  } = props;
+  const stillLoading = notReady.length;
   return (
     <div className="pointer-events-auto absolute inset-0 z-30 flex items-center justify-center bg-black/72 backdrop-blur-md">
       <div className="flex max-w-sm flex-col items-center gap-5 px-8 text-center">
         <LottiePlayer data={waitingAnim} className="h-28 w-28" />
         <div className="flex flex-col gap-1.5">
           <h2 className="text-[18px] font-semibold text-white">
-            {isHost ? "Waiting for everyone" : "Waiting for host"}
+            {isHost ? "Ready when you are" : "Waiting for the host to start"}
           </h2>
           <p className="text-[13px] text-white/60">
             {isHost
-              ? notReady.length > 0
+              ? stillLoading > 0
                 ? `Loading on ${formatNames(notReady.map((p) => p.name))}…`
-                : "Almost there…"
-              : "Playback starts when everyone is loaded in."}
+                : "Everyone is loaded in. Press play to start watching."
+              : "The host starts playback for the whole room."}
           </p>
         </div>
         {isHost && participants.length > 0 && (
           <div className="flex flex-wrap justify-center gap-1.5">
-            {participants.map((p) => (
-              <span
-                key={p.id}
-                className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] ${
-                  p.ready
-                    ? "bg-emerald-500/15 text-emerald-300"
-                    : "bg-white/10 text-white/70"
-                }`}
-              >
+            {participants.map((p) => {
+              const stale = staleIds.has(p.id);
+              return (
                 <span
-                  aria-hidden
-                  className={`h-1.5 w-1.5 rounded-full ${p.ready ? "bg-emerald-400" : "bg-white/40"}`}
-                />
-                {p.name}
-                {p.id === clientId && " (you)"}
-              </span>
-            ))}
+                  key={p.id}
+                  className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] ${readyPillClass(p.ready, stale)}`}
+                >
+                  <span aria-hidden className={`h-1.5 w-1.5 rounded-full ${readyDotClass(p.ready, stale)}`} />
+                  {p.name}
+                  {p.id === clientId && " (you)"}
+                  {!p.ready && stale && " · still loading"}
+                </span>
+              );
+            })}
           </div>
         )}
         <div className="mt-1 flex items-center gap-2.5">
-          {isHost && notReady.length > 0 && (
+          {isHost && (
             <button
               type="button"
-              onClick={onStartAnyway}
+              onClick={onStart}
               className="inline-flex h-10 items-center gap-2 rounded-full bg-white px-5 text-[13px] font-semibold text-black transition-transform hover:scale-[1.02] active:scale-[0.98]"
             >
-              Start anyway
+              {everyoneReady
+                ? "Start watching"
+                : `Start anyway (${stillLoading} still loading)`}
+            </button>
+          )}
+          {!isHost && guestEscapeReady && (
+            <button
+              type="button"
+              onClick={onPlayWithoutSync}
+              className="inline-flex h-10 items-center rounded-full bg-white/15 px-5 text-[13px] font-semibold text-white transition-colors hover:bg-white/25"
+            >
+              Play without sync
             </button>
           )}
           <button

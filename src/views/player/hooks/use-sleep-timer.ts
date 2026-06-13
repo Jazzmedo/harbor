@@ -20,6 +20,10 @@ export const SLEEP_PRESETS: Array<{ id: string; label: string; mode: SleepMode }
   { id: "30", label: "30 min", mode: { kind: "minutes", total: 30, firesAt: 0 } },
   { id: "45", label: "45 min", mode: { kind: "minutes", total: 45, firesAt: 0 } },
   { id: "60", label: "1 hour", mode: { kind: "minutes", total: 60, firesAt: 0 } },
+  { id: "120", label: "2 hours", mode: { kind: "minutes", total: 120, firesAt: 0 } },
+  { id: "180", label: "3 hours", mode: { kind: "minutes", total: 180, firesAt: 0 } },
+  { id: "240", label: "4 hours", mode: { kind: "minutes", total: 240, firesAt: 0 } },
+  { id: "360", label: "6 hours", mode: { kind: "minutes", total: 360, firesAt: 0 } },
   { id: "ep", label: "End of episode", mode: { kind: "end_episode" } },
   { id: "ep2", label: "End of next episode", mode: { kind: "end_next_episode", remaining: 2 } },
 ];

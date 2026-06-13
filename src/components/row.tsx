@@ -105,6 +105,8 @@ export function Row({
   arrowsAlways = false,
   children,
   onEndReached,
+  onViewAll,
+  viewAllLabel = "View all",
 }: {
   title?: React.ReactNode;
   className?: string;
@@ -115,6 +117,8 @@ export function Row({
   scrollKey?: string;
   children: React.ReactNode;
   onEndReached?: () => void;
+  onViewAll?: () => void;
+  viewAllLabel?: string;
 }) {
   const { settings } = useSettings();
   const effMin = Math.max(72, Math.round(min * settings.posterScale));
@@ -196,7 +200,30 @@ export function Row({
     const markInteracted = () => {
       userInteractedRef.current = true;
     };
-    track.addEventListener("wheel", markInteracted, { passive: true });
+    let wheelSettle: number | null = null;
+    const onWheel = (e: WheelEvent) => {
+      userInteractedRef.current = true;
+      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+      if (rafId.current != null && Math.abs(e.deltaX) < 4) return;
+      cancelGlide();
+      track.style.scrollSnapType = "none";
+      track.style.scrollBehavior = "auto";
+      if (wheelSettle != null) window.clearTimeout(wheelSettle);
+      wheelSettle = window.setTimeout(() => {
+        wheelSettle = null;
+        const stride = strideRef.current;
+        const max = track.scrollWidth - track.clientWidth;
+        if (max <= 0 || stride <= 0) {
+          track.style.scrollSnapType = "";
+          track.style.scrollBehavior = "";
+          return;
+        }
+        const aligned = Math.max(0, Math.min(Math.round(track.scrollLeft / stride) * stride, max));
+        const target = max - track.scrollLeft < stride * 0.5 ? max : aligned;
+        glideTo(track, target, true);
+      }, 200);
+    };
+    track.addEventListener("wheel", onWheel, { passive: true });
     track.addEventListener("pointerdown", markInteracted);
     track.addEventListener("keydown", markInteracted);
     const onReset = (e: Event) => {
@@ -216,11 +243,12 @@ export function Row({
     return () => {
       ro.disconnect();
       track.removeEventListener("scroll", onScroll);
-      track.removeEventListener("wheel", markInteracted);
+      track.removeEventListener("wheel", onWheel);
       track.removeEventListener("pointerdown", markInteracted);
       track.removeEventListener("keydown", markInteracted);
       window.removeEventListener("harbor:reset-row-scrolls", onReset);
       if (saveTimer != null) window.clearTimeout(saveTimer);
+      if (wheelSettle != null) window.clearTimeout(wheelSettle);
       if (rafId.current != null) cancelAnimationFrame(rafId.current);
       if (scrollKey && track.scrollLeft > 0) {
         rememberRowScroll(scrollKey, track.scrollLeft);
@@ -246,12 +274,41 @@ export function Row({
     vel: 0,
   });
   const rafId = useRef<number | null>(null);
+  const strideRef = useRef(effMin + GAP);
+  strideRef.current = (cellWidth ?? effMin) + GAP;
 
   const cancelGlide = () => {
     if (rafId.current != null) {
       cancelAnimationFrame(rafId.current);
       rafId.current = null;
     }
+  };
+
+  const glideTo = (el: HTMLDivElement, target: number, snappy = false) => {
+    const start = el.scrollLeft;
+    const distance = target - start;
+    if (Math.abs(distance) < 2) {
+      el.style.scrollSnapType = "";
+      el.style.scrollBehavior = "";
+      return;
+    }
+    const startTime = performance.now();
+    const duration = snappy
+      ? Math.max(140, Math.min(300, Math.abs(distance) * 0.9))
+      : Math.max(280, Math.min(620, 260 + Math.abs(distance) * 0.45));
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - startTime) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      el.scrollLeft = start + distance * eased;
+      if (t < 1) {
+        rafId.current = requestAnimationFrame(tick);
+      } else {
+        rafId.current = null;
+        el.style.scrollSnapType = "";
+        el.style.scrollBehavior = "";
+      }
+    };
+    rafId.current = requestAnimationFrame(tick);
   };
 
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -323,25 +380,7 @@ export function Row({
     const max = el.scrollWidth - el.clientWidth;
     const targetIdx = Math.round(projected / stride);
     const target = Math.max(0, Math.min(targetIdx * stride, max));
-
-    const start = el.scrollLeft;
-    const distance = target - start;
-    const startTime = performance.now();
-    const duration = Math.max(280, Math.min(620, 260 + Math.abs(distance) * 0.45));
-
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - startTime) / duration);
-      const eased = 1 - Math.pow(1 - t, 3);
-      el.scrollLeft = start + distance * eased;
-      if (t < 1) {
-        rafId.current = requestAnimationFrame(tick);
-      } else {
-        rafId.current = null;
-        el.style.scrollSnapType = "";
-        el.style.scrollBehavior = "";
-      }
-    };
-    rafId.current = requestAnimationFrame(tick);
+    glideTo(el, target);
 
     setTimeout(() => {
       drag.current.moved = false;
@@ -357,10 +396,28 @@ export function Row({
 
   return (
     <div className={`flex min-w-0 flex-col gap-5 pl-[9px] ${className}`}>
-      {title && (
-        <h3 className="truncate text-[17px] font-medium tracking-tight text-ink">
-          {title}
-        </h3>
+      {(title || onViewAll) && (
+        <div className="flex items-baseline justify-between gap-4 pr-1">
+          {title && (
+            <h3 className="truncate text-[17px] font-medium tracking-tight text-ink">
+              {title}
+            </h3>
+          )}
+          {onViewAll && (
+            <button
+              type="button"
+              onClick={onViewAll}
+              className="group/va inline-flex shrink-0 items-center gap-1 text-[12.5px] font-medium text-ink-subtle transition-colors hover:text-ink"
+            >
+              {viewAllLabel}
+              <ChevronRight
+                size={14}
+                strokeWidth={2.2}
+                className="transition-transform duration-200 group-hover/va:translate-x-0.5"
+              />
+            </button>
+          )}
+        </div>
       )}
       <div ref={containerRef} className="group/row relative min-w-0">
         <RowTrackContext.Provider value={trackEl}>
@@ -372,7 +429,7 @@ export function Row({
             onPointerCancel={endDrag}
             onClickCapture={onClickCapture}
             onDragStart={(e) => e.preventDefault()}
-            className="grid grid-flow-col gap-5 overflow-x-auto p-5 -m-5 scroll-pl-5 scroll-pr-5 [scroll-snap-type:x_mandatory] [&>*]:[scroll-snap-align:start] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] [overflow-anchor:none] [&_img]:select-none [&_img]:[-webkit-user-drag:none] [will-change:transform]"
+            className="grid grid-flow-col gap-5 overflow-x-auto p-5 -m-5 scroll-pl-5 scroll-pr-5 [scroll-snap-type:x_mandatory] [&>*]:[scroll-snap-align:start] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] [overflow-anchor:none] [overscroll-behavior-x:contain] [&_img]:select-none [&_img]:[-webkit-user-drag:none] [will-change:transform]"
             style={{ gridAutoColumns: cellWidth != null ? `${cellWidth}px` : `${effMin}px` }}
           >
             {Children.map(children, (child, i) => {
@@ -408,8 +465,8 @@ function EdgeArrow({
   if (always) {
     return (
       <div
-        className={`pointer-events-none absolute inset-y-0 z-30 flex w-16 items-center from-canvas/75 to-transparent transition-opacity duration-200 ${
-          side === "left" ? "left-0 justify-start bg-gradient-to-r" : "right-0 justify-end bg-gradient-to-l"
+        className={`pointer-events-none absolute inset-y-0 z-30 flex w-14 items-center transition-opacity duration-200 ${
+          side === "left" ? "left-0 justify-start" : "right-0 justify-end"
         } ${visible ? "opacity-100" : "opacity-0"}`}
       >
         <button

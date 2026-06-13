@@ -10,7 +10,8 @@ import { useAddonsCatalog, buildRail, type ResolvedAddon } from "@/lib/addons-st
 import { useCategories } from "@/lib/providers/stremio-addons";
 import { prefetchTopAddonLogos } from "@/lib/providers/addon-logo-prefetch";
 import { relatedAddons, recommendedAddons } from "@/lib/addons-store/recommend";
-import { fetchManifestAt, installAddon, installFromUrl, uninstallAddon } from "@/lib/addon-store";
+import { loadDisplayOrder } from "@/lib/addons-store/reorder";
+import { fetchManifestAt, installAddon, installFromUrl, loadInstalled, uninstallAddon } from "@/lib/addon-store";
 import { useAuth } from "@/lib/auth";
 import streamsIcon from "@/assets/category/streams.svg";
 import catalogsIcon from "@/assets/category/catalogs.svg";
@@ -23,6 +24,7 @@ import adultIcon from "@/assets/category/adult.svg";
 import { AddByUrlBar } from "./addons/add-by-url-bar";
 import { AddonDetail } from "./addons/addon-detail";
 import { AddonInstallModal } from "./addons/install-modal";
+import { OrganizeAddonsPage } from "./addons/organize/page";
 import { consumeAddonsTab, type Tab, type ToastInfo } from "./addons/addons-types";
 import { BrowsePane } from "./addons/browse-pane";
 import { DiscoverPane } from "./addons/discover-pane";
@@ -41,7 +43,7 @@ void livetvIcon;
 void toolsIcon;
 void adultIcon;
 
-type BrowseModeId = "top" | "new";
+type BrowseModeId = "top" | "new" | "rising";
 
 const BROWSE_MODES: Array<{
   id: BrowseModeId;
@@ -50,10 +52,9 @@ const BROWSE_MODES: Array<{
   Icon: typeof Star;
 }> = [
   { id: "top", label: "Top rated", sub: "By community stars", Icon: Star },
+  { id: "rising", label: "Top rising", sub: "Most starred in 24 hours", Icon: TrendingUp },
   { id: "new", label: "Just added", sub: "Freshest on stremio-addons.net", Icon: Sparkles },
 ];
-
-void TrendingUp;
 
 void Library;
 
@@ -98,6 +99,7 @@ export function AddonsView() {
     | { kind: "manage"; existing: { id: string; name: string; logo?: string | null; transportUrl: string } }
     | null
   >(null);
+  const [reorderOpen, setReorderOpen] = useState(false);
 
   useEffect(() => {
     let unlisten: (() => void) | null = null;
@@ -154,7 +156,20 @@ export function AddonsView() {
 
   const allAddons = useMemo(() => [...byId.values()], [byId]);
 
-  const installed = useMemo(() => allAddons.filter((r) => r.installed), [allAddons]);
+  const installed = useMemo(() => {
+    const seq = [...loadDisplayOrder(), ...loadInstalled().map((e) => e.transportUrl)];
+    const rank = new Map<string, number>();
+    seq.forEach((url, i) => {
+      if (!rank.has(url)) rank.set(url, i);
+    });
+    return allAddons
+      .filter((r) => r.installed)
+      .sort(
+        (a, b) =>
+          (rank.get(a.transportUrl) ?? Number.MAX_SAFE_INTEGER) -
+          (rank.get(b.transportUrl) ?? Number.MAX_SAFE_INTEGER),
+      );
+  }, [allAddons]);
   const trimmedQuery = query.trim();
   useEffect(() => {
     if (trimmedQuery.length > 0 && tab !== "installed") setTab("browse");
@@ -466,6 +481,7 @@ export function AddonsView() {
             search={trimmedQuery || null}
             onOpen={openAddonDetail}
             onUninstall={onUninstall}
+            onReorder={() => setReorderOpen(true)}
             onManage={(r) => {
               const id = r.manifest?.id ?? r.curated?.id;
               if (!id) return;
@@ -506,6 +522,24 @@ export function AddonsView() {
               showToast("error", msg);
               return null;
             }
+          }}
+        />
+      )}
+      {reorderOpen && (
+        <OrganizeAddonsPage
+          authKey={authKey}
+          onClose={() => setReorderOpen(false)}
+          onSaved={(scope) => {
+            setReorderOpen(false);
+            window.dispatchEvent(
+              new CustomEvent("harbor:addons-changed", { detail: { reordered: true } }),
+            );
+            showToast(
+              "ok",
+              scope === "cloud"
+                ? "Addon order synced to your Stremio account"
+                : "Addon order saved on this device",
+            );
           }}
         />
       )}

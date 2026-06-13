@@ -563,6 +563,13 @@ export function activeLayout(theme: ThemeSettings): ThemeLayout {
   return preset?.layout ?? "sidebar";
 }
 
+const TOPBAR_BACK_LAYOUTS = new Set(["sidebar", "dracula", "nord", "forest", "stremio"]);
+
+export function layoutHasGlobalBack(): boolean {
+  const l = document.documentElement.dataset.themeLayout ?? "sidebar";
+  return TOPBAR_BACK_LAYOUTS.has(l);
+}
+
 export function activeBokeh(theme: ThemeSettings): boolean {
   const preset = theme.preset !== "custom" ? getThemeById(theme.preset) : null;
   return !!preset?.bokeh;

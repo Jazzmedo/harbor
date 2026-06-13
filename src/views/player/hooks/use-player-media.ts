@@ -1,0 +1,153 @@
+import { useEffect, useRef, type RefObject } from "react";
+import { useAuth } from "@/lib/auth";
+import { isAssTrack, isImageSubTrack } from "@/lib/player/sub-format";
+import { clearImportedSubs } from "@/lib/player/imported-subs";
+import { readPlayerVolume } from "@/lib/player-volume";
+import { setPlayerActions } from "@/lib/player-actions";
+import type { PlayerBridge, PlayerSnapshot } from "@/lib/player/bridge";
+import { useSettings } from "@/lib/settings";
+import { isLocalEngineUrl } from "@/lib/stremio-server";
+import { useSimklScrobble } from "@/lib/simkl/scrobble-hook";
+import { useTraktScrobble } from "@/lib/trakt/scrobble-hook";
+import { cancelTorrentRemoval, scheduleTorrentRemoval, torrentEngineRemove } from "@/lib/torrent/local-engine";
+import type { PlayerSrc } from "@/lib/view";
+import { useExitSnapshot } from "./use-exit-snapshot";
+import { usePowerInhibit } from "./use-power-inhibit";
+import { useResumeAutosave } from "./use-resume-autosave";
+import { useStremioSync } from "./use-stremio-sync";
+import { useSubDrop } from "./use-sub-drop";
+import { useSubStyleApply } from "./use-sub-style-apply";
+import { useTrackAutoload } from "./use-track-autoload";
+import { useTrickplay } from "./use-trickplay";
+import { useVideoDownload } from "./use-video-download";
+import { useWebviewMemory } from "./use-webview-memory";
+
+export function usePlayerMedia(params: {
+  src: PlayerSrc;
+  snap: PlayerSnapshot;
+  engine: "html5" | "mpv";
+  settings: ReturnType<typeof useSettings>["settings"];
+  authKey: ReturnType<typeof useAuth>["authKey"];
+  bridgeRef: RefObject<PlayerBridge | null>;
+  bridgeReady: boolean;
+  bridgeKey: string | number;
+  videoMountRef: RefObject<HTMLDivElement | null>;
+  toggleFullscreen: () => void;
+  castActiveRef: RefObject<boolean>;
+  season: number | undefined;
+  episode: number | undefined;
+}) {
+  const {
+    src,
+    snap,
+    engine,
+    settings,
+    authKey,
+    bridgeRef,
+    bridgeReady,
+    bridgeKey,
+    videoMountRef,
+    toggleFullscreen,
+    castActiveRef,
+    season,
+    episode,
+  } = params;
+
+  useWebviewMemory(engine === "mpv");
+  const prevEngineHashRef = useRef<string | null>(null);
+  useEffect(() => {
+    const hash = isLocalEngineUrl(src.url) ? src.streamRef?.infoHash ?? null : null;
+    const prev = prevEngineHashRef.current;
+    if (prev && prev !== hash) {
+      cancelTorrentRemoval(prev);
+      void torrentEngineRemove(prev, false);
+    }
+    if (hash) cancelTorrentRemoval(hash);
+    prevEngineHashRef.current = hash;
+    return () => {
+      if (hash) scheduleTorrentRemoval(hash, true);
+    };
+  }, [src.url, src.streamRef?.infoHash]);
+
+  const volumeRestoredRef = useRef(false);
+  useEffect(() => {
+    if (!bridgeReady) {
+      volumeRestoredRef.current = false;
+      return;
+    }
+    if (volumeRestoredRef.current) return;
+    if (snap.status !== "playing" && snap.status !== "paused") return;
+    const b = bridgeRef.current;
+    if (!b) return;
+    const saved = readPlayerVolume();
+    b.setVolume(saved.volume);
+    b.setMuted(saved.muted);
+    volumeRestoredRef.current = true;
+  }, [bridgeReady, bridgeKey, snap.status]);
+
+  const { resolvedImdbId, resolvedImdbVerified, resolutionSettled } = useTrackAutoload({
+    bridgeRef,
+    src,
+    snap,
+    engine,
+    settings,
+    authKey,
+  });
+
+  useTrickplay({ src, enabled: settings.seekPreviewEnabled });
+  const subEmbed = engine === "mpv" && settings.playerMpvEmbed;
+  const selectedSubTrack = snap.subtitleTracks.find((t) => t.selected) ?? null;
+  const subAssNative = subEmbed && isAssTrack(selectedSubTrack);
+  const subNativeRender = subAssNative || (subEmbed && isImageSubTrack(selectedSubTrack));
+  useSubStyleApply({ engine, settings, subAssNative, bridgeReady, bridgeKey });
+  useEffect(() => {
+    if (!subEmbed) return;
+    bridgeRef.current?.setSubVisible(subNativeRender);
+  }, [subEmbed, subNativeRender, selectedSubTrack?.id]);
+  useEffect(() => {
+    clearImportedSubs();
+  }, [src.meta.id]);
+
+  const { captureExitSnapshot } = useExitSnapshot({
+    src,
+    engine,
+    status: snap.status,
+    durationSec: snap.durationSec,
+    videoMountRef,
+    resolvedImdbId,
+    resolvedImdbVerified,
+    seekPreviewEnabled: settings.seekPreviewEnabled,
+  });
+
+  useTraktScrobble({ src, snap });
+  useSimklScrobble({ src, snap });
+  const download = useVideoDownload({ url: src.url, meta: src.meta, episode: src.episode });
+
+  useEffect(() => {
+    setPlayerActions({
+      download: download.start,
+      toggleFullscreen,
+      canDownload: !!src.url,
+    });
+    return () => setPlayerActions(null);
+  }, [download.start, toggleFullscreen, src.url]);
+
+  useResumeAutosave({ src, snap, season, episode });
+  useStremioSync({ src, snap, authKey, resolvedImdbId, resolvedImdbVerified, resolutionSettled, castActiveRef });
+  usePowerInhibit(snap);
+  const subDropToast = useSubDrop(bridgeRef, src.meta.id);
+
+  useEffect(() => {
+    const name = src.meta.name ?? "";
+    const mediaTitle = src.episode
+      ? `${name} · S${src.episode.season}E${src.episode.episode}${src.episode.name ? ` · ${src.episode.name}` : ""}`
+      : name;
+    if (!mediaTitle) return;
+    bridgeRef.current?.setMediaInfo?.({
+      title: mediaTitle,
+      artwork: src.meta.poster ?? undefined,
+    });
+  }, [engine, src.url, src.meta.name, src.meta.poster, src.episode, snap.durationSec]);
+
+  return { resolvedImdbId, subAssNative, captureExitSnapshot, download, subDropToast };
+}

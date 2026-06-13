@@ -1,8 +1,7 @@
-import { Boxes, ChevronDown, Filter, Gauge, Languages, Loader2, MousePointerClick, X, Zap } from "lucide-react";
+import { Filter, Languages, MousePointerClick, X, Zap } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { AddonLogo, resolveAddonLogo } from "@/components/addon-logo";
-import { FlagStack } from "@/components/flag";
-import { FormatBadge, streamBadges, type BadgeKind } from "@/components/format-badge";
+import { resolveAddonLogo } from "@/components/addon-logo";
+import { HostSourceBanner } from "@/components/host-source-banner";
 import { Tooltip } from "./transport/tooltip";
 import { fetchInstalledAddons } from "@/lib/addon-store";
 import { userAddons, type Addon } from "@/lib/addons";
@@ -10,69 +9,20 @@ import { useAuth } from "@/lib/auth";
 import { peekPickerCache, subscribePickerCache } from "@/lib/picker-cache";
 import { useSettings } from "@/lib/settings";
 import type { ScoredStream } from "@/lib/streams/types";
+import type { SourceDescriptor } from "@/lib/together/protocol";
+import { buildMatchScores, matchBadge } from "@/lib/together/source-match";
 import { addonInstanceKey, buildAddonOptions } from "@/views/play-picker/picker-utils";
 import type { Meta } from "@/lib/cinemeta";
 import type { PlayEpisode } from "@/lib/view";
+import { AddonFilterMenu, QualityFilterMenu } from "./stream-switcher/filter-dropdowns";
+import { abbreviateLanguages, normalizeLangCode, streamMatchesLangs } from "./stream-switcher/lang-utils";
+import { QUALITY_BADGE, QUALITY_LABEL, QUALITY_ORDER, qualityKey, type QualityKey } from "./stream-switcher/quality";
+import { streamKey, SwitcherRow } from "./stream-switcher/switcher-row";
 
 function isHiddenAddon(addonId: string, addonName?: string): boolean {
   const id = (addonId || "").toLowerCase();
   const name = (addonName || "").toLowerCase();
   return id.includes("watchhub") || name.includes("watchhub");
-}
-
-type QualityKey =
-  | "all"
-  | "4K"
-  | "1080p"
-  | "720p"
-  | "480p"
-  | "SD"
-  | "telecine"
-  | "telesync"
-  | "cam";
-
-const QUALITY_ORDER: Exclude<QualityKey, "all">[] = [
-  "4K",
-  "1080p",
-  "720p",
-  "480p",
-  "SD",
-  "telecine",
-  "telesync",
-  "cam",
-];
-
-const QUALITY_LABEL: Record<Exclude<QualityKey, "all">, string> = {
-  "4K": "4K UHD",
-  "1080p": "1080p",
-  "720p": "720p",
-  "480p": "480p",
-  SD: "SD",
-  telecine: "Telecine",
-  telesync: "Telesync",
-  cam: "CAM",
-};
-
-const QUALITY_BADGE: Record<Exclude<QualityKey, "all">, BadgeKind> = {
-  "4K": "4k-uhd",
-  "1080p": "1080p",
-  "720p": "720p",
-  "480p": "480p",
-  SD: "sd",
-  telecine: "telecine",
-  telesync: "telesync",
-  cam: "cam",
-};
-
-function qualityKey(stream: ScoredStream): Exclude<QualityKey, "all"> {
-  if (stream.source === "CAM") return "cam";
-  if (stream.source === "TS" || stream.source === "HDTS") return "telesync";
-  if (stream.source === "TC") return "telecine";
-  if (stream.resolution === "4K") return "4K";
-  if (stream.resolution === "1080p") return "1080p";
-  if (stream.resolution === "720p") return "720p";
-  if (stream.resolution === "480p") return "480p";
-  return "SD";
 }
 
 export function StreamSwitcher({
@@ -84,6 +34,7 @@ export function StreamSwitcher({
   debridSlugs,
   meta,
   episode,
+  hostSource,
 }: {
   open: boolean;
   onClose: () => void;
@@ -93,6 +44,7 @@ export function StreamSwitcher({
   debridSlugs: string[];
   meta: Meta;
   episode?: PlayEpisode;
+  hostSource?: SourceDescriptor | null;
 }) {
   const { authKey } = useAuth();
   const { settings } = useSettings();
@@ -225,6 +177,10 @@ export function StreamSwitcher({
       setAddonFilter("all");
     }
   }, [addonOptions, addonFilter]);
+  const matchScores = useMemo(
+    () => (hostSource ? buildMatchScores(allStreams, hostSource) : null),
+    [allStreams, hostSource],
+  );
   const addonFilteredList = useMemo(() => {
     let list: ScoredStream[];
     if (addonFilter !== "all") {
@@ -237,13 +193,17 @@ export function StreamSwitcher({
     }
     if (addonFilter === "all") {
       list = list.slice().sort((a, b) => {
+        if (matchScores) {
+          const dm = (matchScores.get(b) ?? 0) - (matchScores.get(a) ?? 0);
+          if (dm !== 0) return dm;
+        }
         const ar = addonRank.get(a.addonId) ?? 9999;
         const br = addonRank.get(b.addonId) ?? 9999;
         return ar - br;
       });
     }
     return list;
-  }, [baseList, addonFilter, qualityFilter, addonRank]);
+  }, [baseList, addonFilter, qualityFilter, addonRank, matchScores]);
   const matchedStreams = useMemo(
     () =>
       preferredLangs.length === 0
@@ -314,135 +274,26 @@ export function StreamSwitcher({
               </button>
             )}
             {addonOptions.length > 1 && (
-              <div className="relative">
-                <button
-                  onClick={() => setAddonMenuOpen((v) => !v)}
-                  className={`flex h-9 items-center gap-2 rounded-md px-3.5 text-[11.5px] font-semibold tracking-[0.04em] transition-colors ${
-                    addonFilter !== "all"
-                      ? "bg-elevated text-ink ring-1 ring-edge hover:bg-raised"
-                      : "bg-raised text-ink-muted hover:bg-elevated hover:text-ink"
-                  }`}
-                  aria-haspopup="listbox"
-                  aria-expanded={addonMenuOpen}
-                >
-                  <Boxes size={13} strokeWidth={2.2} />
-                  <span className="max-w-[140px] truncate">{activeAddonName}</span>
-                  <ChevronDown
-                    size={12}
-                    strokeWidth={2.4}
-                    className={`transition-transform duration-200 ${addonMenuOpen ? "rotate-180" : ""}`}
-                  />
-                </button>
-                {addonMenuOpen && (
-                  <div className="absolute right-0 top-full z-20 mt-1.5 max-h-72 w-64 overflow-y-auto rounded-md border border-edge bg-elevated p-1.5 shadow-[0_18px_44px_-14px_rgba(0,0,0,0.7)]">
-                    <button
-                      onClick={() => {
-                        setAddonFilter("all");
-                        setAddonMenuOpen(false);
-                      }}
-                      className={`flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-[12.5px] transition-colors hover:bg-raised ${
-                        addonFilter === "all" ? "text-ink font-semibold" : "text-ink-muted"
-                      }`}
-                    >
-                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-raised text-ink-subtle">
-                        <Boxes size={14} strokeWidth={2.2} />
-                      </span>
-                      <span className="flex-1 truncate">All addons</span>
-                      <span className="text-[11px] tabular-nums text-ink-subtle">{allStreams.length}</span>
-                    </button>
-                    {addonOptions.map((opt) => (
-                      <button
-                        key={opt.id}
-                        onClick={() => {
-                          setAddonFilter(opt.id);
-                          setAddonMenuOpen(false);
-                        }}
-                        className={`flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-[12.5px] transition-colors hover:bg-raised ${
-                          addonFilter === opt.id ? "text-ink font-semibold" : "text-ink-muted"
-                        }`}
-                      >
-                        <span className="shrink-0">
-                          <AddonLogo
-                            addonId={opt.id}
-                            addonName={opt.name}
-                            manifestLogo={addonLogos.get(opt.id) ?? null}
-                            size="md"
-                          />
-                        </span>
-                        <span className="flex-1 truncate">{opt.name}</span>
-                        <span className="text-[11px] tabular-nums text-ink-subtle">{opt.count}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <AddonFilterMenu
+                addonFilter={addonFilter}
+                setAddonFilter={setAddonFilter}
+                open={addonMenuOpen}
+                setOpen={setAddonMenuOpen}
+                addonOptions={addonOptions}
+                addonLogos={addonLogos}
+                totalCount={allStreams.length}
+                activeAddonName={activeAddonName}
+              />
             )}
             {qualityOptions.length > 1 && (
-              <div className="relative">
-                <button
-                  onClick={() => setQualityMenuOpen((v) => !v)}
-                  className={`flex h-9 items-center gap-2 rounded-md px-3.5 text-[11.5px] font-semibold tracking-[0.04em] transition-colors ${
-                    qualityFilter !== "all"
-                      ? "bg-elevated text-ink ring-1 ring-edge hover:bg-raised"
-                      : "bg-raised text-ink-muted hover:bg-elevated hover:text-ink"
-                  }`}
-                  aria-haspopup="listbox"
-                  aria-expanded={qualityMenuOpen}
-                >
-                  {qualityFilter === "all" ? (
-                    <Gauge size={13} strokeWidth={2.2} />
-                  ) : (
-                    <FormatBadge kind={QUALITY_BADGE[qualityFilter as Exclude<QualityKey, "all">]} size="sm" />
-                  )}
-                  <span className="max-w-[120px] truncate">
-                    {qualityFilter === "all"
-                      ? "Any quality"
-                      : QUALITY_LABEL[qualityFilter as Exclude<QualityKey, "all">]}
-                  </span>
-                  <ChevronDown
-                    size={12}
-                    strokeWidth={2.4}
-                    className={`transition-transform duration-200 ${qualityMenuOpen ? "rotate-180" : ""}`}
-                  />
-                </button>
-                {qualityMenuOpen && (
-                  <div className="absolute right-0 top-full z-20 mt-1.5 w-56 overflow-y-auto rounded-md border border-edge bg-elevated p-1.5 shadow-[0_18px_44px_-14px_rgba(0,0,0,0.7)]">
-                    <button
-                      onClick={() => {
-                        setQualityFilter("all");
-                        setQualityMenuOpen(false);
-                      }}
-                      className={`flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-[12.5px] transition-colors hover:bg-raised ${
-                        qualityFilter === "all" ? "text-ink font-semibold" : "text-ink-muted"
-                      }`}
-                    >
-                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-raised text-ink-subtle">
-                        <Gauge size={14} strokeWidth={2.2} />
-                      </span>
-                      <span className="flex-1 truncate">Any quality</span>
-                      <span className="text-[11px] tabular-nums text-ink-subtle">{allStreams.length}</span>
-                    </button>
-                    {qualityOptions.map((opt) => (
-                      <button
-                        key={opt.id}
-                        onClick={() => {
-                          setQualityFilter(opt.id);
-                          setQualityMenuOpen(false);
-                        }}
-                        className={`flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-[12.5px] transition-colors hover:bg-raised ${
-                          qualityFilter === opt.id ? "text-ink font-semibold" : "text-ink-muted"
-                        }`}
-                      >
-                        <span className="flex h-7 shrink-0 items-center justify-center">
-                          <FormatBadge kind={opt.badge} size="sm" />
-                        </span>
-                        <span className="flex-1 truncate">{opt.name}</span>
-                        <span className="text-[11px] tabular-nums text-ink-subtle">{opt.count}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <QualityFilterMenu
+                qualityFilter={qualityFilter}
+                setQualityFilter={setQualityFilter}
+                open={qualityMenuOpen}
+                setOpen={setQualityMenuOpen}
+                qualityOptions={qualityOptions}
+                totalCount={allStreams.length}
+              />
             )}
             {preferredLangs.length > 0 && hiddenCount > 0 && (
               <button
@@ -470,6 +321,8 @@ export function StreamSwitcher({
           </div>
         </header>
 
+        {hostSource && <HostSourceBanner source={hostSource} compact />}
+
         {!cache || list.length === 0 ? (
           <div className="flex flex-1 items-center justify-center px-8 py-12 text-center text-[13.5px] text-ink-muted">
             Sources are not cached for this title. Open the picker page to refresh.
@@ -485,6 +338,7 @@ export function StreamSwitcher({
                 resolving={resolvingKey === streamKey(s)}
                 divider={i > 0}
                 isCurrent={s.url != null && s.url === currentUrl}
+                match={matchBadge(matchScores?.get(s))}
               />
             ))}
             {list.length > showCount && (
@@ -520,163 +374,3 @@ export function StreamSwitcher({
   );
 }
 
-function streamKey(s: ScoredStream): string {
-  return s.infoHash ?? s.url ?? `${s.addonId}:${s.title ?? ""}`;
-}
-
-const FLAG_EMOJI_RX = /[\u{1F1E6}-\u{1F1FF}]{2}/gu;
-function stripFlagEmoji(s: string): string {
-  return s.replace(FLAG_EMOJI_RX, "").replace(/\s{2,}/g, " ").trim();
-}
-
-function SwitcherRow({
-  stream,
-  addonLogo,
-  onPick,
-  resolving,
-  divider,
-  isCurrent,
-}: {
-  stream: ScoredStream;
-  addonLogo: string | null;
-  onPick: () => void;
-  resolving: boolean;
-  divider: boolean;
-  isCurrent: boolean;
-}) {
-  const addonName = stream.addonName ?? "Source";
-  const headline = stripFlagEmoji(stream.name?.trim() || addonName) || addonName;
-  const description = stripFlagEmoji(stream.title?.trim() || stream.description?.trim() || "");
-  const cornerBadges = streamBadges(stream);
-  const langs = stream.audioLanguages ?? [];
-  const filterReason = stream.reasons?.find((r) => r.signal.startsWith("filtered:"))?.signal.slice(9);
-
-  return (
-    <li className={divider ? "border-t border-edge-soft/60" : ""}>
-      <button
-        onClick={onPick}
-        disabled={resolving || isCurrent}
-        className={`group flex w-full items-center gap-3.5 px-5 py-3 text-left transition-colors ${
-          isCurrent
-            ? "cursor-default bg-canvas/40"
-            : "hover:bg-canvas/55 disabled:cursor-wait disabled:opacity-60"
-        }`}
-      >
-        <AddonLogo
-          addonId={stream.addonId}
-          addonName={addonName}
-          manifestLogo={addonLogo}
-          size="xl"
-        />
-        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-          <p className="whitespace-pre-line text-[14px] font-semibold leading-snug text-ink">
-            {headline}
-          </p>
-          {description && (
-            <p className="whitespace-pre-line text-[12.5px] leading-snug text-ink-muted">
-              {description}
-            </p>
-          )}
-        </div>
-        <div className="flex shrink-0 items-center gap-2">
-          {filterReason && (
-            <span
-              title={`Hidden by filter: ${filterReason}`}
-              className="rounded-md bg-danger/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-danger ring-1 ring-danger/30"
-            >
-              Filtered
-            </span>
-          )}
-          {langs.length > 0 && !isCurrent && (
-            <FlagStack languages={langs} size="sm" max={3} />
-          )}
-          {cornerBadges.length > 0 && !isCurrent && (
-            <span className="flex items-center gap-1">
-              {cornerBadges.map((b) => (
-                <FormatBadge key={b} kind={b} size="sm" />
-              ))}
-            </span>
-          )}
-          {isCurrent && (
-            <span className="inline-flex items-center gap-1.5 rounded-md bg-ink/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-ink ring-1 ring-edge">
-              <Zap size={9} fill="currentColor" strokeWidth={0} />
-              Now Playing
-            </span>
-          )}
-          {resolving && <Loader2 size={13} className="animate-spin text-ink-muted" />}
-        </div>
-      </button>
-    </li>
-  );
-}
-
-function abbreviateLanguages(langs: string[]): string {
-  if (langs.length === 0) return "";
-  const seen = new Set<string>();
-  const codes: string[] = [];
-  for (const l of langs) {
-    const code = langCode(l);
-    if (seen.has(code)) continue;
-    seen.add(code);
-    codes.push(code);
-  }
-  return codes.join(", ");
-}
-
-function normalizeLangCode(s: string): string {
-  const lower = s.trim().toLowerCase();
-  if (lower === "jp") return "ja";
-  const nameToCode: Record<string, string> = {
-    english: "en", portuguese: "pt", spanish: "es", french: "fr",
-    german: "de", italian: "it", japanese: "ja", korean: "ko",
-    chinese: "zh", russian: "ru", hindi: "hi", arabic: "ar",
-    dutch: "nl", polish: "pl", turkish: "tr", swedish: "sv",
-    norwegian: "no", danish: "da", finnish: "fi", czech: "cs",
-    hungarian: "hu", romanian: "ro", hebrew: "he", thai: "th",
-    vietnamese: "vi", ukrainian: "uk",
-  };
-  if (nameToCode[lower]) return nameToCode[lower];
-  return lower.slice(0, 2);
-}
-
-function langCode(name: string): string {
-  const map: Record<string, string> = {
-    English: "EN",
-    Portuguese: "PT",
-    Spanish: "ES",
-    French: "FR",
-    German: "DE",
-    Italian: "IT",
-    Japanese: "JA",
-    Korean: "KO",
-    Chinese: "ZH",
-    Russian: "RU",
-    Hindi: "HI",
-    Arabic: "AR",
-    Dutch: "NL",
-    Polish: "PL",
-    Turkish: "TR",
-    Swedish: "SV",
-    Norwegian: "NO",
-    Danish: "DA",
-    Finnish: "FI",
-    Czech: "CS",
-    Hungarian: "HU",
-    Romanian: "RO",
-    Hebrew: "HE",
-    Thai: "TH",
-    Vietnamese: "VI",
-    Ukrainian: "UK",
-  };
-  return map[name] ?? name.slice(0, 2).toUpperCase();
-}
-
-function streamMatchesLangs(s: ScoredStream, prefs: string[]): boolean {
-  if (s.audioLanguages.length === 0) return true;
-  if (s.audioLanguages.includes("Multi")) return true;
-  return s.audioLanguages.some((l) =>
-    prefs.some(
-      (p) => l.toLowerCase() === p.toLowerCase() || l.toLowerCase().startsWith(p.toLowerCase()),
-    ),
-  );
-}

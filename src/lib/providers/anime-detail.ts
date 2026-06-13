@@ -136,18 +136,16 @@ async function buildFranchise(
     isUpcoming: isAnimeUpcoming(rootAnime, now),
   });
 
-  let queue: number[] = [rootId];
-  const visited = new Set<number>();
+  const visited = new Set<number>([rootId]);
+  let relatedWave: Promise<{ id: number; related: Awaited<ReturnType<typeof kitsuRelated>> }[]> =
+    Promise.all([kitsuRelated(rootId)]).then(([related]) => [{ id: rootId, related }]);
   let depth = 0;
 
-  while (queue.length > 0 && depth < FRANCHISE_MAX_DEPTH) {
-    const batch = queue;
-    queue = [];
-    const relatedLists = await Promise.all(batch.map((id) => kitsuRelated(id)));
+  while (depth < FRANCHISE_MAX_DEPTH) {
+    const relatedLists = await relatedWave;
     const newIds: number[] = [];
-    for (let i = 0; i < batch.length; i++) {
-      visited.add(batch[i]);
-      for (const r of relatedLists[i]) {
+    for (const { related } of relatedLists) {
+      for (const r of related) {
         if (!FRANCHISE_ROLES.has(r.role.toLowerCase())) continue;
         const m = parseKitsuId(r.meta.id);
         if (!m || items.has(m) || visited.has(m)) continue;
@@ -155,22 +153,28 @@ async function buildFranchise(
       }
     }
     if (newIds.length === 0) break;
+    for (const id of newIds) visited.add(id);
+    const nextWave = Promise.all(
+      newIds.map((id) => kitsuRelated(id).then((related) => ({ id, related }))),
+    );
     const animes = await Promise.all(newIds.map((id) => kitsuAnime(id)));
+    const alive = new Set<number>();
     for (let i = 0; i < newIds.length; i++) {
       const id = newIds[i];
       const a = animes[i];
-      const meta = a ? makeFranchiseMeta(id, a) : null;
-      if (!meta) continue;
+      if (!a) continue;
       items.set(id, {
-        meta,
-        year: parseInt(a!.year ?? "", 10) || 0,
-        startDate: a!.startDate,
-        episodeCount: a!.episodeCount,
+        meta: makeFranchiseMeta(id, a),
+        year: parseInt(a.year ?? "", 10) || 0,
+        startDate: a.startDate,
+        episodeCount: a.episodeCount,
         isCurrent: false,
-        isUpcoming: isAnimeUpcoming(a!, now),
+        isUpcoming: isAnimeUpcoming(a, now),
       });
-      queue.push(id);
+      alive.add(id);
     }
+    if (alive.size === 0) break;
+    relatedWave = nextWave.then((lists) => lists.filter((l) => alive.has(l.id)));
     depth++;
   }
 
@@ -233,6 +237,8 @@ export async function animeDetails(
   ]);
   if (!anime) return null;
 
+  const franchisePromise = buildFranchise(kitsuId, anime);
+
   const slugify = (s: string) =>
     s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   const effectiveSlugs =
@@ -286,14 +292,14 @@ export async function animeDetails(
       }
       if (az.overview && !ep.synopsis) ep.synopsis = az.overview;
       if (az.image && !ep.thumbnail) ep.thumbnail = az.image;
-      if (az.airDate && !ep.airdate) ep.airdate = az.airDate;
+      if (az.airDate) ep.airdate = az.airDate;
       if (az.runtime && !ep.length) ep.length = az.runtime;
       if (az.filler) ep.filler = true;
       if (az.absoluteEpisodeNumber) ep.absoluteNumber = az.absoluteEpisodeNumber;
-      if (azImdb && az.seasonNumber != null && az.seasonNumber > 0 && az.episodeNumber != null) {
-        ep.imdbId = azImdb;
-        ep.imdbSeason = az.seasonNumber;
-        ep.imdbEpisode = az.episodeNumber;
+      if (az.seasonNumber != null && az.seasonNumber > 0 && az.episodeNumber != null) {
+        if (azImdb) ep.imdbId = azImdb;
+        if (ep.imdbSeason == null) ep.imdbSeason = az.seasonNumber;
+        if (ep.imdbEpisode == null) ep.imdbEpisode = az.episodeNumber;
       }
     }
   }
@@ -310,7 +316,7 @@ export async function animeDetails(
     }));
   let cast: CastEntry[] = toCast(characters);
 
-  const franchise = await buildFranchise(kitsuId, anime);
+  const franchise = await franchisePromise;
   const castKeys = [meta.id, `kitsu:${kitsuId}`, ...franchise.map((f) => f.meta.id)];
 
   if (cast.length > 0) {
@@ -382,9 +388,14 @@ export async function animeDetails(
   let poster = anime.poster;
   let backdrops: string[] = backdrop ? [backdrop] : [];
 
+  const rootMeta = kind === "tv" && franchise.length > 0 ? franchise[0].meta : null;
+  const lookupTitle = rootMeta?.name ?? anime.title;
+  const rootYear = rootMeta ? parseInt(rootMeta.releaseInfo ?? "", 10) : NaN;
+  const lookupYear = Number.isFinite(rootYear) ? String(rootYear) : anime.year;
+
   const [tmdbHit, tvdbId] = await Promise.all([
     settings.tmdbKey
-      ? tmdbAnimeLogo(settings.tmdbKey, anime.title, anime.year, kind).catch(() => null)
+      ? tmdbAnimeLogo(settings.tmdbKey, lookupTitle, lookupYear, kind).catch(() => null)
       : Promise.resolve(null),
     settings.fanartKey && kind === "tv"
       ? kitsuToTvdb(kitsuId).catch(() => null)
@@ -399,44 +410,43 @@ export async function animeDetails(
     }
   }
 
-  if (settings.fanartKey) {
-    if (kind === "movie" && tmdbHit?.tmdbId) {
-      const fa = await fanartMovie(settings.fanartKey, tmdbHit.tmdbId).catch(() => null);
-      if (fa) {
-        if (fa.logo) logo = fa.logo;
-        if (fa.backdrops.length > 0) {
-          backdrop = fa.backdrops[0];
-          backdrops = fa.backdrops;
-        }
-        if (fa.poster) poster = fa.poster;
-      }
-    } else if (kind === "tv" && tvdbId) {
-      const fa = await fanartTv(settings.fanartKey, tvdbId).catch(() => null);
-      if (fa) {
-        if (fa.logo) logo = fa.logo;
-        if (fa.backdrops.length > 0) {
-          backdrop = fa.backdrops[0];
-          backdrops = fa.backdrops;
-        }
-        if (fa.poster) poster = fa.poster;
-      }
+  const fanartPromise =
+    settings.fanartKey && kind === "movie" && tmdbHit?.tmdbId
+      ? fanartMovie(settings.fanartKey, tmdbHit.tmdbId).catch(() => null)
+      : settings.fanartKey && kind === "tv" && tvdbId
+        ? fanartTv(settings.fanartKey, tvdbId).catch(() => null)
+        : Promise.resolve(null);
+  const tmdbFullPromise =
+    settings.tmdbKey && tmdbHit?.tmdbId
+      ? tmdbDetails(settings.tmdbKey, {
+          id: `tmdb:${kind === "movie" ? "movie" : "tv"}:${tmdbHit.tmdbId}`,
+          type: kind === "movie" ? "movie" : "series",
+          name: anime.title,
+        } as Meta).catch(() => null)
+      : Promise.resolve(null);
+  const [fa, fullRaw] = await Promise.all([fanartPromise, tmdbFullPromise]);
+
+  if (fa) {
+    if (fa.logo) logo = fa.logo;
+    if (fa.backdrops.length > 0) {
+      backdrop = fa.backdrops[0];
+      backdrops = fa.backdrops;
     }
+    if (fa.poster) poster = fa.poster;
   }
 
   let tmdbFull: TmdbDetail | null = null;
-  if (settings.tmdbKey && tmdbHit?.tmdbId) {
-    const tmdbMeta = {
-      id: `tmdb:${kind === "movie" ? "movie" : "tv"}:${tmdbHit.tmdbId}`,
-      type: kind === "movie" ? "movie" : "series",
-      name: anime.title,
-    } as Meta;
-    const full = await tmdbDetails(settings.tmdbKey, tmdbMeta).catch(() => null);
-    if (full) {
-      const ay = Number(anime.year);
-      const ty = Number(full.year);
-      if (!Number.isFinite(ay) || !Number.isFinite(ty) || Math.abs(ty - ay) <= 1) {
-        tmdbFull = full;
-      }
+  if (fullRaw) {
+    const ay = Number(lookupYear);
+    const ty = Number(fullRaw.year);
+    if (!Number.isFinite(ay) || !Number.isFinite(ty) || Math.abs(ty - ay) <= 1) {
+      tmdbFull = fullRaw;
+    }
+  }
+
+  if (logo) {
+    for (const f of franchise) {
+      if (!f.meta.logo) f.meta.logo = logo;
     }
   }
 

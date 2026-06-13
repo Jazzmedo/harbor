@@ -6,6 +6,7 @@ import {
   withDebridKeys,
   type Addon,
 } from "@/lib/addons";
+import { applyOrderToItems, loadDisplayOrder } from "@/lib/addons-store/reorder";
 import type { useSettings } from "@/lib/settings";
 
 type Settings = ReturnType<typeof useSettings>["settings"];
@@ -32,11 +33,15 @@ export function useAddons(authKey: string | null, settings: Settings): {
       if (cancelled) return;
       const merged: Addon[] = [];
       const seen = new Set<string>();
-      for (const a of [...installed, ...stremioAddons]) {
+      for (const a of [...stremioAddons, ...installed]) {
         if (seen.has(a.transportUrl)) continue;
         seen.add(a.transportUrl);
         merged.push(a);
       }
+      const savedOrder = loadDisplayOrder();
+      const ordered = savedOrder.length > 0 ? applyOrderToItems(merged, savedOrder) : merged;
+      merged.length = 0;
+      merged.push(...ordered);
       const userStreamCount = merged.filter((a) =>
         (a.manifest.resources ?? []).some((r) =>
           typeof r === "string" ? r === "stream" : r.name === "stream",

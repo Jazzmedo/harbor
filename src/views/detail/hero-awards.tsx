@@ -30,6 +30,7 @@ export function HeroAwardsCorner({
   return (
     <button
       type="button"
+      data-hero-awards
       onClick={(e) => {
         e.stopPropagation();
         document.getElementById("awards-section")?.scrollIntoView({ behavior: "smooth", block: "start" });

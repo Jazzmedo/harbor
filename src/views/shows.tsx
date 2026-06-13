@@ -9,10 +9,12 @@ import { TopRankCard } from "@/components/top-rank-card";
 import { useAuth } from "@/lib/auth";
 import { topSeries, type Meta } from "@/lib/cinemeta";
 import { TV_GENRES } from "@/lib/feed/tags";
+import { publishResumeStates } from "@/lib/hover-preview/store";
+import { listPager } from "@/lib/list-pager";
 import { tmdbDiscover, tmdbSeriesRow, tmdbTrending } from "@/lib/providers/tmdb";
 import { useSettings } from "@/lib/settings";
 import { library, type LibraryItem } from "@/lib/stremio";
-import { useScrollMemory } from "@/lib/view";
+import { useScrollMemory, useView } from "@/lib/view";
 import { buildShowHero, bucketCopy } from "./shows/hero-curation";
 
 const HERO_POOL_TARGET = 6;
@@ -37,6 +39,7 @@ type RowSpec = {
 export function Shows({ active = true }: { active?: boolean }) {
   const { settings } = useSettings();
   const { authKey } = useAuth();
+  const { openGrid } = useView();
   const [hero, setHero] = useState<Meta[]>([]);
   const [rows, setRows] = useState<ShowRow[]>([]);
   const [items, setItems] = useState<LibraryItem[]>([]);
@@ -116,6 +119,7 @@ export function Shows({ active = true }: { active?: boolean }) {
             metas: top.slice(0, 30),
             page: 1,
             hasMore: false,
+            fetcher: listPager(top),
           },
         ];
         for (let i = 0; i < genreList.length; i++) {
@@ -127,6 +131,7 @@ export function Shows({ active = true }: { active?: boolean }) {
             metas: list.slice(0, 30),
             page: 1,
             hasMore: false,
+            fetcher: listPager(list),
           });
         }
         setRows(built);
@@ -147,10 +152,18 @@ export function Shows({ active = true }: { active?: boolean }) {
             i.state &&
             i.state.timeOffset > 0,
         )
-        .sort((a, b) => Date.parse(b._mtime) - Date.parse(a._mtime))
+        .sort(
+          (a, b) =>
+            Date.parse(b.state?.lastWatched ?? b._mtime) -
+            Date.parse(a.state?.lastWatched ?? a._mtime),
+        )
         .slice(0, 16),
     [items],
   );
+
+  useEffect(() => {
+    publishResumeStates(continueWatching);
+  }, [continueWatching]);
 
   const loadMore = useCallback((rowKey: string) => {
     if (loadingRef.current.has(rowKey)) return;
@@ -216,7 +229,23 @@ export function Shows({ active = true }: { active?: boolean }) {
             </Row>
           )}
           {top10.length >= 10 && (
-            <Row title="Top 10 Series Today" min={216} shape="rank" scrollKey="shows:top10">
+            <Row
+              title="Top 10 Series Today"
+              min={216}
+              shape="rank"
+              scrollKey="shows:top10"
+              onViewAll={(() => {
+                const trending = rows.find((r) => r.key === "trending");
+                return trending?.fetcher
+                  ? () =>
+                      openGrid({
+                        title: trending.title,
+                        fetcher: trending.fetcher!,
+                        initial: trending.metas,
+                      })
+                  : undefined;
+              })()}
+            >
               {top10.slice(0, 10).map((m, i) => (
                 <TopRankCard key={m.id} meta={m} rank={i + 1} />
               ))}
@@ -230,6 +259,11 @@ export function Shows({ active = true }: { active?: boolean }) {
               shape="portrait"
               scrollKey={`shows:${row.key}`}
               onEndReached={row.hasMore ? () => loadMore(row.key) : undefined}
+              onViewAll={
+                row.fetcher
+                  ? () => openGrid({ title: row.title, fetcher: row.fetcher!, initial: row.metas })
+                  : undefined
+              }
             >
               {row.metas.map((m) => (
                 <PickCard key={m.id} meta={m} />

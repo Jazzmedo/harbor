@@ -1,5 +1,6 @@
 import { Check, Loader2, Play, RotateCw, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useSettings } from "@/lib/settings";
 import {
   torrentEngineRestart,
   torrentEngineSelfTest as engineSelfTest,
@@ -25,6 +26,8 @@ function engineState(status: EngineStatus | null): EngineState {
 }
 
 export function LocalEngineSection() {
+  const { settings } = useSettings();
+  const strictRemote = !!settings.remoteStreamServerUrl && settings.remoteStreamServerStrict;
   const [status, setStatus] = useState<EngineStatus | null>(null);
   const [running, setRunning] = useState(false);
   const [restarting, setRestarting] = useState(false);
@@ -110,7 +113,7 @@ export function LocalEngineSection() {
         <button
           type="button"
           onClick={() => void runTest()}
-          disabled={running}
+          disabled={running || strictRemote}
           className="flex h-10 items-center gap-2 rounded-lg bg-ink px-4 text-[13px] font-semibold text-canvas transition-transform hover:scale-[1.02] active:scale-[0.97] disabled:opacity-60 disabled:hover:scale-100"
         >
           {running ? (
@@ -134,6 +137,12 @@ export function LocalEngineSection() {
           {restarting ? "Restarting" : "Restart engine"}
         </button>
       </div>
+
+      {strictRemote && (
+        <p className="text-[12px] leading-relaxed text-accent/85">
+          Self-test is disabled while strict remote streaming is on. It downloads a test torrent over peer-to-peer on this machine.
+        </p>
+      )}
 
       {result && (
         <div className="flex flex-col gap-2.5 rounded-xl border border-edge-soft bg-canvas/40 p-3.5">

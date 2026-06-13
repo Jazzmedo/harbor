@@ -1,6 +1,6 @@
 import { lruSet } from "@/lib/cache";
 import { registerCache } from "@/lib/memory-profiler";
-import { get, IMG } from "./tmdb-client";
+import { get, IMG, tmdbLanguageIso } from "./tmdb-client";
 
 export type LogoEntry = { file_path: string; iso_639_1: string | null; vote_average?: number };
 
@@ -24,8 +24,9 @@ export async function fetchMovieAssets(key: string, metaId: string): Promise<Raw
   const inflight = movieAssetsInflight.get(metaId);
   if (inflight) return inflight;
   const [, kind, id] = match;
+  const iso = tmdbLanguageIso();
   const p = get<RawImages>(key, `${kind}/${id}/images`, {
-    include_image_language: "en,null",
+    include_image_language: iso && iso !== "en" ? `${iso},en,null` : "en,null",
   }).then((data) => {
     movieAssetsInflight.delete(metaId);
     if (data) lruSet(movieAssetsCache, metaId, data, MOVIE_ASSETS_MAX);
@@ -37,8 +38,16 @@ export async function fetchMovieAssets(key: string, metaId: string): Promise<Raw
 
 export const pickLogo = (logos: LogoEntry[]): string | undefined => {
   if (!logos?.length) return undefined;
+  const iso = tmdbLanguageIso();
   const score = (l: LogoEntry) => {
-    const lang = l.iso_639_1 === "en" ? 100 : l.iso_639_1 == null ? 50 : 0;
+    const lang =
+      iso && iso !== "en" && l.iso_639_1 === iso
+        ? 150
+        : l.iso_639_1 === "en"
+          ? 100
+          : l.iso_639_1 == null
+            ? 50
+            : 0;
     const isPng = l.file_path?.toLowerCase().endsWith(".png") ? 5 : 0;
     return lang + isPng + (l.vote_average ?? 0);
   };

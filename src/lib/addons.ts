@@ -114,6 +114,26 @@ export async function setUserAddons(authKey: string, addons: Addon[]): Promise<b
   return result != null;
 }
 
+export async function getUserAddonsRaw(authKey: string): Promise<Addon[] | null> {
+  const result = await call<{ addons: Addon[] }>("addonCollectionGet", {
+    authKey,
+    type: "user",
+    update: false,
+  });
+  if (!result || !Array.isArray(result.addons)) return null;
+  return result.addons;
+}
+
+export async function setUserAddonsRaw(authKey: string, addons: Addon[]): Promise<boolean> {
+  if (addons.length === 0) return false;
+  const result = await call<{ success?: boolean }>("addonCollectionSet", {
+    authKey,
+    type: "user",
+    addons,
+  });
+  return result != null;
+}
+
 const STRIP_WORDS = ["movies", "movie", "series", "shows", "show", "tv shows", "tv"];
 
 export function normalizeName(name: string, type: string): string {

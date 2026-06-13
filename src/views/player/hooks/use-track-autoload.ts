@@ -3,7 +3,7 @@ import type { PlayerBridge, PlayerSnapshot } from "@/lib/player/bridge";
 import { applySubStyle } from "@/lib/player/sub-style";
 import { langScore, pickBestTrack } from "@/lib/subtitles/language";
 import { searchSubtitles } from "@/lib/subtitles/search";
-import { readPlayerPrefs } from "@/lib/player-prefs";
+import { readPlayerPrefs, type PerShowPrefs } from "@/lib/player-prefs";
 import { tmdbImdbId } from "@/lib/providers/tmdb";
 import { userAddons, type Addon } from "@/lib/addons";
 import type { PlayerSrc } from "@/lib/view";
@@ -146,9 +146,24 @@ export function useTrackAutoload(params: {
         const n = perLang.get(k) ?? 0;
         if (n >= PER_LANG_MAX) continue;
         perLang.set(k, n + 1);
-        const blocked = snapRef.current.subtitleTracks.some((t) => t.selected);
+        const blocked = snapRef.current.subtitleTracks.some(
+          (t) => t.selected && langScore(t.lang ?? "", langs) >= 0,
+        );
+        const embeddedPreferred =
+          settings.preferEmbeddedSubs &&
+          snapRef.current.subtitleTracks.some((t) => !t.external);
+        const nativeForced =
+          settings.forcedSubsWhenNativeAudio &&
+          (() => {
+            const a = snapRef.current.audioTracks.find((t) => t.selected);
+            return !!a && langScore(a.lang ?? "", langs) >= 0;
+          })();
         const shouldSelect =
-          !settings.subtitlesOffByDefault && !blocked && !firstAdded;
+          !subsOffFor(readPlayerPrefs(src.meta.id), settings) &&
+          !blocked &&
+          !embeddedPreferred &&
+          !nativeForced &&
+          !firstAdded;
         attempted++;
         const labeled = labelForTrack(r);
         const ok = await b.addSubtitle(r.url, r.lang, labeled, shouldSelect);
@@ -183,7 +198,8 @@ export function useTrackAutoload(params: {
     if (snap.audioTracks.length === 0 && snap.subtitleTracks.length === 0) return;
     autoTrackKeyRef.current = key;
     if (engine === "mpv") void applySubStyle(settings);
-    if (settings.audioNormalize) bridgeRef.current?.setAudioNormalize(true);
+    bridgeRef.current?.setAudioNormalize(settings.audioNormalize);
+    bridgeRef.current?.setAudioProfile?.(settings.audioProfile);
 
     const prefs = readPlayerPrefs(src.meta.id);
     const isAnime =
@@ -205,15 +221,38 @@ export function useTrackAutoload(params: {
       ? [prefs.subLang, ...baseSub.filter((l) => l !== prefs.subLang)]
       : baseSub;
 
+    const allow = <T extends { title?: string; label?: string }>(tracks: T[]): T[] => {
+      const words = blockWords(settings);
+      if (words.length === 0) return tracks;
+      const kept = tracks.filter((t) => !trackMatchesWords(t, words));
+      return kept.length > 0 ? kept : tracks;
+    };
+
+    let effAudio: (typeof snap.audioTracks)[number] | null = null;
     if (snap.audioTracks.length > 0) {
-      const want = pickBestTrack(snap.audioTracks, audioLangs);
+      const want = pickBestTrack(allow(snap.audioTracks), audioLangs);
       const cur = snap.audioTracks.find((t) => t.selected) ?? null;
+      effAudio = want ?? cur;
       if (want && (!cur || cur.id !== want.id)) bridgeRef.current?.setAudioTrack(want.id);
     }
+    const subsOff = subsOffFor(prefs, settings);
     const subSelected = snap.subtitleTracks.some((t) => t.selected);
-    if (!subSelected && snap.subtitleTracks.length > 0 && subLangs.length > 0) {
-      const want = pickBestTrack(snap.subtitleTracks, subLangs);
-      if (want) bridgeRef.current?.setSubtitleTrack(want.id);
+    const nativeAudio =
+      settings.forcedSubsWhenNativeAudio &&
+      effAudio != null &&
+      langScore(effAudio.lang ?? "", subLangs) >= 0;
+    if (subsOff) {
+      if (subSelected) bridgeRef.current?.setSubtitleTrack(null);
+    } else if (!subSelected && snap.subtitleTracks.length > 0 && subLangs.length > 0) {
+      if (nativeAudio) {
+        const forced = snap.subtitleTracks
+          .filter(isForcedTrack)
+          .sort((a, b) => langScore(b.lang ?? "", subLangs) - langScore(a.lang ?? "", subLangs))[0];
+        if (forced) bridgeRef.current?.setSubtitleTrack(forced.id);
+      } else {
+        const want = pickBestTrack(allow(snap.subtitleTracks), subLangs);
+        if (want) bridgeRef.current?.setSubtitleTrack(want.id);
+      }
     }
 
     if (prefs && prefsAppliedRef.current !== src.meta.id) {
@@ -228,6 +267,25 @@ export function useTrackAutoload(params: {
   }, [engine, src.url, src.meta.id, snap.audioTracks, snap.subtitleTracks, snap.rate, snap.subDelaySec, settings]);
 
   return { resolvedImdbId, resolvedImdbVerified, resolutionSettled };
+}
+
+function blockWords(s: Settings): string[] {
+  return (s.trackBlockWords ?? []).map((w) => w.trim().toLowerCase()).filter(Boolean);
+}
+
+function trackMatchesWords(t: { title?: string; label?: string }, words: string[]): boolean {
+  const hay = `${t.title ?? ""} ${t.label ?? ""}`.toLowerCase();
+  return words.some((w) => hay.includes(w));
+}
+
+function isForcedTrack(t: { title?: string; label?: string }): boolean {
+  return /\bforced\b/i.test(`${t.title ?? ""} ${t.label ?? ""}`);
+}
+
+function subsOffFor(prefs: PerShowPrefs | null, s: Settings): boolean {
+  if (prefs?.subsOff != null) return prefs.subsOff;
+  if (prefs?.subLang) return false;
+  return s.subtitlesOffByDefault;
 }
 
 function resolveLangPreference(

@@ -27,38 +27,47 @@ export function useSkipSegments(
   const [introDb, setIntroDb] = useState<SkipSegment[]>([]);
   const kitsuId = parseKitsuId(meta.id);
   const epNum = episode?.episode;
-  const epSeason = episode?.season;
-  const introDbId = episode?.imdbId && episode.imdbId.startsWith("tt") ? episode.imdbId : meta.id;
+  const introSeason = episode?.imdbSeason ?? episode?.season;
+  const introEpisode = episode?.imdbEpisode ?? episode?.episode;
+  const introDbId =
+    meta.id.startsWith("tt") || meta.id.startsWith("tmdb:")
+      ? meta.id
+      : episode?.imdbId && episode.imdbId.startsWith("tt")
+        ? episode.imdbId
+        : meta.id;
 
   useEffect(() => {
     setAniSkip([]);
-    if (kitsuId == null || epNum == null || durationSec <= 0) return;
+    if (kitsuId == null || epNum == null) return;
     let cancelled = false;
     (async () => {
       const malId = await kitsuToMal(kitsuId);
       if (cancelled || malId == null) return;
-      const segs = await fetchAniSkipSegments(malId, epNum, durationSec);
+      const segs = await fetchAniSkipSegments(malId, epNum);
       if (cancelled) return;
       setAniSkip(segs);
     })();
     return () => {
       cancelled = true;
     };
-  }, [kitsuId, epNum, durationSec]);
+  }, [kitsuId, epNum]);
 
   useEffect(() => {
     setIntroDb([]);
     if (durationSec <= 0) return;
     if (!introDbId.startsWith("tmdb:") && !introDbId.startsWith("tt")) return;
     let cancelled = false;
-    const ep = epSeason != null && epNum != null ? { season: epSeason, episode: epNum } : undefined;
+    const ep =
+      introSeason != null && introEpisode != null
+        ? { season: introSeason, episode: introEpisode }
+        : undefined;
     fetchIntroDbSegments(introDbId, ep, durationSec).then((segs) => {
       if (!cancelled) setIntroDb(segs);
     });
     return () => {
       cancelled = true;
     };
-  }, [introDbId, epSeason, epNum, durationSec]);
+  }, [introDbId, introSeason, introEpisode, durationSec]);
 
   const fromChapters = useMemo(
     () => chaptersToSegments(chapters, durationSec),
@@ -69,7 +78,11 @@ export function useSkipSegments(
     const chosen = aniSkip.length > 0 ? aniSkip : introDb.length > 0 ? introDb : fromChapters;
     if (durationSec <= 0) return chosen;
     const minOutroStart = durationSec * MIN_OUTRO_START_FRACTION;
-    return chosen.filter((s) => s.kind !== "outro" || s.startSec >= minOutroStart);
+    return chosen
+      .filter((s) => s.startSec < durationSec)
+      .map((s) => (s.endSec > durationSec ? { ...s, endSec: durationSec } : s))
+      .filter((s) => s.endSec - s.startSec >= 2)
+      .filter((s) => s.kind !== "outro" || s.startSec >= minOutroStart);
   }, [aniSkip, introDb, fromChapters, durationSec]);
 }
 

@@ -287,7 +287,7 @@ export function SubtitleStylePanel() {
 
 function SubtitlePreview() {
   const { settings } = useSettings();
-  const fontSize = Math.max(14, Math.min(80, settings.subFontSize));
+  const fontSize = Math.max(16, Math.min(120, settings.subFontSize));
   const previewSize = Math.round(fontSize * 0.55);
   const family = previewFamily(settings.subFontFamily);
 

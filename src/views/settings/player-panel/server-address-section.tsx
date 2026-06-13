@@ -1,0 +1,237 @@
+import { Check, Copy, ExternalLink, Loader2, Play, RotateCw, Square } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { invoke } from "@tauri-apps/api/core";
+import { useSettings } from "@/lib/settings";
+import { BUNDLED_SERVER_URL, getCastServerStatus, restartCastServer } from "@/lib/stremio-server";
+import { openUrl } from "@/lib/window";
+import { ToggleRow, settingsAnchor } from "../shared";
+import { isTauri } from "./internals";
+
+const WEB_PORT = 11471;
+
+type EngineState = "checking" | "running" | "starting" | "stopped";
+
+const PILL: Record<EngineState, { label: string; dot: string; chip: string }> = {
+  checking: { label: "Checking", dot: "bg-ink-subtle", chip: "bg-ink-subtle/15 text-ink-muted" },
+  running: { label: "Running", dot: "bg-emerald-400", chip: "bg-emerald-500/15 text-emerald-400" },
+  starting: { label: "Starting", dot: "bg-accent", chip: "bg-accent/15 text-accent" },
+  stopped: { label: "Not running", dot: "bg-danger", chip: "bg-danger/15 text-danger" },
+};
+
+async function probeBundled(): Promise<boolean> {
+  try {
+    const ctrl = new AbortController();
+    const timer = window.setTimeout(() => ctrl.abort(), 1500);
+    const res = await fetch(`${BUNDLED_SERVER_URL}/settings`, { method: "GET", signal: ctrl.signal });
+    window.clearTimeout(timer);
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+async function readEngineState(): Promise<EngineState> {
+  const s = await getCastServerStatus();
+  if (s?.ready) return "running";
+  if (s?.running) return "starting";
+  return (await probeBundled()) ? "running" : "stopped";
+}
+
+function AddressRow({ label, url, openable }: { label: string; url: string; openable?: boolean }) {
+  const [copied, setCopied] = useState(false);
+  const copy = () => {
+    void navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1600);
+    });
+  };
+  return (
+    <div className="flex flex-col gap-1.5">
+      <span className="text-[11.5px] font-semibold uppercase tracking-wider text-ink-subtle">{label}</span>
+      <div className="flex items-center gap-2">
+        <span className="h-10 flex-1 truncate rounded-xl border border-edge-soft bg-canvas px-3.5 font-mono text-[13px] leading-10 text-ink">
+          {url}
+        </span>
+        <button
+          type="button"
+          onClick={copy}
+          className={`flex h-10 shrink-0 items-center gap-1.5 rounded-xl border px-3.5 text-[12.5px] font-medium transition-colors ${
+            copied
+              ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
+              : "border-edge text-ink-muted hover:bg-elevated hover:text-ink"
+          }`}
+        >
+          {copied ? <Check size={13} strokeWidth={2.4} /> : <Copy size={13} strokeWidth={1.9} />}
+          {copied ? "Copied" : "Copy"}
+        </button>
+        {openable && (
+          <button
+            type="button"
+            onClick={() => openUrl(url)}
+            className="flex h-10 shrink-0 items-center gap-1.5 rounded-xl border border-edge px-3.5 text-[12.5px] font-medium text-ink-muted transition-colors hover:bg-elevated hover:text-ink"
+          >
+            <ExternalLink size={13} strokeWidth={1.9} />
+            Open
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ControlButton({
+  icon,
+  label,
+  busy,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  busy?: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      disabled={busy}
+      onClick={onClick}
+      className="flex h-9 items-center gap-1.5 rounded-lg border border-edge px-3 text-[12.5px] font-medium text-ink-muted transition-colors hover:bg-elevated hover:text-ink disabled:opacity-60"
+    >
+      {busy ? <Loader2 size={13} strokeWidth={1.9} className="animate-spin" /> : icon}
+      {label}
+    </button>
+  );
+}
+
+export function ServerAddressSection() {
+  const { settings, update } = useSettings();
+  const [lanIp, setLanIp] = useState<string | null>(null);
+  const [engine, setEngine] = useState<EngineState>("checking");
+  const [acting, setActing] = useState(false);
+  const [webError, setWebError] = useState(false);
+  const aliveRef = useRef(true);
+
+  const refresh = async () => {
+    const next = await readEngineState();
+    if (aliveRef.current) setEngine(next);
+  };
+
+  useEffect(() => {
+    if (!isTauri) return;
+    aliveRef.current = true;
+    void invoke<string | null>("lan_ip")
+      .then((ip) => {
+        if (aliveRef.current) setLanIp(ip);
+      })
+      .catch(() => {});
+    void refresh();
+    const timer = window.setInterval(() => void refresh(), 5000);
+    return () => {
+      aliveRef.current = false;
+      window.clearInterval(timer);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isTauri || !settings.serveWebUi) {
+      setWebError(false);
+      return;
+    }
+    const t = window.setTimeout(() => {
+      void invoke<boolean>("web_serve_status")
+        .then((ok) => {
+          if (aliveRef.current) setWebError(!ok);
+        })
+        .catch(() => {});
+    }, 800);
+    return () => window.clearTimeout(t);
+  }, [settings.serveWebUi]);
+
+  if (!isTauri) return null;
+
+  const pill = PILL[engine];
+  const running = engine === "running" || engine === "starting";
+
+  const start = async () => {
+    setActing(true);
+    setEngine("starting");
+    await restartCastServer();
+    window.setTimeout(() => {
+      void refresh().then(() => setActing(false));
+    }, 1200);
+  };
+
+  const stop = async () => {
+    setActing(true);
+    await invoke("cast_server_stop").catch(() => {});
+    window.setTimeout(() => {
+      void refresh().then(() => setActing(false));
+    }, 600);
+  };
+
+  return (
+    <div id={settingsAnchor("Your streaming server address")} className="scroll-mt-28 flex flex-col gap-4 rounded-2xl border border-edge-soft bg-canvas/40 p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex flex-col gap-0.5">
+          <span className="text-[14px] font-medium text-ink">Your streaming server address</span>
+          <span className="text-[12.5px] text-ink-subtle">
+            Harbor runs a small streaming server right on this computer. This is where it lives. To stream from this machine on another device, copy the Wi-Fi address and paste it into Remote streaming server in Harbor over there.
+          </span>
+        </div>
+        <span className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider ${pill.chip}`}>
+          <span className={`h-1.5 w-1.5 rounded-full ${pill.dot}`} />
+          {pill.label}
+        </span>
+      </div>
+
+      <AddressRow label="On this computer" url={BUNDLED_SERVER_URL} openable={running} />
+      {lanIp && <AddressRow label="From other devices on your Wi-Fi" url={`http://${lanIp}:11470`} />}
+
+      <div className="flex items-center gap-2">
+        {running ? (
+          <>
+            <ControlButton
+              icon={<Square size={13} strokeWidth={2} />}
+              label="Stop"
+              busy={acting}
+              onClick={() => void stop()}
+            />
+            <ControlButton
+              icon={<RotateCw size={13} strokeWidth={2} />}
+              label="Restart"
+              busy={acting}
+              onClick={() => void start()}
+            />
+          </>
+        ) : (
+          <ControlButton
+            icon={<Play size={13} strokeWidth={2} />}
+            label="Start server"
+            busy={acting || engine === "checking"}
+            onClick={() => void start()}
+          />
+        )}
+      </div>
+
+      <div className="h-px bg-edge-soft" />
+
+      <ToggleRow
+        label="Harbor in your browser"
+        sub="Serves this exact install of Harbor as a web app on your network. Open it on a phone, laptop, or TV browser, sign in there, and it streams through this computer."
+        value={settings.serveWebUi}
+        onChange={(v) => update({ serveWebUi: v })}
+      />
+      {settings.serveWebUi && (
+        <>
+          <AddressRow label="On this computer" url={`http://127.0.0.1:${WEB_PORT}`} openable />
+          {lanIp && <AddressRow label="From any browser on your Wi-Fi" url={`http://${lanIp}:${WEB_PORT}`} />}
+          {webError && (
+            <span className="text-[12px] text-danger">
+              Couldn't start on port {WEB_PORT}. Another app may be using it; toggle off and on to retry.
+            </span>
+          )}
+        </>
+      )}
+    </div>
+  );
+}

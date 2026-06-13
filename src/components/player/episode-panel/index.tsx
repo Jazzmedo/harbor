@@ -5,6 +5,7 @@ import type { Meta } from "@/lib/cinemeta";
 import { useDebridClients } from "@/lib/debrid/registry";
 import type { PanelCorner } from "@/lib/player-chrome";
 import { useSettings } from "@/lib/settings";
+import { spoilerMaskFor } from "@/lib/spoilers";
 import { registerStreamProxy } from "@/lib/stream-proxy";
 import { preflightCheck } from "@/lib/streams/preflight";
 import { resolveStream } from "@/lib/streams/resolve";
@@ -23,6 +24,8 @@ export function EpisodePanel({
   corner = "top-right",
   roomGuest = false,
   onHostAdvance,
+  watchedFor,
+  nextEp,
 }: {
   open: boolean;
   onClose: () => void;
@@ -31,6 +34,8 @@ export function EpisodePanel({
   corner?: PanelCorner;
   roomGuest?: boolean;
   onHostAdvance?: (ep: PlayEpisode) => void;
+  watchedFor?: (ep: PlayEpisode) => boolean;
+  nextEp?: PlayEpisode | null;
 }) {
   const { settings } = useSettings();
   const { openPicker, replacePlayerSrc } = useView();
@@ -209,6 +214,12 @@ export function EpisodePanel({
                 <div className="flex flex-col gap-3">
                   {episodes.map((ep) => {
                     const key = `${ep.season}:${ep.episode}`;
+                    const isCurrent =
+                      !!currentEpisode &&
+                      ep.season === currentEpisode.season &&
+                      ep.episode === currentEpisode.episode;
+                    const isNextUp =
+                      !!nextEp && ep.season === nextEp.season && ep.episode === nextEp.episode;
                     return (
                       <EpisodeRow
                         key={key}
@@ -217,11 +228,12 @@ export function EpisodePanel({
                         onToggle={() => setExpandedEp((cur) => (cur === key ? null : key))}
                         onPlay={() => handlePlay(ep)}
                         manualMode={manualMode}
-                        isCurrent={
-                          !!currentEpisode &&
-                          ep.season === currentEpisode.season &&
-                          ep.episode === currentEpisode.episode
-                        }
+                        isCurrent={isCurrent}
+                        watched={watchedFor?.(ep) ?? false}
+                        spoiler={spoilerMaskFor(settings, {
+                          watched: isCurrent || (watchedFor?.(ep) ?? false),
+                          isNextUp,
+                        })}
                       />
                     );
                   })}

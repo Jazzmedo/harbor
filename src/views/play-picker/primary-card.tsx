@@ -1,6 +1,7 @@
 import { Check, Download, ExternalLink, Loader2, Play, Zap } from "lucide-react";
 import { Flag } from "@/components/flag";
 import { FormatBadge, streamBadges } from "@/components/format-badge";
+import { HostMatchChip } from "@/components/host-match-chip";
 import type { Meta } from "@/lib/cinemeta";
 import { useDebridClients } from "@/lib/debrid/registry";
 import type { ScoredStream } from "@/lib/streams/types";
@@ -21,6 +22,7 @@ export function PrimaryCard({
   queued,
   inSession,
   isPreviouslyPlayed = false,
+  match = null,
 }: {
   meta: Meta;
   episode?: PlayEpisode;
@@ -33,6 +35,7 @@ export function PrimaryCard({
   queued: boolean;
   inSession: boolean;
   isPreviouslyPlayed?: boolean;
+  match?: "same" | "close" | null;
 }) {
   const cachedDebrids = debrids.filter((d) => stream.cached[d.slug]);
   const libraryDebrids = debrids.filter((d) => stream.inLibrary[d.slug]);
@@ -124,6 +127,7 @@ export function PrimaryCard({
                 {titleConfirmation}
               </p>
             )}
+            <HostMatchChip match={match} long />
             <p className="break-all font-mono text-[15.5px] leading-relaxed text-ink">
               {displayTitle(stream, meta.name, episode)}
             </p>

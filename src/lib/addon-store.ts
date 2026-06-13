@@ -1,6 +1,7 @@
 import { safeFetch as fetch } from "@/lib/safe-fetch";
 import { readActiveStremioAuthKey } from "./auth";
 import { setUserAddons, userAddons, type Addon } from "./addons";
+import { applyOrderToItems } from "./addons-store/reorder";
 
 const STORAGE_KEY = "harbor.installed-addons";
 const SEEDED_KEY = "harbor.addons.seeded.v1";
@@ -139,6 +140,12 @@ function saveInstalled(list: InstalledAddon[]) {
       throw e;
     }
   }
+}
+
+export function reorderInstalled(urlSequence: string[]): void {
+  const items = loadInstalled();
+  if (items.length < 2) return;
+  saveInstalled(applyOrderToItems(items, urlSequence));
 }
 
 export function isInstalled(id: string): boolean {

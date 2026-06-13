@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AwardLogo, laurelColorFor } from "@/components/icons/award-logo";
 import { Laurel } from "@/components/icons/laurel";
 import { awardSourceMeta, findAnyAwardWins, parseAwardYear } from "@/lib/anime-awards";
@@ -36,7 +36,26 @@ export function MetaAwardsCorner({ meta, imdbId }: { meta: Meta; imdbId?: string
   return <ClassicCorner imdbId={imdbId ?? null} name={meta.name} year={parseAwardYear(meta.releaseInfo)} />;
 }
 
+function useHostWide(min = 860) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [wide, setWide] = useState(true);
+  useLayoutEffect(() => {
+    let host = ref.current?.offsetParent as HTMLElement | null;
+    while (host && host.clientWidth < 340 && host.offsetParent) {
+      host = host.offsetParent as HTMLElement;
+    }
+    if (!host) return;
+    const check = () => setWide(host.clientWidth >= min);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(host);
+    return () => ro.disconnect();
+  }, []);
+  return { ref, wide };
+}
+
 function AnimeCorner({ name, year }: { name: string; year?: number }) {
+  const { ref, wide } = useHostWide();
   const wins = findAnyAwardWins(name, year);
   if (wins.length === 0) return null;
   const top = wins[0];
@@ -49,7 +68,8 @@ function AnimeCorner({ name, year }: { name: string; year?: number }) {
   const otherWins = wins.length - 1;
   return (
     <div
-      className="pointer-events-none absolute bottom-10 right-10 z-10 hidden items-center gap-4 text-right lg:flex"
+      ref={ref}
+      className={`pointer-events-none absolute bottom-10 right-10 z-10 hidden items-center gap-4 text-right ${wide ? "lg:flex" : ""}`}
       title={wins.map((w) => `${awardSourceMeta(w.source).shortName} ${w.year} ${w.categoryName}`).join("\n")}
     >
       <div className="flex flex-col gap-0.5">
@@ -87,6 +107,7 @@ function AnimeCorner({ name, year }: { name: string; year?: number }) {
 }
 
 function ClassicCorner({ imdbId, name, year }: { imdbId: string | null; name: string; year?: number }) {
+  const { ref, wide } = useHostWide();
   const live = useAwards(imdbId ?? undefined);
   const awards = useMemo(() => mergeBundledAwards(live, name, year), [live, name, year]);
   const summary = useMemo(() => awardSummary(awards).slice(0, 2), [awards]);
@@ -107,7 +128,8 @@ function ClassicCorner({ imdbId, name, year }: { imdbId: string | null; name: st
   const laurelTint = laurelColorFor(top.type);
   return (
     <div
-      className="pointer-events-none absolute bottom-10 right-10 z-10 hidden items-center gap-4 text-right lg:flex"
+      ref={ref}
+      className={`pointer-events-none absolute bottom-10 right-10 z-10 hidden items-center gap-4 text-right ${wide ? "lg:flex" : ""}`}
       title={lines.join(" · ")}
     >
       <div className="flex flex-col gap-0.5">

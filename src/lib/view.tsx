@@ -80,6 +80,7 @@ export type Frame =
   | { kind: "meta"; meta: Meta; liveContext?: boolean; episodeHint?: { season: number; episode: number } }
   | { kind: "person"; id: number }
   | { kind: "collection"; id: number }
+  | { kind: "collections" }
   | { kind: "filter"; filter: MetaFilter }
   | { kind: "grid"; grid: GridSpec }
   | { kind: "award"; awardType: import("./providers/wikidata").AwardType }
@@ -127,6 +128,8 @@ type ViewValue = {
   openFilter: (f: MetaFilter) => void;
   grid: GridSpec | null;
   openGrid: (g: GridSpec) => void;
+  openCollections: () => void;
+  stackKinds: Frame["kind"][];
   awardType: import("./providers/wikidata").AwardType | null;
   openAward: (t: import("./providers/wikidata").AwardType) => void;
   animeAwardSource: import("./anime-awards").AwardSourceId | null;
@@ -208,6 +211,8 @@ function frameKey(f: Frame): string {
       return `person:${f.id}`;
     case "collection":
       return `collection:${f.id}`;
+    case "collections":
+      return "collections";
     case "filter":
       return `filter:${f.filter.kind}:${f.filter.mediaType}:${"name" in f.filter ? f.filter.name : f.filter.value}`;
     case "grid":
@@ -557,6 +562,14 @@ export function ViewProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const openCollections = useCallback(() => {
+    setStack((cur) => {
+      const t = cur[cur.length - 1];
+      if (t.kind === "collections") return cur;
+      return pushFrame(cur, { kind: "collections" });
+    });
+  }, []);
+
   const openPicker = useCallback(
     (m: Meta, ep?: PlayEpisode, opts?: { autoPlay?: boolean; attempt?: number; intent?: "play" | "download" }) => {
       setStack((cur) => {
@@ -628,6 +641,8 @@ export function ViewProvider({ children }: { children: ReactNode }) {
 
   const topPath = useMemo(() => syncFrameKey(top), [top]);
 
+  const stackKinds = useMemo(() => stack.map((f) => f.kind), [stack]);
+
   const value = useMemo(
     () => ({
       view,
@@ -652,6 +667,8 @@ export function ViewProvider({ children }: { children: ReactNode }) {
       openFilter,
       grid,
       openGrid,
+      openCollections,
+      stackKinds,
       awardType,
       openAward,
       animeAwardSource: top.kind === "anime-award" ? top.sourceId : null,
@@ -692,6 +709,7 @@ export function ViewProvider({ children }: { children: ReactNode }) {
       collectionId,
       openCollection,
       filter,
+      stackKinds,
       awardType,
       homeResetTick,
       picker,
@@ -707,6 +725,7 @@ export function ViewProvider({ children }: { children: ReactNode }) {
       openFilter,
       grid,
       openGrid,
+      openCollections,
       openAward,
       openAnimeAward,
       openPicker,

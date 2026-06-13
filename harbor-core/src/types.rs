@@ -202,6 +202,8 @@ pub struct Stream {
     pub addon_id: String,
     pub addon_name: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub addon_priority: Option<u32>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub contributors: Option<Vec<Contributor>>,
     #[serde(flatten)]
     pub extra: std::collections::BTreeMap<String, serde_json::Value>,
@@ -344,4 +346,6 @@ pub struct ScoreOptions {
     pub runtime_minutes: Option<u32>,
     #[serde(default)]
     pub in_theaters: bool,
+    #[serde(default)]
+    pub respect_addon_order: bool,
 }

@@ -1,0 +1,234 @@
+import type { ThemeSettings } from "@/lib/theme";
+
+export type StreamingService =
+  | "netflix"
+  | "disney"
+  | "hulu"
+  | "prime"
+  | "apple"
+  | "max"
+  | "paramount"
+  | "peacock";
+
+export type WebhookTrigger =
+  | { event: "newMovie" }
+  | { event: "newSeries" }
+  | { event: "newAnime" }
+  | { event: "fromTrackedPerson"; personIds?: number[] }
+  | { event: "fromGenre"; genreIds: number[]; mediaType: "movie" | "tv" }
+  | { event: "fromProvider"; providerIds: number[] }
+  | { event: "fromCountry"; countryCodes: string[] }
+  | { event: "fromTraktAnticipated" }
+  | { event: "fromTraktWatchlist" }
+  | { event: "liveTvEvent"; channelIds?: string[]; favoritesOnly?: boolean; leadMinutes?: number };
+
+export type ContentCategory = "anime" | "liveTv" | "sports" | "adult";
+
+export type ContentFilters = Record<ContentCategory, boolean>;
+
+export type Settings = {
+  tmdbKey: string;
+  omdbKey: string;
+  rpdbKey: string;
+  fanartKey: string;
+  tvdbKey: string;
+  rdKey: string;
+  tbKey: string;
+  adKey: string;
+  pmKey: string;
+  dlKey: string;
+  region: string;
+  preferredLanguages: string[];
+  requirePreferredLanguage: boolean;
+  showImdbBadge: boolean;
+  showRtBadge: boolean;
+  showMalBadge: boolean;
+  showQualityBadge: boolean;
+  posterScale: number;
+  uiScale: number;
+  serveWebUi: boolean;
+  trailerQuality: "auto" | "360p" | "720p" | "1080p" | "best";
+  badgePlacement: "top" | "bottom";
+  episodeLayout: "list" | "strip";
+  harborAvatar: string | null;
+  harborColor: string;
+  anilistAutoSync: boolean;
+  useAnilistAvatar: boolean;
+  useTraktAvatar: boolean;
+  useSimklAvatar: boolean;
+  traktClientId: string;
+  traktClientSecret: string;
+  traktAccessToken: string | null;
+  traktRefreshToken: string | null;
+  traktExpiresAt: number;
+  traktUsername: string | null;
+  streaming: Record<StreamingService, boolean>;
+  showAdultAddons: boolean;
+  togetherRelayUrl: string;
+  togetherCfToken: string;
+  togetherCfAccountId: string;
+  togetherCfDeployed: boolean;
+  togetherShareCursors: boolean;
+  togetherGuestsPick: boolean;
+  discordRichPresence: boolean;
+  discordHideTitle: boolean;
+  discordShowWhenPaused: boolean;
+  discordShowWhenBrowsing: boolean;
+  discordShowPoster: boolean;
+  discordShowTimestamp: boolean;
+  discordShowPartyJoin: boolean;
+  playerEngine: "auto" | "html5" | "mpv";
+  playerShellId: string;
+  seekPreviewEnabled: boolean;
+  instantPlay: boolean;
+  playerHdrToSdr: boolean;
+  playerMotionInterp: boolean;
+  playerAnime4k: boolean;
+  playerMpvEmbed: boolean;
+  stremioServerTranscode: boolean;
+  directTorrentStream: boolean;
+  localEngine: boolean;
+  remoteStreamServerUrl: string;
+  remoteStreamServerStrict: boolean;
+  castAlwaysTranscode: boolean;
+  playerAnime4kShaders: string[];
+  playerAnime4kMode: string;
+  playerAnime4kTier: string;
+  playerAnime4kFolder: string;
+  preferredSubLangs: string[];
+  preferredAudioLangs: string[];
+  subFontSize: number;
+  subFontColor: string;
+  subBorderColor: string;
+  subBorderSize: number;
+  subMarginY: number;
+  subAlignX: "left" | "center" | "right";
+  subAssOverride: "no" | "yes" | "force" | "scale" | "strip";
+  subStyle: "shadow" | "outline" | "box";
+  subFontFamily: string;
+  customFonts: Array<{ id: string; name: string; dataUrl: string; format: string }>;
+  subBoxOpacity: number;
+  subBoxColor: string;
+  subOpacity: number;
+  subLineSpacing: number;
+  subProvidersEnabled: { wyzie: boolean; opensubtitles: boolean; jimaku: boolean; addons: boolean };
+  subShowInPip: boolean;
+  subtitlesOffByDefault: boolean;
+  preferEmbeddedSubs: boolean;
+  autoSkipIntro: boolean;
+  trackBlockWords: string[];
+  forcedSubsWhenNativeAudio: boolean;
+  tmdbLanguage: string;
+  posterBaseUrl: string;
+  hidePosterTitles: boolean;
+  hoverPreview: boolean;
+  mdblistKey: string;
+  playerD3d11Flip: boolean;
+  opensubtitlesApiKey: string;
+  jimakuToken: string;
+  audioNormalize: boolean;
+  audioProfile: "off" | "bass" | "voice" | "bass-reduce" | "night";
+  bandwidthMbps: number;
+  nextEpisodeLeadSec: number;
+  showPlaylistsTab: boolean;
+  hideSpoilers: boolean;
+  spoilerHideThumbnails: boolean;
+  spoilerHideTitles: boolean;
+  spoilerHideDescriptions: boolean;
+  spoilerSkipNext: boolean;
+  hideContent: ContentFilters;
+  theme: ThemeSettings;
+  homeMode: "harbor" | "classic";
+  homeShowAllAddonRows: boolean;
+  libraryBookmarkedOnly: boolean;
+  animeOnlyInAnimeRoom: boolean;
+  cwAdvanceNext: boolean;
+  useNativeTitleBar: boolean;
+  closeToTray: boolean;
+  trayAlwaysOnTop: boolean;
+  pauseMinimized: boolean;
+  pauseUnfocused: boolean;
+  cwSnapshotRetentionDays: number;
+  streamFilterLevel: "strict" | "balanced" | "off";
+  blockTrackers: boolean;
+  homeRows: {
+    order: string[];
+    hidden: string[];
+    renamed: Record<string, string>;
+    numerals: string[];
+    heroSource: string | null;
+  };
+  hotkeys: Record<string, string>;
+  animeFavoriteGenres: number[];
+  animePicksDismissedAt: number;
+  animeAnilistRowsHidden: string[];
+  pickerLayout: "condensed" | "stremio";
+  streamSort: "harbor" | "addon";
+  seekBarStyle: "flat" | "glass" | "pinstripe" | "rainbow" | "image";
+  seekBarHeight: number;
+  seekBarColor: string;
+  seekBarImage: string;
+  seekDotShape: "circle" | "square" | "image" | "hidden";
+  seekDotSize: number;
+  seekDotImage: string;
+  customCss: string;
+  customJs: string;
+  customHtml: string;
+  webhooks: {
+    discordUrl: string;
+    telegramUrl: string;
+    notifyMovies: boolean;
+    notifyTv: boolean;
+    notifyAnime: boolean;
+    sources: {
+      library: boolean;
+      all: boolean;
+      trakt: boolean;
+      anticipated: boolean;
+      custom: boolean;
+    };
+  };
+  calendarSource:
+    | "library"
+    | "all"
+    | "trakt"
+    | "anticipated"
+    | "custom"
+    | "simkl"
+    | "simkl-anticipated";
+  customCalendar: {
+    trackedPeople: Array<{
+      id: number;
+      name: string;
+      profile?: string | null;
+      role: "any" | "acting" | "directing";
+    }>;
+    includeTraktWatchlist: boolean;
+    includeTraktAnticipated: boolean;
+    genres: Array<{ id: number; name: string; mediaType: "movie" | "tv" }>;
+    watchProviders: Array<{ id: number; name: string }>;
+    originCountries: string[];
+    mediaTypes: { movie: boolean; tv: boolean; anime: boolean };
+  };
+  webhookRules: Array<{
+    id: string;
+    name: string;
+    enabled: boolean;
+    trigger: WebhookTrigger;
+    channels: { discord: boolean; telegram: boolean };
+  }>;
+  downloadDir: string;
+  stremioDeeplinkInstall: boolean;
+  iptvPlaylists: Array<{
+    id: string;
+    name: string;
+    url: string;
+    epgUrl?: string;
+    kind?: "m3u" | "xtream" | "epg";
+    xtream?: {
+      server: string;
+      username: string;
+      password: string;
+    };
+  }>;
+};

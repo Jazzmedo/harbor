@@ -5,7 +5,8 @@ import { useAuth } from "@/lib/auth";
 import type { Meta } from "@/lib/cinemeta";
 import { useDebridClients } from "@/lib/debrid/registry";
 import { useTogether } from "@/lib/together/provider";
-import { buildPlayInvite } from "@/lib/together/build-invite";
+import { buildMatchScores, matchBadge, MATCH_CLOSE } from "@/lib/together/source-match";
+import { HostSourceBanner } from "@/components/host-source-banner";
 import { consumeRecentStubEvent } from "@/lib/dead-streams";
 import { readPlayback } from "@/lib/playback-history";
 import { useSettings } from "@/lib/settings";
@@ -19,8 +20,8 @@ import { CinematicLoader } from "./play-picker/cinematic-loader";
 import { DownloadStarted } from "./play-picker/download-started";
 import { DebridDownModal } from "./play-picker/debrid-down-modal";
 import { P2pConfirmModal } from "./play-picker/p2p-confirm-modal";
-import { EmptyState, FilteredOutState, NoSourcesState, TheatresEmptyState } from "./play-picker/empty-states";
 import { CachedFilterPill, LanguageFilterPill } from "./play-picker/filter-pills";
+import { PickerEmptyLadder } from "./play-picker/picker-empty-ladder";
 import { NoSourcesConfiguredModal } from "./play-picker/no-sources-modal";
 import {
   hasUncachedMarker,
@@ -37,6 +38,7 @@ import { TierStrip } from "./play-picker/tier-strip";
 import { usePickHandler } from "./play-picker/use-pick-handler";
 import { useAutoCandidates } from "./play-picker/use-auto-candidates";
 import { useAutoFire } from "./play-picker/use-auto-fire";
+import { useRoomInvite } from "./play-picker/use-room-invite";
 import { useAddons } from "./play-picker/use-addons";
 import { useImdbId } from "./play-picker/use-imdb-id";
 import { usePipelineResult } from "./play-picker/use-pipeline-result";
@@ -63,7 +65,7 @@ export function PlayPicker({
   const { settings } = useSettings();
   const { authKey } = useAuth();
   const debrids = useDebridClients();
-  const { snapshot: roomSnapshot, sendInvite, claimHost, wasInvitedTo } = useTogether();
+  const { snapshot: roomSnapshot, sendInvite, claimHost, wasInvitedTo, clientId, hostSource, roomGuestPick, lastInviteProto } = useTogether();
   const inSession = roomSnapshot.state === "joined";
   const resolvedImdb = useImdbId(meta, settings.tmdbKey);
   const imdbId = resolvedImdb.id;
@@ -122,21 +124,32 @@ export function PlayPicker({
   );
   const [cachedOnly, setCachedOnly] = useState(false);
 
-  const inviteKey = `${meta.id}|${episode?.season ?? ""}|${episode?.episode ?? ""}`;
-  const canInvite = inSession && !wasInvitedTo(inviteKey);
-  const inviteSentRef = useRef<string | null>(null);
-  useEffect(() => {
-    if (!canInvite) return;
-    if (inviteSentRef.current === inviteKey) return;
-    inviteSentRef.current = inviteKey;
-    claimHost(true);
-    sendInvite(buildPlayInvite(meta, episode));
-  }, [canInvite, inviteKey, sendInvite, claimHost, meta, episode]);
+  const { inviteKey, canInvite, inviteSentRef, hostSourceForMedia, expectHostSource } = useRoomInvite({
+    meta,
+    episode,
+    inSession,
+    roomSnapshot,
+    clientId,
+    hostSource,
+    lastInviteProto,
+    wasInvitedTo,
+    claimHost,
+    sendInvite,
+  });
 
   useEffect(() => {
     setStrictMode(settings.streamFilterLevel === "strict");
     setForceShowAll(false);
   }, [meta.id, episode?.season, episode?.episode, settings.streamFilterLevel]);
+
+  const hostMatch = useMemo(
+    () => (hostSourceForMedia && result ? buildMatchScores(result.picker.all, hostSourceForMedia) : null),
+    [result, hostSourceForMedia],
+  );
+  const matchFor = useCallback(
+    (s: ScoredStream) => (hostMatch ? matchBadge(hostMatch.get(s)) : null),
+    [hostMatch],
+  );
 
   const isCached = useCallback(
     (s: ScoredStream) =>
@@ -165,14 +178,21 @@ export function PlayPicker({
       if (cached.length > 0) all = cached;
     }
     const cachedFirst = all.slice().sort((a, b) => (isCached(b) ? 1 : 0) - (isCached(a) ? 1 : 0));
+    const ranked = hostMatch
+      ? cachedFirst.slice().sort((a, b) => (hostMatch.get(b) ?? 0) - (hostMatch.get(a) ?? 0))
+      : cachedFirst;
     const byTier: Partial<Record<Tier, ScoredStream>> = {};
-    for (const s of cachedFirst) if (!byTier[s.tier]) byTier[s.tier] = s;
-    const primaryCandidates = [result.picker.primary, ...cachedFirst].filter(
+    for (const s of ranked) if (!byTier[s.tier]) byTier[s.tier] = s;
+    const hostBest =
+      hostMatch && ranked.length > 0 && (hostMatch.get(ranked[0]) ?? 0) >= MATCH_CLOSE
+        ? ranked[0]
+        : null;
+    const primaryCandidates = [hostBest, result.picker.primary, ...ranked].filter(
       (s): s is ScoredStream => s != null && all.includes(s),
     );
     const primary = primaryCandidates[0] ?? null;
     return { primary, byTier, all };
-  }, [result, langFilter, preferredLangs, cachedOnly, debrids.length, isCached]);
+  }, [result, langFilter, preferredLangs, cachedOnly, debrids.length, isCached, hostMatch]);
 
   const anyAddonRanked = useMemo(() => {
     const all = filteredPicker?.all ?? [];
@@ -189,9 +209,10 @@ export function PlayPicker({
   const addonOrderMode = settings.streamSort === "addon" || anyAddonRanked;
   const displayStreams = useMemo(() => {
     const all = filteredPicker?.all ?? [];
-    if (!addonOrderMode || !result) return all;
-    return orderByAddonNative(all, result.raw.addon, addons);
-  }, [filteredPicker, addonOrderMode, result, addons]);
+    const base = addonOrderMode && result ? orderByAddonNative(all, result.raw.addon, addons) : all;
+    if (!hostMatch) return base;
+    return base.slice().sort((a, b) => (hostMatch.get(b) ?? 0) - (hostMatch.get(a) ?? 0));
+  }, [filteredPicker, addonOrderMode, result, addons, hostMatch]);
 
   const langHiddenCount = useMemo(() => {
     if (!result || preferredLangs.length === 0) return 0;
@@ -226,13 +247,14 @@ export function PlayPicker({
     hasStrongAddon,
     isTorrentioStream,
     preferredLangs,
+    hostSource: hostSourceForMedia,
   });
 
   const autoFiredRef = useRef(false);
   const [autoAttemptIdx, setAutoAttemptIdx] = useState(0);
   const [autoExhausted, setAutoExhausted] = useState(false);
   const [autoCancelled, setAutoCancelled] = useState(false);
-  const autoActive = !!(autoPlay || wasInvitedTo(inviteKey)) && !autoCancelled && !autoExhausted && !isDownload;
+  const autoActive = !!(autoPlay || wasInvitedTo(inviteKey)) && !autoCancelled && !autoExhausted && !isDownload && !roomGuestPick;
   useEffect(() => {
     if (!autoActive) return;
     const t = window.setTimeout(() => setAutoCancelled(true), 45_000);
@@ -305,6 +327,8 @@ export function PlayPicker({
     preferredLangs,
     hasStrongAddon,
     isTorrentioStream,
+    expectHostSource,
+    hostSource: hostSourceForMedia,
     autoFiredRef,
     setAutoSettleReady,
     setAutoCancelled,
@@ -334,32 +358,6 @@ export function PlayPicker({
     }
     return [...seen.values()];
   }, [result, addonLogoMap]);
-  const isStillInTheatres = useMemo(() => {
-    if (!result || meta.type !== "movie") return false;
-    if (allCount > 0) return false;
-    if (rawCount === 0) return false;
-    const recentRelease = (() => {
-      if (meta.releaseDate) {
-        const d = new Date(meta.releaseDate);
-        if (!Number.isNaN(d.getTime())) {
-          const days = (Date.now() - d.getTime()) / (1000 * 60 * 60 * 24);
-          return days >= -30 && days < 90;
-        }
-      }
-      return meta.inTheaters === true;
-    })();
-    if (!recentRelease) return false;
-    const rejected = result.rejected;
-    const trashRejections = rejected.filter(
-      (r) =>
-        r.reason.startsWith("cinema-window-") ||
-        r.reason.startsWith("scam-score-") ||
-        r.reason.startsWith("size-too-small-") ||
-        r.reason === "dead-torrent-zero-seeders" ||
-        r.reason.startsWith("suspicious-extension:"),
-    ).length;
-    return trashRejections >= Math.max(3, Math.floor(rawCount * 0.5));
-  }, [result, meta.type, meta.inTheaters, meta.releaseDate, allCount, rawCount]);
   const backdropSrc = episode?.still || meta.background || meta.poster;
 
   const [maxWaitElapsed, setMaxWaitElapsed] = useState(false);
@@ -494,6 +492,8 @@ export function PlayPicker({
       <div className="relative mx-auto flex min-h-full w-full max-w-5xl flex-col gap-12 px-12 pb-32 pt-32">
         <PickerHeader meta={meta} episode={episode} />
 
+        {hostSourceForMedia && <HostSourceBanner source={hostSourceForMedia} />}
+
         {isDownload && (
           <div className="rounded-2xl border border-edge-soft bg-elevated/60 px-5 py-3.5 text-[13.5px] text-ink-muted">
             Choose a source to save offline. You can track progress on the Downloads page.
@@ -510,69 +510,26 @@ export function PlayPicker({
           <CinematicLoader meta={meta} />
         )}
 
-        {addonsSettled && (!streamIds || streamIds.length === 0) && (
-          <EmptyState
-            message="Harbor couldn't resolve a usable ID for this title. Add a TMDB key in Library settings or sign in to Stremio to broaden coverage."
-            action={{ label: "Open Library settings", onClick: () => openSettings("library") }}
-          />
-        )}
-        {addonsSettled && streamIds && streamIds.length > 0 && debrids.length === 0 && allCount === 0 && (
-          <EmptyState
-            message="No playable streams turned up, and no debrid is configured. Real-Debrid, TorBox, AllDebrid, Premiumize, or Debrid-Link will unlock raw torrent results. Some addons bake debrid in (Sootio, Comet/ElfHosted, MediaFusion/ElfHosted) and play without your own keys."
-            action={{ label: "Set up a debrid", onClick: () => openSettings("streaming") }}
-          />
-        )}
-        {addonsSettled && streamIds && streamIds.length > 0 && allCount === 0 && debrids.length > 0 && rawCount === 0 && (
-          <NoSourcesState
-            addonCount={addons?.length ?? 0}
-            streamIds={streamIds}
-            isAnime={meta.id.startsWith("kitsu:") || meta.id.startsWith("mal:")}
-          />
-        )}
-        {addonsSettled && streamIds && streamIds.length > 0 && allCount === 0 && debrids.length > 0 && rawCount > 0 && isStillInTheatres && (
-          <TheatresEmptyState
-            meta={meta}
-            onShowAll={() => setForceShowAll(true)}
-            showingAll={forceShowAll}
-          />
-        )}
-        {addonsSettled && streamIds && streamIds.length > 0 && allCount === 0 && debrids.length > 0 && rawCount > 0 && !isStillInTheatres && (
-          <FilteredOutState
-            rawCount={rawCount}
-            rejected={result?.rejected ?? []}
-            strictMode={strictMode || !forceShowAll}
-            onSearchWider={() => {
-              if (strictMode) setStrictMode(false);
-              else setForceShowAll(true);
-            }}
-          />
-        )}
-
-        {pipelineDone && allCount > 0 && allCount <= 2 && (
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-300/30 bg-amber-300/[0.06] px-5 py-3.5 text-[13px] text-ink">
-            <div className="flex min-w-0 flex-1 flex-col">
-              <p className="font-semibold text-amber-200">
-                {allCount === 1 ? "Only 1 source after filtering" : "Only 2 sources after filtering"}
-              </p>
-              <p className="text-[12.5px] leading-snug text-ink-muted">
-                {allCount === 1
-                  ? "Clean releases for this title haven't surfaced yet. The result below may not match the title you're looking for, so confirm the filename and size before playing."
-                  : "Clean releases for this title are still scarce. Confirm the filename and size before playing."}
-                {rawCount - allCount > 0 && !forceShowAll
-                  ? ` Harbor dropped ${rawCount - allCount} suspicious or mismatched result${rawCount - allCount === 1 ? "" : "s"}.`
-                  : ""}
-              </p>
-            </div>
-            {rawCount - allCount > 0 && !forceShowAll && (
-              <button
-                onClick={() => setForceShowAll(true)}
-                className="shrink-0 rounded-full border border-amber-300/40 bg-amber-300/10 px-4 py-2 text-[12.5px] font-semibold text-amber-100 transition-[transform,background-color] hover:scale-[1.02] hover:bg-amber-300/20 active:scale-[0.98]"
-              >
-                Show everything anyway
-              </button>
-            )}
-          </div>
-        )}
+        <PickerEmptyLadder
+          meta={meta}
+          result={result}
+          addonsSettled={addonsSettled}
+          pipelineDone={pipelineDone}
+          streamIds={streamIds}
+          debridCount={debrids.length}
+          addonCount={addons?.length ?? 0}
+          allCount={allCount}
+          rawCount={rawCount}
+          strictMode={strictMode}
+          forceShowAll={forceShowAll}
+          onOpenLibrarySettings={() => openSettings("library")}
+          onOpenStreamingSettings={() => openSettings("streaming")}
+          onShowAll={() => setForceShowAll(true)}
+          onSearchWider={() => {
+            if (strictMode) setStrictMode(false);
+            else setForceShowAll(true);
+          }}
+        />
 
         {(settings.pickerLayout === "stremio" || isDownload) && filteredPicker && filteredPicker.all.length > 0 ? (
           <StremioLayout
@@ -581,7 +538,8 @@ export function PlayPicker({
             pipelineDone={pipelineDone}
             loadingAddonCount={Math.max(0, (addons?.length ?? 0) - addonCount)}
             failedStreams={failedStreams}
-            preserveOrder={addonOrderMode}
+            preserveOrder={addonOrderMode || !!hostMatch}
+            matchFor={hostMatch ? matchFor : undefined}
             onPlay={onPlay}
           />
         ) : (
@@ -605,6 +563,7 @@ export function PlayPicker({
                 }
                 inSession={inSession}
                 isPreviouslyPlayed={previousMatch === currentPick}
+                match={matchFor(currentPick)}
               />
             )}
 
@@ -648,6 +607,7 @@ export function PlayPicker({
                 streams={displayStreams}
                 debrids={debrids}
                 getAddonLogo={lookupLogo}
+                matchFor={hostMatch ? matchFor : undefined}
                 onPlay={onPlay}
                 resolvingId={resolving?.stream.infoHash ?? null}
                 showName={meta.name}

@@ -6,6 +6,9 @@ import type { KitsuEpisode } from "@/lib/providers/kitsu";
 import { useSettings } from "@/lib/settings";
 import { SPOILER_TEXT_CLASS, SPOILER_THUMB_CLASS, type SpoilerMask } from "@/lib/spoilers";
 import { useView } from "@/lib/view";
+import { formatAirDate } from "@/lib/dates";
+import { UpcomingBadge } from "./badges";
+import { isUpcomingDate } from "./helpers";
 
 type Progress = { ratio: number; watched: boolean; startedAt: number };
 
@@ -53,6 +56,7 @@ function AnimeEpisodeStripCard({
 }) {
   const { openPicker } = useView();
   const { settings } = useSettings();
+  const upcoming = isUpcomingDate(ep.airdate);
   return (
     <button
       data-ep={ep.number}
@@ -78,9 +82,14 @@ function AnimeEpisodeStripCard({
       className="group flex w-[244px] shrink-0 flex-col gap-2.5 text-left"
     >
       <div className="relative aspect-video overflow-hidden rounded-xl">
-        <div className={spoiler?.thumb ? SPOILER_THUMB_CLASS : undefined}>
+        <div className={`${spoiler?.thumb ? SPOILER_THUMB_CLASS : ""} ${upcoming ? "opacity-55 saturate-50" : ""}`}>
           <Poster src={ep.thumbnail ?? undefined} seed={String(ep.id)} ratio="landscape" className="" />
         </div>
+        {upcoming && (
+          <span className="absolute bottom-2 left-2">
+            <UpcomingBadge />
+          </span>
+        )}
         <div className="absolute inset-0 flex items-center justify-center bg-canvas/40 opacity-0 transition-opacity group-hover:opacity-100">
           <div className="flex h-11 w-11 items-center justify-center rounded-full bg-ink text-canvas">
             <Play size={16} fill="currentColor" />
@@ -107,6 +116,7 @@ function AnimeEpisodeStripCard({
         <span className="text-[11.5px] text-ink-subtle">
           E{ep.number}
           {ep.length ? ` · ${ep.length} min` : ""}
+          {upcoming && ep.airdate ? ` · ${formatAirDate(ep.airdate)}` : ""}
         </span>
       </div>
     </button>

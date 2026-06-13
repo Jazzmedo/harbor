@@ -61,7 +61,6 @@ export function Poster({
           key={src}
           src={src}
           alt=""
-          loading="lazy"
           decoding="async"
           onError={() => {
             setFailed(true);
@@ -73,6 +72,10 @@ export function Poster({
       {children}
     </div>
   );
+}
+
+export function posterPlate(seed: string): string {
+  return gradient(hash(seed) % 360);
 }
 
 function gradient(hue: number) {

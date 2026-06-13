@@ -33,6 +33,7 @@ mod torrent_engine;
 mod trailer;
 mod transcode;
 mod tray;
+mod web_server;
 mod webview_helpers;
 
 pub(crate) fn shutdown_services(app: &tauri::AppHandle) {
@@ -252,6 +253,16 @@ pub fn run() {
         .plugin(tauri_plugin_deep_link::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_process::init())
+        .plugin(
+            tauri_plugin_window_state::Builder::default()
+                .with_state_flags(
+                    tauri_plugin_window_state::StateFlags::SIZE
+                        | tauri_plugin_window_state::StateFlags::POSITION
+                        | tauri_plugin_window_state::StateFlags::MAXIMIZED
+                        | tauri_plugin_window_state::StateFlags::FULLSCREEN,
+                )
+                .build(),
+        )
         .manage(proxy_state)
         .manage(mpv_state)
         .manage(pip_state)
@@ -368,6 +379,10 @@ pub fn run() {
             harbor_resume_webview,
             save_text_file,
             cast_server::stop_stremio_sidecar,
+            cast_server::cast_server_stop,
+            web_server::web_serve_start,
+            web_server::web_serve_stop,
+            web_server::web_serve_status,
             anime4k::anime4k_download,
             anime4k::anime4k_dir,
             proc_mem::harbor_process_memory,
@@ -434,6 +449,7 @@ pub fn run() {
             discord_rp::discord_clear,
             discord_rp::discord_set_enabled,
             cast::cast_discover,
+            dlna::lan_ip,
             cast::cast_load,
             cast::cast_play,
             cast::cast_pause,

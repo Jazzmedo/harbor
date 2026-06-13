@@ -11,6 +11,10 @@ export function setTmdbLanguage(lang: string): void {
   tmdbLanguage = lang.trim();
 }
 
+export function tmdbLanguageIso(): string {
+  return tmdbLanguage.split("-")[0]?.toLowerCase() ?? "";
+}
+
 let lastFailureLogged = 0;
 function logTmdbFailure(path: string, status: number, body: string): void {
   const now = Date.now();

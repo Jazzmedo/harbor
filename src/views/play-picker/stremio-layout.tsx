@@ -14,6 +14,7 @@ export function StremioLayout({
   loadingAddonCount,
   failedStreams,
   preserveOrder,
+  matchFor,
   onPlay,
 }: {
   streams: ScoredStream[];
@@ -22,6 +23,7 @@ export function StremioLayout({
   loadingAddonCount: number;
   failedStreams: Set<ScoredStream>;
   preserveOrder?: boolean;
+  matchFor?: (s: ScoredStream) => "same" | "close" | null;
   onPlay: (stream: ScoredStream) => void;
 }) {
   const [filter, setFilter] = useState<string>("all");
@@ -156,6 +158,7 @@ export function StremioLayout({
             stream={s}
             failed={failedStreams.has(s)}
             addonLogo={addonLogoMap.get(s.addonUrl ?? "") ?? addonLogoMap.get(s.addonId) ?? null}
+            match={matchFor ? matchFor(s) : null}
             onPlay={() => onPlay(s)}
           />
         ))}

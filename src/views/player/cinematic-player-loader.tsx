@@ -14,12 +14,14 @@ export function CinematicPlayerLoader({
   forceShow,
   onCancel,
   engineStats,
+  onShowingChange,
 }: {
   src: PlayerSrc;
   snap: PlayerSnapshot;
   forceShow?: boolean;
   onCancel: () => void;
   engineStats?: EngineStats | null;
+  onShowingChange?: (showing: boolean) => void;
 }) {
   const isLocal = isLocalUrl(src.url);
   const isInfoHash = isBundledEngineUrl(src.url) && !src.url.includes("/hlsv2/");
@@ -40,6 +42,10 @@ export function CinematicPlayerLoader({
     (!everPlayedRef.current && snap.errorCode == null && snap.status !== "ended");
   const [mounted, setMounted] = useState(showing);
   useEffect(() => {
+    onShowingChange?.(showing);
+  }, [showing, onShowingChange]);
+  useEffect(() => () => onShowingChange?.(false), [onShowingChange]);
+  useEffect(() => {
     if (showing) {
       setMounted(true);
       return;
@@ -52,7 +58,7 @@ export function CinematicPlayerLoader({
   return (
     <div
       data-tauri-drag-region
-      className={`absolute inset-0 z-10 overflow-hidden bg-black transition-opacity duration-300 ${
+      className={`absolute inset-0 z-[80] overflow-hidden bg-black transition-opacity duration-300 ${
         showing ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
       }`}
     >
@@ -98,7 +104,7 @@ export function CinematicPlayerLoader({
       </div>
       <button
         onClick={onCancel}
-        className="absolute bottom-10 left-1/2 flex h-12 -translate-x-1/2 items-center gap-2.5 rounded-xl border border-white/15 bg-white/5 px-6 text-[13.5px] font-medium text-white/70 backdrop-blur-md transition-all hover:border-white/30 hover:bg-white/10 hover:text-white"
+        className="absolute bottom-10 left-1/2 z-10 flex h-11 -translate-x-1/2 cursor-pointer items-center gap-2 rounded-full border border-white/12 bg-black/45 px-6 text-[13.5px] font-medium text-white/75 backdrop-blur-md transition-colors hover:border-white/25 hover:bg-black/60 hover:text-white"
       >
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
           <path

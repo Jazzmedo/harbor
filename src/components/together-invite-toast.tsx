@@ -47,7 +47,7 @@ export function TogetherInviteToast() {
         logo: invite.logoUrl,
         releaseInfo: invite.releaseInfo,
       };
-      openPicker(meta, invite.episode, { autoPlay: true });
+      openPicker(meta, invite.episode, { autoPlay: invite.guestPick !== true });
       dismissInvite();
     }
   }, [incomingInvite, openPicker, dismissInvite]);
@@ -55,6 +55,7 @@ export function TogetherInviteToast() {
   if (!incomingInvite) return null;
   if (handledRef.current === incomingInvite.at) return null;
   const { name, invite } = incomingInvite;
+  const guestPick = invite.guestPick === true;
   const subtitle = invite.episode
     ? `S${invite.episode.season} · E${String(invite.episode.episode).padStart(2, "0")}`
     : null;
@@ -70,7 +71,7 @@ export function TogetherInviteToast() {
       logo: invite.logoUrl,
       releaseInfo: invite.releaseInfo,
     };
-    openPicker(meta, invite.episode, { autoPlay: true });
+    openPicker(meta, invite.episode, { autoPlay: !guestPick });
     dismissInvite();
   };
 
@@ -92,7 +93,7 @@ export function TogetherInviteToast() {
 
         <div className="flex min-w-0 flex-col gap-0.5 pr-1">
           <span className="text-[10.5px] font-semibold uppercase tracking-[0.18em] text-accent">
-            {name} started watching
+            {guestPick ? "Pick your source" : `${name} started watching`}
           </span>
           <span className="flex items-center gap-2 truncate text-[13.5px] font-semibold text-ink">
             <span className="max-w-[280px] truncate">{invite.mediaTitle}</span>
@@ -106,7 +107,7 @@ export function TogetherInviteToast() {
           onClick={onJoin}
           className="inline-flex h-9 items-center gap-1.5 rounded-full bg-ink px-4 text-[12.5px] font-semibold text-canvas transition-transform hover:scale-[1.04]"
         >
-          Join <ArrowRight size={13} strokeWidth={2.4} />
+          {guestPick ? "Choose" : "Join"} <ArrowRight size={13} strokeWidth={2.4} />
         </button>
 
         <button

@@ -25,6 +25,7 @@ struct State {
     restart_count: u32,
     bundled: bool,
     last_spawn: Option<Instant>,
+    user_stopped: bool,
 }
 
 impl Default for State {
@@ -36,6 +37,7 @@ impl Default for State {
             restart_count: 0,
             bundled: false,
             last_spawn: None,
+            user_stopped: false,
         }
     }
 }
@@ -46,6 +48,10 @@ fn state() -> &'static Mutex<State> {
 }
 
 pub fn start(app: &AppHandle) {
+    {
+        let mut st = state().lock().unwrap();
+        st.user_stopped = false;
+    }
     spawn_once(app);
 }
 
@@ -132,7 +138,9 @@ fn spawn_once(app: &AppHandle) {
                         st.child = None;
                         st.ready = false;
                         st.last_error = Some(format!("exited with code {}", exit_code));
-                        if st.restart_count < MAX_AUTO_RESTARTS {
+                        if st.user_stopped {
+                            false
+                        } else if st.restart_count < MAX_AUTO_RESTARTS {
                             st.restart_count += 1;
                             true
                         } else {
@@ -249,6 +257,17 @@ pub fn ensure_started_on_setup(_app: &AppHandle) {
 
 #[tauri::command]
 pub fn stop_stremio_sidecar() {
+    kill_orphan_sidecars();
+}
+
+#[tauri::command]
+pub fn cast_server_stop() {
+    {
+        let mut st = state().lock().unwrap();
+        st.user_stopped = true;
+        st.last_error = None;
+    }
+    stop();
     kill_orphan_sidecars();
 }
 

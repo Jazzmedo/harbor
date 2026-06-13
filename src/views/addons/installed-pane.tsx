@@ -1,4 +1,4 @@
-import { Settings2 } from "lucide-react";
+import { ArrowUpDown, Settings2 } from "lucide-react";
 import { useState } from "react";
 import { AddonLogo, resolveAddonLogo } from "@/components/addon-logo";
 import type { ResolvedAddon } from "@/lib/addons-store/store";
@@ -10,12 +10,14 @@ export function InstalledPane({
   onOpen,
   onUninstall,
   onManage,
+  onReorder,
 }: {
   installed: ResolvedAddon[];
   search?: string | null;
   onOpen: (id: string) => void;
   onUninstall: (r: ResolvedAddon) => Promise<void>;
   onManage?: (r: ResolvedAddon) => void;
+  onReorder?: () => void;
 }) {
   const q = search?.trim().toLowerCase() ?? "";
   const filtered = q
@@ -48,16 +50,30 @@ export function InstalledPane({
     );
   }
   return (
-    <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
-      {filtered.map((r) => (
-        <InstalledRow
-          key={addonKey(r)}
-          resolved={r}
-          onOpen={onOpen}
-          onUninstall={onUninstall}
-          onManage={onManage}
-        />
-      ))}
+    <div className="flex flex-col gap-3">
+      {onReorder && (
+        <div className="flex justify-end">
+          <button
+            onClick={onReorder}
+            title="Change the order addons are tried in"
+            className="flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-edge-soft px-3 text-[11.5px] font-semibold uppercase tracking-[0.14em] text-ink-subtle transition-colors hover:border-edge hover:text-ink-muted"
+          >
+            <ArrowUpDown size={13} strokeWidth={2.4} />
+            Reorder
+          </button>
+        </div>
+      )}
+      <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
+        {filtered.map((r) => (
+          <InstalledRow
+            key={addonKey(r)}
+            resolved={r}
+            onOpen={onOpen}
+            onUninstall={onUninstall}
+            onManage={onManage}
+          />
+        ))}
+      </div>
     </div>
   );
 }

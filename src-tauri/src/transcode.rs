@@ -91,6 +91,14 @@ pub fn locate_ffmpeg() -> Option<std::path::PathBuf> {
             owned.push(p.into());
         }
     } else {
+        if let Ok(exe) = std::env::current_exe() {
+            if let Some(dir) = exe.parent() {
+                owned.push(dir.join("ffmpeg").to_string_lossy().to_string());
+                owned.push(
+                    dir.join("ffmpeg-x86_64-unknown-linux-gnu").to_string_lossy().to_string(),
+                );
+            }
+        }
         for p in ["ffmpeg", "/usr/bin/ffmpeg", "/usr/local/bin/ffmpeg"] {
             owned.push(p.into());
         }

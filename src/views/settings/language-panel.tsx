@@ -1,4 +1,5 @@
 import { Github } from "lucide-react";
+import { useState } from "react";
 import { useSettings } from "@/lib/settings";
 import { openUrl } from "@/lib/window";
 import { Section, ToggleRow } from "./shared";
@@ -6,6 +7,7 @@ import { LanguagesPicker } from "./streaming-panel";
 
 export function LanguagePanel() {
   const { settings, update } = useSettings();
+  const [blockDraft, setBlockDraft] = useState(settings.trackBlockWords.join(", "));
   return (
     <>
     <Section
@@ -22,6 +24,40 @@ export function LanguagePanel() {
         value={settings.subtitlesOffByDefault}
         onChange={(v) => update({ subtitlesOffByDefault: v })}
       />
+      <ToggleRow
+        label="Prefer embedded subtitles"
+        sub="When the file ships its own subtitle track, keep it selected instead of switching to a downloaded one. Embedded tracks are usually the best synced."
+        value={settings.preferEmbeddedSubs}
+        onChange={(v) => update({ preferEmbeddedSubs: v })}
+      />
+      <ToggleRow
+        label="Forced subs with native audio"
+        sub="When the audio already matches your subtitle language, pick a forced track (foreign dialogue and signs only) instead of full subtitles. If the file has no forced track, subtitles stay off."
+        value={settings.forcedSubsWhenNativeAudio}
+        onChange={(v) => update({ forcedSubsWhenNativeAudio: v })}
+      />
+      <div className="flex flex-col gap-1.5 pt-1">
+        <p className="text-[13.5px] font-medium text-ink">Never auto-select tracks containing</p>
+        <p className="text-[12px] leading-relaxed text-ink-subtle">
+          Comma-separated words. Audio or subtitle tracks whose name matches any of these are skipped
+          during automatic selection. You can still pick them by hand in the player.
+        </p>
+        <input
+          type="text"
+          value={blockDraft}
+          onChange={(e) => {
+            setBlockDraft(e.target.value);
+            update({
+              trackBlockWords: e.target.value
+                .split(",")
+                .map((w) => w.trim())
+                .filter(Boolean),
+            });
+          }}
+          placeholder="commentary, descriptive"
+          className="h-11 w-full max-w-[340px] rounded-xl border border-edge-soft bg-canvas/40 px-3.5 text-[13.5px] text-ink outline-none transition-colors focus:border-edge"
+        />
+      </div>
     </Section>
 
     <Section

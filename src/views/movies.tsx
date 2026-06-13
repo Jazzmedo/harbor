@@ -9,9 +9,10 @@ import { topMovies, type Meta } from "@/lib/cinemeta";
 import { fetchUnderNinety } from "@/lib/feed/sections";
 import { pickMoodSpecs } from "@/lib/feed/moods";
 import { MOVIE_GENRES } from "@/lib/feed/tags";
+import { listPager } from "@/lib/list-pager";
 import { tmdbDiscover, tmdbMovieRow, tmdbTrending } from "@/lib/providers/tmdb";
 import { useSettings } from "@/lib/settings";
-import { useScrollMemory } from "@/lib/view";
+import { useScrollMemory, useView } from "@/lib/view";
 
 const HERO_POOL_TARGET = 5;
 const MAX_PER_ROW = 30;
@@ -34,6 +35,7 @@ type RowSpec = {
 
 export function Movies({ active = true }: { active?: boolean }) {
   const { settings } = useSettings();
+  const { openGrid } = useView();
   const [hero, setHero] = useState<Meta[]>([]);
   const [rows, setRows] = useState<MovieRow[]>([]);
   const rowsRef = useRef<MovieRow[]>([]);
@@ -104,6 +106,7 @@ export function Movies({ active = true }: { active?: boolean }) {
             metas: top.slice(0, 30),
             page: 1,
             hasMore: false,
+            fetcher: listPager(top),
           },
         ];
         for (let i = 0; i < genreList.length; i++) {
@@ -115,6 +118,7 @@ export function Movies({ active = true }: { active?: boolean }) {
             metas: list.slice(0, 30),
             page: 1,
             hasMore: false,
+            fetcher: listPager(list),
           });
         }
         setRows(built);
@@ -188,7 +192,23 @@ export function Movies({ active = true }: { active?: boolean }) {
         <div className="relative mx-auto flex max-w-[1700px] flex-col gap-12 px-12 pb-32 pt-12">
           {!settings.tmdbKey && <TmdbNudge />}
           {top10.length >= 10 && (
-            <Row title="Top 10 Movies Today" min={216} shape="rank" scrollKey="movies:top10">
+            <Row
+              title="Top 10 Movies Today"
+              min={216}
+              shape="rank"
+              scrollKey="movies:top10"
+              onViewAll={(() => {
+                const trending = rows.find((r) => r.key === "trending");
+                return trending?.fetcher
+                  ? () =>
+                      openGrid({
+                        title: trending.title,
+                        fetcher: trending.fetcher!,
+                        initial: trending.metas,
+                      })
+                  : undefined;
+              })()}
+            >
               {top10.slice(0, 10).map((m, i) => (
                 <TopRankCard key={m.id} meta={m} rank={i + 1} />
               ))}
@@ -202,6 +222,11 @@ export function Movies({ active = true }: { active?: boolean }) {
               shape="portrait"
               scrollKey={`movies:${row.key}`}
               onEndReached={row.hasMore ? () => loadMore(row.key) : undefined}
+              onViewAll={
+                row.fetcher
+                  ? () => openGrid({ title: row.title, fetcher: row.fetcher!, initial: row.metas })
+                  : undefined
+              }
             >
               {row.metas.map((m) => (
                 <PickCard key={m.id} meta={m} flagRerun={row.key === "coming-soon"} />

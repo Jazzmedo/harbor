@@ -101,6 +101,9 @@ export function usePipelineResult({
         : meta.type === "series"
           ? "series"
           : "movie";
+    const animeReq = streamIds.some((id) => id.startsWith("kitsu:") || id.startsWith("mal:"));
+    const effSeason = episode?.imdbSeason ?? episode?.season;
+    const effEpisode = episode?.imdbEpisode ?? episode?.episode;
     runPipeline(
       {
         request: {
@@ -112,20 +115,20 @@ export function usePipelineResult({
           imdbId: imdbId ?? "",
           title: meta.name,
           year: parseInt(meta.releaseInfo ?? "", 10) || undefined,
-          season: episode?.season,
-          episode: episode?.episode,
+          season: animeReq && episode?.imdbSeason == null ? undefined : effSeason,
+          episode: animeReq && episode?.imdbEpisode == null ? episode?.episode : effEpisode,
         },
         addons,
         debrids,
-        isAnime: streamIds.some((id) => id.startsWith("kitsu:") || id.startsWith("mal:")),
+        isAnime: animeReq,
         presetStreams: embedded.length > 0 ? embedded : undefined,
         trust: {
           kind: episode ? "series" : meta.type === "series" ? "series" : "movie",
           expectedTitle: meta.name,
           releaseDate: meta.releaseDate ?? null,
           expectedYear: parseInt(meta.releaseInfo ?? "", 10) || null,
-          expectedSeason: episode?.season ?? null,
-          expectedEpisode: episode?.episode ?? null,
+          expectedSeason: effSeason ?? null,
+          expectedEpisode: effEpisode ?? null,
           strict: strictMode,
           disabled: filterDisabled || addonNative || embedded.length > 0,
           preferredLanguages: settings.preferredLanguages,
@@ -133,7 +136,7 @@ export function usePipelineResult({
           requirePreferredLanguage: strictMode && settings.requirePreferredLanguage,
           allowSeasonPacks: !strictMode,
           allowSizeOutliers: !strictMode,
-          isAnime: streamIds.some((id) => id.startsWith("kitsu:") || id.startsWith("mal:")),
+          isAnime: animeReq,
         },
         score: {
           activeDebrids: debrids.map((d) => d.slug),
@@ -146,6 +149,7 @@ export function usePipelineResult({
           preferSingleAudioTrack:
             !("__TAURI_INTERNALS__" in window) || settings.playerEngine === "html5",
           preferAddonId: meta.addonOrigin?.id,
+          respectAddonOrder: settings.streamSort === "addon",
         },
       },
       ac.signal,

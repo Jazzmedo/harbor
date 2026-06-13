@@ -10,7 +10,24 @@ export function stremioIdToSimklTarget(
 ): IdResolution {
   if (!metaId) return { ok: false, reason: "unrecognized" };
 
-  if (metaId.startsWith("kitsu:") || metaId.startsWith("mal:")) {
+  if (metaId.startsWith("mal:")) {
+    const n = Number(metaId.split(":")[1]);
+    if (!Number.isFinite(n)) return { ok: false, reason: "unrecognized" };
+    if (episode) {
+      return {
+        ok: true,
+        target: {
+          kind: "episode",
+          show: { ids: { mal: n } },
+          season: episode.season,
+          number: episode.episode,
+        },
+      };
+    }
+    return { ok: true, target: { kind: "show", ids: { mal: n } } };
+  }
+
+  if (metaId.startsWith("kitsu:")) {
     return { ok: false, reason: "anime" };
   }
 

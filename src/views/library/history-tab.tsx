@@ -129,7 +129,11 @@ function filterHistory(items: LibraryItem[]): LibraryItem[] {
   return items
     .filter((i) => !i.removed || i.temp)
     .filter((i) => i.state?.flaggedWatched === 1 || (i.state?.timeOffset ?? 0) > 0)
-    .sort((a, b) => Date.parse(b._mtime) - Date.parse(a._mtime));
+    .sort(
+      (a, b) =>
+        Date.parse(b.state?.lastWatched ?? b._mtime) -
+        Date.parse(a.state?.lastWatched ?? a._mtime),
+    );
 }
 
 function mergeHistory(stremio: LibraryItem[], trakt: HistoryItem[]): WatchlistMerged[] {

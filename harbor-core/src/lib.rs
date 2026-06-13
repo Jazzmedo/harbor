@@ -127,7 +127,7 @@ pub fn run_pipeline_pure_js(
         .into_iter()
         .map(|p| scoring::score_stream(p, &score_opts, &corpus))
         .collect();
-    let picker = scoring::rank_and_pick(scored, &score_opts.active_debrids);
+    let picker = scoring::rank_and_pick(scored, &score_opts.active_debrids, score_opts.respect_addon_order);
 
     let out = PipelineResultJs {
         picker,

@@ -71,12 +71,19 @@ export function StreamingSourcesPanel({
 
       <Section
         title="Result order"
-        subtitle="Harbor ranking puts the best-scoring sources first. Addon order keeps each addon's results in the order it returned them, like the Stremio and Vidi apps."
+        subtitle="Harbor ranking puts the best-scoring sources first. Addon order follows your addon priority (organize it in Addons, Installed tab, Reorder) and keeps each addon's results in the order it returned them, like the Stremio and Vidi apps."
       >
         <StreamSortPicker
           value={settings.streamSort}
           onChange={(v) => update({ streamSort: v })}
         />
+        <p className="mt-3 rounded-xl border border-edge-soft bg-canvas/40 px-4 py-3 text-[12.5px] leading-relaxed text-ink-muted">
+          Using AIOStreams or another aggregator addon? Its own sorting and filtering happen inside
+          the addon before Harbor ever sees the results, then Harbor applies the stream filter and
+          result order above on top. If results look thinner than expected, keep one side
+          permissive: either relax the addon's internal filters or set Harbor's stream filter to
+          Balanced or Off.
+        </p>
       </Section>
 
       <Section

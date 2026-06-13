@@ -8,9 +8,10 @@ import { PickCard } from "@/components/pick-card";
 import { Row, ScrollRootContext } from "@/components/row";
 import { AnimeRankCard } from "@/components/top-rank-card";
 import { useAuth } from "@/lib/auth";
-import { loadAddonRows, normalizeName, type AddonRow } from "@/lib/addons";
+import { fetchAddonCatalogPage, loadAddonRows, normalizeName, type AddonRow } from "@/lib/addons";
 import type { Meta } from "@/lib/cinemeta";
 import { findTopAward, parseAwardYear, uniqueWinnerFranchisesAcrossSources } from "@/lib/anime-awards";
+import { publishResumeStates } from "@/lib/hover-preview/store";
 import { useAnimeTopPicks } from "@/lib/use-anime-top-picks";
 import { useCrunchyrollAwardMetas } from "@/lib/use-crunchyroll-award-metas";
 import { useWatchHistoryRecommendations } from "@/lib/use-watch-history-recs";
@@ -18,95 +19,30 @@ import { AnilistRows } from "./anime/anilist-rows";
 import { AnilistRowControls } from "./anime/anilist-row-controls";
 import { AnilistTopRow, AnilistTrendingRow } from "./anime/anilist-top-row";
 import {
-  animeFranchiseKey,
-  GENRE,
-  jikanAiringNow,
-  jikanByEra,
-  jikanByGenre,
-  jikanTopAiring,
-  jikanTopAnime,
-  jikanTopMovies,
-  jikanTopPopular,
-  jikanTopTv,
-  jikanUnderratedGems,
-  jikanUpcoming,
-  stripFranchiseSuffix,
-} from "@/lib/providers/jikan";
+  EMPTY_ROW,
+  HERO_KEYS,
+  ROW_MAX_PAGES,
+  ROW_MIN_VISIBLE,
+  RowSkeleton,
+  SPECS,
+  TOP_PICKS_KEY,
+  isAnimeRow,
+  type RowPool,
+  type RowState,
+} from "./anime/anime-rows";
+import { animeFranchiseKey, stripFranchiseSuffix } from "@/lib/providers/jikan";
 import { useSettings } from "@/lib/settings";
 import { isAdultAnime } from "@/lib/addons-store/adult-filter";
 import { isAnimeCwItem, library, type LibraryItem } from "@/lib/stremio";
 import { fetchSimklPlaybackItems } from "@/lib/simkl/playback";
 import { useSimkl } from "@/lib/simkl/provider";
-import { useScrollMemory } from "@/lib/view";
+import { useScrollMemory, useView } from "@/lib/view";
 
-type Spec = {
-  key: string;
-  title: string;
-  fetcher: (page: number) => Promise<Meta[]>;
-  rank?: boolean;
-};
-
-const SPECS: Spec[] = [
-  { key: "airing", title: "Airing Now", fetcher: jikanAiringNow },
-  { key: "top-airing", title: "Top Airing on MAL", fetcher: jikanTopAiring, rank: true },
-  { key: "upcoming", title: "Upcoming Season", fetcher: jikanUpcoming },
-  { key: "top-tv", title: "Top Series on MAL", fetcher: jikanTopTv, rank: true },
-  { key: "top-movies", title: "Top Movies on MAL", fetcher: jikanTopMovies },
-  { key: "popular", title: "Most Popular on MAL", fetcher: jikanTopPopular },
-  { key: "all-time", title: "Top Rated on MAL", fetcher: jikanTopAnime },
-  { key: "gems", title: "Hidden Gems on MAL", fetcher: jikanUnderratedGems },
-  {
-    key: "era-2020s",
-    title: "2020s Hits",
-    fetcher: (p) => jikanByEra("2020-01-01", "2029-12-31", p),
-  },
-  {
-    key: "era-2010s",
-    title: "2010s Classics",
-    fetcher: (p) => jikanByEra("2010-01-01", "2019-12-31", p),
-  },
-  {
-    key: "era-2000s",
-    title: "2000s Era",
-    fetcher: (p) => jikanByEra("2000-01-01", "2009-12-31", p),
-  },
-  {
-    key: "era-1990s",
-    title: "Foundation Years (90s)",
-    fetcher: (p) => jikanByEra("1990-01-01", "1999-12-31", p),
-  },
-  { key: "genre-action", title: "Action & Adventure", fetcher: (p) => jikanByGenre(GENRE.Action, p) },
-  { key: "genre-romance", title: "Romance", fetcher: (p) => jikanByGenre(GENRE.Romance, p) },
-  { key: "genre-slice", title: "Slice of Life", fetcher: (p) => jikanByGenre(GENRE.SliceOfLife, p) },
-  { key: "genre-mecha", title: "Mecha", fetcher: (p) => jikanByGenre(GENRE.Mecha, p) },
-  { key: "genre-fantasy", title: "Fantasy", fetcher: (p) => jikanByGenre(GENRE.Fantasy, p) },
-  { key: "genre-scifi", title: "Sci-Fi", fetcher: (p) => jikanByGenre(GENRE.SciFi, p) },
-  { key: "genre-psych", title: "Psychological", fetcher: (p) => jikanByGenre(GENRE.Psychological, p) },
-  { key: "genre-horror", title: "Horror & Supernatural", fetcher: (p) => jikanByGenre(GENRE.Horror, p) },
-];
-
-const HERO_KEYS = new Set(["airing", "top-airing", "upcoming", "popular"]);
-const TOP_PICKS_KEY = "top-airing";
-
-type RowState = { metas: Meta[]; page: number; hasMore: boolean; ready: boolean };
-
-const EMPTY_ROW: RowState = { metas: [], page: 1, hasMore: false, ready: false };
+export { isAnimeRow } from "./anime/anime-rows";
 
 function cleanMeta(m: Meta): Meta {
   const cleaned = stripFranchiseSuffix(m.name);
   return cleaned === m.name ? m : { ...m, name: cleaned };
-}
-
-export function isAnimeRow(row: AddonRow): boolean {
-  if (row.type === "anime") return true;
-  const nameLower = (row.name ?? "").toLowerCase();
-  if (/\b(anime|mal|anilist|kitsu|aniworld|crunchyroll|funimation)\b/.test(nameLower)) return true;
-  const sample = row.metas.slice(0, 6);
-  if (sample.length === 0) return false;
-  const animeIds = sample.filter(
-    (m) => m.id.startsWith("kitsu:") || m.id.startsWith("mal:") || m.id.startsWith("anilist:"),
-  ).length;
-  return animeIds / sample.length >= 0.5;
 }
 
 export function AnimeView({ active = true }: { active?: boolean }) {
@@ -137,7 +73,7 @@ export function AnimeView({ active = true }: { active?: boolean }) {
               if (cancelled) return;
               setRowsByKey((prev) => ({
                 ...prev,
-                [s.key]: { metas, page: 1, hasMore: metas.length >= 20, ready: true },
+                [s.key]: { metas, page: 1, hasMore: metas.length >= ROW_MIN_VISIBLE, ready: true },
               }));
             } catch {
               if (cancelled) return;
@@ -179,7 +115,7 @@ export function AnimeView({ active = true }: { active?: boolean }) {
               ...cur,
               metas: [...cur.metas, ...fresh],
               page: next,
-              hasMore: more.length >= 20 && cur.metas.length + fresh.length < 80,
+              hasMore: more.length >= ROW_MIN_VISIBLE && cur.metas.length + fresh.length < 80,
             },
           };
         });
@@ -228,6 +164,7 @@ export function AnimeView({ active = true }: { active?: boolean }) {
   }, [rowsByKey]);
 
   const { settings, update } = useSettings();
+  const { openGrid } = useView();
   const favoriteGenres = settings.animeFavoriteGenres;
   const anilistHidden = settings.animeAnilistRowsHidden;
   const [showPicker, setShowPicker] = useState(false);
@@ -286,9 +223,17 @@ export function AnimeView({ active = true }: { active?: boolean }) {
         seen.add(i._id);
         return true;
       })
-      .sort((a, b) => Date.parse(b._mtime) - Date.parse(a._mtime))
+      .sort(
+        (a, b) =>
+          Date.parse(b.state?.lastWatched ?? b._mtime) -
+          Date.parse(a.state?.lastWatched ?? a._mtime),
+      )
       .slice(0, 20);
   }, [libItems, simklCw]);
+
+  useEffect(() => {
+    publishResumeStates(continueWatching);
+  }, [continueWatching]);
 
   const watchHistoryRecs = useWatchHistoryRecommendations(continueWatching);
 
@@ -340,9 +285,14 @@ export function AnimeView({ active = true }: { active?: boolean }) {
   }, [awardWinnersRaw]);
 
   const filteredRowsByKey = useMemo<Record<string, RowState>>(() => {
-    const seen = new Set<string>();
-    for (const m of heroMetas) seen.add(animeFranchiseKey(m.name));
-    for (const m of topPicks) seen.add(animeFranchiseKey(m.name));
+    const heroSeen = new Set<string>();
+    for (const m of heroMetas) heroSeen.add(animeFranchiseKey(m.name));
+    for (const m of topPicks) heroSeen.add(animeFranchiseKey(m.name));
+    const pools: Record<RowPool, Set<string>> = {
+      general: new Set(heroSeen),
+      era: new Set(heroSeen),
+      genre: new Set(heroSeen),
+    };
     const out: Record<string, RowState> = {};
     for (const spec of SPECS) {
       const row = rowsByKey[spec.key];
@@ -354,6 +304,7 @@ export function AnimeView({ active = true }: { active?: boolean }) {
         out[spec.key] = row;
         continue;
       }
+      const seen = pools[spec.pool ?? "general"];
       const filtered: Meta[] = [];
       for (const m of row.metas) {
         const fk = animeFranchiseKey(m.name);
@@ -365,6 +316,16 @@ export function AnimeView({ active = true }: { active?: boolean }) {
     }
     return out;
   }, [rowsByKey, heroMetas, topPicks]);
+
+  useEffect(() => {
+    for (const spec of SPECS) {
+      const raw = rowsByKey[spec.key];
+      if (!raw?.ready || !raw.hasMore || raw.page >= ROW_MAX_PAGES) continue;
+      const shown = filteredRowsByKey[spec.key];
+      if (!shown || shown.metas.length >= ROW_MIN_VISIBLE) continue;
+      loadMore(spec.key);
+    }
+  }, [rowsByKey, filteredRowsByKey, loadMore]);
 
   const dedupedAddonRows = useMemo(() => {
     const seen = new Set<string>();
@@ -486,6 +447,12 @@ export function AnimeView({ active = true }: { active?: boolean }) {
             if (spec.key === TOP_PICKS_KEY) return null;
             const r = filteredRowsByKey[spec.key] ?? EMPTY_ROW;
             if (r.ready && r.metas.length === 0) return null;
+            const viewAll = () =>
+              openGrid({
+                title: spec.title,
+                fetcher: (p) => spec.fetcher(p).then((ms) => ms.map(cleanMeta)),
+                initial: r.metas,
+              });
             return (
               <div key={spec.key} data-scroll-anchor={`row:${spec.key}`}>
                 {!r.ready ? (
@@ -496,6 +463,7 @@ export function AnimeView({ active = true }: { active?: boolean }) {
                     min={180}
                     shape="rank"
                     scrollKey={`anime:${spec.key}`}
+                    onViewAll={viewAll}
                   >
                     {r.metas.slice(0, 10).map((m, i) => (
                       <AnimeRankCard key={m.id} meta={m} rank={i + 1} />
@@ -506,6 +474,7 @@ export function AnimeView({ active = true }: { active?: boolean }) {
                     title={spec.title}
                     scrollKey={`anime:${spec.key}`}
                     onEndReached={r.hasMore ? () => loadMore(spec.key) : undefined}
+                    onViewAll={viewAll}
                   >
                     {r.metas.map((m, i) => (
                       <PickCard key={`${m.id}-${i}`} meta={m} />
@@ -517,7 +486,28 @@ export function AnimeView({ active = true }: { active?: boolean }) {
           })}
           {dedupedAddonRows.map((row) => (
             <div key={row.key} data-scroll-anchor={`row:${row.key}`}>
-              <Row title={row.name} scrollKey={`anime:addon:${row.key}`}>
+              <Row
+                title={row.name}
+                scrollKey={`anime:addon:${row.key}`}
+                onViewAll={
+                  row.more && row.metas.length > 0
+                    ? () =>
+                        openGrid({
+                          title: row.name,
+                          fetcher: async (p) =>
+                            (
+                              await fetchAddonCatalogPage(
+                                row.more!.base,
+                                row.more!.type,
+                                row.more!.id,
+                                (p - 1) * row.metas.length,
+                              )
+                            ).map(cleanMeta),
+                          initial: row.metas.map(cleanMeta),
+                        })
+                    : undefined
+                }
+              >
                 {row.metas.map((m, i) => (
                   <PickCard key={`${m.id}-${i}`} meta={cleanMeta(m)} />
                 ))}
@@ -543,22 +533,4 @@ export function AnimeView({ active = true }: { active?: boolean }) {
   );
 }
 
-function RowSkeleton({ title }: { title: string }) {
-  return (
-    <div className="flex flex-col gap-5">
-      <div className="flex items-baseline justify-between px-1">
-        <h2 className="font-display text-[26px] font-medium text-ink/85">{title}</h2>
-      </div>
-      <div className="flex gap-5 overflow-hidden px-1">
-        {Array.from({ length: 7 }).map((_, i) => (
-          <div
-            key={i}
-            className="flex-shrink-0 animate-pulse rounded-2xl bg-elevated/60"
-            style={{ width: 144, aspectRatio: "2 / 3", animationDelay: `${i * 80}ms` }}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
 

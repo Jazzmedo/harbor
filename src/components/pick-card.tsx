@@ -1,10 +1,17 @@
-import { Bookmark, RefreshCcw, Star } from "lucide-react";
+import { Bookmark, Popcorn, RefreshCcw } from "lucide-react";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { awardSourceMeta, findTopAward, parseAwardYear, type AwardWin } from "@/lib/anime-awards";
 import { meta as fetchMeta, narrowMediaType, type Meta } from "@/lib/cinemeta";
 import { useContextMenu } from "@/lib/context-menu";
+import {
+  hoverPreviewBlur,
+  hoverPreviewEnter,
+  hoverPreviewFocus,
+  hoverPreviewLeave,
+} from "@/lib/hover-preview/store";
 import { animeKitsuMeta } from "@/lib/providers/anime-kitsu-addon";
 import { omdbPrefetch, useOmdbScores } from "@/lib/providers/omdb";
+import { mdblistCardPrefetch, useMdblistCardScores } from "@/lib/providers/mdblist-batch";
 import { rpdbPoster } from "@/lib/providers/rpdb";
 import { tmdbImdbId, useTmdbImdbId } from "@/lib/providers/tmdb";
 import { useSettings } from "@/lib/settings";
@@ -37,6 +44,8 @@ export const PickCard = memo(function PickCard({
   const resolvedImdb = useTmdbImdbId(meta.id);
   const imdbId = resolvedImdb ?? undefined;
   const cached = useOmdbScores(imdbId);
+  const mediaKind = meta.type === "series" ? "show" : "movie";
+  const audience = useMdblistCardScores(settings.showRtBadge ? imdbId : undefined, mediaKind);
   const ref = useRef<HTMLButtonElement>(null);
   const altIds = useMemo(() => [imdbId], [imdbId]);
   const inWatchlist = useInWatchlist(meta.id, altIds);
@@ -89,7 +98,7 @@ export const PickCard = memo(function PickCard({
   }, [posterSrc, hydratedPoster, meta.type, meta.id]);
 
   useEffect(() => {
-    if (!settings.omdbKey) return;
+    if (!settings.omdbKey && !settings.mdblistKey) return;
     const el = ref.current;
     if (!el) return;
     let off: (() => void) | null = null;
@@ -98,19 +107,30 @@ export const PickCard = memo(function PickCard({
       off?.();
       off = null;
       const id = await tmdbImdbId(settings.tmdbKey, meta.id);
-      if (id) omdbPrefetch(settings.omdbKey, id);
+      if (!id) return;
+      if (settings.omdbKey) omdbPrefetch(settings.omdbKey, id);
+      if (settings.mdblistKey && settings.showRtBadge) {
+        mdblistCardPrefetch(id, meta.type === "series" ? "show" : "movie");
+      }
     });
     return () => off?.();
-  }, [meta.id, settings.tmdbKey, settings.omdbKey]);
+  }, [meta.id, meta.type, settings.tmdbKey, settings.omdbKey, settings.mdblistKey, settings.showRtBadge]);
 
   return (
     <button
       ref={ref}
       onClick={() => openMeta(meta)}
       onContextMenu={(e) => openContextMenu(e, { kind: "meta", meta })}
+      onFocus={(e) => hoverPreviewFocus(meta, e.currentTarget)}
+      onBlur={(e) => hoverPreviewBlur(e.currentTarget)}
       className="group flex w-full min-w-0 flex-col gap-2.5 text-left"
     >
-      <div className="relative transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0.24,1)] group-hover:-translate-y-2">
+      <div
+        data-preview-anchor
+        onPointerEnter={(e) => hoverPreviewEnter(meta, e.currentTarget, e.buttons)}
+        onPointerLeave={(e) => hoverPreviewLeave(e.currentTarget)}
+        className="relative transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0.24,1)] group-hover:-translate-y-2"
+      >
         <Poster
           src={posterSrc}
           seed={meta.id}
@@ -149,13 +169,8 @@ export const PickCard = memo(function PickCard({
                 : undefined
           }
           rt={settings.showRtBadge ? cached?.rtCritics : undefined}
-          source={
-            isAnimeCardId
-              ? "mal"
-              : cached?.imdbRating != null || meta.id.startsWith("tt")
-                ? "imdb"
-                : "generic"
-          }
+          audience={settings.showRtBadge ? audience?.rtAudience ?? undefined : undefined}
+          source={isAnimeCardId ? "mal" : "imdb"}
           placement={settings.badgePlacement}
         />
       </div>
@@ -171,15 +186,17 @@ export const PickCard = memo(function PickCard({
 function ScoreStack({
   rating,
   rt,
+  audience,
   source = "imdb",
   placement = "bottom",
 }: {
   rating?: string;
   rt?: number;
-  source?: "imdb" | "mal" | "generic";
+  audience?: number;
+  source?: "imdb" | "mal";
   placement?: "top" | "bottom";
 }) {
-  if (!rating && rt == null) return null;
+  if (!rating && rt == null && audience == null) return null;
   return (
     <div
       className={`absolute right-1.5 flex items-center gap-1 rounded-md bg-canvas/95 px-1.5 py-0.5 text-[10px] font-semibold text-ink ${
@@ -190,8 +207,6 @@ function ScoreStack({
         <span className="flex items-center gap-1">
           {source === "mal" ? (
             <MalLogo className="h-[11px] w-auto text-ink-muted" />
-          ) : source === "generic" ? (
-            <Star size={10} strokeWidth={0} fill="currentColor" className="text-accent" />
           ) : (
             <ImdbIcon className="h-[11px] w-auto rounded-[2px]" />
           )}
@@ -203,6 +218,13 @@ function ScoreStack({
         <span className="flex items-center gap-0.5">
           <RtBadge score={rt} className="h-[12px] w-auto" />
           <span>{rt}%</span>
+        </span>
+      )}
+      {(rating || rt != null) && audience != null && <span className="opacity-30">·</span>}
+      {audience != null && (
+        <span className="flex items-center gap-0.5" title="Rotten Tomatoes audience score">
+          <Popcorn size={12} strokeWidth={2.4} className={audience >= 60 ? "text-accent" : "text-ink-muted"} />
+          <span>{Math.round(audience)}%</span>
         </span>
       )}
     </div>

@@ -6,6 +6,7 @@ export type PerShowPrefs = {
   subDelaySec?: number;
   audioLang?: string;
   subLang?: string;
+  subsOff?: boolean;
   updatedAt: number;
 };
 

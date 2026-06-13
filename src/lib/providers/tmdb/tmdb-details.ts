@@ -1,5 +1,5 @@
 import type { Meta } from "../../cinemeta";
-import { get, IMG } from "./tmdb-client";
+import { get, IMG, tmdbLanguageIso } from "./tmdb-client";
 import { pickLogo } from "./tmdb-images";
 import { pickTrailers, type Video } from "./tmdb-trailers";
 import type { PersonRef } from "./tmdb-people";
@@ -151,9 +151,10 @@ export async function tmdbDetails(key: string, meta: Meta): Promise<TmdbDetail |
     return null;
   }
 
+  const iso = tmdbLanguageIso();
   const raw = await get<any>(key, `${kind}/${id}`, {
     append_to_response: "credits,aggregate_credits,recommendations,similar,videos,external_ids,images,keywords",
-    include_image_language: "en,null",
+    include_image_language: iso && iso !== "en" ? `${iso},en,null` : "en,null",
   });
   if (!raw) return null;
 

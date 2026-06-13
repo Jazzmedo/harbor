@@ -153,6 +153,11 @@ new_sqlite_classes = ["Room"]`}</DocsPre>
           The test calls <DocsCode>/health</DocsCode> and confirms the worker is reachable and
           running a current version. A passing test means Watch Together rooms will connect.
         </DocsP>
+        <DocsP>
+          If the Watch Together popover shows an outdated-relay banner, redeploying with the
+          steps above is the fix. The banner clears automatically the next time you connect
+          once the relay reports the current version.
+        </DocsP>
       </DocsBlock>
 
       <DocsBlock>

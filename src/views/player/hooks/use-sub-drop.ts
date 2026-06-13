@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import type { PlayerBridge } from "@/lib/player/bridge";
+import { writePlayerPrefs } from "@/lib/player-prefs";
 
 const SUB_EXT = /\.(srt|ass|ssa|vtt|sub)$/i;
 
-export function useSubDrop(bridgeRef: RefObject<PlayerBridge | null>) {
+export function useSubDrop(bridgeRef: RefObject<PlayerBridge | null>, metaId: string) {
   const [toast, setToast] = useState<string | null>(null);
   const timer = useRef<number | null>(null);
 
@@ -21,6 +22,7 @@ export function useSubDrop(bridgeRef: RefObject<PlayerBridge | null>) {
           void bridgeRef.current
             ?.addSubtitle(path, undefined, name.replace(SUB_EXT, ""), true)
             .then((ok) => {
+              if (ok) writePlayerPrefs(metaId, { subsOff: false });
               setToast(ok ? `Loaded ${name}` : `Couldn't load ${name}`);
               if (timer.current) window.clearTimeout(timer.current);
               timer.current = window.setTimeout(() => setToast(null), 2200);
@@ -32,7 +34,7 @@ export function useSubDrop(bridgeRef: RefObject<PlayerBridge | null>) {
       un?.();
       if (timer.current) window.clearTimeout(timer.current);
     };
-  }, [bridgeRef]);
+  }, [bridgeRef, metaId]);
 
   return toast;
 }

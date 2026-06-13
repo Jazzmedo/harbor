@@ -42,6 +42,7 @@ export type PlayerSnapshot = {
   videoHeight: number;
   errorMessage: string | null;
   errorCode: "decode" | "codec" | "network" | "source" | "unknown" | null;
+  noAudio?: boolean;
 };
 
 export type PlayerSource = {
@@ -69,6 +70,8 @@ export type PlayerBridge = {
   setPanscan: (value: number) => void;
   addSubtitle: (url: string, lang?: string, title?: string, select?: boolean) => Promise<boolean>;
   setAudioNormalize: (on: boolean) => void;
+  setAudioProfile?: (profile: string) => void;
+  setMediaInfo?: (info: { title: string; artist?: string; artwork?: string }) => void;
   screenshot: (path: string) => Promise<{ ok: boolean; path?: string; error?: string }>;
   setAbLoop: (a: number | null, b: number | null) => void;
   requestPiP: () => Promise<void>;
