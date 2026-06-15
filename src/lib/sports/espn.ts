@@ -240,7 +240,6 @@ function parseEvents(events: unknown[], def: LeagueDef): SportsGame[] {
     // For F1/NASCAR: prioritize Race > Qualifying > Sprint > Practice
     let comp = allComps.find((c) => c.featured === true);
     if (!comp && (def.key === "F1" || def.key === "NASCAR")) {
-      const typeMap = new Map(allComps.map((c, i) => [c, i]));
       const raceComp = allComps.find((c) => {
         const typeAbbr = ((c.type as Record<string, unknown>)?.abbreviation as string)?.toUpperCase();
         return typeAbbr === "RACE" || typeAbbr === "R" || typeAbbr?.includes("MAIN");
