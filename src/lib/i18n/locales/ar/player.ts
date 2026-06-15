@@ -97,20 +97,12 @@ const player: Record<string, string> = {
     "لا يوجد صوت: صيغة صوت هذا البث (غالبًا Dolby أو DTS) غير مدعومة في محرك HTML5.",
   "This file is flagged as not web-playable. Try the mpv backend in Settings or pick another stream.":
     "هذا الملف موسوم بأنه غير قابل للتشغيل عبر الويب. جرّب محرك mpv في الإعدادات أو اختر بثًا آخر.",
-  "Play": "تشغيل",
-  "Pause": "إيقاف مؤقت",
   "Next Episode": "الحلقة التالية",
   "Previous Episode": "الحلقة السابقة",
-  "Fullscreen": "ملء الشاشة",
   "TV Guide": "دليل القنوات",
   "Back": "رجوع",
   "Live": "مباشر",
   "Title info": "معلومات العنوان",
-  "Mute": "كتم الصوت",
-  "Unmute": "إلغاء كتم الصوت",
-  "Subtitles": "ترجمات",
-  "Audio": "الصوت",
-  "Speed": "السرعة",
 };
 
 export default player;

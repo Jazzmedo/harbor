@@ -65,7 +65,6 @@ const library: Record<string, string> = {
 
   "TMDB powers the firehose of every release this month. The free tier covers it. About 60 seconds to set up. Switch to My Library if you'd rather only see what you've saved.":
     "تغذّي TMDB سيل كل إصدارات هذا الشهر. الباقة المجانية تكفي. الإعداد يستغرق نحو 60 ثانية. بدّل إلى \"مكتبتي\" إن كنت تفضّل رؤية ما حفظته فقط.",
-  "History": "السجل",
 };
 
 export default library;
