@@ -82,6 +82,9 @@ const settings: Record<string, string> = {
   "Leave the episode you are up to clear and only blur the ones after it.":
     "اترك الحلقة التي وصلت إليها واضحة وموّه فقط ما بعدها.",
   "Keep the next episode visible": "إبقاء الحلقة التالية ظاهرة",
+  "Blur episode images on detail page": "تمويه صور الحلقات في صفحة التفاصيل",
+  "Blurs the hero image and stills on the episode detail page until you click reveal.":
+    "تمويه الصورة الرئيسية وصور المشاهد في صفحة تفاصيل الحلقة حتى تنقر على الإظهار.",
 
   "Hides anime from the Home Continue Watching row. It still appears in the Anime tab's own Continue Watching.":
     "يخفي الأنمي من صف متابعة المشاهدة في الرئيسية. ويظل يظهر في متابعة المشاهدة الخاصة بعلامة تبويب الأنمي.",
@@ -482,6 +485,9 @@ const settings: Record<string, string> = {
   "Disconnect from Trakt": "قطع الاتصال من Trakt",
   "Disconnect Trakt? Scrobbles and syncs will stop until you reconnect.": "هل تريد قطع اتصال Trakt؟ سيتوقف تسجيل المشاهدات والمزامنة حتى تقوم بالاتصال مرة أخرى.",
   "Disconnect": "قطع الاتصال",
+  "Blur comments by default": "تمويه التعليقات افتراضيًا",
+  "Comments on episode/show pages are blurred until you reveal them, even if they are not tagged as spoilers.":
+    "التعليقات في صفحات الحلقات/العروض تكون معمّاة حتى تظهرها، حتى لو لم تكن موسومة كحرق.",
   "today": "اليوم",
   "Connect your Simkl account": "ربط حساب Simkl الخاص بك",
   "Connect Simkl": "ربط Simkl",

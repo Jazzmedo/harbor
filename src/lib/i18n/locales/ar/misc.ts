@@ -123,6 +123,12 @@ const misc: Record<string, string> = {
   "Connected": "متصل",
   "Email": "البريد الإلكتروني",
   "Reveal": "إظهار",
+  "Reveal comments": "إظهار التعليقات",
+  "Comments are hidden": "التعليقات مخفية",
+  "You haven't commented yet": "لم تعلق بعد",
+  "Reveal image": "إظهار الصورة",
+
+  "My": "تعليقاتي",
   "Run test": "تشغيل الاختبار",
   "Use a different URL": "استخدام رابط مختلف",
   "Deploy a relay": "نشر المرحل (Deploy a relay)",

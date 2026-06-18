@@ -102,6 +102,19 @@ const en: Record<string, string> = {
   "Votes": "Votes",
   "Air Date": "Air Date",
   "Runtime": "Runtime",
+
+  "My": "My",
+  "Reveal comments": "Reveal comments",
+  "Comments are hidden": "Comments are hidden",
+  "You haven't commented yet": "You haven't commented yet",
+  "Reveal image": "Reveal image",
+
+  "Blur comments by default": "Blur comments by default",
+  "Comments on episode/show pages are blurred until you reveal them, even if they are not tagged as spoilers.":
+    "Comments on episode/show pages are blurred until you reveal them, even if they are not tagged as spoilers.",
+  "Blur episode images on detail page": "Blur episode images on detail page",
+  "Blurs the hero image and stills on the episode detail page until you click reveal.":
+    "Blurs the hero image and stills on the episode detail page until you click reveal.",
 };
 
 export default en;
