@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowLeft, Play, Star, Popcorn } from "lucide-react";
+import { ArrowLeft, Play } from "lucide-react";
 import type { Meta } from "@/lib/cinemeta";
 import type { EpisodeDetail } from "@/lib/providers/tmdb/tmdb-episode-types";
 import type { CastEntry } from "@/lib/providers/tmdb";
@@ -9,8 +9,7 @@ import { useSettings, type Settings } from "@/lib/settings";
 import { useScrollMemory, useView, type PlayEpisode } from "@/lib/view";
 import { useT } from "@/lib/i18n";
 import { openUrl } from "@/lib/window";
-import { useOmdbScores } from "@/lib/providers/omdb";
-import { useMdblistScores } from "@/lib/providers/mdblist";
+import { useOmdbScores, omdbScores as fetchOmdbScores } from "@/lib/providers/omdb";
 import { useTmdbImdbId } from "@/lib/providers/tmdb";
 import { HeroRatings } from "@/views/detail/hero-ratings";
 import { CastCard } from "@/views/detail/cast-card";
@@ -47,18 +46,19 @@ export function EpisodeDetailView({
   const resolvedImdb = useTmdbImdbId(seriesMeta?.id);
   const imdbId = resolvedImdb ?? (seriesMeta?.id.startsWith("tt") ? seriesMeta.id : null);
   const omdbScores = useOmdbScores(imdbId ?? undefined);
-  const mdblistScores = useMdblistScores(
-    settings.mdblistKey,
-    imdbId,
-  );
   const episodeImdbId = episodeData?.imdbId ?? undefined;
   const episodeOmdbScores = useOmdbScores(episodeImdbId);
-  const episodeMdblistScores = useMdblistScores(
-    settings.mdblistKey,
-    episodeImdbId ?? null,
-    "show",
-  );
   useScrollMemory(`episode:${seriesId}:${season}:${episode}`, scrollRef);
+
+  // Trigger OMDB fetch for episode IMDb ID (useOmdbScores only watches cache, doesn't fetch)
+  useEffect(() => {
+    if (!settings.omdbKey || !episodeImdbId) return;
+    let cancelled = false;
+    void fetchOmdbScores(settings.omdbKey, episodeImdbId, "episode").then(() => {
+      if (cancelled) return;
+    });
+    return () => { cancelled = true; };
+  }, [settings.omdbKey, episodeImdbId]);
 
   const episodeKey = `${seriesId}:${season}:${episode}`;
   const { tmdbKey } = settings;
@@ -223,32 +223,13 @@ export function EpisodeDetailView({
                 {episodeData.runtime && episodeData.runtime > 0 && (
                   <Pill>{t("{n} min", { n: episodeData.runtime })}</Pill>
                 )}
-                {episodeRating && (
-                  <Pill>
-                    <Star size={13} className="text-accent" fill="currentColor" />
-                    <span className="text-accent">{episodeRating}</span>
-                    {episodeOmdbScores?.imdbVotes != null && (
-                      <span className="text-[11px] text-ink-muted">
-                        {episodeOmdbScores.imdbVotes >= 1000
-                          ? `${(episodeOmdbScores.imdbVotes / 1000).toFixed(0)}k`
-                          : episodeOmdbScores.imdbVotes}
-                      </span>
-                    )}
-                  </Pill>
-                )}
-                {!episodeOmdbScores && episodeMdblistScores?.score != null && (
-                  <Pill>
-                    <Popcorn size={13} className="text-ink-muted" />
-                    <span>{Math.round(episodeMdblistScores.score)}</span>
-                  </Pill>
-                )}
                 <HeroRatings
-                  rating={seriesRating}
+                  rating={episodeRating ?? seriesRating}
                   isAnime={false}
-                  scores={omdbScores}
-                  mdblist={mdblistScores}
+                  scores={episodeOmdbScores ?? omdbScores}
+                  mdblist={null}
                   showRtBadge={settings.showRtBadge}
-                  imdbId={imdbId}
+                  imdbId={episodeImdbId ?? imdbId}
                   mediaType="show"
                   onOpenUrl={openUrl}
                 />
