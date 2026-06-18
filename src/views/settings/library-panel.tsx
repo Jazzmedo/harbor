@@ -143,6 +143,12 @@ export function LibraryPanel({
               onChange={(v) => update({ spoilerHideDescriptions: v })}
             />
             <ToggleRow
+              label={t("Blur episode images on detail page")}
+              sub={t("Blurs the hero image and stills on the episode detail page until you click reveal.")}
+              value={settings.blurEpisodes}
+              onChange={(v) => update({ blurEpisodes: v })}
+            />
+            <ToggleRow
               label={t("Keep the next episode visible")}
               sub={t("Leave the episode you are up to clear and only blur the ones after it.")}
               value={settings.spoilerSkipNext}

@@ -144,12 +144,6 @@ export function TraktPanel() {
             value={settings.blurComments}
             onChange={(on) => update({ blurComments: on })}
           />
-          <ToggleRow
-            label={t("Blur episode images")}
-            sub={t("Episode stills and hero images are blurred to avoid spoilers.")}
-            value={settings.blurEpisodes}
-            onChange={(on) => update({ blurEpisodes: on })}
-          />
           {!confirmDisconnect ? (
             <button
               onClick={() => setConfirmDisconnect(true)}
