@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Heart, MessageCircle, ChevronDown, Settings, Loader2, Send } from "lucide-react";
+import { Heart, MessageCircle, ChevronDown, Settings, Loader2, Send, AlertCircle } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import {
   fetchComments,
@@ -8,6 +8,7 @@ import {
   postComment,
   type TraktComment,
 } from "@/lib/trakt/comments";
+import { traktRequest, TraktApiError } from "@/lib/trakt/client";
 import type { IdResolution } from "@/lib/trakt/ids";
 import { getSession, subscribeSession } from "@/lib/trakt/session";
 import { useView } from "@/lib/view";
@@ -26,22 +27,21 @@ function timeAgo(dateStr: string): string {
   return `${months}mo ago`;
 }
 
-function UserAvatar({ username, size = "md" }: { username: string; size?: "sm" | "md" }) {
+function UserAvatar({ username, size = "sm" }: { username?: string | null; size?: "sm" | "md" }) {
   const [error, setError] = useState(false);
   const dim = size === "sm" ? "h-8 w-8" : "h-9 w-9";
   const font = size === "sm" ? "text-[12px]" : "text-[14px]";
-  const url = `https://walter.trakt.tv/users/${username}/avatars/medium`;
-  const initial = username.charAt(0).toUpperCase();
+  const initial = username ? username.charAt(0).toUpperCase() : "?";
 
   return (
     <div className={`shrink-0 ${dim}`}>
-      {error ? (
+      {error || !username ? (
         <div className={`flex ${dim} items-center justify-center rounded-full bg-ink-muted/20 ${font} font-semibold text-ink-muted`}>
           {initial}
         </div>
       ) : (
         <img
-          src={url}
+          src={`https://walter.trakt.tv/users/${username}/avatars/medium`}
           alt={username}
           className={`${dim} rounded-full object-cover`}
           loading="lazy"
@@ -163,18 +163,34 @@ export function TraktComments({ resolution }: { resolution: IdResolution | null 
   const [sort, setSort] = useState<string>("likes");
   const [showSort, setShowSort] = useState(false);
   const [posting, setPosting] = useState(false);
+  const [postError, setPostError] = useState<string | null>(null);
   const [text, setText] = useState("");
   const sortRef = useRef<HTMLDivElement>(null);
   const { openSettings } = useView();
   const [session, setSessionState] = useState(() => getSession());
   const connected = !!session;
   const username = session?.username ?? null;
+  const [userAvatar, setUserAvatar] = useState<string | null>(null);
 
   useEffect(() => {
     return subscribeSession(() => {
       setSessionState(getSession());
     });
   }, []);
+
+  useEffect(() => {
+    if (!connected) return;
+    let cancelled = false;
+    traktRequest<{ username: string; images?: { avatar?: { full?: string } } }>(
+      "/users/me?extended=images",
+    )
+      .then((data) => {
+        if (cancelled) return;
+        setUserAvatar(data.images?.avatar?.full ?? null);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [connected]);
 
   const target = resolution?.ok ? resolution.target : null;
 
@@ -219,13 +235,23 @@ export function TraktComments({ resolution }: { resolution: IdResolution | null 
 
   const handlePost = useCallback(async () => {
     if (!target || !text.trim() || posting) return;
+    setPostError(null);
     setPosting(true);
     try {
       const created = await postComment(target, text.trim());
       setComments((prev) => [created, ...prev]);
       setText("");
     } catch (e) {
-      console.error("Failed to post comment:", e);
+      if (e instanceof TraktApiError) {
+        try {
+          const parsed = JSON.parse(e.body);
+          setPostError(parsed.error_description ?? parsed.error ?? "Failed to post comment");
+        } catch {
+          setPostError("Failed to post comment");
+        }
+      } else {
+        setPostError("Failed to post comment");
+      }
     }
     setPosting(false);
   }, [target, text, posting]);
@@ -296,37 +322,53 @@ export function TraktComments({ resolution }: { resolution: IdResolution | null 
       )}
 
       {target && connected && (
-        <div className="mb-5 flex items-start gap-3">
-          {username && <UserAvatar username={username} size="sm" />}
-          <div className="flex flex-1 items-start gap-2">
-            <textarea
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder={t("Write a comment...")}
-              rows={1}
-              className="min-h-[36px] max-h-32 flex-1 resize-none overflow-y-auto rounded-xl bg-elevated px-3.5 py-2 text-[13px] text-ink outline-none ring-1 ring-edge placeholder:text-ink-muted/50 focus:ring-2 focus:ring-ink/20"
-              onInput={(e) => {
-                const el = e.currentTarget;
-                el.style.height = "auto";
-                el.style.height = `${Math.min(el.scrollHeight, 128)}px`;
-              }}
-            />
-            <button
-              onClick={handlePost}
-              disabled={!text.trim() || posting}
-              className={`flex h-9 shrink-0 items-center gap-1.5 rounded-xl px-3.5 text-[13px] font-semibold transition-all ${
-                !text.trim() || posting
-                  ? "bg-ink-muted/20 text-ink-muted/50 cursor-not-allowed"
-                  : "bg-ink text-canvas hover:scale-[1.02]"
-              }`}
-            >
-              {posting ? (
-                <Loader2 size={14} className="animate-spin" />
-              ) : (
-                <Send size={14} />
-              )}
-            </button>
+        <div className="mb-5">
+          <div className="flex items-start gap-3">
+            {userAvatar ? (
+              <img
+                src={userAvatar}
+                alt={username ?? ""}
+                className="h-8 w-8 shrink-0 rounded-full object-cover"
+              />
+            ) : (
+              <UserAvatar username={username} size="sm" />
+            )}
+            <div className="flex flex-1 items-start gap-2">
+              <textarea
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder={t("Write a comment...")}
+                rows={1}
+                className="min-h-[36px] max-h-32 flex-1 resize-none overflow-y-auto rounded-xl bg-elevated px-3.5 py-2 text-[13px] text-ink outline-none ring-1 ring-edge placeholder:text-ink-muted/50 focus:ring-2 focus:ring-ink/20"
+                onInput={(e) => {
+                  const el = e.currentTarget;
+                  el.style.height = "auto";
+                  el.style.height = `${Math.min(el.scrollHeight, 128)}px`;
+                }}
+              />
+              <button
+                onClick={handlePost}
+                disabled={!text.trim() || posting}
+                className={`flex h-9 shrink-0 items-center gap-1.5 rounded-xl px-3.5 text-[13px] font-semibold transition-all ${
+                  !text.trim() || posting
+                    ? "bg-ink-muted/20 text-ink-muted/50 cursor-not-allowed"
+                    : "bg-ink text-canvas hover:scale-[1.02]"
+                }`}
+              >
+                {posting ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <Send size={14} />
+                )}
+              </button>
+            </div>
           </div>
+          {postError && (
+            <div className="mt-2 flex items-center gap-1.5 rounded-lg bg-red-500/10 px-3 py-2 text-[12px] text-red-400">
+              <AlertCircle size={12} />
+              {postError}
+            </div>
+          )}
         </div>
       )}
 
