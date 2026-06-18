@@ -549,11 +549,11 @@ export function TraktComments({ resolution }: { resolution: IdResolution | null 
         )}
       </div>
 
-      <div className="relative">
+      <div className="relative overflow-hidden rounded-xl">
         {settings.blurComments && blurred && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center gap-3 pt-12 backdrop-blur-sm"
+          <div className="absolute inset-0 z-10 flex flex-col items-center gap-3 pt-16 backdrop-blur-sm"
             style={{
-              background: "linear-gradient(to bottom, color-mix(in srgb, var(--color-canvas) 0%, transparent) 0%, color-mix(in srgb, var(--color-canvas) 75%, transparent) 40%, color-mix(in srgb, var(--color-canvas) 92%, transparent) 100%)",
+              background: "linear-gradient(to bottom, color-mix(in srgb, var(--color-canvas) 5%, transparent) 0%, color-mix(in srgb, var(--color-canvas) 78%, transparent) 40%, color-mix(in srgb, var(--color-canvas) 95%, transparent) 100%)",
             }}
           >
             <button
