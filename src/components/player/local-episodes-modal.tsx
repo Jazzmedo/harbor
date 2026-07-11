@@ -13,6 +13,7 @@ import {
   subscribeLocalEpisodes,
   type LocalEpisodesPayload,
 } from "@/lib/player/local-episodes-modal";
+import { focusTvPageDefault } from "@/lib/keyboard-navigation";
 
 export function LocalEpisodesModal() {
   const state = useSyncExternalStore(subscribeLocalEpisodes, getLocalEpisodes);
@@ -165,6 +166,8 @@ function GridModal({ payload }: { payload: LocalEpisodesPayload }) {
         : t("Ascending");
 
   useEffect(() => {
+    focusTvPageDefault();
+
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
@@ -330,6 +333,8 @@ function GridModal({ payload }: { payload: LocalEpisodesPayload }) {
                 key={ep.id}
                 type="button"
                 onClick={() => play(ep)}
+                autoFocus={isHighlight}
+                data-tv-initial-focus={isHighlight || undefined}
                 className={`group/ep relative flex items-center gap-3 overflow-hidden rounded-xl px-3 py-2.5 text-start transition-colors hover:bg-raised ${
                   isHighlight ? "bg-accent/10 ring-1 ring-accent" : ""
                 }`}

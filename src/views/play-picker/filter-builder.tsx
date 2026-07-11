@@ -173,9 +173,15 @@ export function FilterBuilder({
 
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
   }, [open, onClose]);
 
   const isEdit = initial != null;
@@ -203,6 +209,7 @@ export function FilterBuilder({
       onClick={onClose}
     >
       <div
+        data-tv-focus-scope
         onClick={(e) => e.stopPropagation()}
         className="animate-modal-in flex max-h-[88vh] w-[min(94vw,560px)] flex-col rounded-2xl border border-edge-soft bg-elevated shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)]"
       >
@@ -216,6 +223,7 @@ export function FilterBuilder({
           <button
             type="button"
             onClick={onClose}
+            data-tv-modal-close
             aria-label="Close"
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-subtle transition-colors hover:bg-raised hover:text-ink"
           >

@@ -630,7 +630,7 @@ export function PlayPicker({
   }
 
   return (
-    <main ref={mainRef} className="absolute inset-0 z-50 overflow-y-auto bg-canvas">
+    <main ref={mainRef} data-tv-focus-scope className="absolute inset-0 z-50 overflow-y-auto bg-canvas">
       <BackdropLayer src={backdropSrc} />
 
       <div aria-hidden data-tauri-drag-region={fs ? "false" : "true"} className="absolute inset-x-0 top-0 z-10 h-20" />

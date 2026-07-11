@@ -1,6 +1,7 @@
 import { Search, X, Loader2, CornerDownLeft, CalendarRange, Tag } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { TvModalClose } from "@/components/tv-modal-close";
 import { useT } from "@/lib/i18n";
 import { useSearch } from "@/lib/search-context";
 import { useView } from "@/lib/view";
@@ -108,6 +109,7 @@ export function SearchOverlay() {
       data-search-overlay
       data-tv-focus-scope
     >
+      <TvModalClose onClose={close} label={t("common.close")} />
       <div
         role="presentation"
         aria-hidden="true"

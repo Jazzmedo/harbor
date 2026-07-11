@@ -31,6 +31,8 @@ export function PickerHeader({
           <button
             type="button"
             onClick={onBack}
+            data-tv-modal-close
+            aria-label={t("common.back")}
             className="group/back -ms-1 flex w-fit items-center gap-3 rounded-full py-1.5 pe-6 ps-1.5 text-[17px] font-semibold text-ink-muted transition-colors hover:text-ink"
           >
             <span className="flex h-12 w-12 items-center justify-center rounded-full bg-elevated/70 ring-1 ring-edge-soft transition-colors group-hover/back:bg-elevated">

@@ -155,6 +155,8 @@ export function EpisodePanel({
   return (
     <div
       aria-hidden={!open}
+      data-tv-focus-scope={open || undefined}
+      inert={!open ? true : undefined}
       className={`pointer-events-${open ? "auto" : "none"} absolute inset-0 z-30`}
     >
       {resolvingFor && (
@@ -212,6 +214,7 @@ export function EpisodePanel({
               <button
                 aria-label={t("Close")}
                 onClick={onClose}
+                data-tv-modal-close
                 className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-elevated text-ink-muted transition-colors hover:bg-raised hover:text-ink"
               >
                 <X size={18} strokeWidth={2.2} />

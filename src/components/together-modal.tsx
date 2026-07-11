@@ -1,5 +1,6 @@
 import { Check, Copy, LogOut, MousePointer2, Plus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { TvModalClose } from "@/components/tv-modal-close";
 import type { Meta } from "@/lib/cinemeta";
 import { useSettings } from "@/lib/settings";
 import { useTogether } from "@/lib/together/provider";
@@ -107,6 +108,7 @@ export function TogetherPopover({
     <div
       role="dialog"
       aria-modal="true"
+      data-tv-focus-scope
       aria-label={t("Watch together")}
       className={`harbor-together-surface flex max-h-[80vh] w-[400px] flex-col gap-4 overflow-y-auto border border-edge p-5 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.7)] animate-popover-in ${
         connectStyle === "tab"
@@ -118,6 +120,7 @@ export function TogetherPopover({
             : "rounded-2xl rounded-se-none"
       }`}
     >
+      <TvModalClose onClose={closeModal} label={t("Close")} />
       <header className="flex items-center justify-between gap-3">
         <h2 className="text-[14px] font-semibold tracking-tight text-ink">
           {view === "link" ? t("Invite via link") : t("Watch together")}

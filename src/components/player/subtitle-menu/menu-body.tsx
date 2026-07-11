@@ -144,6 +144,7 @@ export function MenuBody(props: SubtitleMenuProps & { onClose: () => void }) {
           <button
             onClick={onClose}
             aria-label={tr("Close")}
+            data-tv-modal-close
             className="flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-raised hover:text-ink"
           >
             <X size={16} strokeWidth={2.2} />

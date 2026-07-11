@@ -138,8 +138,16 @@ export function SpeedMenu({
       </Tooltip>
       {open && (
         <div
+          data-tv-focus-scope
           className={`absolute bottom-[calc(100%+10px)] ${side === "start" ? "start-0" : "end-0"} w-[400px] max-w-[calc(100vw-32px)] overflow-hidden rounded-2xl border border-edge bg-elevated shadow-[0_24px_60px_-18px_rgba(0,0,0,0.8)] backdrop-blur-xl`}
         >
+          <button
+            onClick={() => setOpen(false)}
+            aria-label={t("Close")}
+            data-tv-modal-close
+            tabIndex={-1}
+            className="hidden"
+          />
           <div className={`grid ${sleep ? "grid-cols-2" : "grid-cols-1"}`}>
             <Section title={t("Playback speed")}>
               {speedList.map((s) => (

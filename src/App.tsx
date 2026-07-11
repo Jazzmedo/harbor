@@ -483,7 +483,8 @@ function Shell() {
   }, []);
 
   useKeyboardNavigation({
-    enabled: !player && !picker,
+    // Player mounts its own hook; picker stays on App so Back/arrows keep working.
+    enabled: !player,
     wrap: false,
     onBack: handleTvBack,
     onBackToNav: handleTvBackToNav,
