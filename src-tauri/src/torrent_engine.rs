@@ -179,7 +179,7 @@ fn engine_dir(app: &AppHandle, cfg: &EngineConfig) -> Result<std::path::PathBuf,
 }
 
 async fn init(app: AppHandle) -> Result<(), String> {
-    std::env::set_var("DHT_QUERIES_PER_SECOND", "100");
+    std::env::set_var("DHT_QUERIES_PER_SECOND", "20");
     let cfg = read_config(&app);
     let dir = engine_dir(&app, &cfg)?;
     std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
