@@ -79,7 +79,6 @@ function zoneOf(el: HTMLElement): 'nav' | 'hero' | 'content' {
   return 'content';
 }
 
-// 🧠 تحسين ذكاء التعرف على الأفلام ليشمل الروابط والـ Rows
 function getSoundType(el: HTMLElement): 'light' | 'movie' {
   if (isInNav(el)) return 'light';
   if (el.closest('[role="dialog"], [role="menu"], [role="tablist"], [role="switch"], form, .settings-panel')) return 'light';
@@ -244,13 +243,11 @@ export function useKeyboardNavigation(options: TVNavigationOptions = {}) {
         return;
       }
 
-      // 🧠 إصلاح شامل لزر الرجوع (ESC) ليتطابق مع واجهة الأفلام
       if (isBackKey(e)) {
-        SFX.close(); // تشغيل الصوت دائماً
+        SFX.close(); 
 
         if (activeModal) return;
 
-        // محاولة إيجاد زر الرجوع الفعلي في الشاشة (مثل صفحة تفاصيل الفيلم) والضغط عليه برمجياً
         const backBtn = document.querySelector<HTMLElement>('button[aria-label*="back" i], button[aria-label*="رجوع" i], a[aria-label*="back" i], button[class*="back" i], [data-harbor-back]');
         if (backBtn && isVisible(backBtn)) {
           e.preventDefault(); e.stopPropagation();
