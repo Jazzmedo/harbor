@@ -5,6 +5,7 @@
   "windows": ["main", "harbor-pip", "harbor-browser", "harbor-modal-overlay"],
   "permissions": [
     "core:default",
+    "os:default",
     "core:window:allow-minimize",
     "core:window:allow-toggle-maximize",
     "core:window:allow-close",
