@@ -1,4 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
+import { isWindowsDesktop } from "@/lib/platform";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import {
   emptySnapshot,
@@ -491,7 +492,7 @@ export function createMpvBridge(mpvOptions?: MpvOptions): PlayerBridge {
       invoke("mpv_set_property", { name, value }).catch(() => {});
     },
     setAnime4kShaders(shaders) {
-      const sep = typeof navigator !== "undefined" && navigator.userAgent.toLowerCase().includes("windows") ? ";" : ":";
+      const sep = isWindowsDesktop() ? ";" : ":";
       invoke("mpv_set_property", { name: "glsl-shaders", value: shaders.filter(Boolean).join(sep) }).catch(() => {});
     },
     async addSubtitle(url, lang, title, select): Promise<boolean> {

@@ -1,5 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { emptySnapshot, type PlayerBridge, type PlayerCapabilities, type PlayerSnapshot } from "./bridge";
+import { isWindowsDesktop } from "@/lib/platform";
 
 export type ForwardingBridge = PlayerBridge & {
   pushSnapshot: (snap: PlayerSnapshot) => void;
@@ -73,7 +74,7 @@ export function createForwardingMpvBridge(): ForwardingBridge {
       void set(name, value);
     },
     setAnime4kShaders(shaders) {
-      const sep = typeof navigator !== "undefined" && navigator.userAgent.toLowerCase().includes("windows") ? ";" : ":";
+      const sep = isWindowsDesktop() ? ";" : ":";
       void set("glsl-shaders", shaders.filter(Boolean).join(sep));
     },
     async addSubtitle(url, lang, title, select) {

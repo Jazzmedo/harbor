@@ -1,5 +1,19 @@
+import { platform as nativePlatform } from "@tauri-apps/plugin-os";
+
 function isTauri(): boolean {
   return typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
+}
+
+type DesktopPlatform = "linux" | "macos" | "windows" | null;
+
+function detectedDesktopPlatform(): DesktopPlatform {
+  if (!isTauri()) return null;
+
+  const platform = nativePlatform();
+  if (platform === "linux" || platform === "macos" || platform === "windows") {
+    return platform;
+  }
+  return null;
 }
 
 export function isWeb(): boolean {
@@ -7,24 +21,15 @@ export function isWeb(): boolean {
 }
 
 export function isLinuxDesktop(): boolean {
-  if (!isTauri()) return false;
-  const ua = (navigator.userAgent || "").toLowerCase();
-  const plat = (navigator.platform || "").toLowerCase();
-  if (ua.includes("android")) return false;
-  if (ua.includes("windows") || ua.includes("macintosh") || ua.includes("mac os")) return false;
-  return ua.includes("linux") || plat.includes("linux");
+  return detectedDesktopPlatform() === "linux";
 }
 
 export function isMacDesktop(): boolean {
-  if (!isTauri()) return false;
-  const ua = (navigator.userAgent || "").toLowerCase();
-  const plat = (navigator.platform || "").toLowerCase();
-  return ua.includes("macintosh") || ua.includes("mac os") || plat.includes("mac");
+  return detectedDesktopPlatform() === "macos";
 }
 
 export function isWindowsDesktop(): boolean {
-  if (!isTauri()) return false;
-  return (navigator.userAgent || "").toLowerCase().includes("windows");
+  return detectedDesktopPlatform() === "windows";
 }
 
 export function isMobileDevice(): boolean {

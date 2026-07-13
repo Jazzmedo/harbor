@@ -11,6 +11,7 @@ import {
   type CastSubStyle,
   type TranscodeProfile,
 } from "@/lib/cast";
+import { ffmpegInstallStep } from "@/lib/ffmpeg-install";
 import type { PlayerBridge } from "@/lib/player/bridge";
 import type { CastErrorInfo } from "../cast-error-modal";
 
@@ -76,18 +77,12 @@ function buildActionableCastError(
     };
   }
   if (/ffmpeg/i.test(err)) {
-    const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
-    const installCmd = /Mac/.test(ua)
-      ? "brew install ffmpeg"
-      : /Linux/.test(ua)
-        ? "sudo apt install ffmpeg"
-        : "winget install Gyan.FFmpeg";
     return {
       title: "Install ffmpeg",
       message:
         "Harbor uses ffmpeg to convert streams into formats TVs can play. It's a one-time install and Harbor will pick it up automatically.",
       steps: [
-        `Open a terminal and run: ${installCmd}`,
+        ffmpegInstallStep(),
         "Restart Harbor after the install completes.",
         "Open the cast menu and try this device again.",
       ],

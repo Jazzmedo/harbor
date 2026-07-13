@@ -1,4 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
+import { isWindowsDesktop } from "@/lib/platform";
 
 export const MAX_SLOTS = 4;
 
@@ -23,8 +24,7 @@ export type OpenRect = {
 
 export function multiviewSupported(): boolean {
   if (typeof window === "undefined") return false;
-  if (!("__TAURI__" in window || "__TAURI_INTERNALS__" in window)) return false;
-  return navigator.userAgent.toLowerCase().includes("windows");
+  return isWindowsDesktop();
 }
 
 export async function mvOpen(

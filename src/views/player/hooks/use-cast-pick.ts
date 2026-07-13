@@ -6,6 +6,7 @@ import {
   type CastSubStyle,
 } from "@/lib/cast";
 import { useDebridClients } from "@/lib/debrid/registry";
+import { ffmpegInstallStep } from "@/lib/ffmpeg-install";
 import type { PlayerBridge, PlayerSnapshot, TrackInfo } from "@/lib/player/bridge";
 import { getPlaybackPosition } from "@/lib/player/playback-clock";
 import type { Settings } from "@/lib/settings";
@@ -105,16 +106,11 @@ export function useCastPick(params: {
         return;
       }
       if (resolved.kind === "needs-ffmpeg") {
-        const installCmd = navigator.userAgent.includes("Mac")
-          ? "brew install ffmpeg"
-          : navigator.userAgent.includes("Linux")
-            ? "sudo apt install ffmpeg"
-            : "winget install Gyan.FFmpeg";
         setCastErrorInfo({
           title: "Install ffmpeg",
           message: `${resolved.caps.label} can't decode this stream natively (${resolved.reasons.join(", ")}). Harbor uses ffmpeg to convert it into a format your TV understands.`,
           steps: [
-            `Open a terminal and run: ${installCmd}`,
+            ffmpegInstallStep(),
             "Restart Harbor after the install completes.",
             "Open the cast menu and try this device again.",
           ],

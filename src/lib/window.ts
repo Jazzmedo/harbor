@@ -3,11 +3,11 @@ import { getCurrentWindow, type Window } from "@tauri-apps/api/window";
 import { invoke } from "@tauri-apps/api/core";
 import { useEffect, useState } from "react";
 import { getWindowFullscreen } from "@/lib/fullscreen-state";
+import { isMacDesktop } from "@/lib/platform";
 
 const win: Window | null = isTauri() ? getCurrentWindow() : null;
 
-const IS_MAC =
-  typeof navigator !== "undefined" && /Mac|iP(hone|ad|od)/.test(navigator.platform || navigator.userAgent);
+const IS_MAC = isMacDesktop();
 
 function isTauri() {
   return typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;

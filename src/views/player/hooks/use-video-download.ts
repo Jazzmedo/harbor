@@ -14,6 +14,7 @@ import {
   type DownloadProgress,
 } from "@/lib/download/video-download";
 import { useSettings } from "@/lib/settings";
+import { isWindowsDesktop } from "@/lib/platform";
 import type { PlayEpisode } from "@/lib/view";
 
 export type DownloadStatus =
@@ -46,7 +47,7 @@ export function useVideoDownload({ url, meta, episode }: Args) {
     setStatus({ kind: "preparing" });
     const defaultFilename = buildDefaultFilename(meta, episode, url);
     const ext = extensionFromUrl(url);
-    const sep = navigator.platform.toLowerCase().includes("win") ? "\\" : "/";
+    const sep = isWindowsDesktop() ? "\\" : "/";
     const settingsDir = settings.downloadDir.trim();
     const dir = settingsDir || (await downloadDir().catch(() => "")) || "";
     const defaultPath = dir ? `${dir}${dir.endsWith(sep) ? "" : sep}${defaultFilename}` : defaultFilename;

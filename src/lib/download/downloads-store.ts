@@ -6,6 +6,7 @@ import type { Meta } from "@/lib/cinemeta";
 import type { PlayEpisode } from "@/lib/view";
 import { buildDefaultFilename, sanitizeName } from "./filename";
 import { startDownload, type DownloadHandle } from "./video-download";
+import { isWindowsDesktop } from "@/lib/platform";
 
 export type DownloadItem = {
   id: string;
@@ -86,7 +87,7 @@ function patch(id: string, next: Partial<DownloadItem>) {
 }
 
 function sep(): string {
-  return navigator.platform.toLowerCase().includes("win") ? "\\" : "/";
+  return isWindowsDesktop() ? "\\" : "/";
 }
 
 async function resolveDir(): Promise<string> {
