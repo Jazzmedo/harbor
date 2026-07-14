@@ -129,7 +129,6 @@ export function DisplaySection() {
                 <option value="modern">{t("Modern")}</option>
                 <option value="retro">{t("Retro")}</option>
                 <option value="cinematic">{t("Cinematic")}</option>
-                <option value="cloudy">{t("Bubbles")}</option>
               </select>
 
               <div className="flex items-center gap-4 px-1 py-1.5">
