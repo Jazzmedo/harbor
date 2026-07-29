@@ -21,7 +21,8 @@ const ALL_LANGS = "__all__";
 
 export function MenuBody(props: SubtitleMenuProps & { onClose: () => void }) {
   const tr = useT();
-  const { tracks, selectedId, onSelect, onClose, delaySec, metaReleaseDate, onOpenStyleBar } = props;
+  const { tracks, selectedId, onSelect, onClose, delaySec, metaReleaseDate, onOpenStyleBar } =
+    props;
   const groups = useMemo(() => groupByLang(tracks), [tracks]);
   const [searchSettled, setSearchSettled] = useState(false);
   const [activeLang, setActiveLang] = useState<string | null>(null);
@@ -73,7 +74,10 @@ export function MenuBody(props: SubtitleMenuProps & { onClose: () => void }) {
   const isTauri = typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
   const [localError, setLocalError] = useState<string | null>(null);
   const delayNonZero = delaySec !== 0;
-  const selectedTrack = useMemo(() => tracks.find((t) => t.id === selectedId) ?? null, [tracks, selectedId]);
+  const selectedTrack = useMemo(
+    () => tracks.find((t) => t.id === selectedId) ?? null,
+    [tracks, selectedId],
+  );
   const secondaryTrack = useMemo(() => tracks.find((t) => t.secondary) ?? null, [tracks]);
   const pickSecondary = props.onSelectSecondary ?? setSecondarySub;
   const search = useSubtitleSearch();
@@ -215,9 +219,7 @@ export function MenuBody(props: SubtitleMenuProps & { onClose: () => void }) {
               >
                 <Flag language={g.langDisplay} size="sm" showLabel={false} />
                 <span className="flex-1 truncate font-medium">{g.langDisplay}</span>
-                {hasSelected && (
-                  <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
-                )}
+                {hasSelected && <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />}
                 <span className="text-[10.5px] tabular-nums text-ink-subtle">
                   {g.variants.length}
                 </span>
@@ -344,4 +346,3 @@ export function MenuBody(props: SubtitleMenuProps & { onClose: () => void }) {
     </div>
   );
 }
-
