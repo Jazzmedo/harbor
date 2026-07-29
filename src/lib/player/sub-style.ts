@@ -30,6 +30,25 @@ function mpvFontFor(id: string): string {
   }
 }
 
+/** Hand the second subtitle over to mpv's own renderer, for the one surface our
+ *  overlay cannot draw on (HDR passthrough). `secondary-sub-pos` is measured from
+ *  the top, matching how `sub-pos` positions the primary. */
+export async function applySecondarySubNative(
+  on: boolean,
+  placement: Settings["subSecondaryPlacement"],
+  marginY: number,
+): Promise<void> {
+  await invoke("mpv_set_property", {
+    name: "secondary-sub-visibility",
+    value: on,
+  }).catch(() => {});
+  if (!on) return;
+  // "bottom" means "just above the primary line". mpv exposes no line-height
+  // metric, so offset by a fixed slice of the frame rather than guessing exactly.
+  const pos = placement === "top" ? 0 : clamp(100 - (Number(marginY) || 0) - 8, 0, 100);
+  await invoke("mpv_set_property", { name: "secondary-sub-pos", value: pos }).catch(() => {});
+}
+
 export type SubRenderContext = {
   assNativeActive: boolean;
   imageNativeActive: boolean;
