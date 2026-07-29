@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Flag } from "@/components/flag";
 import { markImportedSub } from "@/lib/player/imported-subs";
 import { setSecondarySub } from "@/lib/player/secondary-sub";
+import { canBeSecondarySub } from "@/lib/player/sub-format";
 import { useT } from "@/lib/i18n";
 import { Tooltip } from "../transport/tooltip";
 import { SearchSection } from "./search-section";
@@ -300,8 +301,10 @@ export function MenuBody(props: SubtitleMenuProps & { onClose: () => void }) {
                       onPick={() => {
                         onSelect(t.id);
                       }}
-                      onPickSecondary={() =>
-                        pickSecondary(t.id === secondaryTrack?.id ? null : t.id)
+                      onPickSecondary={
+                        canBeSecondarySub(t)
+                          ? () => pickSecondary(t.id === secondaryTrack?.id ? null : t.id)
+                          : undefined
                       }
                     />
                   ))}
