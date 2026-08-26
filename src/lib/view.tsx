@@ -41,6 +41,7 @@ export type View =
   | "downloads"
   | "wrapped"
   | "manga"
+  | "ebook"
   | "people";
 
 export type PlayEpisode = {
@@ -134,6 +135,7 @@ export type Frame =
   | { kind: "vod" }
   | { kind: "downloads" }
   | { kind: "manga"; mangaId?: string }
+  | { kind: "ebook"; ebookId?: string }
   | { kind: "people"; source?: RankSource; dept?: PeopleDept; focusSource?: boolean; nonce: number }
   | { kind: "service"; service: StreamingService }
   | {
@@ -236,6 +238,8 @@ type ViewValue = {
   openCollection: (id: number) => void;
   mangaId: string | null;
   openManga: (mangaId?: string) => void;
+  ebookId: string | null;
+  openEBook: (ebookId?: string) => void;
   peopleInit: {
     source?: RankSource;
     dept?: PeopleDept;
@@ -350,6 +354,8 @@ function frameKey(f: Frame): string {
       return "downloads";
     case "manga":
       return f.mangaId ? `manga:${f.mangaId}` : "manga";
+    case "ebook":
+      return f.ebookId ? `ebook:${f.ebookId}` : "ebook";
     case "people":
       return "people";
     case "service":
@@ -483,6 +489,7 @@ export function ViewProvider({ children }: { children: ReactNode }) {
       if (f.kind === "vod") return "vod";
       if (f.kind === "downloads") return "downloads";
       if (f.kind === "manga") return "manga";
+      if (f.kind === "ebook") return "ebook";
       if (f.kind === "people") return "people";
       if (f.kind === "home") return "home";
     }
@@ -515,6 +522,8 @@ export function ViewProvider({ children }: { children: ReactNode }) {
   const collectionId = collectionFrame ? collectionFrame.id : null;
   const mangaFrame = lastOfKind(stack, "manga");
   const mangaId = mangaFrame ? (mangaFrame.mangaId ?? null) : null;
+  const ebookFrame = lastOfKind(stack, "ebook");
+  const ebookId = ebookFrame ? (ebookFrame.ebookId ?? null) : null;
   const peopleFrame = lastOfKind(stack, "people");
   const peopleInit = useMemo(
     () =>
@@ -746,6 +755,11 @@ export function ViewProvider({ children }: { children: ReactNode }) {
           rowScrollMem.current.clear();
           return [{ kind: "manga" }];
         }
+        if (v === "ebook") {
+          scrollMem.current.clear();
+          rowScrollMem.current.clear();
+          return [{ kind: "ebook" }];
+        }
         if (v === "people") {
           scrollMem.current.clear();
           rowScrollMem.current.clear();
@@ -941,6 +955,20 @@ export function ViewProvider({ children }: { children: ReactNode }) {
         const t = cur[cur.length - 1];
         if (t.kind === "manga" && t.mangaId === mangaId) return cur;
         return pushFrame(cur, { kind: "manga", mangaId });
+      });
+    },
+    [setNavStack],
+  );
+
+  const openEBook = useCallback(
+    (ebookId?: string) => {
+      setNavStack((cur) => {
+        const top = cur[cur.length - 1];
+        if (top.kind === "ebook") {
+          if (top.ebookId === ebookId) return cur;
+          return [...cur.slice(0, -1), { kind: "ebook", ebookId }];
+        }
+        return pushFrame(cur, { kind: "ebook", ebookId });
       });
     },
     [setNavStack],
@@ -1192,6 +1220,8 @@ export function ViewProvider({ children }: { children: ReactNode }) {
       openCollection,
       mangaId,
       openManga,
+      ebookId,
+      openEBook,
       peopleInit,
       openPeople,
       addonCollectionMeta,
@@ -1263,6 +1293,8 @@ export function ViewProvider({ children }: { children: ReactNode }) {
       openCollection,
       mangaId,
       openManga,
+      ebookId,
+      openEBook,
       peopleInit,
       openPeople,
       addonCollectionMeta,
