@@ -145,7 +145,7 @@ const EBOOK_EXAMPLE_REPO = `{
     {
       "id": "example-source",
       "name": "Example eBook Source",
-      "version": "1.5.0",
+      "version": "1.6.0",
       "lang": "en",
       "nsfw": false,
       "icon": "https://example-ebook-host.test/icon.png",
@@ -526,7 +526,12 @@ function cardToSummary(el) {`,
   if (start < 0 || end < 0) return converted;
   return `${converted.slice(0, start)}  async content(chapterId) {
     const doc = await getDoc("/" + chapterId);
-    return doc.querySelector(".chapter-content")?.text() || "";
+    // Select only real chapter blocks. querySelectorAll keeps DOM/source order;
+    // never sort, reverse, or deduplicate prose (including Arabic/RTL text).
+    const blocks = doc.querySelectorAll(
+      ".chapter-content > p, .chapter-content > blockquote",
+    );
+    return blocks.map((node) => node.text().trim()).filter(Boolean).join("\\n\\n");
   },${converted.slice(end)}`;
 }
 
@@ -650,7 +655,19 @@ title keep the generated Volume N label.
 
 Harbor groups chapters by the supplied volume and sorts numbered volumes numerically.
 content() returns readable text, or an object containing text and/or absolute HTTP(S)
-image URLs.
+image URLs. Return chapter blocks in their original source order. querySelectorAll returns
+nodes in DOM order, so map them directly and join them without sort(), reverse(), Set-based
+deduplication, or direction-dependent reordering. This rule also applies to decoded repeated
+fields and streamed messages from binary gRPC sources. Harbor handles RTL presentation; a
+plugin must not reverse Arabic text or paragraph order.
+
+Select the narrowest real chapter container and its content blocks rather than reading the
+whole page. Do not hardcode randomized decoy class names. harbor.parseHtml removes script,
+style, and iframe nodes and omits elements hidden by explicit stylesheet rules using
+display, visibility, content-visibility, large negative text indentation, or off-screen
+positioning before the plugin receives the tree. The plugin must still exclude visible
+navigation, adverts, donation widgets, comments, and other non-chapter blocks with precise
+selectors.
 
 Use harbor.http(url, opts), harbor.grpc(url, protobufBytes, opts) for binary gRPC, and
 harbor.parseHtml(html) for selector parsing.
@@ -715,7 +732,7 @@ the plugin file on HTTPS, then paste the manifest URL into eBook > Sources > Ext
       "plugins": [{
       "id": "my-source",
       "name": "My Source",
-      "version": "1.5.0",
+      "version": "1.6.0",
         "lang": "en",
         "nsfw": false,
         "entry": "my-source.plugin.js"

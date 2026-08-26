@@ -1,4 +1,8 @@
-import { loadEBookExtensions, installedEBookPlugins } from "./extensions";
+import {
+  loadEBookExtensions,
+  installedEBookPlugins,
+  subscribeEBookExtensions,
+} from "./extensions";
 import { fetchEBookMetadata, mergeEBookMetadata, type EBook } from "./api";
 import { listEBookSources, type EBookHtmlSourceConfig, type EBookSource } from "./sources";
 import { safeFetch } from "@/lib/safe-fetch";
@@ -33,6 +37,12 @@ const workers = new Map<string, PluginWorker>();
 const htmlPages = new Map<string, Map<string, Map<number, number>>>();
 const details = new Map<string, Promise<EBook | null>>();
 let extensionsReady: Promise<void> | null = null;
+
+subscribeEBookExtensions(() => {
+  workers.forEach((worker) => worker.dispose());
+  workers.clear();
+  details.clear();
+});
 
 function routeId(providerId: string, itemId: string): string {
   return `source:${encodeURIComponent(providerId)}:${encodeURIComponent(itemId)}`;
@@ -193,14 +203,28 @@ function pluginChapters(
 }
 
 function pluginContent(value: unknown): EBookChapterContent {
-  if (typeof value === "string") return { text: value.trim() };
+  if (typeof value === "string") return { text: cleanSourceText(value) };
   const item = record(value);
   const body = text(item.text) ?? text(item.content) ?? text(item.body);
   const images = (Array.isArray(item.images) ? item.images : [])
     .map(url)
     .filter((image): image is string => !!image)
     .slice(0, 2_000);
-  return { text: body, images };
+  return { text: body ? cleanSourceText(body) : undefined, images };
+}
+
+function cleanSourceText(value: string): string {
+  const text = value.replace(/\r/g, "").trim();
+  const boundary = [
+    /(?:^|\s)(?:background|border|color|cursor|display|font-size|line-height|opacity|position)\s*:\s*[^;{}]+;\s*(?:[\w-]+\s*:|})/i,
+    /\b(?:document\.(?:getElementById|querySelector)|function\s+[\w$]+\s*\(|querySelectorAll\s*\(|classList\.(?:add|remove)\s*\()/i,
+    /(?:^|\s)[.#][\w-]+(?::[\w-]+)?\s*\{(?=[^}]{0,400}\b(?:background|border|color|display|position)\s*:)/i,
+  ].reduce((cut, pattern) => {
+    const index = text.search(pattern);
+    return index < 0 ? cut : Math.min(cut, index);
+  }, text.length);
+  const cleaned = text.slice(0, boundary).trim();
+  return /[\p{L}\p{N}]/u.test(cleaned) ? cleaned : "";
 }
 
 function pluginProvider(plugin: InstalledPlugin): Provider {
@@ -351,7 +375,9 @@ function htmlProvider(source: EBookSource & { config: EBookHtmlSourceConfig }): 
     const blocks = Array.from(root.querySelectorAll("p,h1,h2,h3,h4,blockquote,li"))
       .map((element) => element.textContent?.replace(/\s+/g, " ").trim())
       .filter(Boolean);
-    return { text: blocks.length ? blocks.join("\n\n") : (root.textContent?.trim() ?? "") };
+    return {
+      text: cleanSourceText(blocks.length ? blocks.join("\n\n") : (root.textContent?.trim() ?? "")),
+    };
   };
   return provider;
 }
