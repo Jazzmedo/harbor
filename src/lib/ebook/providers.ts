@@ -6,6 +6,7 @@ import {
 import { fetchEBookMetadata, mergeEBookMetadata, type EBook } from "./api";
 import { listEBookSources, type EBookHtmlSourceConfig, type EBookSource } from "./sources";
 import { safeFetch } from "@/lib/safe-fetch";
+import { translateEBookChapter } from "./translation";
 import { PluginWorker } from "@/lib/manga/plugins/worker-host";
 import type { InstalledPlugin } from "@/lib/manga/plugins/types";
 
@@ -20,7 +21,7 @@ export type EBookChapter = {
   views?: number | string;
 };
 
-export type EBookChapterContent = { text?: string; images?: string[] };
+export type EBookChapterContent = { text?: string; images?: string[]; translated?: boolean };
 
 type Provider = {
   id: string;
@@ -543,5 +544,13 @@ export async function sourceEBookContent(
   chapterId: string,
 ): Promise<EBookChapterContent> {
   const found = await providerFor(route);
-  return found ? found.provider.content(chapterId) : {};
+  const content = found ? await found.provider.content(chapterId) : {};
+  if (!content.text) return content;
+  try {
+    const text = await translateEBookChapter(content.text);
+    return text === content.text ? content : { ...content, text, translated: true };
+  } catch (error) {
+    console.warn("[ebook/translation]", error);
+    return content;
+  }
 }
