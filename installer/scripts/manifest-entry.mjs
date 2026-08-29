@@ -41,7 +41,7 @@ if (existsSync(zip) && statSync(zip).mtimeMs > setupStat.mtimeMs) {
   process.exit(1);
 }
 
-const name = `harbor-setup-${version}.exe`;
+const name = `Harbor_${version}_x64-installer.exe`;
 const block = {
   installer: {
     [platform]: {
@@ -54,7 +54,7 @@ const block = {
 };
 
 console.log(`upload  ${exe}`);
-console.log(`     as ${base}/${name}`);
-console.log(`\nmerge this into latest.json (stable and the x-harbor-channel: beta variant):\n`);
+console.log(`     as ${name}   (the release API reads version and platform from this name)`);
+console.log(`\nthe publisher rebuilds this block itself once the exe and its .sig are staged:\n`);
 console.log(JSON.stringify(block, null, 2));
 console.log(`\n${basename(exe)} is ${(setupStat.size / 1048576).toFixed(0)} MB, payload ${version}, payloadVersion ${payloadVersion}`);
