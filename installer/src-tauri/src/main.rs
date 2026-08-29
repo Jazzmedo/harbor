@@ -2,8 +2,12 @@
 
 mod install;
 mod shell;
+mod update;
 
 fn main() {
+    if let Some(code) = update::maybe_run() {
+        std::process::exit(code);
+    }
     shell::builder()
         .invoke_handler(tauri::generate_handler![
             install::default_install_dir,
