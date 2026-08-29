@@ -41,6 +41,32 @@ export function useReaderProgress(a: Args): (page: number) => void {
   } = a;
 
   useEffect(() => {
+    if (disabled || loading || failed || total === 0 || !manga.title) return;
+    setMangaReading({
+      mangaId: manga.id,
+      title: manga.title,
+      cover: manga.cover,
+      chapter: chapter.chapter,
+      chapterLabel: label,
+      page: Math.min(currentPage + 1, total),
+      totalPages: total,
+    });
+  }, [
+    loading,
+    failed,
+    total,
+    currentPage,
+    index,
+    manga.id,
+    manga.title,
+    manga.cover,
+    chapter.id,
+    chapter.chapter,
+    label,
+    disabled,
+  ]);
+
+  useEffect(() => {
     if (disabled || book || !settled.current || loading || failed || total === 0 || !manga.title) return;
     setMangaReading({
       mangaId: manga.id,

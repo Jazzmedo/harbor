@@ -1,4 +1,5 @@
 import coverage from "./ar/coverage";
+import uiFallback from "./ui-fallback";
 import addons from "./ar/addons";
 import awards from "./ar/awards";
 import catalog from "./ar/catalog";
@@ -24,10 +25,12 @@ import sync from "./ar/sync";
 import together from "./ar/together";
 import controllers from "./ar/controllers";
 
+import bpSources from "./ar/bp-sources";
 import used from "./ar/used";
 
 const ar: Record<string, string> = {
   ...coverage,
+  ...uiFallback,
   ...chrome,
   ...common,
   ...catalog,
@@ -52,6 +55,7 @@ const ar: Record<string, string> = {
   ...awards,
   ...addons,
   ...controllers,
+  ...bpSources,
   ...used,
 };
 

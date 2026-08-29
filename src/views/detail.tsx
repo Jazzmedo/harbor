@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
-import { Check, HardDrive, Heart, Layers, Pencil, Play, Plus, RotateCcw } from "lucide-react";
+import { Check, HardDrive, Pencil, Plus, RotateCcw } from "lucide-react";
+import { Play } from "@/components/icons/play-filled";
 import { animeDetails, type AnimeDetailExtras, type FranchiseEntry } from "@/lib/providers/anime-detail";
 import { isTextInLanguage } from "@/lib/providers/anime-episode-build";
 import { peekAnimeArt, saveAnimeArt } from "@/lib/providers/anime-art-cache";
@@ -104,10 +105,11 @@ import { Pill } from "./detail/pill";
 import { Credit } from "./detail/credit";
 import { TitlePlate } from "./detail/title-plate";
 import { PlayModeHint } from "./detail/play-mode-hint";
+import { usePlayOnTrigger } from "@/components/play-on-trigger";
 import { UpcomingCta } from "./detail/upcoming-cta";
 import { Synopsis } from "./detail/synopsis";
 import { CastCard } from "./detail/cast-card";
-import { PreviewIcon } from "./detail/preview-icon";
+import { UiIcon } from "@/components/ui-icon";
 import { HeroActionOverflow, useHeroActionOverflow } from "./detail/hero-action-overflow";
 import { useTvdbCastFallback } from "./detail/use-tvdb-cast-fallback";
 import { HeroRatings } from "./detail/hero-ratings";
@@ -139,6 +141,7 @@ import { LetterboxdReviews } from "./detail/letterboxd-reviews";
 import { AnilistComments } from "./detail/anilist-comments";
 import { stremioIdToTraktTarget } from "@/lib/trakt/ids";
 import type { IdResolution } from "@/lib/trakt/ids";
+import { searchAnime } from "@/lib/search";
 
 function parseYear(v: string | number | undefined | null): number {
   if (v == null) return 0;
@@ -188,7 +191,9 @@ export function DetailView({
   const contentDrag = useContentDrag();
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
-  const [detail, setDetail] = useState<(TmdbDetail & Pick<AnimeDetailExtras, "seasonOverviews">) | null>(null);
+  const [detail, setDetail] = useState<
+    (TmdbDetail & Pick<AnimeDetailExtras, "seasonOverviews">) | null
+  >(null);
   const [animeEpisodes, setAnimeEpisodes] = useState<KitsuEpisode[]>([]);
   const [franchise, setFranchise] = useState<FranchiseEntry[]>([]);
   const [animeCanonicalId, setAnimeCanonicalId] = useState<string | null>(null);
@@ -460,6 +465,29 @@ export function DetailView({
     (async () => {
       let k = tmdbTv != null && Number.isFinite(tmdbTv) ? await tmdbTvToKitsu(tmdbTv) : null;
       if (k == null && imdb) k = await imdbToKitsu(imdb);
+      // Orphan ids (standalone TMDB/IMDb entries with no cross-db mapping --
+      // e.g. Bleach TYBW tt14986406): fall back to Kitsu title search and
+      // accept the hit only when the year verdict agrees.
+      if (k == null) {
+        const name = meta.name || detail?.title;
+        if (name && name.trim().length >= 2) {
+          const hits = await searchAnime(name).catch(() => []);
+          const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "");
+          const target = norm(name);
+          const yr = parseInt(detail?.year ?? meta.releaseInfo ?? "", 10) || null;
+          const candidates = hits.filter((h) => norm(h.name).startsWith(target.slice(0, 8)));
+          const byYear = yr ? candidates.find((h) => parseInt(h.year ?? "", 10) === yr) : undefined;
+          const pick = byYear ?? (candidates.length === 1 ? candidates[0] : undefined);
+          if (pick?.kitsuId != null && pick.kitsuId !== failedKitsu.current) {
+            const verdict = await kitsuYearVerdict(
+              pick.kitsuId,
+              meta.releaseInfo,
+              detail?.year ?? pick.year ?? undefined,
+            );
+            if (!cancelled && verdict === "ok") k = pick.kitsuId;
+          }
+        }
+      }
       if (cancelled) return;
       if (k != null && k !== failedKitsu.current) {
         const verdict = await kitsuYearVerdict(k, meta.releaseInfo, detail?.year);
@@ -684,7 +712,10 @@ export function DetailView({
           ) {
             const lang = settingsRef.current.tmdbLanguage || settingsRef.current.uiLanguage || "en";
             const pickedTitle = settingsRef.current.translateTitles
-              ? pickLocalizedText([{ text: prev.title }, { text: d.title }], { forName: true, lang })
+              ? pickLocalizedText([{ text: prev.title }, { text: d.title }], {
+                  forName: true,
+                  lang,
+                })
               : undefined;
             const pickedOverview = settingsRef.current.translateDescriptions
               ? pickLocalizedText([{ text: prev.overview }, { text: d.overview }], { lang })
@@ -692,7 +723,9 @@ export function DetailView({
             return {
               ...d,
               title: pickedTitle ?? (settingsRef.current.translateTitles ? prev.title : d.title),
-              overview: pickedOverview ?? (settingsRef.current.translateDescriptions ? prev.overview : d.overview),
+              overview:
+                pickedOverview ??
+                (settingsRef.current.translateDescriptions ? prev.overview : d.overview),
               tagline: settingsRef.current.translateDescriptions ? prev.tagline : d.tagline,
             };
           }
@@ -1201,6 +1234,11 @@ export function DetailView({
       ? t("Resume S{s}:E{e}", { s: (lastPlay as { displaySeason?: number }).displaySeason ?? lastPlay.season, e: lastPlay.episode })
       : t("Play");
 
+  const playOnTrigger = usePlayOnTrigger(() => ({
+    meta,
+    episode: lastPlay ? { season: lastPlay.season, episode: lastPlay.episode } : undefined,
+  }));
+
   const heroPills = (
     <>
       {year && (
@@ -1260,7 +1298,7 @@ export function DetailView({
         </HoverTooltip>
       )}
       {meta.addonOrigin ? (
-        <span className="flex items-center gap-2 rounded-full border border-edge bg-canvas/80 py-1 ps-1.5 pe-3 text-[12.5px] font-medium text-ink-muted">
+        <span className="flex items-center gap-2 rounded-full bg-canvas/80 py-1 ps-1.5 pe-3 text-[12.5px] font-medium text-ink-muted">
           {meta.addonOrigin.logo ? (
             <img
               src={meta.addonOrigin.logo}
@@ -1376,12 +1414,13 @@ export function DetailView({
                 ) : (
                   <PlayModeHint>
                   <button
+                    {...playOnTrigger}
                     onClick={() => smartPlay(false)}
                     onContextMenu={(e) => {
                       e.preventDefault();
                       void smartPlay(true);
                     }}
-                    className="flex h-12 items-center gap-2.5 rounded-full bg-ink px-7 text-[15px] font-semibold text-canvas shadow-[0_8px_24px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.65),inset_0_-1px_0_rgba(0,0,0,0.18)] transition-transform duration-200 hover:scale-[1.03] active:scale-[0.98]"
+                    className="flex h-12 items-center gap-2.5 rounded-full bg-ink px-7 text-[15px] font-semibold text-canvas transition-transform duration-200 hover:scale-[1.03] active:scale-[0.98]"
                   >
                     <Play size={18} fill="currentColor" />
                     {smartPlayLabel}
@@ -1405,10 +1444,10 @@ export function DetailView({
                           imdbId: detail?.imdbId,
                         })
                       }
-                      className={`flex h-12 items-center gap-2.5 whitespace-nowrap rounded-full border px-6 text-[15px] font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-[transform,background-color,border-color] duration-200 active:scale-[0.98] ${
+                      className={`flex h-12 items-center gap-2.5 whitespace-nowrap rounded-full px-6 text-[15px] font-medium transition-[transform,background-color] duration-200 active:scale-[0.98] ${
                         inWatchlist
-                          ? "border-ink bg-ink/10 text-ink hover:bg-ink/20"
-                          : "border-edge bg-canvas/80 text-ink hover:border-ink-subtle hover:bg-canvas/95"
+                          ? "bg-ink/15 text-ink hover:bg-ink/20"
+                          : "bg-canvas/80 text-ink hover:bg-canvas/95"
                       }`}
                     >
                       <PopIcon
@@ -1501,16 +1540,16 @@ export function DetailView({
                           })
                         }
                         aria-label={isFav ? t("Remove from favorites") : t("Add to favorites")}
-                        className={`group flex h-12 w-12 items-center justify-center rounded-full border transition-[transform,background-color,border-color] duration-200 active:scale-[0.94] ${
+                        className={`group flex h-12 w-12 items-center justify-center rounded-full transition-[transform,background-color] duration-200 active:scale-[0.94] ${
                           isFav
-                            ? "border-accent/55 bg-accent/15 text-accent hover:bg-accent/22"
-                            : "border-edge bg-canvas/80 text-ink hover:border-ink-subtle hover:bg-canvas/95"
+                            ? "bg-accent/20 text-accent hover:bg-accent/22"
+                            : "bg-canvas/80 text-ink hover:bg-canvas/95"
                         }`}
                       >
                         <PopIcon
                           active={isFav}
-                          activeIcon={<Heart size={20} strokeWidth={0} fill="currentColor" />}
-                          inactiveIcon={<Heart size={20} strokeWidth={1.9} fill="none" />}
+                          activeIcon={<UiIcon name="unfavorite" className="h-5 w-5" />}
+                          inactiveIcon={<UiIcon name="favorite" className="h-5 w-5" />}
                         />
                       </button>
                     </HoverTooltip>
@@ -1525,9 +1564,9 @@ export function DetailView({
                         type="button"
                         onClick={() => setAddToListOpen((v) => !v)}
                         aria-label={t("Add to list")}
-                        className="group flex h-12 w-12 items-center justify-center rounded-full border border-edge bg-canvas/80 text-ink transition-[transform,background-color,border-color] duration-200 hover:border-ink-subtle hover:bg-canvas/95 active:scale-[0.94]"
+                        className="group flex h-12 w-12 items-center justify-center rounded-full bg-canvas/80 text-ink transition-[transform,background-color] duration-200 hover:bg-canvas/95 active:scale-[0.94]"
                       >
-                        <Layers size={20} strokeWidth={1.9} />
+                        <UiIcon name="list" className="h-5 w-5" />
                       </button>
                     </HoverTooltip>
                     <AddToListMenu
@@ -1546,16 +1585,16 @@ export function DetailView({
                           type="button"
                           onClick={markThisMovieWatched}
                           aria-label={t("Mark watched")}
-                          className={`group flex h-12 w-12 items-center justify-center rounded-full border transition-[transform,background-color,border-color] duration-200 active:scale-[0.94] ${
+                          className={`group flex h-12 w-12 items-center justify-center rounded-full transition-[transform,background-color] duration-200 active:scale-[0.94] ${
                             watchedMark
-                              ? "border-accent/55 bg-accent/15 text-accent"
-                              : "border-edge bg-canvas/80 text-ink hover:border-ink-subtle hover:bg-canvas/95"
+                              ? "bg-accent/20 text-accent"
+                              : "bg-canvas/80 text-ink hover:bg-canvas/95"
                           }`}
                         >
                           <PopIcon
                             active={watchedMark}
-                            activeIcon={<Check size={20} strokeWidth={2.4} />}
-                            inactiveIcon={<Check size={20} strokeWidth={2.4} />}
+                            activeIcon={<UiIcon name="mark-unwatched" className="h-5 w-5" />}
+                            inactiveIcon={<UiIcon name="mark-watched" className="h-5 w-5" />}
                           />
                         </button>
                       </HoverTooltip>
@@ -1566,9 +1605,9 @@ export function DetailView({
                           type="button"
                           onClick={() => setTrailerOpen(true)}
                           aria-label={t("Watch trailer")}
-                          className="group flex h-12 w-12 items-center justify-center rounded-full border border-edge bg-canvas/80 text-ink transition-[transform,background-color,border-color] duration-200 hover:border-ink-subtle hover:bg-canvas/95 active:scale-[0.94]"
+                          className="group flex h-12 w-12 items-center justify-center rounded-full bg-canvas/80 text-ink transition-[transform,background-color] duration-200 hover:bg-canvas/95 active:scale-[0.94]"
                         >
-                          <PreviewIcon size={20} />
+                          <UiIcon name="trailer" className="h-5 w-5" />
                         </button>
                       </HoverTooltip>
                     )}
@@ -1587,7 +1626,7 @@ export function DetailView({
                   <button
                     type="button"
                     onClick={promoteMetaToRoot}
-                    className="flex h-12 items-center gap-2 rounded-full border border-edge bg-canvas/80 px-5 text-[14px] font-medium text-ink-muted transition-colors hover:border-ink-subtle hover:bg-canvas/95 hover:text-ink"
+                    className="flex h-12 items-center gap-2 rounded-full bg-canvas/80 px-5 text-[14px] font-medium text-ink-muted transition-colors hover:bg-canvas/95 hover:text-ink"
                   >
                     {meta.type === "series" || meta.type === "tv"
                       ? t("Open in TV Shows")
@@ -1699,7 +1738,7 @@ export function DetailView({
               label: t("Crew"),
               minHeight: 160,
               node: (
-                <div className="grid grid-cols-1 gap-x-12 gap-y-6 border-b border-edge-soft pb-12 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid grid-cols-1 gap-x-12 gap-y-6 pb-12 sm:grid-cols-2 lg:grid-cols-3">
                   {detail.directors.length > 0 && (
                     <Credit label={detail.directors.length === 1 ? t("Director") : t("Directors")} people={detail.directors} />
                   )}
@@ -1944,7 +1983,7 @@ export function DetailView({
                 {layoutEdit && hasChanges && (
                   <button
                     onClick={() => persist(resetDetailCustomization())}
-                    className="flex h-8 items-center gap-1.5 rounded-md border border-edge-soft/40 bg-canvas/80 px-2.5 text-[12px] font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink"
+                    className="flex h-8 items-center gap-1.5 rounded-md bg-white/[0.06] px-2.5 text-[12px] font-medium text-ink-muted transition-colors hover:bg-white/[0.10] hover:text-ink"
                   >
                     <RotateCcw size={12} strokeWidth={2.2} />
                     {t("Reset")}
@@ -1952,10 +1991,10 @@ export function DetailView({
                 )}
                 <button
                   onClick={() => setLayoutEdit((v) => !v)}
-                  className={`flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-[12px] font-medium transition-colors ${
+                  className={`flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[12px] font-medium transition-colors ${
                     layoutEdit
-                      ? "border-ink bg-ink text-canvas hover:opacity-90"
-                      : "border-edge-soft/40 bg-canvas/80 text-ink-muted hover:bg-canvas hover:text-ink"
+                      ? "bg-ink text-canvas hover:opacity-90"
+                      : "bg-white/[0.06] text-ink-muted hover:bg-white/[0.10] hover:text-ink"
                   }`}
                 >
                   <Pencil size={12} strokeWidth={2.4} />
@@ -1976,7 +2015,7 @@ export function DetailView({
         })()}
 
         {!loading && !detail && !isAnime && !addonNative && !settings.tmdbKey && (
-          <div className="rounded-2xl border border-dashed border-edge px-6 py-12 text-center text-[14px] text-ink-muted">
+          <div className="rounded-2xl bg-canvas/50 px-6 py-12 text-center text-[14px] text-ink-muted">
             {t("Add a TMDB key in Settings to see cast, related titles, and trailers here.")}
           </div>
         )}

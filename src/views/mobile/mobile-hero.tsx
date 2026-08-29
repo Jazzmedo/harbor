@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Check, Info, Play, Plus, TrendingUp } from "lucide-react";
+import { Check, Info, Plus, TrendingUp } from "lucide-react";
+import { Play } from "@/components/icons/play-filled";
 import type { Meta } from "@/lib/cinemeta";
 import { useSettings } from "@/lib/settings";
 import { useHeroLogos } from "@/components/anime-hero/use-hero-logos";
@@ -139,7 +140,7 @@ export function MobileHero({ slides, onOpenDetail }: { slides: Meta[]; onOpenDet
   return (
     <section className="flex flex-col gap-3">
       <div className="px-4">
-        <div className="relative aspect-[16/13] w-full overflow-hidden rounded-[24px] bg-surface ring-1 ring-edge-soft/50">
+        <div className="relative aspect-[16/13] w-full overflow-hidden rounded-3xl bg-surface ring-1 ring-edge-soft/50">
           <button
             type="button"
             aria-label={`Open ${current.name}`}
@@ -214,7 +215,14 @@ export function MobileHero({ slides, onOpenDetail }: { slides: Meta[]; onOpenDet
                 type="button"
                 aria-label={inWl ? "In My List" : "Add to My List"}
                 onClick={() =>
-                  toggleWatchlist({ id: current.id, type: current.type, name: current.name, poster: current.poster })
+                  toggleWatchlist({
+                    id: current.id,
+                    type: current.type,
+                    name: current.name,
+                    poster: current.poster,
+                    addonOrigin: current.addonOrigin,
+                    videos: current.videos,
+                  })
                 }
                 className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border border-white/25 bg-black/35 text-white backdrop-blur-sm transition-transform duration-150 active:scale-[0.94]"
               >

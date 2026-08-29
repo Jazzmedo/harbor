@@ -18,7 +18,22 @@ export type StreamingService =
   | "crunchyroll"
   | "amcplus"
   | "starz"
-  | "shudder";
+  | "shudder"
+  | "tubi"
+  | "plutotv"
+  | "roku"
+  | "fubo"
+  | "mgmplus"
+  | "philo"
+  | "britbox"
+  | "acorntv"
+  | "mubi"
+  | "curiositystream"
+  | "kanopy"
+  | "hoopla"
+  | "pbs"
+  | "cw"
+  | "hidive";
 
 export type WebhookTrigger =
   | { event: "newMovie" }
@@ -115,6 +130,7 @@ export type Settings = {
   simklGranularFilters: SimklGranularFilters;
   cardBadgeLimit: number;
   showQualityBadge: boolean;
+  qualityBadgeStyle: "bar" | "chips";
   showCardBadges: boolean;
   homeLanguages: string[];
   posterScale: number;
@@ -164,6 +180,7 @@ export type Settings = {
   keepFullscreenOnExit: boolean;
   fullscreenRestorePosition: boolean;
   contentAdvisoryToast: boolean;
+  contentAdvisoryTheme: "colored" | "monochrome";
   playerVolumeHud: boolean;
   playerVolumeHudPosition: "center" | "top" | "top-left" | "top-right";
   customPlaybackSpeeds: number[];
@@ -229,8 +246,10 @@ export type Settings = {
   playerShellId: string;
   playerChromeTheme: "auto" | "default" | "stremio";
   playerMenuBlack: boolean;
+  playerScreenLockEnabled: boolean;
   seekPreviewEnabled: boolean;
   instantPlay: boolean;
+  instantPlaybackPreparation: boolean;
   autoNextStreamOnStall: boolean;
   autoNextStreamOnStallSec: number;
   fullscreenMode: "fullscreen" | "maximized";
@@ -385,6 +404,22 @@ export type Settings = {
   playerConfirmLeave: boolean;
   tvNavigation: boolean;
   playerTvNavigation: boolean;
+  bigPictureButton: boolean;
+  bigPictureAutoStart: boolean;
+  bigPictureSound: "none" | "glass" | "modern" | "retro" | "cinematic";
+  bigPictureMosaic: boolean;
+  /**
+   * Fraction of each edge a television is assumed to crop, 0 to 0.1. Read at
+   * import time by bp-safe-area straight out of localStorage, which is why it
+   * has to exist here: it was being read for months with nothing able to write
+   * it.
+   *
+   * null means nobody has chosen, and that is not the same as 0. It is what
+   * lets bp-safe-area fall through to its ten-foot default on a television
+   * while a desktop stays at no inset. A concrete default here would hand
+   * every desktop window a crop margin it never had.
+   */
+  bigPictureOverscan: number | null;
   playerHdrStage: "auto" | "off" | "always";
   opensubtitlesApiKey: string;
   jimakuToken: string;
@@ -426,6 +461,7 @@ export type Settings = {
   customAppIconPreset: string;
   homeMode: "harbor" | "classic";
   homeShowAllAddonRows: boolean;
+  homeNewEpisodes: boolean;
   libraryBookmarkedOnly: boolean;
   librarySort: "recent" | "title" | "year";
   preferCustomMetaAddon: boolean;
@@ -566,8 +602,7 @@ export type Settings = {
   }>;
   downloadDir: string;
   downloadCreateFolders: boolean;
-  stremioDeeplinkInstall: boolean;
-  iptvPlaylists: Array<{
+  stremioDeeplinkInstall: boolean;  iptvPlaylists: Array<{
     id: string;
     name: string;
     url: string;
@@ -579,6 +614,7 @@ export type Settings = {
       password: string;
     };
   }>;
+
   iptvLiveContainer: "ts" | "m3u8";
   iptvForceProxy: boolean;
   iptvEpgOffsetHours: number;

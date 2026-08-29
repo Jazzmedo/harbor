@@ -41,7 +41,6 @@ export function toggleEBookLibrary(ebook: EBook): boolean {
   window.dispatchEvent(new Event("harbor:ebook-library"));
   return !exists;
 }
-
 export function favoriteEBooks(): EBook[] {
   return read(FAVORITES_KEY, LEGACY_FAVORITES_KEY);
 }
@@ -60,4 +59,3 @@ export function toggleEBookFavorite(ebook: EBook): boolean {
   window.dispatchEvent(new Event("harbor:ebook-library"));
   return !exists;
 }
-

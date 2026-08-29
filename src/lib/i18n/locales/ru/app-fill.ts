@@ -7,6 +7,8 @@ const appFill: Record<string, string> = {
   "Downloading speech model {pct}%": "Загрузка речевой модели {pct}%",
   "Downloading speech model": "Загрузка речевой модели",
   "Subtitles synced": "Субтитры синхронизированы",
+  "Subtitles already aligned": "Субтитры уже синхронизированы",
+  "Not enough dialogue to sync": "Недостаточно диалога для синхронизации",
   "Subtitles may be off": "Субтитры могут не совпадать",
   "Different subtitle version": "Другая версия субтитров",
   "Couldn't auto-sync": "Не удалось синхронизировать",
@@ -15,6 +17,25 @@ const appFill: Record<string, string> = {
   "Sync manually": "Синхронизировать вручную",
   "Adjusted timing by": "Тайминг сдвинут на",
   "Timing looks aligned": "Тайминг совпадает",
+  "Variable timing corrected": "Переменный тайминг исправлен",
+  Delay: "Задержка",
+  "Timing rate": "Скорость тайминга",
+  "No timing change was needed. This subtitle already matches the audio.":
+    "Тайминг менять не потребовалось. Эти субтитры уже совпадают со звуком.",
+  "Harbor couldn't analyze the audio for this source. Try again or adjust it manually.":
+    "Harbor не смог проанализировать звук этого источника. Повторите попытку или настройте вручную.",
+  "There isn't enough readable dialogue in this subtitle to measure its timing.":
+    "В субтитрах недостаточно читаемого диалога для измерения тайминга.",
+  "This subtitle appears to be for a different cut. Try another match.":
+    "Похоже, эти субтитры от другой версии. Попробуйте другое совпадение.",
+  "The timing checks disagreed, so Harbor left the subtitle unchanged.":
+    "Проверки тайминга дали разные результаты, поэтому Harbor не изменил субтитры.",
+  "The timing difference was too large to correct safely. Try another subtitle.":
+    "Разница в тайминге слишком велика для безопасного исправления. Попробуйте другие субтитры.",
+  "There wasn't enough matching dialogue to make a safe correction.":
+    "Недостаточно совпадающего диалога для безопасного исправления.",
+  "Harbor couldn't find a reliable timing correction for this subtitle.":
+    "Harbor не смог найти надёжное исправление тайминга для этих субтитров.",
   "Looks right": "Всё верно",
   "Still off": "Всё ещё не так",
   "This subtitle looks like a different version of the video.":
@@ -420,6 +441,7 @@ const appFill: Record<string, string> = {
   Characters: "Персонажи",
   "Characters · {n}": "Персонажи · {n}",
   "Related Anime": "Связанное аниме",
+  "Sequels & Prequels": "Сиквелы и приквелы",
   Adaptations: "Адаптации",
   Statistics: "Статистика",
   "Deletes every episode cached for this source": "Удаляет все серии в кэше для этого источника",
@@ -773,6 +795,18 @@ const appFill: Record<string, string> = {
   "Use Cinemeta for title metadata": "Использовать Cinemeta для метаданных названий",
   "Turn this off to take Cinemeta out entirely and use only your own metadata addons, such as AIOMetadata or AIOStreams. Cinemeta can go stale and show already released episodes as TBA. Leave it on unless you have a metadata addon installed, or titles will have no details.":
     "Выключите, чтобы полностью убрать Cinemeta и использовать только свои дополнения с метаданными, например AIOMetadata или AIOStreams. Данные Cinemeta устаревают, и уже вышедшие серии могут отображаться как TBA. Оставьте включённым, если у вас не установлено дополнение с метаданными, иначе у названий не будет подробностей.",
+  "This one also replaces Harbor's bundled players and tools, so it installs through Harbor Setup. Harbor closes, the installer finishes, then Harbor reopens.":
+    "Это обновление также заменяет встроенные в Harbor плееры и инструменты, поэтому оно устанавливается через Harbor Setup. Harbor закроется, установщик завершит работу, затем Harbor откроется снова.",
+  "This one installs through Harbor Setup, but the update manifest carries no signature for it. Harbor will not run an installer it cannot verify. Download it and run it yourself.":
+    "Это обновление устанавливается через Harbor Setup, но в манифесте обновления нет подписи для него. Harbor не запускает установщик, который не может проверить. Скачайте его и запустите сами.",
+  "Download installer":
+    "Скачать установщик",
+  "Install and reopen":
+    "Установить и открыть заново",
+  "Harbor is closing. Harbor Setup will finish and reopen it.":
+    "Harbor закрывается. Harbor Setup завершит установку и откроет его снова.",
+  "Harbor Setup did not finish updating Harbor. Nothing was changed.":
+    "Harbor Setup не завершил обновление Harbor. Ничего не изменилось.",
 };
 
 export default appFill;

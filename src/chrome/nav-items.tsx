@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { BookMarked, BookOpen, GalleryVerticalEnd, Popcorn } from "lucide-react";
+import { BookMarked, Popcorn } from "lucide-react";
+import { NavGlyph } from "@/components/icons/nav-glyph";
 import { useUnseenReminderCount } from "@/lib/reminders";
 import { AddonsIcon } from "@/components/icons/addons-icon";
 import { CatalogsIcon } from "@/components/icons/catalogs-icon";
@@ -115,9 +116,7 @@ export const NAV_ITEMS: NavItem[] = [
   {
     id: "manga",
     label: "nav.manga",
-    render: (active) => (
-      <BookOpen size={24} strokeWidth={2.2} className={active ? "" : "opacity-70"} />
-    ),
+    render: () => <NavGlyph name="manga" className="h-[26px] w-[26px] p-[2px]" />,
     view: "manga",
     hideKey: "manga",
     parentalKey: "anime",
@@ -162,9 +161,7 @@ export const NAV_ITEMS: NavItem[] = [
   {
     id: "collections",
     label: "Collections",
-    render: (active) => (
-      <GalleryVerticalEnd size={24} strokeWidth={2.2} className={active ? "" : "opacity-70"} />
-    ),
+    render: () => <NavGlyph name="collections" className="h-[26px] w-[26px] p-[2px]" />,
     view: "collections-hub",
   },
   {

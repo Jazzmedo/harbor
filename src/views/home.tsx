@@ -74,6 +74,8 @@ import { useScrollMemory, useView } from "@/lib/view";
 import { CustomizableRows } from "./home/customizable-rows";
 import { CustomizeBar } from "./home/customize-bar";
 import { CWSection } from "./home/cw-section";
+import { NewEpisodesSection } from "./home/new-episodes-section";
+import { useNewEpisodes } from "./home/hooks/use-new-episodes";
 import { useCwAdvance } from "./home/hooks/use-cw-advance";
 import { usePinnedRows } from "./home/hooks/use-pinned-rows";
 import {
@@ -169,7 +171,11 @@ export function Home({ active = true, onReady }: { active?: boolean; onReady?: (
   useEffect(() => {
     const onAddonsChanged = () => setAddonsTick((t) => t + 1);
     window.addEventListener("harbor:addons-changed", onAddonsChanged);
-    return () => window.removeEventListener("harbor:addons-changed", onAddonsChanged);
+    window.addEventListener("harbor:active-profile-changed", onAddonsChanged);
+    return () => {
+      window.removeEventListener("harbor:addons-changed", onAddonsChanged);
+      window.removeEventListener("harbor:active-profile-changed", onAddonsChanged);
+    };
   }, []);
 
   useEffect(() => {
@@ -647,6 +653,7 @@ export function Home({ active = true, onReady }: { active?: boolean; onReady?: (
     publishResumeStates(cwItems);
   }, [cwItems]);
 
+
   const onDismissCw = useCallback(
     (item: LibraryItem) => {
       if (item.manualWatched) {
@@ -669,7 +676,14 @@ export function Home({ active = true, onReady }: { active?: boolean; onReady?: (
     const toMetas = (m: Map<string, MediaEntry>): Meta[] =>
       [...m.values()]
         .sort((a, b) => b.addedAt - a.addedAt)
-        .map((e) => ({ id: e.id, type: e.type, name: e.name, poster: e.poster }));
+        .map((e) => ({
+          id: e.id,
+          type: e.type,
+          name: e.name,
+          poster: e.poster,
+          addonOrigin: e.addonOrigin,
+          videos: e.videos,
+        }));
     const out: HomeRow[] = [];
     if (favItems.size > 0) {
       out.push({ key: "harbor-favorites", type: "movie", name: "Favorites", metas: toMetas(favItems), page: 1, hasMore: false, noDedup: true });
@@ -771,6 +785,12 @@ export function Home({ active = true, onReady }: { active?: boolean; onReady?: (
   const restRows = displayed.rest;
 
   const homeRowsCustom = settings.homeRows;
+  const newEpisodesHidden = homeRowsCustom.hidden.includes("new-episodes");
+  const {
+    episodes: newEpisodes,
+    dismissOne: dismissNewEpisode,
+    dismissAll: dismissAllNewEpisodes,
+  } = useNewEpisodes(cwItems, settings.homeNewEpisodes && !newEpisodesHidden);
 
   const sourceRows = useMemo<HomeRow[]>(() => {
     const uniqueSources = new Map<string, SourceRow>();
@@ -971,6 +991,13 @@ export function Home({ active = true, onReady }: { active?: boolean; onReady?: (
             items={cwItems}
             watchedSet={traktWatched}
             onDismiss={onDismissCw}
+          />
+        )}
+        {settings.homeNewEpisodes && !newEpisodesHidden && (
+          <NewEpisodesSection
+            episodes={newEpisodes}
+            onDismissOne={dismissNewEpisode}
+            onDismissAll={dismissAllNewEpisodes}
           />
         )}
       </div>

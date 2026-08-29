@@ -1,4 +1,5 @@
 import coverage from "./pt/coverage";
+import uiFallback from "./ui-fallback";
 import chrome from "./pt/chrome";
 import common from "./pt/common";
 import catalog from "./pt/catalog";
@@ -24,10 +25,13 @@ import addons from "./pt/addons";
 import extra from "./pt/extra";
 import manga from "./pt/manga";
 import controllers from "./pt/controllers";
+
+import bpSources from "./pt/bp-sources";
 import used from "./pt/used";
 
 const pt: Record<string, string> = {
   ...coverage,
+  ...uiFallback,
   ...chrome,
   ...common,
   ...catalog,
@@ -53,6 +57,7 @@ const pt: Record<string, string> = {
   ...extra,
   ...manga,
   ...controllers,
+  ...bpSources,
   ...used,
 };
 

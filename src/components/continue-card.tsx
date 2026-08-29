@@ -1,5 +1,6 @@
 import { memo, useEffect, useMemo, useRef, useState } from "react";
-import { Check, Play, X } from "lucide-react";
+import { Check, X } from "lucide-react";
+import { Play } from "@/components/icons/play-filled";
 import simklLogo from "@/assets/simkl.png";
 import { meta as fetchMeta, narrowMediaType, type Meta } from "@/lib/cinemeta";
 import { animeKitsuMeta, type AnimeKitsuVideo } from "@/lib/providers/anime-kitsu-addon";
@@ -16,7 +17,7 @@ import {
 } from "@/lib/stremio";
 import { useHasNewEpisode } from "@/lib/new-episodes";
 import { Tooltip } from "@/views/detail/tooltip";
-import { useProfiles } from "@/lib/profiles";
+import { useProfiles, sharesStremioStorage } from "@/lib/profiles";
 import { useSettings } from "@/lib/settings";
 import { useView, type PlayEpisode } from "@/lib/view";
 import { getWatchedBy } from "@/lib/watched-by";
@@ -55,7 +56,11 @@ export const ContinueCard = memo(function ContinueCard({
   const { profiles, activeProfile } = useProfiles();
   const watcherId = getWatchedBy(item._id);
   const watcher = watcherId ? profiles.find((p) => p.id === watcherId) : null;
-  const showWatcher = !!watcher && watcher.id !== activeProfile?.id;
+  const showWatcher =
+    !!watcher &&
+    !!activeProfile &&
+    watcher.id !== activeProfile.id &&
+    sharesStremioStorage(activeProfile, watcher, profiles);
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
   const { open: openContextMenu } = useContextMenu();

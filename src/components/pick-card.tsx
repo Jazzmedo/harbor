@@ -1,8 +1,9 @@
 import { Bookmark, Check, Popcorn, RefreshCcw } from "lucide-react";
 import { memo, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { animeHasDub, dubSetReady, ensureDubSet, subscribeDubSet } from "@/lib/providers/anime-dub-sub";
-import { awardSourceMeta, findAnyAwardWins, findTopAward, parseAwardYear, type AwardWin } from "@/lib/anime-awards";
+import { awardSourceMeta, findAnyAwardWins, findTopAward, parseAwardYear } from "@/lib/anime-awards";
 import { resolveAwardIcon, useAwardPacks } from "@/lib/award-icons";
+import { shortCategory } from "@/lib/anime-award-labels";
 import { AwardTab } from "@/components/award-tab";
 import { TopTenRibbon } from "@/components/top-ten-ribbon";
 import { isTop10, useTop10Version } from "@/lib/top10-set";
@@ -240,7 +241,7 @@ const PosterCard = memo(function PosterCard({
 
   const [imgIdx, setImgIdx] = useState(0);
   const [hydratedPoster, setHydratedPoster] = useState<string | undefined>();
-  const localizedPoster = useLocalizedPoster(meta.id);
+  const { url: localizedPoster, localizing: posterLocalizing } = useLocalizedPoster(meta.id);
   const wantTmdbPoster = needsTmdbForPoster(settings.rpdbKey, meta.id);
   const resolvedTmdb = useTmdbIdFromImdb(wantTmdbPoster ? meta.id : undefined);
   const animeTmdb = useTmdbIdFromImdb(animeImdb) ?? undefined;
@@ -257,6 +258,7 @@ const PosterCard = memo(function PosterCard({
   const pinnedPoster = useTitlePoster(meta.id);
   const posterCandidates = useMemo(() => {
     if (posterPending && !pinnedPoster) return [];
+    if (posterLocalizing) return pinnedPoster ? [pinnedPoster] : [];
     const base = localizedPoster ?? meta.poster;
     const seen = new Set<string>();
     const out: string[] = [];
@@ -274,7 +276,7 @@ const PosterCard = memo(function PosterCard({
       out.push(u);
     }
     return out;
-  }, [settings.rpdbKey, meta.id, posterAltId, meta.poster, meta.background, hydratedPoster, animeImdb, animeTvdb, animeTmdb, localizedPoster, posterPending, pinnedPoster]);
+  }, [settings.rpdbKey, meta.id, posterAltId, meta.poster, meta.background, hydratedPoster, animeImdb, animeTvdb, animeTmdb, localizedPoster, posterLocalizing, posterPending, pinnedPoster]);
   const posterSrc = posterCandidates[imgIdx];
 
   useEffect(() => {
@@ -873,69 +875,6 @@ function isRerun(meta: Meta): boolean {
   return monthsOld > 9;
 }
 
-const CR_CATEGORY_SHORT: Record<string, string> = {
-  anime_of_the_year: "Winner",
-  best_continuing_series: "Continuing",
-  best_new_series: "New",
-  best_film: "Film",
-  best_original_anime: "Original",
-  best_animation: "Animation",
-  best_director: "Director",
-  best_action: "Action",
-  best_fantasy: "Fantasy",
-  best_isekai: "Isekai",
-  best_drama: "Drama",
-  best_comedy: "Comedy",
-  best_romance: "Romance",
-  best_slice_of_life: "Slice",
-  best_mystery: "Mystery",
-  best_horror: "Horror",
-  best_sports: "Sports",
-  best_supernatural: "Supernatural",
-  best_scifi: "Sci-Fi",
-  best_background_art: "BG Art",
-  best_character_design: "Char Design",
-  best_cinematography: "Cinematography",
-  best_art_direction: "Art Direction",
-  best_score: "Score",
-  best_song: "Song",
-  best_opening: "Opening",
-  best_ending: "Ending",
-  best_boy: "Boy",
-  best_girl: "Girl",
-  best_protagonist: "Hero",
-  best_antagonist: "Villain",
-  best_main_character: "Main Char",
-  best_supporting: "Supporting",
-  best_couple: "Couple",
-  best_fight: "Fight",
-  best_bromance: "Bromance",
-  best_girls_love: "GL",
-  best_boys_love: "BL",
-  must_protect: "Must Protect",
-  global_impact: "Global Impact",
-  best_cgi: "CGI",
-  heartwarming_scene: "Heartwarming",
-  // TAAF + Kobe specific
-  best_tv: "TV",
-  best_ova: "OVA",
-  best_packaged: "Packaged",
-  best_network: "Network",
-  best_theme_song: "Song",
-  // JMAF
-  grand_prize: "Grand Prize",
-  excellence: "Excellence",
-  new_face: "New Face",
-  social_impact: "Social",
-  // r/anime
-  best_short: "Short",
-  best_va: "VA",
-  best_character: "Character",
-  best_adventure: "Adventure",
-  best_suspense: "Suspense",
-  best_psychological: "Psychological",
-};
-
 const AWARD_TAB_LABEL: Record<string, string> = {
   crunchyroll: "Crunchyroll",
   taaf: "TAAF",
@@ -1021,12 +960,6 @@ function AnimeAwardBadge({
       <span className="truncate">{label}</span>
     </span>
   );
-}
-
-function shortCategory(win: AwardWin): string {
-  const fromMap = CR_CATEGORY_SHORT[win.categoryKey];
-  if (fromMap) return fromMap;
-  return win.categoryName.replace(/^Best\s+/i, "").replace(/Award$/i, "").trim();
 }
 
 function CinemaBadge({ dubShift = false, ribbonShift = false }: { dubShift?: boolean; ribbonShift?: boolean }) {

@@ -144,7 +144,7 @@ const settings: Record<string, string> = {
   "Automatically jump past recap segments.": "القفز تلقائيًا عبر مقاطع الملخّص.",
   "Automatically skip ending credits and trigger the next episode countdown immediately.": "تخطّي شارة النهاية تلقائيًا وبدء العد التنازلي للحلقة التالية فورًا.",
   "Automatically track what you are playing and save watch progress in real-time.": "تتبّع ما تشاهده تلقائيًا وحفظ تقدّم المشاهدة في الوقت الفعلي.",
-  "Autoplay trailer on detail pages": "تشغيل المقطع الدعائي تلقائيًا في صفحات التفاصيل",
+  "Auto-play trailer on detail pages": "تشغيل المقطع الدعائي تلقائيًا في صفحات التفاصيل",
   "Award Icons": "أيقونات الجوائز",
   "Award tab on cards": "علامة تبويب الجوائز على البطاقات",
   "Award tab position": "موضع علامة تبويب الجوائز",
@@ -667,7 +667,7 @@ const settings: Record<string, string> = {
   "With no TMDB key, the About panel pulls cast, crew, and title info from a free IMDb source. TMDB is still used whenever a key is set.": "بدون مفتاح TMDB، تسحب لوحة 'حول' معلومات طاقم التمثيل وفريق العمل والعنوان من مصدر IMDb مجاني. لا يزال TMDB يُستخدم كلما تم ضبط مفتاح.",
   "Wordmark": "شعار نصّي",
   "Worse": "أسوأ",
-  "YOUR FILTERS": "مرشّحاتك",
+  "Your filters": "مرشّحاتك",
   "You're on the latest build. Earlier builds show up here as new versions ship.": "أنت على أحدث إصدار. ستظهر الإصدارات الأقدم هنا مع طرح نسخ جديدة.",
   "Your Trakt watchlist is empty, nothing to import.": "قائمة المشاهدة في Trakt فارغة، لا شيء لاستيراده.",
   "Your library and watch progress sync here.": "تتم مزامنة مكتبتك وتقدّم المشاهدة هنا.",
@@ -2179,6 +2179,16 @@ const settings: Record<string, string> = {
   "Next frame": "الإطار التالي",
   "Step back one frame and pause. Frame-accurate on mpv.": "ارجع إطاراً واحداً مع الإيقاف المؤقت. دقة بمستوى الإطار على mpv.",
   "Step forward one frame and pause. Frame-accurate on mpv.": "تقدّم إطاراً واحداً مع الإيقاف المؤقت. دقة بمستوى الإطار على mpv.",
+  "Autoplay trailer on detail pages": "تشغيل المقطع الدعائي تلقائيًا في صفحات التفاصيل",
+  "YOUR FILTERS": "مرشّحاتك",
+  "Open Harbor's settings outside playback.": "فتح إعدادات Harbor خارج وضع التشغيل.",
+  "Xtream credentials were left out of this backup.": "تمّ استبعاد بيانات اعتماد Xtream من هذه النسخة الاحتياطية.",
+  "Content advisory style": "نمط تنبيه المحتوى",
+  "Use color to distinguish severity, or keep every advisory monochrome.":
+    "استخدم الألوان لتمييز مستوى الشدة، أو اجعل جميع التنبيهات أحادية اللون.",
+  "Monochrome (White)": "أحادي (أبيض)",
+  "When a movie or episode starts, briefly show its Common Sense Media parental guide (violence, nudity, profanity, substances) with severity. Fades on its own.":
+    "عند بدء فيلم أو حلقة، اعرض لفترة وجيزة إرشادات المحتوى من Common Sense Media (العنف والعري والألفاظ والمواد) مع مستوى الشدة، ثم أخفها تلقائياً.",
 };
 
 export default settings;

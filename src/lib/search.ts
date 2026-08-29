@@ -5,8 +5,8 @@ import type { Meta } from "@/lib/cinemeta";
 import type { AddonResultGroup } from "@/lib/search-addons";
 import type { AddonHit } from "@/lib/search-addon-index";
 import { getCachedPlaylist } from "@/lib/iptv/store";
+import type { StoredPlaylist } from "@/lib/iptv/playlists-store";
 import { arabicAwareMatch } from "@/lib/iptv/rtl";
-import type { Settings } from "@/lib/settings";
 import { loadStoredSettings } from "@/lib/settings/load";
 import { safeFetch } from "@/lib/safe-fetch";
 import { anilistAnimeSearch } from "@/lib/anilist/browse";
@@ -81,7 +81,7 @@ export type SearchIntent =
 
 export function searchLiveTvChannels(
   query: string,
-  iptvPlaylists: Settings["iptvPlaylists"],
+  iptvPlaylists: StoredPlaylist[],
   limit = 8,
 ): LiveTvHit[] {
   const q = query.trim().toLowerCase();
@@ -140,7 +140,7 @@ async function jikanAnimeSearch(query: string, limit: number): Promise<AnimeHit[
         format: a.type ?? null,
         name,
         year: year ? String(year) : null,
-        poster: a.images?.jpg?.large_image_url ?? a.images?.jpg?.image_url ?? null,
+        poster: a.images?.jpg?.image_url ?? a.images?.jpg?.large_image_url ?? null,
         background: a.trailer?.images?.maximum_image_url ?? null,
         overview: a.synopsis ?? "",
         score: a.score ?? 0,
@@ -181,7 +181,7 @@ async function kitsuAnimeSearch(query: string, limit: number): Promise<AnimeHit[
         format: at.subtype ?? null,
         name: at.titles?.en?.trim() || at.canonicalTitle || "Untitled",
         year: at.startDate ? at.startDate.slice(0, 4) : null,
-        poster: at.posterImage?.large ?? at.posterImage?.medium ?? null,
+        poster: at.posterImage?.medium ?? at.posterImage?.large ?? null,
         background: at.coverImage?.large ?? null,
         overview: at.synopsis ?? "",
         score: at.averageRating ? Number(at.averageRating) / 10 : 0,
@@ -285,7 +285,12 @@ export async function searchAll(
   }
   const metaBase = effectiveTmdbLanguage().split("-")[0]?.toLowerCase() ?? "";
   let enNameById: Map<number, string> | null = null;
-  if (loadStoredSettings().translateTitles && metaBase !== "" && metaBase !== "en" && metaBase !== "ja") {
+  if (
+    loadStoredSettings().translateTitles &&
+    metaBase !== "" &&
+    metaBase !== "en" &&
+    metaBase !== "ja"
+  ) {
     const en = await get<Page<MultiItem>>(key, "search/multi", {
       query: trimmed,
       include_adult: "false",
@@ -295,7 +300,7 @@ export async function searchAll(
       enNameById = new Map();
       for (const r of en.results) {
         const n = (r as { title?: string; name?: string }).title ?? (r as { name?: string }).name;
-        if (n && typeof r.id === "number") enNameById.set(r.id, n);
+        if (typeof r.id === "number" && n) enNameById.set(r.id, n);
       }
     }
   }
@@ -394,7 +399,7 @@ function levenshtein(a: string, b: string): number {
   if (m === 0) return n;
   if (n === 0) return m;
   let prev = Array.from({ length: n + 1 }, (_, i) => i);
-  let cur = new Array<number>(n + 1);
+  let cur = Array.from({ length: n + 1 }, () => 0);
   for (let i = 1; i <= m; i++) {
     cur[0] = i;
     for (let j = 1; j <= n; j++) {

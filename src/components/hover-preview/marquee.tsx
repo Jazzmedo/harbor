@@ -1,18 +1,5 @@
-import {
-  Check,
-  ChevronDown,
-  Ghost,
-  Heart,
-  MessageSquareWarning,
-  Play,
-  Plus,
-  ShieldAlert,
-  Star,
-  Swords,
-  ThumbsUp,
-  Wine,
-  type LucideIcon,
-} from "lucide-react";
+import { Check, ChevronDown, Ghost, Heart, MessageSquareWarning, Plus, ShieldAlert, Star, Swords, ThumbsUp, Wine, type LucideIcon } from "lucide-react";
+import { Play } from "@/components/icons/play-filled";
 import { Fragment, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { Meta } from "@/lib/cinemeta";
 import type { PreviewData } from "@/lib/hover-preview/preview-data";
@@ -236,6 +223,8 @@ function MarqueeBlock({
               name: meta.name,
               poster: meta.poster,
               imdbId: alt ?? undefined,
+              addonOrigin: meta.addonOrigin,
+              videos: meta.videos,
             });
           }}
         >

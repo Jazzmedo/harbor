@@ -1,4 +1,5 @@
-import { Check, Download, ExternalLink, Loader2, Play, Zap } from "lucide-react";
+import { Check, Download, ExternalLink, Loader2, Zap } from "lucide-react";
+import { Play } from "@/components/icons/play-filled";
 import { Flag } from "@/components/flag";
 import { DubSubPill, streamDubSub } from "@/components/dub-sub-pill";
 import { CopyLinkButton, resolveStreamLink } from "@/components/player/copy-link-button";
@@ -17,6 +18,7 @@ import { PlayProvenance } from "./play-provenance";
 export function PrimaryCard({
   meta,
   episode,
+  absoluteEpisode,
   stream,
   debrids,
   addonLogo,
@@ -30,6 +32,7 @@ export function PrimaryCard({
 }: {
   meta: Meta;
   episode?: PlayEpisode;
+  absoluteEpisode?: number | null;
   stream: ScoredStream;
   debrids: ReturnType<typeof useDebridClients>;
   addonLogo: string | null;
@@ -56,7 +59,7 @@ export function PrimaryCard({
   const queueTarget = debrids.find((d) => d.queueCache);
   const canStream = !isCached && directStreamAvailable(stream);
   const summary = streamSummaryParts(stream);
-  const title = displayTitle(stream, meta.name, episode);
+  const title = displayTitle(stream, meta.name, episode, absoluteEpisode);
   const fname = settings.pickerShowFilename ? torrentFilename(stream) : "";
   const badges = settings.showQualityBadge ? streamBadges(stream) : [];
   const knownLanguages = stream.audioLanguages.filter((l) => l && l.toLowerCase() !== "unknown");
@@ -66,7 +69,7 @@ export function PrimaryCard({
   const isLandscape = Boolean(landscapeImage);
 
   return (
-    <section className="relative overflow-hidden rounded-[24px] bg-canvas/70">
+    <section className="relative overflow-hidden rounded-3xl bg-canvas/70">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-ink/12 to-transparent" />
 
       <div className={`grid gap-7 p-7 ${isLandscape ? "grid-cols-[320px_1fr] items-center" : "grid-cols-[224px_1fr]"}`}>

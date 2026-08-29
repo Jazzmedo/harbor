@@ -9,8 +9,8 @@ import {
 import type { Meta } from "@/lib/cinemeta";
 import type { Rejection } from "@/lib/streams/trust";
 import type { Addon } from "@/lib/addons";
-import type { ScoredStream, Stream, Tier } from "@/lib/streams/types";
-import { hasCachedMarker } from "@/lib/streams/cached";
+import type { DebridSlug, ScoredStream, Stream, Tier } from "@/lib/streams/types";
+import { hasCachedMarker, hasUncachedMarker } from "@/lib/streams/cached";
 import type { PlayEpisode } from "@/lib/view";
 
 export async function cinemetaImdbFallback(
@@ -301,7 +301,12 @@ export function tierChipBadges(s: ScoredStream): BadgeKind[] {
   return out;
 }
 
-export function displayTitle(s: ScoredStream, showName: string, episode?: PlayEpisode): string {
+export function displayTitle(
+  s: ScoredStream,
+  showName: string,
+  episode?: PlayEpisode,
+  absoluteEpisode?: number | null,
+): string {
   const raw = s.name?.trim();
   if (raw) return raw;
   if (!episode) {
@@ -311,7 +316,9 @@ export function displayTitle(s: ScoredStream, showName: string, episode?: PlayEp
   }
   const parts = [showName || s.parsedTitle];
   parts.push(
-    `S${String(episode.imdbSeason ?? episode.season).padStart(2, "0")}E${String(episode.imdbEpisode ?? episode.episode).padStart(2, "0")}`,
+    absoluteEpisode != null
+      ? `E${absoluteEpisode}`
+      : `S${String(episode.imdbSeason ?? episode.season).padStart(2, "0")}E${String(episode.imdbEpisode ?? episode.episode).padStart(2, "0")}`,
   );
   if (episode.name) parts.push(episode.name);
   else if (s.episodeTitle) parts.push(s.episodeTitle);
@@ -376,11 +383,19 @@ export function hasInstantMarker(s: ScoredStream): boolean {
   return /\binstant\b/.test(haystack) || haystack.includes("⚡");
 }
 
-export { hasUncachedMarker } from "@/lib/streams/cached";
-export { hasCachedMarker };
+export { hasCachedMarker, hasUncachedMarker };
 
 export function anyStreamCached(s: ScoredStream): boolean {
   return Object.values(s.cached).some((v) => v === true) || hasCachedMarker(s);
+}
+
+export function streamIsCached(
+  s: ScoredStream,
+  debrids: ReadonlyArray<{ slug: DebridSlug }>,
+): boolean {
+  if (s.url != null && !s.infoHash && !hasUncachedMarker(s)) return true;
+  if (debrids.some((d) => s.cached[d.slug] === true || s.inLibrary[d.slug] === true)) return true;
+  return hasCachedMarker(s);
 }
 
 const DEBRID_FAIL_CODES = new Set([
@@ -460,7 +475,7 @@ export function humanError(code: string): string {
     case "remote-server-unreachable":
       return "Remote streaming server unreachable. Check the address in Settings > P2P & servers and that the server machine is online.";
     case "engine-no-peers":
-      return "Couldn't reach any peers for this torrent. If this keeps happening, your network or ISP is likely blocking torrents (the local port doesn't matter) - use a debrid service or a VPN.";
+      return "Couldn't prepare this P2P source. It may not have reachable peers. Try again or choose another source.";
     case "engine-not-ready":
       return ENGINE_WARMING_MESSAGE;
     case "direct-torrent-disabled":

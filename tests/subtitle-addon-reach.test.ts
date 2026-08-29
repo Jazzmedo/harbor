@@ -1,7 +1,7 @@
 // @ts-expect-error Node test types are intentionally outside the browser-only tsconfig.
 import assert from "node:assert/strict";
 // @ts-expect-error Node test types are intentionally outside the browser-only tsconfig.
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 // @ts-expect-error Node test types are intentionally outside the browser-only tsconfig.
 import test from "node:test";
 import { filterTracksByPreferredLanguage } from "../src/lib/subtitles/language.ts";
@@ -146,9 +146,28 @@ test("the configured languages reach the separate subtitle popup", () => {
 });
 
 test("subtitle popup fills compact players while staying above the controls", () => {
-  assert.match(subtitleMenu, /fixed end-2 bottom-\[84px\]/);
-  assert.match(subtitleModal, /m-2 mb-\[84px\]/);
-  assert.match(subtitleMenu, /w-\[560px\] max-w-\[calc\(100vw-16px\)\]/);
-  assert.match(subtitleModal, /w-\[560px\] max-w-\[calc\(100vw-16px\)\]/);
+  assert.match(subtitleMenu, /fixed end-14 bottom-\[150px\]/);
+  assert.match(subtitleModal, /mb-\[84px\] me-\[56px\]/);
+  assert.match(subtitleMenu, /w-\[560px\] max-w-\[calc\(100vw-72px\)\]/);
+  assert.match(subtitleModal, /w-\[560px\] max-w-\[calc\(100vw-64px\)\]/);
   assert.doesNotMatch(subtitleModal, /me-\[120px\]/);
+});
+
+test("every anchored player popup shares one anchor", () => {
+  const root = new URL("../src/components/player/", import.meta.url);
+  const drifted: string[] = [];
+  const walk = (dir: URL) => {
+    for (const e of readdirSync(dir, { withFileTypes: true })) {
+      if (e.isDirectory()) {
+        walk(new URL(`${e.name}/`, dir));
+      } else if (e.name.endsWith(".tsx")) {
+        const at = new URL(e.name, dir);
+        const src = readFileSync(at, "utf8");
+        const hit = src.match(/fixed end-\S+ bottom-\[\d+px\]/);
+        if (hit && hit[0] !== "fixed end-14 bottom-[150px]") drifted.push(`${e.name} ${hit[0]}`);
+      }
+    }
+  };
+  walk(root);
+  assert.deepEqual(drifted, []);
 });

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { needsImdbForPoster, needsTmdbForPoster, rpdbPoster } from "@/lib/providers/rpdb";
 import { useTitlePoster } from "@/lib/title-poster";
 import {
@@ -16,27 +16,42 @@ import { useProxiedImageSrc } from "@/lib/remote-image-proxy";
 
 type Ratio = "portrait" | "landscape" | "wide";
 
-export function useLocalizedPoster(metaId: string): string | undefined {
+export function useLocalizedPoster(metaId: string): {
+  url: string | undefined;
+  localizing: boolean;
+} {
   const { settings } = useSettings();
   const [url, setUrl] = useState<string | undefined>(undefined);
+  const [localizing, setLocalizing] = useState<boolean>(() => {
+    const canResolve = metaId.startsWith("tmdb:") || metaId.startsWith("tt");
+    return !!settings.tmdbKey && canResolve && shouldLocalizePosters();
+  });
   useEffect(() => {
     setUrl(undefined);
     const canResolve = metaId.startsWith("tmdb:") || metaId.startsWith("tt");
-    if (!settings.tmdbKey || !canResolve || !shouldLocalizePosters()) return;
+    const active = !!settings.tmdbKey && canResolve && shouldLocalizePosters();
+    setLocalizing(active);
+    if (!active) return;
     let alive = true;
     void (async () => {
       const tmdbId = metaId.startsWith("tmdb:")
         ? metaId
         : await tmdbIdFromImdb(settings.tmdbKey, metaId);
-      if (!tmdbId) return;
+      if (!alive) return;
+      if (!tmdbId) {
+        setLocalizing(false);
+        return;
+      }
       const localized = await tmdbLocalizedPoster(settings.tmdbKey, tmdbId);
-      if (alive && localized) setUrl(localized);
+      if (!alive) return;
+      if (localized) setUrl(localized);
+      setLocalizing(false);
     })();
     return () => {
       alive = false;
     };
   }, [metaId, settings.tmdbKey]);
-  return url;
+  return { url, localizing };
 }
 
 export function useRpdbAltId(
@@ -112,21 +127,25 @@ export function usePosterChain(
 ) {
   const { altId, pending } = useRpdbAltId(rpdbKey, metaId, type);
   const { animeImdb, animeTvdb, animeTmdb } = useAnimeRpdbIds(rpdbKey, metaId);
-  const localized = useLocalizedPoster(metaId);
+  const { url: localized, localizing } = useLocalizedPoster(metaId);
   const pinned = useTitlePoster(metaId);
   const candidates = useMemo(() => {
     if (pending && !pinned) return [];
     const base = localized ?? metaPoster;
     const out: string[] = [];
     const seen = new Set<string>();
-    for (const u of [
-      pinned,
-      animeImdb ? rpdbPoster(rpdbKey, animeImdb, base, animeTmdb) : undefined,
-      animeTvdb ? rpdbPoster(rpdbKey, `tvdb:${animeTvdb}`, base) : undefined,
-      rpdbPoster(rpdbKey, metaId, base, altId),
-      localized,
-      metaPoster,
-    ]) {
+    // While the localized poster is being resolved, hold the artwork instead of flashing the
+    // original-language (e.g. Japanese) search poster, which then swaps to English once resolved.
+    const fallbacks = localizing
+      ? [pinned]
+      : [
+          animeImdb ? rpdbPoster(rpdbKey, animeImdb, base, animeTmdb) : undefined,
+          animeTvdb ? rpdbPoster(rpdbKey, `tvdb:${animeTvdb}`, base) : undefined,
+          rpdbPoster(rpdbKey, metaId, base, altId),
+          localized,
+          metaPoster,
+        ];
+    for (const u of [pinned, ...fallbacks]) {
       if (u && !seen.has(u)) {
         seen.add(u);
         out.push(u);
@@ -142,6 +161,7 @@ export function usePosterChain(
     animeTvdb,
     animeTmdb,
     localized,
+    localizing,
     pending,
     pinned,
   ]);
@@ -183,7 +203,7 @@ const RATIO_AR: Record<Ratio, number> = {
   wide: 16 / 7,
 };
 
-export function Poster({
+function PosterBody({
   src,
   seed,
   ratio = "portrait",
@@ -251,7 +271,10 @@ export function Poster({
     const box = el.getBoundingClientRect();
     if (box.width <= 0) return;
     const need = Math.max(box.width, box.height * RATIO_AR[ratio]);
-    const t = Math.ceil(need * (window.devicePixelRatio || 1) * qMult);
+    // Capped at 2. An Android TV WebView reports devicePixelRatio 4 because it is
+    // describing the 4K panel, while the window it rasterises is 1920x1080, so the
+    // raw value asks for a bucket twice as wide and four times the pixels.
+    const t = Math.ceil(need * Math.min(2, window.devicePixelRatio || 1) * qMult);
     setTargetPx((prev) => (t > prev ? t : prev));
   }, [inView, qMult, ratio]);
   const rawCandidates = [src, ...(fallbacks ?? [])].filter((u): u is string => !!u);
@@ -443,6 +466,12 @@ export function Poster({
     </div>
   );
 }
+
+// Every arrow press on the Big Picture taste grid re-ran 40 Poster bodies for
+// props whose values had not changed, and a MutationObserver recorded no DOM
+// change from any of them. Call sites that pass children or onError inline will
+// still re-render; those are fresh objects every time by construction.
+export const Poster = memo(PosterBody);
 
 export function posterPlate(seed: string): string {
   return gradient(hash(seed) % 360);

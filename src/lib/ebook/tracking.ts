@@ -161,4 +161,3 @@ export async function fetchEBookListCollection(userId: number): Promise<EBookLis
   localStorage.setItem(KEY, JSON.stringify(tracked));
   return groups;
 }
-

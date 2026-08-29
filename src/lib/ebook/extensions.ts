@@ -244,4 +244,3 @@ export async function removeEBookPlugin(id: string): Promise<void> {
   plugins = plugins.filter((item) => item.id !== id);
   notify();
 }
-

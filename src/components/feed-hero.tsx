@@ -1,4 +1,6 @@
-import { Bookmark, BookmarkCheck, Play, SkipForward, Star, ThumbsDown } from "lucide-react";
+import { Star } from "lucide-react";
+import { Play } from "@/components/icons/play-filled";
+import { SaveIcon, SkipIcon, ThumbsDownIcon } from "@/components/icons/harbor-glyphs";
 import tideInfo from "@/assets/tide-info.png";
 import type { FeedItem } from "@/lib/feed";
 import { useT } from "@/lib/i18n";
@@ -40,7 +42,7 @@ export function FeedHero({
   const positionLabel = `${String(position + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}`;
 
   return (
-    <article className="relative h-full overflow-hidden rounded-[28px] border border-edge-soft bg-canvas">
+    <article className="relative h-full overflow-hidden rounded-2xl border border-edge-soft bg-canvas">
       <div className="absolute inset-0">
         <Poster
           src={backdrop}
@@ -155,19 +157,29 @@ export function FeedHero({
               <span>{t("Play tonight")}</span>
             </button>
             <SecondaryAction
-              icon={saved ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
+              icon={<SaveIcon size={18} />}
               label={saved ? t("Saved") : t("Save")}
-              onClick={() => toggleWatchlist({ id: meta.id, type: meta.type, name: meta.name, poster: meta.poster, imdbId: resolvedImdb })}
+              onClick={() =>
+                toggleWatchlist({
+                  id: meta.id,
+                  type: meta.type,
+                  name: meta.name,
+                  poster: meta.poster,
+                  imdbId: resolvedImdb,
+                  addonOrigin: meta.addonOrigin,
+                  videos: meta.videos,
+                })
+              }
               active={saved}
             />
             <SecondaryAction
-              icon={<SkipForward size={18} />}
+              icon={<SkipIcon size={18} />}
               label={t("Skip")}
               onClick={onSkip}
             />
             {onNotInterested && (
               <SecondaryAction
-                icon={<ThumbsDown size={18} />}
+                icon={<ThumbsDownIcon size={18} />}
                 label={t("Not interested")}
                 onClick={onNotInterested}
               />

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { HarborLoader } from "@/components/harbor-loader";
 import type { PlayerSnapshot } from "@/lib/player/bridge";
-import { getPlaybackPosition, usePlaybackFlag } from "@/lib/player/playback-clock";
 import { isLocalUrl } from "@/lib/player/local-url";
 import type { PlayerSrc } from "@/lib/view";
 import { Topbar } from "@/chrome/topbar";
@@ -47,15 +46,18 @@ export function CinematicPlayerLoader({
   const isInfoHash =
     (isBundledEngineUrl(src.url) || isLocalEngineUrl(src.url)) && !src.url.includes("/hlsv2/");
   const isLocalEngine = isLocalEngineUrl(src.url) && !!src.streamRef?.infoHash;
-  const enginePeers = engineStats ? (engineStats.unchoked > 0 ? engineStats.unchoked : engineStats.peers) : 0;
+  const enginePeers = engineStats
+    ? engineStats.unchoked > 0
+      ? engineStats.unchoked
+      : engineStats.peers
+    : 0;
   const engineSpeed = engineStats?.downloadSpeed ?? 0;
   const showEngineActivity = isInfoHash && !!engineStats && (enginePeers > 0 || engineSpeed > 0);
   const streamBytes = src.streamRef?.size ?? engineStats?.streamLen ?? null;
   const ready = isInfoHash ? readinessScore(engineStats ?? null, true) : 0;
   const heavyForP2p = isInfoHash && streamBytes != null && streamBytes > 20 * 1024 ** 3;
   const everPlayedRef = useRef(false);
-  const hasProgress = usePlaybackFlag(() => getPlaybackPosition() > 0.3);
-  if (hasProgress && (snap.durationSec > 0 || snap.status === "playing")) {
+  if (snap.firstFrameReady) {
     everPlayedRef.current = true;
   }
   const sessionKey = `${src.meta.id}::${src.episode?.season ?? ""}:${src.episode?.episode ?? ""}`;
@@ -181,13 +183,13 @@ export function CinematicPlayerLoader({
               <div className="flex items-center gap-2.5">
                 <button
                   onClick={onCancel}
-                  className="flex h-11 cursor-pointer items-center rounded-full border border-white/20 bg-white/10 px-6 text-[13.5px] font-medium text-white/90 transition-colors hover:border-white/35 hover:bg-white/15"
+                  className="flex h-11 cursor-pointer items-center rounded-full bg-[#34343b] px-6 text-[13.5px] font-medium text-white/90 transition-colors hover:bg-[#41414a]"
                 >
                   {t("Go back")}
                 </button>
                 <button
                   onClick={prep.retry}
-                  className="flex h-11 cursor-pointer items-center rounded-full border border-white/12 bg-transparent px-6 text-[13.5px] font-medium text-white/70 transition-colors hover:border-white/25 hover:text-white"
+                  className="flex h-11 cursor-pointer items-center rounded-full bg-[#26262c] px-6 text-[13.5px] font-medium text-white/70 transition-colors hover:bg-[#31313a] hover:text-white"
                 >
                   {t("Try again")}
                 </button>
@@ -229,14 +231,16 @@ export function CinematicPlayerLoader({
         )}
         {!kid && heavyForP2p && (
           <p className="max-w-md text-[12.5px] leading-relaxed text-amber-300/85">
-            {t("Heads up: this is a large file for peer-to-peer streaming, so it can take a while to start. A 1080p source or a debrid service will load faster.")}
+            {t(
+              "Heads up: this is a large file for peer-to-peer streaming, so it can take a while to start. A 1080p source or a debrid service will load faster.",
+            )}
           </p>
         )}
       </div>
       {!(isLocalEngine && prep.phase === "no-peers") && (
         <button
           onClick={onCancel}
-          className="absolute bottom-10 left-1/2 z-10 flex h-11 -translate-x-1/2 cursor-pointer items-center gap-2 rounded-full border border-white/15 bg-black/45 px-6 text-[13.5px] font-medium text-white/75 backdrop-blur-md transition-colors hover:border-white/30 hover:bg-black/60 hover:text-white"
+          className="absolute bottom-10 left-1/2 z-10 flex h-11 -translate-x-1/2 cursor-pointer items-center gap-2 rounded-full bg-[#34343b] px-6 text-[13.5px] font-medium text-white/85 transition-colors hover:bg-[#41414a]"
         >
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
             <path

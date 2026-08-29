@@ -241,41 +241,25 @@ export function PlayerLayoutPanel() {
   const hiddenCount = draft.controls.length - visibleCount;
 
   return (
-    <div className="flex flex-col gap-6">
-      <EditLayoutCard
-        theme={theme}
-        config={draft}
-        visibleCount={visibleCount}
-        hiddenCount={hiddenCount}
-        activeProfileName={profiles.find((p) => p.id === activeProfileId)?.name ?? null}
-        onOpen={() => setEditorOpen(true)}
-      />
-
+    <div className="flex flex-col gap-10">
       <Section
-        title={t("Player style")}
+        title={t("Player layout")}
         subtitle={t("The button set your layout is built on. Your customizations are kept separately for each style.")}
       >
+        <EditLayoutCard
+          theme={theme}
+          config={draft}
+          visibleCount={visibleCount}
+          hiddenCount={hiddenCount}
+          activeProfileName={profiles.find((p) => p.id === activeProfileId)?.name ?? null}
+          onOpen={() => setEditorOpen(true)}
+        />
         <ThemeTabs
           value={theme}
           onChange={(id) => {
             update({ playerChromeTheme: id });
             setTheme(id);
           }}
-        />
-      </Section>
-
-      <Section
-        title={t("Control bar")}
-        subtitle={t("How the on-screen controls read while you watch.")}
-      >
-        <OptionsSection
-          config={draft}
-          onTimeFormat={(v: TimeFormat) =>
-            setDraft((cur) => ({ ...cur, options: { ...cur.options, timeFormat: v } }))
-          }
-          onVolumeStyle={(v: VolumeStyle) =>
-            setDraft((cur) => ({ ...cur, options: { ...cur.options, volumeStyle: v } }))
-          }
         />
         <ToggleRow
           label={t("True black menus")}
@@ -286,12 +270,36 @@ export function PlayerLayoutPanel() {
       </Section>
 
       <Section
+        title={t("Control bar")}
+        subtitle={t("How the on-screen controls read while you watch.")}
+      >
+        <OptionsSection
+          config={draft}
+          theme={theme}
+          onTimeFormat={(v: TimeFormat) =>
+            setDraft((cur) => ({ ...cur, options: { ...cur.options, timeFormat: v } }))
+          }
+          onVolumeStyle={(v: VolumeStyle) =>
+            setDraft((cur) => ({ ...cur, options: { ...cur.options, volumeStyle: v } }))
+          }
+        />
+        <FooterBar
+          dirty={dirty}
+          justSaved={justSaved}
+          confirmingReset={confirmingReset}
+          onSave={onSave}
+          onDiscard={onDiscard}
+          onResetAll={onResetAll}
+        />
+      </Section>
+
+      <Section
         title={t("While you watch")}
         subtitle={t("Optional overlays that appear over the video.")}
       >
         <ToggleRow
           label={t("Show P2P status chip")}
-          sub={t("Peers, speed and progress while a torrent streams. Sits clear of the exit button, top left.")}
+          sub={t("Peers, speed and progress on the player while a torrent streams. Sits top left, clear of the exit button.")}
           value={settings.playerP2pChip}
           onChange={(v) => update({ playerP2pChip: v })}
         />
@@ -300,8 +308,8 @@ export function PlayerLayoutPanel() {
           sub={t("When a movie or episode starts, briefly show its IMDb parental guide (violence, profanity, substances, frightening scenes and more) with severity. Fades on its own.")}
           value={settings.contentAdvisoryToast}
           onChange={(v) => update({ contentAdvisoryToast: v })}
+          preview={<AdvisoryPreview />}
         />
-        <AdvisoryPreview />
       </Section>
 
       <Section
@@ -311,16 +319,6 @@ export function PlayerLayoutPanel() {
       >
         <SeekBarPanel />
       </Section>
-
-      <FooterBar
-        dirty={dirty}
-        justSaved={justSaved}
-        confirmingReset={confirmingReset}
-        onSave={onSave}
-        onDiscard={onDiscard}
-        onResetAll={onResetAll}
-      />
-
 
       {editorOpen && (
         <EditorOverlay

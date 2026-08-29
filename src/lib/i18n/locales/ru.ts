@@ -1,5 +1,6 @@
 import gap from "./ru/gap";
 import coverage from "./ru/coverage";
+import uiFallback from "./ui-fallback";
 import chrome from "./ru/chrome";
 import common from "./ru/common";
 import catalog from "./ru/catalog";
@@ -27,10 +28,12 @@ import manga from "./ru/manga";
 import controllers from "./ru/controllers";
 import plurals from "./ru/plurals";
 
+import bpSources from "./ru/bp-sources";
 import used from "./ru/used";
 
 const ru: Record<string, string> = {
   ...coverage,
+  ...uiFallback,
   ...gap,
   ...chrome,
   ...common,
@@ -58,6 +61,7 @@ const ru: Record<string, string> = {
   ...manga,
   ...controllers,
   ...plurals,
+  ...bpSources,
   ...used,
 };
 
