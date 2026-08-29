@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { BookMarked, Popcorn } from "lucide-react";
+import { BookOpen, Popcorn } from "lucide-react";
 import { NavGlyph } from "@/components/icons/nav-glyph";
 import { useUnseenReminderCount } from "@/lib/reminders";
 import { AddonsIcon } from "@/components/icons/addons-icon";
@@ -125,7 +125,7 @@ export const NAV_ITEMS: NavItem[] = [
     id: "ebook",
     label: "nav.ebook",
     render: (active) => (
-      <BookMarked size={24} strokeWidth={2.2} className={active ? "" : "opacity-70"} />
+      <BookOpen size={24} strokeWidth={1.35} className={active ? "" : "opacity-70"} />
     ),
     view: "ebook",
     parentalKey: "anime",
