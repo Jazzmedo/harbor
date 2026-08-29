@@ -1,8 +1,4 @@
-import {
-  loadEBookExtensions,
-  installedEBookPlugins,
-  subscribeEBookExtensions,
-} from "./extensions";
+import { loadEBookExtensions, installedEBookPlugins, subscribeEBookExtensions } from "./extensions";
 import { fetchEBookMetadata, mergeEBookMetadata, type EBook } from "./api";
 import { parseEpub, readEpubChapter, type EpubBook } from "./epub";
 import { listEBookSources, type EBookHtmlSourceConfig, type EBookSource } from "./sources";
@@ -245,7 +241,12 @@ async function localJoin(parent: string, child: string): Promise<string> {
 }
 
 function localTitle(name: string): string {
-  return name.replace(/\.epub$/i, "").replaceAll(/[_-]+/g, " ").trim() || "Untitled eBook";
+  return (
+    name
+      .replace(/\.epub$/i, "")
+      .replaceAll(/[_-]+/g, " ")
+      .trim() || "Untitled eBook"
+  );
 }
 
 async function localPackage(path: string): Promise<EpubBook> {

@@ -67,7 +67,8 @@ export function useReaderProgress(a: Args): (page: number) => void {
   ]);
 
   useEffect(() => {
-    if (disabled || book || !settled.current || loading || failed || total === 0 || !manga.title) return;
+    if (disabled || book || !settled.current || loading || failed || total === 0 || !manga.title)
+      return;
     setMangaReading({
       mangaId: manga.id,
       title: manga.title,

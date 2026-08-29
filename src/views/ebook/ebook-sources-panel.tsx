@@ -211,7 +211,9 @@ function TranslationSelect({
                     className={`h-1.5 w-1.5 shrink-0 rounded-full ${active ? "bg-accent" : "bg-edge"}`}
                   />
                   <span className="min-w-0 flex-1">
-                    <span className={`block truncate text-[13.5px] ${active ? "font-semibold" : "font-medium"}`}>
+                    <span
+                      className={`block truncate text-[13.5px] ${active ? "font-semibold" : "font-medium"}`}
+                    >
                       {option.label}
                     </span>
                     {option.sub && (
@@ -281,7 +283,11 @@ function Translation() {
                 label: "DeepSeek V4 Flash",
                 sub: "Fast · recommended for chapters",
               },
-              { value: "deepseek-v4-pro", label: "DeepSeek V4 Pro", sub: "Higher quality · slower" },
+              {
+                value: "deepseek-v4-pro",
+                label: "DeepSeek V4 Pro",
+                sub: "Higher quality · slower",
+              },
             ]}
           />
           <TranslationSelect
@@ -289,8 +295,7 @@ function Translation() {
             value={settings.targetLanguage}
             onChange={(targetLanguage) =>
               patch({
-                targetLanguage:
-                  targetLanguage as EBookTranslationSettings["targetLanguage"],
+                targetLanguage: targetLanguage as EBookTranslationSettings["targetLanguage"],
               })
             }
             options={[

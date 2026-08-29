@@ -25,8 +25,20 @@ import { addMangaBookmark, type MangaBookmark } from "@/lib/manga-bookmarks";
 import { chapterSourceOf } from "./manga-reader/reader-source-menu";
 import { useMangaRemoteBinding } from "@/lib/remote/use-manga-remote-binding";
 import { useBookTurnQueue } from "./manga-reader/hooks/use-book-turn-queue";
-import { BG, BG_HEX, doublePageStyle, loadPrefs, pageStyle, PREFS_KEY } from "./manga-reader/reader-prefs";
-import { EndOfChapterHint, ReaderComplete, ReaderFailed, ReaderLoading } from "./manga-reader/reader-states";
+import {
+  BG,
+  BG_HEX,
+  doublePageStyle,
+  loadPrefs,
+  pageStyle,
+  PREFS_KEY,
+} from "./manga-reader/reader-prefs";
+import {
+  EndOfChapterHint,
+  ReaderComplete,
+  ReaderFailed,
+  ReaderLoading,
+} from "./manga-reader/reader-states";
 import type { ReaderPrefs, MangaPage } from "./manga-reader/reader-types";
 
 export function MangaReader({
@@ -107,7 +119,13 @@ export function MangaReader({
   const complete = paged && currentPage >= total && total > 0;
   const bookSpreadLast =
     book && bookSpread
-      ? Math.max(0, ...bookSpread.split("-").map(Number).filter((n) => Number.isFinite(n)))
+      ? Math.max(
+          0,
+          ...bookSpread
+            .split("-")
+            .map(Number)
+            .filter((n) => Number.isFinite(n)),
+        )
       : 0;
   const bookAtEnd = book && total > 0 && bookSpreadLast >= total;
 
@@ -174,7 +192,13 @@ export function MangaReader({
         void detectWebtoon(urls).then((w) => {
           if (!cancelled) setAutoLong(w);
         });
-        const localResume = resumePageForChapter(pid, manga.id, manga.title, chapter.id, chapter.chapter);
+        const localResume = resumePageForChapter(
+          pid,
+          manga.id,
+          manga.title,
+          chapter.id,
+          chapter.chapter,
+        );
         const serverResume =
           typeof chapter.serverPage === "number" && chapter.serverPage > 0 && !chapter.serverRead
             ? chapter.serverPage
@@ -184,9 +208,7 @@ export function MangaReader({
             ? serverResume
             : localResume;
         const resumeTo =
-          startPage != null && synced != null
-            ? Math.max(startPage, synced)
-            : (startPage ?? synced);
+          startPage != null && synced != null ? Math.max(startPage, synced) : (startPage ?? synced);
         const firstLoad = !didSeek.current;
         didSeek.current = true;
         if (firstLoad && (resumeTo != null || startScroll)) {
@@ -336,7 +358,11 @@ export function MangaReader({
     const onKey = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement) return;
       const navKey = e.key === " " || e.key === "ArrowRight" || e.key === "ArrowLeft";
-      if (navKey && document.activeElement instanceof HTMLElement && document.activeElement.tagName === "BUTTON") {
+      if (
+        navKey &&
+        document.activeElement instanceof HTMLElement &&
+        document.activeElement.tagName === "BUTTON"
+      ) {
         document.activeElement.blur();
       }
       if (e.key === "Escape") {
@@ -480,7 +506,10 @@ export function MangaReader({
 
   const spreadPages = book
     ? (() => {
-        const nums = bookSpread.split("-").map(Number).filter((n) => Number.isFinite(n) && n > 0);
+        const nums = bookSpread
+          .split("-")
+          .map(Number)
+          .filter((n) => Number.isFinite(n) && n > 0);
         return rtl ? nums.slice().reverse() : nums;
       })()
     : double
@@ -623,7 +652,9 @@ export function MangaReader({
             className={`flex min-h-full justify-center px-4 py-3 ${double ? "items-center" : "items-start"}`}
             style={double ? { gap: `${prefs.doubleGap}px` } : undefined}
             onClick={(e) => {
-              const x = (e.clientX - e.currentTarget.getBoundingClientRect().left) / e.currentTarget.clientWidth;
+              const x =
+                (e.clientX - e.currentTarget.getBoundingClientRect().left) /
+                e.currentTarget.clientWidth;
               if (x < 0.35) (rtl ? nextPage : prevPage)();
               else if (x > 0.65) (rtl ? prevPage : nextPage)();
             }}
@@ -661,7 +692,13 @@ export function MangaReader({
                 }}
                 className="h-full shrink-0"
               >
-                <PageImage url={page.url} headers={page.headers} fillHeight className="block" style={hStyle} />
+                <PageImage
+                  url={page.url}
+                  headers={page.headers}
+                  fillHeight
+                  className="block"
+                  style={hStyle}
+                />
               </div>
             ))}
             <div className="flex h-full w-[50vw] shrink-0 items-center justify-center px-16">
@@ -679,7 +716,12 @@ export function MangaReader({
                 }}
                 className="flex w-full justify-center"
               >
-                <PageImage url={page.url} headers={page.headers} className="mx-auto block" style={longStyle} />
+                <PageImage
+                  url={page.url}
+                  headers={page.headers}
+                  className="mx-auto block"
+                  style={longStyle}
+                />
               </div>
             ))}
             <div className="flex w-full justify-center py-16">{completeCard}</div>
@@ -691,7 +733,9 @@ export function MangaReader({
         <ReaderNav
           pos={prefs.navPos}
           onPrev={book ? () => bookApi.current?.prev() : prevPage}
-          onNext={book ? (bookAtEnd ? advanceFromBookEnd : () => bookApi.current?.next()) : nextPage}
+          onNext={
+            book ? (bookAtEnd ? advanceFromBookEnd : () => bookApi.current?.next()) : nextPage
+          }
         />
       )}
 

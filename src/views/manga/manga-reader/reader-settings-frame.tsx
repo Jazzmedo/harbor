@@ -88,4 +88,3 @@ export function ReaderSettingsFrame<T extends string>({
     </>
   );
 }
-

@@ -61,7 +61,9 @@ export async function translateEBookChapter(
   if (!source.trim()) return original;
   const cacheKey = `${settings.model}:${settings.targetLanguage}:${hash(translationInstructions)}:${hash(title)}:${hash(source)}`;
   try {
-    const saved = JSON.parse(localStorage.getItem(`${CACHE_PREFIX}${hash(cacheKey)}`) ?? "null") as EBookTranslation | null;
+    const saved = JSON.parse(
+      localStorage.getItem(`${CACHE_PREFIX}${hash(cacheKey)}`) ?? "null",
+    ) as EBookTranslation | null;
     if (saved?.text) {
       onProgress?.({ percent: 100, etaMs: 0 });
       return saved;
@@ -165,7 +167,9 @@ async function requestTranslation(
     throw new Error(`DeepSeek stopped translation: ${finishReason.replaceAll("_", " ")}`);
   const translated = output.replace(/^```(?:text|xml)?\s*|\s*```$/gi, "").trim();
   if (!translated) throw new Error("DeepSeek returned no translation");
-  const translatedTitle = translated.match(/<chapter_title>([\s\S]*?)<\/chapter_title>/i)?.[1].trim();
+  const translatedTitle = translated
+    .match(/<chapter_title>([\s\S]*?)<\/chapter_title>/i)?.[1]
+    .trim();
   const translatedText = translated.match(/<chapter_body>([\s\S]*?)<\/chapter_body>/i)?.[1].trim();
   if (!translatedText) throw new Error("DeepSeek returned an incomplete chapter translation");
   return { title: translatedTitle || title, text: translatedText };

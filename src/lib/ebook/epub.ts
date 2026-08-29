@@ -16,10 +16,8 @@ export type EpubBook = {
 const decoder = new TextDecoder();
 
 function decode(bytes: Uint8Array): string {
-  if (bytes[0] === 0xff && bytes[1] === 0xfe)
-    return new TextDecoder("utf-16le").decode(bytes);
-  if (bytes[0] === 0xfe && bytes[1] === 0xff)
-    return new TextDecoder("utf-16be").decode(bytes);
+  if (bytes[0] === 0xff && bytes[1] === 0xfe) return new TextDecoder("utf-16le").decode(bytes);
+  if (bytes[0] === 0xfe && bytes[1] === 0xff) return new TextDecoder("utf-16be").decode(bytes);
   return decoder.decode(bytes);
 }
 
@@ -145,15 +143,13 @@ export async function parseEpub(buffer: ArrayBuffer): Promise<EpubBook> {
       title: titles.get(item.path) || heading || `Chapter ${index + 1}`,
     };
   });
-  const coverId = elements(packageDocument, "meta").find(
-    (item) => item.getAttribute("name")?.toLowerCase() === "cover",
-  )?.getAttribute("content");
+  const coverId = elements(packageDocument, "meta")
+    .find((item) => item.getAttribute("name")?.toLowerCase() === "cover")
+    ?.getAttribute("content");
   const coverItem = [...manifest.entries()].find(
     ([id, item]) =>
       item.mediaType.startsWith("image/") &&
-      (id === coverId ||
-        item.properties.split(/\s+/).includes("cover-image") ||
-        /cover/i.test(id)),
+      (id === coverId || item.properties.split(/\s+/).includes("cover-image") || /cover/i.test(id)),
   )?.[1];
   const coverBytes = coverItem && entry(entries, coverItem.path);
   const date = metadata(packageDocument, "date")[0];
@@ -182,18 +178,7 @@ export function readEpubChapter(book: EpubBook, path: string): string {
     .filter((item) => ignored.has(item.localName.toLowerCase()))
     .forEach((item) => item.remove());
   const root = element(document, "body") ?? document.documentElement;
-  const blockNames = new Set([
-    "h1",
-    "h2",
-    "h3",
-    "h4",
-    "h5",
-    "h6",
-    "p",
-    "blockquote",
-    "li",
-    "pre",
-  ]);
+  const blockNames = new Set(["h1", "h2", "h3", "h4", "h5", "h6", "p", "blockquote", "li", "pre"]);
   const blocks = Array.from(root.getElementsByTagName("*"))
     .filter((item) => blockNames.has(item.localName.toLowerCase()))
     .filter(
@@ -202,7 +187,12 @@ export function readEpubChapter(book: EpubBook, path: string): string {
           blockNames.has(child.localName.toLowerCase()),
         ),
     )
-    .map((item) => item.textContent?.replace(/[\t ]+/g, " ").replace(/\n\s*/g, "\n").trim())
+    .map((item) =>
+      item.textContent
+        ?.replace(/[\t ]+/g, " ")
+        .replace(/\n\s*/g, "\n")
+        .trim(),
+    )
     .filter((value): value is string => !!value);
-  return (blocks.length ? blocks.join("\n\n") : root.textContent ?? "").trim();
+  return (blocks.length ? blocks.join("\n\n") : (root.textContent ?? "")).trim();
 }

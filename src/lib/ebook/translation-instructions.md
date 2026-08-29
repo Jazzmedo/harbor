@@ -155,7 +155,15 @@ Use stable positional IDs such as `ch0003-p0042` and store a separate source has
 Each JSONL record should follow this contract:
 
 ```json
-{"id":"ch0003-p0042","type":"paragraph","source":"Source text","source_hash":"sha256:...","translate":true,"protected_tokens":["[12]","https://example.com"],"translation":null}
+{
+  "id": "ch0003-p0042",
+  "type": "paragraph",
+  "source": "Source text",
+  "source_hash": "sha256:...",
+  "translate": true,
+  "protected_tokens": ["[12]", "https://example.com"],
+  "translation": null
+}
 ```
 
 Preserve whitespace or inline markup as structured spans when exact reconstruction matters. Mark URLs, filenames, citation labels, code identifiers, equation tokens, and other immutable content as protected tokens.
@@ -222,7 +230,20 @@ Translate a complete poemâ€”or a semantically complete movement of a long poemâ€
 For poetry records, preserve both structural grouping and alignment:
 
 ```json
-{"id":"ch0003-poem0002-s01-l03","poem_id":"poem0002","stanza":1,"line":3,"type":"verse_line","source":"Source verse line","source_hash":"sha256:...","rhyme_label":"A","semantic_constraints":["required meaning"],"translate":true,"protected_tokens":[],"translation":null}
+{
+  "id": "ch0003-poem0002-s01-l03",
+  "poem_id": "poem0002",
+  "stanza": 1,
+  "line": 3,
+  "type": "verse_line",
+  "source": "Source verse line",
+  "source_hash": "sha256:...",
+  "rhyme_label": "A",
+  "semantic_constraints": ["required meaning"],
+  "translate": true,
+  "protected_tokens": [],
+  "translation": null
+}
 ```
 
 After the first draft, run two independent checks over the complete poem:

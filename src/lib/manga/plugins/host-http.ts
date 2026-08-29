@@ -1,11 +1,6 @@
 import { safeFetch, safeFetchBytes } from "@/lib/safe-fetch";
 import { isBlockedUrl } from "@/lib/privacy/blocklist";
-import type {
-  PluginGrpcOpts,
-  PluginGrpcResult,
-  PluginHttpOpts,
-  PluginHttpResult,
-} from "./types";
+import type { PluginGrpcOpts, PluginGrpcResult, PluginHttpOpts, PluginHttpResult } from "./types";
 
 const MAX_BYTES = 8 * 1024 * 1024;
 const MAX_TIMEOUT = 45_000;
@@ -99,19 +94,78 @@ export function assertSafeUrl(raw: string): string {
 }
 
 const TWO_LEVEL_TLDS = new Set([
-  "co.uk", "org.uk", "gov.uk", "ac.uk", "me.uk", "net.uk", "sch.uk", "ltd.uk", "plc.uk",
-  "com.au", "net.au", "org.au", "edu.au", "gov.au", "id.au",
-  "co.jp", "or.jp", "ne.jp", "ac.jp", "go.jp",
-  "com.cn", "net.cn", "org.cn", "gov.cn",
-  "co.nz", "net.nz", "org.nz",
-  "co.in", "net.in", "org.in", "firm.in", "gen.in", "ind.in",
-  "co.kr", "or.kr",
-  "com.br", "net.br", "org.br", "gov.br",
-  "com.mx", "com.ar", "com.tr", "com.ua", "com.pl", "com.ru", "com.sa", "com.eg", "com.ng",
-  "co.za", "co.il", "co.id", "co.th", "co.ke",
-  "com.sg", "com.hk", "com.tw", "com.my", "com.ph", "com.vn",
-  "github.io", "pages.dev", "web.app", "workers.dev", "vercel.app", "netlify.app",
-  "onrender.com", "fly.dev", "deno.dev", "firebaseapp.com", "herokuapp.com", "glitch.me", "r2.dev",
+  "co.uk",
+  "org.uk",
+  "gov.uk",
+  "ac.uk",
+  "me.uk",
+  "net.uk",
+  "sch.uk",
+  "ltd.uk",
+  "plc.uk",
+  "com.au",
+  "net.au",
+  "org.au",
+  "edu.au",
+  "gov.au",
+  "id.au",
+  "co.jp",
+  "or.jp",
+  "ne.jp",
+  "ac.jp",
+  "go.jp",
+  "com.cn",
+  "net.cn",
+  "org.cn",
+  "gov.cn",
+  "co.nz",
+  "net.nz",
+  "org.nz",
+  "co.in",
+  "net.in",
+  "org.in",
+  "firm.in",
+  "gen.in",
+  "ind.in",
+  "co.kr",
+  "or.kr",
+  "com.br",
+  "net.br",
+  "org.br",
+  "gov.br",
+  "com.mx",
+  "com.ar",
+  "com.tr",
+  "com.ua",
+  "com.pl",
+  "com.ru",
+  "com.sa",
+  "com.eg",
+  "com.ng",
+  "co.za",
+  "co.il",
+  "co.id",
+  "co.th",
+  "co.ke",
+  "com.sg",
+  "com.hk",
+  "com.tw",
+  "com.my",
+  "com.ph",
+  "com.vn",
+  "github.io",
+  "pages.dev",
+  "web.app",
+  "workers.dev",
+  "vercel.app",
+  "netlify.app",
+  "onrender.com",
+  "fly.dev",
+  "deno.dev",
+  "firebaseapp.com",
+  "herokuapp.com",
+  "glitch.me",
+  "r2.dev",
 ]);
 
 function ipLiteral(h: string): boolean {
@@ -236,7 +290,7 @@ function parseGrpcFrames(bytes: Uint8Array): {
 } {
   const messages: string[] = [];
   const trailers: Record<string, string> = {};
-  for (let offset = 0; offset < bytes.length; ) {
+  for (let offset = 0; offset < bytes.length;) {
     if (offset + 5 > bytes.length) throw new Error("incomplete gRPC frame header");
     const flags = bytes[offset];
     const length = new DataView(bytes.buffer, bytes.byteOffset + offset + 1, 4).getUint32(0);
@@ -248,7 +302,8 @@ function parseGrpcFrames(bytes: Uint8Array): {
       if (flags !== 0x80) throw new Error("invalid gRPC trailer frame flags");
       for (const line of new TextDecoder().decode(payload).split(/\r?\n/)) {
         const split = line.indexOf(":");
-        if (split > 0) trailers[line.slice(0, split).trim().toLowerCase()] = line.slice(split + 1).trim();
+        if (split > 0)
+          trailers[line.slice(0, split).trim().toLowerCase()] = line.slice(split + 1).trim();
       }
     } else {
       if (flags > 1) throw new Error("invalid gRPC message frame flags");

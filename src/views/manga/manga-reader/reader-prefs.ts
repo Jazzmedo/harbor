@@ -38,7 +38,8 @@ export const BG_HEX: Record<ReaderBg, string> = {
 };
 
 export function pageStyle(fit: ReaderFit, zoom: number): CSSProperties {
-  if (fit === "height") return { height: `${Math.round(94 * zoom)}vh`, width: "auto", maxWidth: "100%" };
+  if (fit === "height")
+    return { height: `${Math.round(94 * zoom)}vh`, width: "auto", maxWidth: "100%" };
   if (fit === "original") return { width: `${Math.round(zoom * 100)}%`, maxWidth: "none" };
   return { width: "100%", maxWidth: `${Math.round(880 * zoom)}px` };
 }

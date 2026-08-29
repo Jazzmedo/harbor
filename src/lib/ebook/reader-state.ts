@@ -126,7 +126,8 @@ export function loadEBookAnnotations(profile: string, bookId: string): EBookAnno
 export function saveEBookAnnotation(
   profile: string,
   bookId: string,
-  annotation: Omit<EBookAnnotation, "id" | "createdAt"> & Partial<Pick<EBookAnnotation, "id" | "createdAt">>,
+  annotation: Omit<EBookAnnotation, "id" | "createdAt"> &
+    Partial<Pick<EBookAnnotation, "id" | "createdAt">>,
 ): EBookAnnotation[] {
   const items = loadEBookAnnotations(profile, bookId);
   const next = {

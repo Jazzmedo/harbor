@@ -174,7 +174,10 @@ function metadataCandidates(ebook: EBook): string[] {
     ...new Set([
       ...candidates,
       ...candidates.map((title) =>
-        title.replace(/\b(?:a|an|the)\b/gi, " ").replace(/\s+/g, " ").trim(),
+        title
+          .replace(/\b(?:a|an|the)\b/gi, " ")
+          .replace(/\s+/g, " ")
+          .trim(),
       ),
     ]),
   ].filter(Boolean);
@@ -507,9 +510,9 @@ export function googleBooksApiKey(): string {
 }
 
 export function setGoogleBooksApiKey(value: string): void {
-  value.trim()
-    ? localStorage.setItem(GOOGLE_BOOKS_KEY, value.trim())
-    : localStorage.removeItem(GOOGLE_BOOKS_KEY);
+  const trimmed = value.trim();
+  if (trimmed) localStorage.setItem(GOOGLE_BOOKS_KEY, trimmed);
+  else localStorage.removeItem(GOOGLE_BOOKS_KEY);
   googleMetadata.clear();
 }
 
@@ -560,7 +563,7 @@ async function fetchGoogleMetadata(ebooks: EBook[]): Promise<EBook[]> {
       if (!ebook.googleBooksId)
         url.searchParams.set(
           "q",
-          ebook.isbn ? `isbn:${ebook.isbn}` : `intitle:\"${lookupTitle(candidate)}\"`,
+          ebook.isbn ? `isbn:${ebook.isbn}` : `intitle:"${lookupTitle(candidate)}"`,
         );
       if (!ebook.googleBooksId) url.searchParams.set("maxResults", "5");
       if (!ebook.googleBooksId) url.searchParams.set("langRestrict", getUiLanguage());
@@ -643,7 +646,10 @@ function wikidataLanguage(value: string): string {
 }
 
 function sparqlString(value: string): string {
-  return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/[\r\n]+/g, " ");
+  return value
+    .replace(/\\/g, "\\\\")
+    .replace(/"/g, '\\"')
+    .replace(/[\r\n]+/g, " ");
 }
 
 function claim(entity: WikidataEntity, property: string): unknown {
@@ -802,10 +808,7 @@ SELECT DISTINCT ?matched ?item ?itemDescription WHERE {
         const owner = ebook.seriesTitle || ebook.title;
         const entity = [...(ids.get(ebook.id) ?? [])]
           .map((id) => entities[id])
-          .find(
-            (candidate) =>
-              candidate && verifiedMetadataMatch(ebook, mapWikidata(candidate)),
-          );
+          .find((candidate) => candidate && verifiedMetadataMatch(ebook, mapWikidata(candidate)));
         if (entity) {
           const summary = await wikipediaSummary(entity);
           wikidataMetadata.set(metadataRequestKey(ebook), {
@@ -871,9 +874,7 @@ async function fetchOpenLibraryMetadata(ebooks: EBook[]): Promise<EBook[]> {
   );
   const titles = [
     ...new Set(
-      pending
-        .filter((ebook) => !ebook.openLibraryId && !ebook.isbn)
-        .flatMap(metadataCandidates),
+      pending.filter((ebook) => !ebook.openLibraryId && !ebook.isbn).flatMap(metadataCandidates),
     ),
   ];
   for (let start = 0; start < titles.length; start += 12) {
@@ -882,7 +883,7 @@ async function fetchOpenLibraryMetadata(ebooks: EBook[]): Promise<EBook[]> {
       "q",
       titles
         .slice(start, start + 12)
-        .map((title) => `title:\"${title.replace(/[\\\"]+/g, " ")}\"`)
+        .map((title) => `title:"${title.replace(/[\\"]+/g, " ")}"`)
         .join(" OR "),
     );
     url.searchParams.set("fields", OPEN_LIBRARY_FIELDS);
@@ -908,9 +909,7 @@ async function fetchOpenLibraryMetadata(ebooks: EBook[]): Promise<EBook[]> {
     const cacheKey = metadataRequestKey(source);
     openLibraryMetadata.set(
       cacheKey,
-      exact
-        ? { ...mapOpenLibrary(exact), seriesTitle: source.seriesTitle || source.title }
-        : null,
+      exact ? { ...mapOpenLibrary(exact), seriesTitle: source.seriesTitle || source.title } : null,
     );
     openLibraryAliases.set(cacheKey, exact ? alternativeTitles(exact) : []);
   }
@@ -937,8 +936,7 @@ export async function fetchEBookMetadata(ebooks: EBook[]): Promise<EBook[]> {
   for (const ebook of unresolved) {
     const owner = ebook.seriesTitle || ebook.title;
     for (const alias of openLibraryAliases.get(metadataRequestKey(ebook)) ?? []) {
-      if (titleKey(alias) !== titleKey(owner))
-        aliasOwners.set(titleKey(alias), { alias, owner });
+      if (titleKey(alias) !== titleKey(owner)) aliasOwners.set(titleKey(alias), { alias, owner });
     }
   }
   const aliasMatches = aliasOwners.size

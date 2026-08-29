@@ -225,7 +225,8 @@ async function tauriHarborFetch(
       headers,
       body,
       bodyBase64: binaryBody ? bytesToBase64(binaryBody) : undefined,
-      timeoutMs,
+      timeoutMs: 30000,
+      ...(timeoutMs === 30000 ? {} : { timeoutMs }),
       responseType,
     },
   });
