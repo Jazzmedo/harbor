@@ -4,6 +4,8 @@ import {
   BookOpen,
   Check,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Copy,
   Gauge,
   Headphones,
@@ -24,6 +26,7 @@ import {
   X,
 } from "lucide-react";
 import type { EBookChapter, EBookChapterContent } from "@/lib/ebook/providers";
+import { createEBookFlipPages, type EBookFlipPages } from "@/lib/ebook/book-pages";
 import {
   addEBookBookmark,
   loadEBookAnnotations,
@@ -39,6 +42,7 @@ import {
   type EBookReaderPrefs,
 } from "@/lib/ebook/reader-state";
 import { translateEBookChapter } from "@/lib/ebook/translation";
+import { BookFlip, type BookApi } from "@/views/manga/manga-reader/book-view";
 
 type Props = {
   profile: string;
@@ -52,7 +56,6 @@ type Props = {
   volumes: EBookReaderVolume[];
   onSelectChapter: (chapter: EBookChapter) => void;
   onClose: () => void;
-  onUseLegacy: () => void;
 };
 
 export type EBookReaderVolume = {
@@ -110,6 +113,12 @@ const textDirection = (text: string, fallback: "ltr" | "rtl") => {
 const formatEta = (milliseconds: number) => {
   const seconds = Math.max(1, Math.ceil(milliseconds / 1000));
   return seconds < 60 ? `${seconds}s` : `${Math.ceil(seconds / 60)}m`;
+};
+const pageForParagraph = (starts: number[], target: number) => {
+  for (let index = starts.length - 1; index >= 0; index -= 1) {
+    if (starts[index] <= target) return index;
+  }
+  return 0;
 };
 
 function TranslationSpinner() {
@@ -174,7 +183,6 @@ export function HarborReader({
   volumes,
   onSelectChapter,
   onClose,
-  onUseLegacy,
 }: Props) {
   const [prefs, setPrefs] = useState<EBookReaderPrefs>(loadEBookReaderPrefs);
   const [panel, setPanel] = useState<"settings" | "search" | "bookmarks" | "annotations" | null>(
@@ -234,6 +242,10 @@ export function HarborReader({
   const traceY = useRef<number | null>(null);
   const annotationHoverTimer = useRef<number | undefined>(undefined);
   const annotationHideTimer = useRef<number | undefined>(undefined);
+  const bookApi = useRef<BookApi | null>(null);
+  const [flipPages, setFlipPages] = useState<EBookFlipPages>({ urls: [], paragraphStarts: [] });
+  const [flipPage, setFlipPage] = useState(0);
+  const [bookResume, setBookResume] = useState(0);
   const progressId = `${chapter.id}:harbor`;
   const paragraphs = useMemo(
     () =>
@@ -247,6 +259,58 @@ export function HarborReader({
   const colors = paper[prefs.background];
   const effectiveDirection =
     prefs.direction === "auto" ? textDirection(readerText, direction) : prefs.direction;
+
+  useEffect(() => {
+    if (prefs.mode !== "book") return;
+    let cancelled = false;
+    let generated: EBookFlipPages = { urls: [], paragraphStarts: [] };
+    setFlipPages({ urls: [], paragraphStarts: [] });
+    const saved = loadEBookProgress(profile, bookId, progressId);
+    void createEBookFlipPages({
+      content: { ...content, text: readerText },
+      title: readerTitle,
+      direction: effectiveDirection,
+      page: colors.page,
+      ink: colors.ink,
+      muted: colors.muted,
+      fontFamily: fontFamily[prefs.font],
+      fontSize: prefs.fontSize,
+      lineHeight: prefs.lineHeight,
+      cover: chapterIndex === 0 ? internalCover || bookCover : undefined,
+    }).then((next) => {
+      generated = next;
+      if (cancelled) {
+        next.urls.forEach((url) => url.startsWith("blob:") && URL.revokeObjectURL(url));
+        return;
+      }
+      const page = pageForParagraph(next.paragraphStarts, saved);
+      setBookResume(page);
+      setFlipPage(page);
+      setFlipPages(next);
+    });
+    return () => {
+      cancelled = true;
+      generated.urls.forEach((url) => url.startsWith("blob:") && URL.revokeObjectURL(url));
+    };
+  }, [
+    bookCover,
+    bookId,
+    chapterIndex,
+    colors.ink,
+    colors.muted,
+    colors.page,
+    content,
+    effectiveDirection,
+    internalCover,
+    prefs.font,
+    prefs.fontSize,
+    prefs.lineHeight,
+    prefs.mode,
+    profile,
+    progressId,
+    readerText,
+    readerTitle,
+  ]);
 
   useEffect(() => {
     setReaderText(content.text ?? "");
@@ -367,12 +431,20 @@ export function HarborReader({
   const goTo = useCallback(
     (index: number) => {
       const next = Math.max(0, Math.min(paragraphs.length - 1, index));
+      if (prefs.mode === "book" && flipPages.urls.length) {
+        const page = pageForParagraph(flipPages.paragraphStarts, next);
+        bookApi.current?.goToPage(page + 1);
+        setFlipPage(page);
+        tracedLine.current = next;
+        setCurrent(next);
+        return;
+      }
       smartTarget.current = next;
       blocks.current[next]?.scrollIntoView({ block: "center", behavior: "smooth" });
       tracedLine.current = next;
       setCurrent(next);
     },
-    [paragraphs.length],
+    [flipPages.paragraphStarts, flipPages.urls.length, paragraphs.length, prefs.mode],
   );
 
   useEffect(() => {
@@ -673,7 +745,10 @@ export function HarborReader({
     return () => window.clearTimeout(timer);
   }, [chapter.id, chaptersOpen, sidebarVolume]);
   useEffect(() => {
-    if (!prefs.mouseLineTrack) traceY.current = null;
+    if (!prefs.mouseLineTrack) {
+      traceY.current = null;
+      setTrace(null);
+    }
     updateTrace();
   }, [prefs.mouseLineTrack, prefs.fontSize, prefs.lineHeight, prefs.width, updateTrace]);
 
@@ -857,7 +932,9 @@ export function HarborReader({
         <div className="min-w-0 text-center">
           <div className="truncate text-sm font-semibold">{readerTitle}</div>
           <div className="mt-0.5 text-[11px]" style={{ color: colors.muted }}>
-            {current + 1} / {Math.max(1, paragraphs.length)} · {bookTitle}
+            {prefs.mode === "book"
+              ? `${flipPage + 1} / ${Math.max(1, flipPages.urls.length)}`
+              : `${current + 1} / ${Math.max(1, paragraphs.length)}`} · {bookTitle}
           </div>
         </div>
         <div className="flex items-center gap-1">
@@ -904,6 +981,33 @@ export function HarborReader({
         </div>
       </div>
 
+      {prefs.mode === "book" ? (
+        <div className="absolute inset-x-0 bottom-16 top-16 overflow-hidden">
+          {flipPages.urls.length ? (
+            <BookFlip
+              pages={flipPages.urls}
+              rtl={effectiveDirection === "rtl"}
+              bg={colors.desk}
+              resumePage={bookResume}
+              soundEnabled
+              onReady={(api) => {
+                bookApi.current = api;
+              }}
+              onProgress={(page) => {
+                const paragraph = flipPages.paragraphStarts[page] ?? 0;
+                setFlipPage(page);
+                setCurrent(paragraph);
+                tracedLine.current = paragraph;
+                saveEBookProgress(profile, bookId, progressId, paragraph);
+              }}
+            />
+          ) : (
+            <div className="grid h-full place-items-center text-sm" style={{ color: colors.muted }}>
+              Preparing book…
+            </div>
+          )}
+        </div>
+      ) : (
       <div ref={scroller} className="absolute inset-0 overflow-y-auto px-4 pb-32 pt-24 sm:px-8">
         <article
           ref={article}
@@ -974,8 +1078,9 @@ export function HarborReader({
           ))}
         </article>
       </div>
+      )}
 
-      {trace && (
+      {prefs.mode === "harbor" && trace && (
         <div
           dir={effectiveDirection}
           className="pointer-events-none fixed z-20 rounded-sm border-s-2 transition-[top,height] duration-100"
@@ -1038,6 +1143,26 @@ export function HarborReader({
         >
           <Bookmark size={18} />
         </button>
+        {prefs.mode === "book" && (
+          <>
+            <button
+              className="reader-icon"
+              disabled={flipPage <= 0}
+              onClick={() => bookApi.current?.prev()}
+              aria-label="Previous page"
+            >
+              {effectiveDirection === "rtl" ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+            </button>
+            <button
+              className="reader-icon"
+              disabled={flipPage >= flipPages.urls.length - 1}
+              onClick={() => bookApi.current?.next()}
+              aria-label="Next page"
+            >
+              {effectiveDirection === "rtl" ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+            </button>
+          </>
+        )}
         <button
           className={`reader-icon ${translation ? "reader-icon-accent reader-language-toggle" : translationError ? "text-red-400" : ""}`}
           disabled={translating}
@@ -1093,7 +1218,11 @@ export function HarborReader({
           )}
         </button>
         <div className="px-3 text-xs tabular-nums" style={{ color: colors.muted }}>
-          {Math.round(((current + 1) / Math.max(1, paragraphs.length)) * 100)}%
+          {Math.round(
+            prefs.mode === "book"
+              ? ((flipPage + 1) / Math.max(1, flipPages.urls.length)) * 100
+              : ((current + 1) / Math.max(1, paragraphs.length)) * 100,
+          )}%
         </div>
         <button
           className="reader-icon"
@@ -1270,12 +1399,7 @@ export function HarborReader({
           </div>
           <div className="min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {panel === "settings" && (
-              <Settings
-                prefs={prefs}
-                patch={patchPrefs}
-                colors={colors}
-                onUseLegacy={onUseLegacy}
-              />
+              <Settings prefs={prefs} patch={patchPrefs} colors={colors} />
             )}
             {panel === "search" && (
               <div>
@@ -1730,16 +1854,34 @@ function Settings({
   prefs,
   patch,
   colors,
-  onUseLegacy,
 }: {
   prefs: EBookReaderPrefs;
   patch: (value: Partial<EBookReaderPrefs>) => void;
   colors: (typeof paper)[keyof typeof paper];
-  onUseLegacy: () => void;
 }) {
   const [adjustmentsOpen, setAdjustmentsOpen] = useState(true);
   return (
     <div className="space-y-6">
+      <Setting label="Reading mode">
+        <div className="grid grid-cols-2 gap-2">
+          {([
+            { mode: "harbor", label: "Harbor", icon: <Type size={18} /> },
+            { mode: "book", label: "Book", icon: <BookOpen size={18} /> },
+          ] as const).map((item) => (
+            <button
+              key={item.mode}
+              type="button"
+              aria-pressed={prefs.mode === item.mode}
+              onClick={() => patch({ mode: item.mode })}
+              className={`flex h-14 items-center justify-center gap-2 rounded-xl border transition ${prefs.mode === item.mode ? "border-accent bg-accent/10 text-accent" : "hover:bg-white/5"}`}
+              style={{ borderColor: prefs.mode === item.mode ? undefined : `${colors.muted}35` }}
+            >
+              {item.icon}
+              <span className="text-sm font-semibold">{item.label}</span>
+            </button>
+          ))}
+        </div>
+      </Setting>
       <Setting label="Paper">
         <div className="grid grid-cols-3 gap-2">
           {(["dark", "dim", "light"] as const).map((background) => (
@@ -1916,13 +2058,6 @@ function Settings({
           </div>
         </div>
       </Setting>
-      <button
-        onClick={onUseLegacy}
-        className="w-full rounded-xl border px-4 py-3 text-sm"
-        style={{ borderColor: `${colors.muted}45` }}
-      >
-        Use legacy Manga-style engine
-      </button>
     </div>
   );
 }
