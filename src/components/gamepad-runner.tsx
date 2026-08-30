@@ -7,9 +7,22 @@ import { useGamepad } from "@/lib/gamepad/use-gamepad";
 import { useSettings } from "@/lib/settings";
 
 function hoverCss(rules: CSSRuleList): string {
-  return Array.from(rules).map((rule) => rule instanceof CSSStyleRule && rule.selectorText.includes(":hover")
-    ? `${rule.selectorText.replaceAll(":hover", "[data-gamepad-hover]")}{${rule.style.cssText}${hoverCss(rule.cssRules)}}`
-    : "cssRules" in rule ? `${rule.cssText.slice(0, rule.cssText.indexOf("{"))}{${hoverCss((rule as CSSGroupingRule).cssRules)}}` : "").join("");
+  return Array.from(rules).map((rule) => {
+    if (rule instanceof CSSStyleRule && rule.selectorText.includes(":hover")) {
+      const selectors = rule.selectorText
+        .split(",")
+        .map((selector) => selector.trim())
+        .filter((selector) => selector.includes(":hover"))
+        .map((selector) => selector.replaceAll(":hover", "[data-gamepad-hover]"));
+      if (selectors.length === 0) return "";
+      return `${selectors.join(",")}{${rule.style.cssText}${hoverCss(rule.cssRules)}}`;
+    }
+    if (!("cssRules" in rule) || rule instanceof CSSKeyframesRule) return "";
+    const nested = hoverCss((rule as CSSGroupingRule).cssRules);
+    if (!nested) return "";
+    const brace = rule.cssText.indexOf("{");
+    return brace < 0 ? "" : `${rule.cssText.slice(0, brace)}{${nested}}`;
+  }).join("");
 }
 
 type TextField = HTMLInputElement | HTMLTextAreaElement;

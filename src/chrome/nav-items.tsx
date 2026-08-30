@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
-import { BookOpen, Popcorn } from "lucide-react";
+import { Popcorn } from "lucide-react";
 import { NavGlyph } from "@/components/icons/nav-glyph";
+import { EBookNavIcon } from "@/components/icons/ebook-nav-icon";
 import { useUnseenReminderCount } from "@/lib/reminders";
 import { AddonsIcon } from "@/components/icons/addons-icon";
 import { CatalogsIcon } from "@/components/icons/catalogs-icon";
@@ -124,9 +125,7 @@ export const NAV_ITEMS: NavItem[] = [
   {
     id: "ebook",
     label: "nav.ebook",
-    render: (active) => (
-      <BookOpen size={24} strokeWidth={1.35} className={active ? "" : "opacity-70"} />
-    ),
+    render: (active) => <EBookNavIcon active={active} />,
     view: "ebook",
     parentalKey: "anime",
   },
