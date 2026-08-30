@@ -292,4 +292,35 @@ mod tests {
             .iter()
             .any(|event| matches!(event, TtsEvent::WordBoundary { .. })));
     }
+
+    #[tokio::test]
+    #[ignore = "requires the live Microsoft Edge Read Aloud service"]
+    async fn arabic_voice_ids_produce_distinct_audio() {
+        init_tls();
+        let mut results = Vec::new();
+        for (voice, locale) in [
+            ("ar-SA-HamedNeural", "ar-SA"),
+            ("ar-EG-ShakirNeural", "ar-EG"),
+            ("ar-AE-HamdanNeural", "ar-AE"),
+        ] {
+            let events = EdgeTts
+                .synthesize("مرحباً، هذا اختبار لصوت القراءة.", voice, "+0%", locale)
+                .await
+                .expect("live Arabic voice synthesis should succeed");
+            let audio = events
+                .into_iter()
+                .filter_map(|event| match event {
+                    TtsEvent::Audio(bytes) => Some(bytes),
+                    _ => None,
+                })
+                .flatten()
+                .collect::<Vec<_>>();
+            assert!(!audio.is_empty(), "{voice} returned no audio");
+            println!("{voice}: {} audio bytes", audio.len());
+            results.push((voice, audio));
+        }
+        assert_ne!(results[0].1, results[1].1, "Hamed and Shakir returned identical audio");
+        assert_ne!(results[0].1, results[2].1, "Hamed and Hamdan returned identical audio");
+        assert_ne!(results[1].1, results[2].1, "Shakir and Hamdan returned identical audio");
+    }
 }

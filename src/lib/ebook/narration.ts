@@ -26,6 +26,8 @@ type NativeNarrationResult = {
 const CACHE = "harbor-ebook-edge-narration-v1";
 const CACHE_MAX_AGE = 30 * 24 * 60 * 60 * 1_000;
 const CACHED_AT = "X-Harbor-Cached-At";
+const CACHED_VOICE = "X-Harbor-Voice";
+const CACHED_LOCALE = "X-Harbor-Locale";
 let voicesRequest: Promise<EdgeNarrationVoice[]> | null = null;
 
 export function fetchEdgeNarrationVoices(): Promise<EdgeNarrationVoice[]> {
@@ -72,7 +74,12 @@ export async function synthesizeNarration(
   const cached = await cache?.match(cacheKey);
   if (cached) {
     const cachedAt = Number(cached.headers.get(CACHED_AT));
-    if (Number.isFinite(cachedAt) && Date.now() - cachedAt < CACHE_MAX_AGE) {
+    if (
+      Number.isFinite(cachedAt) &&
+      Date.now() - cachedAt < CACHE_MAX_AGE &&
+      cached.headers.get(CACHED_VOICE) === voice &&
+      cached.headers.get(CACHED_LOCALE) === locale
+    ) {
       const result = (await cached.json()) as NativeNarrationResult;
       onProgress({ completed: 1, total: 1, percent: 100 });
       return { blob: fromBase64(result.audioBase64), boundaries: result.boundaries ?? [] };
@@ -92,7 +99,12 @@ export async function synthesizeNarration(
   await cache?.put(
     cacheKey,
     new Response(JSON.stringify(result), {
-      headers: { "Content-Type": "application/json", [CACHED_AT]: String(Date.now()) },
+      headers: {
+        "Content-Type": "application/json",
+        [CACHED_AT]: String(Date.now()),
+        [CACHED_VOICE]: voice,
+        [CACHED_LOCALE]: locale,
+      },
     }),
   );
   return { blob: fromBase64(result.audioBase64), boundaries: result.boundaries ?? [] };

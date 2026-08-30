@@ -46,6 +46,7 @@ import {
 import { translateEBookChapter } from "@/lib/ebook/translation";
 import { BookFlip, type BookApi } from "@/views/manga/manga-reader/book-view";
 import { useCustomFonts } from "@/lib/custom-fonts";
+import { Flag } from "@/components/flag";
 import {
   cancelNarration,
   clearNarrationCache,
@@ -139,18 +140,58 @@ const fallbackNarrationVoices: ReaderNarrationVoice[] = narrationVoices.map((voi
   gender: voice.tone.includes("Female") ? "Female" : "Male",
 }));
 
+const VOICE_SAMPLE_TEXT: Record<string, string> = {
+  ar: "مرحباً، هذا نموذج قصير لاختبار نبرة الصوت ووضوح القراءة في هاربور.",
+  en: "Welcome to Harbor. This short sample helps you compare the voice, tone, and reading clarity.",
+  es: "Bienvenido a Harbor. Esta breve muestra permite comparar la voz, el tono y la claridad.",
+  fr: "Bienvenue dans Harbor. Ce court extrait permet de comparer la voix, le ton et la clarté.",
+  de: "Willkommen bei Harbor. Mit diesem kurzen Beispiel können Sie Stimme und Klarheit vergleichen.",
+  it: "Benvenuto in Harbor. Questo breve esempio aiuta a confrontare voce, tono e chiarezza.",
+  pt: "Bem-vindo ao Harbor. Esta breve amostra ajuda a comparar a voz, o tom e a clareza.",
+  ru: "Добро пожаловать в Harbor. Этот короткий пример поможет сравнить голос и ясность чтения.",
+  ja: "ハーバーへようこそ。この短いサンプルで、声の調子と読みやすさを比較できます。",
+  ko: "하버에 오신 것을 환영합니다. 이 짧은 샘플로 목소리와 읽기 명료도를 비교할 수 있습니다.",
+  zh: "欢迎使用 Harbor。这个简短示例可以帮助你比较声音、语调和朗读清晰度。",
+  hi: "हार्बर में आपका स्वागत है। यह छोटा नमूना आवाज़ और पढ़ने की स्पष्टता की तुलना करता है।",
+  tr: "Harbor'a hoş geldiniz. Bu kısa örnek ses tonunu ve okuma netliğini karşılaştırır.",
+};
+const VOICE_SAMPLE_BY_LOCALE: Record<string, string> = {
+  "ar-SA": "هلا والله، كيف حالك؟ إن شاء الله أمورك طيبة. هذا صوت تجريبي من هاربور.",
+  "ar-EG": "أهلاً وسهلاً، إزيّك؟ النهارده هنجرب الصوت ده ونشوف وضوحه ونبرته.",
+  "ar-AE": "مرحبا الساع، شحالك؟ عساك بخير. خلّنا نجرّب هالصوت ونسمع نبرته.",
+  "ar-KW": "هلا والله، شلونك؟ عساك بخير. خلّنا نسمع هالصوت ونجرب نبرته.",
+  "ar-BH": "هلا وغلا، شخبارك؟ إن شاء الله بخير. هذا نموذج بسيط لتجربة الصوت.",
+  "ar-DZ": "أهلاً، واش راك؟ اليوم نجرّبوا هاد الصوت ونشوفوا النبرة تاعو.",
+  "ar-IQ": "هلا بيك، شلونك؟ إن شاء الله زين. خلّينا نجرّب هذا الصوت ونسمع نبرته.",
+  "ar-JO": "أهلاً وسهلاً، كيفك؟ إن شاء الله تمام. خلّينا نجرّب هالصوت ونسمع نبرته.",
+  "ar-LB": "أهلا وسهلا، كيفك اليوم؟ خلّينا نجرّب هالصوت ونسمع نبرته ووضوحه.",
+  "ar-LY": "أهلاً بيك، شن حالك؟ إن شاء الله تمام. خلّينا نجربوا الصوت هذا.",
+  "ar-MA": "مرحبا، كيداير؟ لاباس عليك؟ اليوم غادي نجربو هاد الصوت ونسمعو النبرة ديالو.",
+  "ar-OM": "مرحبا، كيف حالك؟ عساك طيب. خلّنا نجرّب هذا الصوت ونسمع نبرته.",
+  "ar-QA": "مرحبا، شلونك؟ عساك بخير. خلّنا نجرّب هالصوت ونسمع نبرته بوضوح.",
+  "ar-SY": "أهلاً وسهلاً، شلونك اليوم؟ خلّينا نجرّب هالصوت ونسمع نبرته.",
+  "ar-TN": "عسلامة، شنوّة أحوالك؟ اليوم باش نجرّبوا الصوت هذا ونسمعوا نبرتو.",
+  "ar-YE": "يا مرحبا، كيف حالك؟ عساك بخير. خلّينا نجرّب هذا الصوت ونسمع نبرته.",
+};
+
 function VoicePicker({
   voices,
   value,
   disabled,
   colors,
   onChange,
+  previewingVoice,
+  previewLoading,
+  onPreview,
 }: {
   voices: ReaderNarrationVoice[];
   value: string;
   disabled: boolean;
   colors: (typeof paper)[keyof typeof paper];
   onChange: (voice: string) => void;
+  previewingVoice: string;
+  previewLoading: boolean;
+  onPreview: (voice: ReaderNarrationVoice) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -179,6 +220,8 @@ function VoicePicker({
         return left.name.localeCompare(right.name);
       });
   }, [selectedLanguage, voices]);
+  const selectedLanguageName =
+    languageGroups.find((group) => group.code === selectedLanguage)?.name ?? selectedLanguage;
   const filtered = useMemo(() => {
     const languageVoices =
       languageGroups.find((group) => group.code === activeLanguage)?.voices ?? voices;
@@ -216,7 +259,9 @@ function VoicePicker({
         style={{ borderColor: `${colors.muted}45` }}
         title="Choose an Edge TTS voice before generating audio"
       >
-        <Headphones size={15} className="shrink-0 text-accent" />
+        <span className="grid h-7 w-8 shrink-0 place-items-center rounded-lg bg-white/[.04]">
+          <Flag language={selectedLanguageName} size="sm" showLabel={false} />
+        </span>
         <span className="min-w-0 flex-1">
           <span className="block truncate text-xs font-semibold" style={{ color: colors.ink }}>
             {selected.label}
@@ -264,8 +309,8 @@ function VoicePicker({
                     }}
                     className={`flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-start transition ${active ? "bg-accent/15 text-accent" : "text-white/60 hover:bg-white/[.05] hover:text-white"}`}
                   >
-                    <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-white/[.05] text-[9px] font-bold uppercase">
-                      {group.code}
+                    <span className="grid h-7 w-8 shrink-0 place-items-center rounded-lg bg-white/[.05]">
+                      <Flag language={group.name} size="sm" showLabel={false} />
                     </span>
                     <span className="min-w-0 flex-1 truncate text-[11px] font-semibold">{group.name}</span>
                     <span className="text-[9px] tabular-nums opacity-45">{group.voices.length}</span>
@@ -280,30 +325,50 @@ function VoicePicker({
             >
               {filtered.map((voice) => {
                 const active = voice.id === value;
+                const previewing = previewingVoice === voice.id;
                 return (
-                <button
-                  key={voice.id}
-                  type="button"
-                  role="option"
-                  aria-selected={active}
-                  onClick={() => {
-                    onChange(voice.id);
-                    setOpen(false);
-                    setQuery("");
-                  }}
-                  className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-start transition ${active ? "bg-accent/15 text-accent" : "text-white/85 hover:bg-white/[.06]"}`}
-                >
-                  <span className="grid h-8 min-w-10 shrink-0 place-items-center rounded-lg bg-white/[.05] px-1.5 text-[9px] font-bold uppercase">
-                    {voice.locale}
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-xs font-semibold">{voice.label}</span>
-                    <span className="mt-0.5 block truncate text-[10px] text-white/40">
-                      {voice.locale} · {voice.gender}
-                    </span>
-                  </span>
-                  {active && <Check size={15} className="shrink-0" />}
-                </button>
+                  <div
+                    key={voice.id}
+                    role="option"
+                    aria-selected={active}
+                    className={`flex w-full items-center gap-1 rounded-xl pe-1 transition ${active ? "bg-accent/15 text-accent" : "text-white/85 hover:bg-white/[.06]"}`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onChange(voice.id);
+                        setOpen(false);
+                        setQuery("");
+                      }}
+                      className="flex min-w-0 flex-1 items-center gap-3 px-3 py-2.5 text-start"
+                    >
+                      <span className="grid h-8 min-w-10 shrink-0 place-items-center rounded-lg bg-white/[.05] px-1.5 text-[9px] font-bold uppercase">
+                        {voice.locale}
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-xs font-semibold">{voice.label}</span>
+                        <span className="mt-0.5 block truncate text-[10px] text-white/40">
+                          {voice.locale} · {voice.gender}
+                        </span>
+                      </span>
+                      {active && <Check size={15} className="shrink-0" />}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onPreview(voice)}
+                      aria-label={previewing ? `Stop ${voice.label} sample` : `Play ${voice.label} sample`}
+                      title={previewing ? "Stop sample" : "Test this voice"}
+                      className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg transition ${previewing ? "bg-accent text-black" : "bg-white/[.05] text-white/55 hover:bg-white/[.1] hover:text-white"}`}
+                    >
+                      {previewing && previewLoading ? (
+                        <Loader2 size={13} className="animate-spin" />
+                      ) : previewing ? (
+                        <X size={13} strokeWidth={2.5} />
+                      ) : (
+                        <Play size={12} fill="currentColor" />
+                      )}
+                    </button>
+                  </div>
                 );
               })}
               {!filtered.length && (
@@ -459,6 +524,12 @@ export function HarborReader({
   const [audioDuration, setAudioDuration] = useState(0);
   const audio = useRef<HTMLAudioElement | null>(null);
   const audioUrl = useRef("");
+  const voicePreviewAudio = useRef<HTMLAudioElement | null>(null);
+  const voicePreviewUrl = useRef("");
+  const voicePreviewRequestId = useRef("");
+  const voicePreviewRun = useRef(0);
+  const [voicePreviewId, setVoicePreviewId] = useState("");
+  const [voicePreviewLoading, setVoicePreviewLoading] = useState(false);
   const narrationRun = useRef(0);
   const narrationRequestId = useRef("");
   const narrationLine = useRef(-1);
@@ -893,12 +964,28 @@ export function HarborReader({
       cancelAnimationFrame(traceFrame.current);
       window.speechSynthesis?.cancel();
       if (narrationRequestId.current) void cancelNarration(narrationRequestId.current);
+      if (voicePreviewRequestId.current) void cancelNarration(voicePreviewRequestId.current);
       audio.current?.pause();
       if (audioUrl.current) URL.revokeObjectURL(audioUrl.current);
+      voicePreviewAudio.current?.pause();
+      if (voicePreviewUrl.current) URL.revokeObjectURL(voicePreviewUrl.current);
     };
   }, []);
 
+  const stopVoicePreview = () => {
+    voicePreviewRun.current += 1;
+    if (voicePreviewRequestId.current) void cancelNarration(voicePreviewRequestId.current);
+    voicePreviewRequestId.current = "";
+    voicePreviewAudio.current?.pause();
+    voicePreviewAudio.current = null;
+    if (voicePreviewUrl.current) URL.revokeObjectURL(voicePreviewUrl.current);
+    voicePreviewUrl.current = "";
+    setVoicePreviewId("");
+    setVoicePreviewLoading(false);
+  };
+
   const stopSpeech = () => {
+    stopVoicePreview();
     narrationRun.current += 1;
     if (narrationRequestId.current) void cancelNarration(narrationRequestId.current);
     narrationRequestId.current = "";
@@ -915,6 +1002,46 @@ export function HarborReader({
     setAudioDuration(0);
     narrationLine.current = -1;
     if (!prefs.mouseLineTrack) setTrace(null);
+  };
+
+  const previewVoice = async (voice: ReaderNarrationVoice) => {
+    if (voicePreviewId === voice.id) {
+      stopVoicePreview();
+      return;
+    }
+    stopSpeech();
+    const language = voice.locale.split("-")[0].toLocaleLowerCase();
+    const sample =
+      VOICE_SAMPLE_BY_LOCALE[voice.locale] ??
+      VOICE_SAMPLE_TEXT[language] ??
+      paragraphs.slice(current, current + 2).join(" ").trim().slice(0, 320);
+    if (!sample) return;
+    const run = ++voicePreviewRun.current;
+    const requestId = `voice-preview-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    voicePreviewRequestId.current = requestId;
+    setVoicePreviewId(voice.id);
+    setVoicePreviewLoading(true);
+    try {
+      const { blob } = await synthesizeNarration(
+        requestId,
+        sample,
+        voice.id,
+        voice.locale,
+        () => undefined,
+      );
+      if (run !== voicePreviewRun.current) return;
+      voicePreviewRequestId.current = "";
+      const url = URL.createObjectURL(blob);
+      voicePreviewUrl.current = url;
+      const player = new Audio(url);
+      voicePreviewAudio.current = player;
+      setVoicePreviewLoading(false);
+      player.onended = stopVoicePreview;
+      player.onerror = stopVoicePreview;
+      await player.play();
+    } catch {
+      if (run === voicePreviewRun.current) stopVoicePreview();
+    }
   };
 
   const toggleNarrationPause = () => {
@@ -1619,21 +1746,36 @@ export function HarborReader({
             stopSpeech();
             patchPrefs({ narrationVoice: voice });
           }}
+          previewingVoice={voicePreviewId}
+          previewLoading={voicePreviewLoading}
+          onPreview={(voice) => void previewVoice(voice)}
         />
         <button
-          className="reader-icon reader-icon-accent"
-          onClick={speaking ? toggleNarrationPause : () => void speakFrom()}
+          className={`reader-icon ${narrationLoading ? "reader-icon-cancel" : "reader-icon-accent"}`}
+          onClick={
+            narrationLoading
+              ? stopSpeech
+              : speaking
+                ? toggleNarrationPause
+                : () => void speakFrom()
+          }
           aria-label={
-            speaking
+            narrationLoading
+              ? "Cancel Edge TTS generation"
+              : speaking
               ? narrationPaused
                 ? "Resume narration"
                 : "Pause narration"
               : "Read chapter with Edge TTS"
           }
-          title={narrationNotice || "Read the complete chapter with Edge TTS"}
+          title={
+            narrationLoading
+              ? "Cancel audio generation"
+              : narrationNotice || "Read the complete chapter with Edge TTS"
+          }
         >
           {narrationLoading ? (
-            <Loader2 size={18} className="animate-spin" />
+            <X size={18} strokeWidth={2.5} />
           ) : speaking && !narrationPaused ? (
             <Pause size={18} fill="currentColor" />
           ) : (
@@ -2070,7 +2212,7 @@ export function HarborReader({
           onClose={() => setEditing(null)}
         />
       )}
-      <style>{`.reader-icon{display:grid;width:42px;height:42px;place-items:center;border-radius:999px;color:inherit;transition:.16s ease}.reader-icon:hover{background:rgba(127,127,127,.16);transform:translateY(-1px)}.reader-icon:active{transform:scale(.92)}.reader-icon:disabled{pointer-events:none;opacity:.28}.reader-icon-accent{background:var(--color-accent);color:#111}.reader-language-toggle{display:flex;width:auto;gap:6px;padding:0 12px;font-size:11px;font-weight:700}.reader-current{border-radius:4px}.reader-annotation{color:inherit;border-radius:3px;padding:.04em .02em;cursor:pointer}.reader-annotation:hover{outline:1px solid color-mix(in srgb,var(--color-accent) 60%,transparent)}.ebook-audio-seeker{appearance:none;background:transparent}.ebook-audio-seeker::-webkit-slider-runnable-track{height:4px;border-radius:99px;background:linear-gradient(90deg,var(--color-accent) var(--audio-progress),rgba(127,127,127,.28) var(--audio-progress))}.ebook-audio-seeker::-webkit-slider-thumb{appearance:none;width:12px;height:12px;margin-top:-4px;border:2px solid var(--color-accent);border-radius:50%;background:#111;box-shadow:0 0 0 3px color-mix(in srgb,var(--color-accent) 18%,transparent);transition:transform .15s}.ebook-audio-seeker:hover::-webkit-slider-thumb{transform:scale(1.2)}`}</style>
+      <style>{`.reader-icon{display:grid;width:42px;height:42px;place-items:center;border-radius:999px;color:inherit;transition:.16s ease}.reader-icon:hover{background:rgba(127,127,127,.16);transform:translateY(-1px)}.reader-icon:active{transform:scale(.92)}.reader-icon:disabled{pointer-events:none;opacity:.28}.reader-icon-accent{background:var(--color-accent);color:#111}.reader-icon-cancel{background:rgba(239,68,68,.16);color:#f87171;box-shadow:inset 0 0 0 1px rgba(248,113,113,.28)}.reader-icon-cancel:hover{background:rgba(239,68,68,.25);color:#fca5a5}.reader-language-toggle{display:flex;width:auto;gap:6px;padding:0 12px;font-size:11px;font-weight:700}.reader-current{border-radius:4px}.reader-annotation{color:inherit;border-radius:3px;padding:.04em .02em;cursor:pointer}.reader-annotation:hover{outline:1px solid color-mix(in srgb,var(--color-accent) 60%,transparent)}.ebook-audio-seeker{appearance:none;background:transparent}.ebook-audio-seeker::-webkit-slider-runnable-track{height:4px;border-radius:99px;background:linear-gradient(90deg,var(--color-accent) var(--audio-progress),rgba(127,127,127,.28) var(--audio-progress))}.ebook-audio-seeker::-webkit-slider-thumb{appearance:none;width:12px;height:12px;margin-top:-4px;border:2px solid var(--color-accent);border-radius:50%;background:#111;box-shadow:0 0 0 3px color-mix(in srgb,var(--color-accent) 18%,transparent);transition:transform .15s}.ebook-audio-seeker:hover::-webkit-slider-thumb{transform:scale(1.2)}`}</style>
     </div>
   );
 }
