@@ -7,24 +7,27 @@ import { useT } from "@/lib/i18n";
 import { useGamepads } from "@/lib/gamepad/store";
 import { Section, ToggleRow } from "./shared";
 import { SettingGroup, SettingRow } from "./kit";
+import { ButtonGlyph, type GlyphKind } from "./controllers-panel/button-glyphs";
 import { ControllerPreview } from "./controllers-panel/controller-preview";
 import { CursorSection } from "./controllers-panel/cursor-section";
 
-const BROWSE_MAP: Array<{ control: string; action: string }> = [
-  { control: "D-pad", action: "Move focus" },
-  { control: "A / Cross", action: "Select" },
-  { control: "B / Circle", action: "Back" },
-  { control: "Menu / Options", action: "Home" },
+type MapRow = { glyph: GlyphKind; action: string };
+
+const BROWSE_MAP: MapRow[] = [
+  { glyph: "dpad", action: "Move focus" },
+  { glyph: "south", action: "Select" },
+  { glyph: "east", action: "Back" },
+  { glyph: "center", action: "Home" },
 ];
 
-const PLAYER_MAP: Array<{ control: string; action: string }> = [
-  { control: "A / Cross", action: "Play or pause" },
-  { control: "X / Square", action: "Subtitles" },
-  { control: "Y / Triangle", action: "Stats overlay" },
-  { control: "Bumpers (LB / RB)", action: "Previous or next episode" },
-  { control: "Triggers (LT / RT)", action: "Seek back or forward" },
-  { control: "D-pad up / down", action: "Volume up or down" },
-  { control: "B / Circle", action: "Exit player" },
+const PLAYER_MAP: MapRow[] = [
+  { glyph: "south", action: "Play or pause" },
+  { glyph: "west", action: "Subtitles" },
+  { glyph: "north", action: "Stats overlay" },
+  { glyph: "bumpers", action: "Previous or next episode" },
+  { glyph: "triggers", action: "Seek back or forward" },
+  { glyph: "dpadVertical", action: "Volume up or down" },
+  { glyph: "east", action: "Exit player" },
 ];
 
 type Tab = "setup" | "mapping";
@@ -167,14 +170,16 @@ export function ControllersPanel() {
   );
 }
 
-function MapGroup({ heading, rows }: { heading: string; rows: Array<{ control: string; action: string }> }) {
+function MapGroup({ heading, rows }: { heading: string; rows: MapRow[] }) {
   const t = useT();
   return (
     <SettingGroup label={heading}>
       {rows.map((row) => (
-        <SettingRow key={row.control + row.action} label={t(row.action)}>
-          <span className="flex h-8 shrink-0 items-center justify-center rounded-md bg-canvas px-3 text-[12.5px] font-semibold text-ink">
-            {t(row.control)}
+        <SettingRow key={row.glyph + row.action} label={t(row.action)}>
+          <span className="flex shrink-0 items-center gap-3 text-ink">
+            <ButtonGlyph kind={row.glyph} pad="xbox" />
+            <span className="h-4 w-px bg-edge-soft" />
+            <ButtonGlyph kind={row.glyph} pad="ps" />
           </span>
         </SettingRow>
       ))}
