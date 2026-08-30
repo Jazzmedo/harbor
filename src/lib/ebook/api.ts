@@ -1,4 +1,5 @@
 import { anilistRequest } from "@/lib/anilist/client";
+import { animeRelations } from "@/lib/anilist/relations";
 import { getUiLanguage } from "@/lib/i18n";
 import { safeFetch } from "@/lib/safe-fetch";
 
@@ -196,7 +197,12 @@ function authorListsMatch(left: string[], right: string[]): boolean {
     right.some((b) => {
       const x = titleKey(a);
       const y = titleKey(b);
-      return x === y || (x.length > 4 && y.length > 4 && (x.includes(y) || y.includes(x)));
+      const tokenKey = (value: string) => value.split(" ").filter(Boolean).sort().join(" ");
+      return (
+        x === y ||
+        tokenKey(x) === tokenKey(y) ||
+        (x.length > 4 && y.length > 4 && (x.includes(y) || y.includes(x)))
+      );
     }),
   );
 }
@@ -218,7 +224,12 @@ function verifiedMetadataMatch(source: EBook, metadata: EBook): boolean {
     identityTitleKey,
   );
   if (!metadataTitles.some((title) => sourceTitles.has(title))) return false;
-  if (metadata.source === "anilist") return true;
+  if (metadata.source === "anilist")
+    return (
+      source.authors.length > 0 &&
+      metadata.authors.length > 0 &&
+      authorListsMatch(source.authors, metadata.authors)
+    );
   if (metadata.source === "wikidata") {
     if (
       !/\b(?:(?:web|light)\s+)?novel\b|\b(?:book|novel) series\b|\bliterary work\b/i.test(
@@ -1528,7 +1539,9 @@ export async function ebookDetail(id: string): Promise<EBook | null> {
 const ebookAdaptationCache = new Map<string, Promise<EBookAdaptations>>();
 
 export function ebookAdaptations(ebook: EBook): Promise<EBookAdaptations> {
-  const cacheKey = `${ebook.anilistId ?? ""}:${ebook.wikidataId ?? ""}`;
+  const cacheKey = `${ebook.anilistId ?? ""}:${ebook.wikidataId ?? ""}:${identityTitleKey(
+    ebook.seriesTitle || ebook.title,
+  )}`;
   const cached = ebookAdaptationCache.get(cacheKey);
   if (cached) return cached;
 
@@ -1538,6 +1551,35 @@ export function ebookAdaptations(ebook: EBook): Promise<EBookAdaptations> {
       const value = title?.trim();
       if (value && !result[kind].includes(value)) result[kind].push(value);
     };
+    const identityMetadata = fetchEBookMetadata([ebook]).catch(() => []);
+
+    const englishTitle = [
+      ebook.title,
+      ...(ebook.altTitle?.split("|") ?? []),
+      ebook.seriesTitle,
+      ...(ebook.books ?? []).flatMap((book) => [book.title, ...(book.altTitle?.split("|") ?? [])]),
+    ].find((title): title is string => !!title && /\p{Script=Latin}/u.test(title));
+    const mangaDex = englishTitle
+      ? (() => {
+          const url = new URL("https://api.mangadex.org/manga");
+          url.searchParams.set("title", englishTitle);
+          url.searchParams.set("limit", "10");
+          url.searchParams.set("includes[]", "author");
+          url.searchParams.set("order[relevance]", "desc");
+          return cachedJson<{
+            data?: Array<{
+              attributes?: {
+                title?: Record<string, string>;
+                altTitles?: Array<Record<string, string>>;
+              };
+              relationships?: Array<{
+                type?: string;
+                attributes?: { name?: string };
+              }>;
+            }>;
+          }>(url.toString()).catch(() => null);
+        })()
+      : Promise.resolve(null);
 
     const aniList = ebook.anilistId
       ? anilistRequest<{
@@ -1546,8 +1588,10 @@ export function ebookAdaptations(ebook: EBook): Promise<EBookAdaptations> {
               edges: Array<{
                 relationType: string | null;
                 node: {
+                  id: number;
                   type: "ANIME" | "MANGA";
                   format: string | null;
+                  seasonYear: number | null;
                   title: { english: string | null; romaji: string | null; native: string | null };
                 } | null;
               }>;
@@ -1559,7 +1603,7 @@ export function ebookAdaptations(ebook: EBook): Promise<EBookAdaptations> {
               relations {
                 edges {
                   relationType
-                  node { type format title { english romaji native } }
+                  node { id type format seasonYear title { english romaji native } }
                 }
               }
             }
@@ -1590,12 +1634,99 @@ SELECT DISTINCT ?adaptation ?label ?description WHERE {
         })()
       : Promise.resolve(null);
 
-    const [aniListData, wikidataData] = await Promise.all([aniList, wikidata]);
-    for (const edge of aniListData?.Media?.relations?.edges ?? []) {
+    const [mangaDexData, aniListData, wikidataData, matchedMetadata] = await Promise.all([
+      mangaDex,
+      aniList,
+      wikidata,
+      identityMetadata,
+    ]);
+    const knownAuthors = [
+      ...new Set([
+        ...ebook.authors,
+        ...(ebook.books ?? []).flatMap((book) => book.authors),
+        ...matchedMetadata.flatMap((metadata) => metadata.authors),
+      ]),
+    ].filter(Boolean);
+    let mangaDexHighConfidence = false;
+    if (englishTitle) {
+      const wanted = identityTitleKey(englishTitle);
+      const wantedTokens = new Set(wanted.split(" ").filter(Boolean));
+      const scored = (mangaDexData?.data ?? [])
+        .flatMap((item) => {
+          const titles = [
+            ...Object.values(item.attributes?.title ?? {}),
+            ...(item.attributes?.altTitles ?? []).flatMap((title) => Object.values(title)),
+          ];
+          const authors = (item.relationships ?? [])
+            .filter((relationship) => relationship.type === "author")
+            .map((relationship) => relationship.attributes?.name?.trim() ?? "")
+            .filter(Boolean);
+          return titles.map((title) => {
+            const candidate = identityTitleKey(title);
+            const candidateTokens = new Set(candidate.split(" ").filter(Boolean));
+            const intersection = [...wantedTokens].filter((token) => candidateTokens.has(token)).length;
+            const union = new Set([...wantedTokens, ...candidateTokens]).size;
+            const confidence =
+              candidate === wanted
+                ? 1
+                : wantedTokens.size >= 2 &&
+                    candidateTokens.size >= 2 &&
+                    (candidate.includes(wanted) || wanted.includes(candidate))
+                  ? 0.9
+                  : union
+                    ? intersection / union
+                    : 0;
+            return { title, confidence, authors };
+          });
+        })
+        .sort((left, right) => right.confidence - left.confidence);
+      const verified = scored.find(
+        (candidate) =>
+          candidate.confidence >= 0.86 &&
+          knownAuthors.length > 0 &&
+          authorListsMatch(knownAuthors, candidate.authors),
+      );
+      if (
+        verified
+      ) {
+        add("manga", verified.title);
+        mangaDexHighConfidence = true;
+      }
+    }
+    const relationEdges = aniListData?.Media?.relations?.edges ?? [];
+    const animeEdges = relationEdges.filter(
+      (edge) => edge.relationType === "ADAPTATION" && edge.node?.type === "ANIME",
+    );
+    const seasonMetadata = await Promise.all(
+      animeEdges.map(async (edge) => {
+        const node = edge.node!;
+        const relations = await animeRelations(node.id).catch(() => []);
+        const seasonFormats = new Set(["TV", "TV_SHORT", "ONA"]);
+        const seasons = [
+          ...(seasonFormats.has(node.format ?? "")
+            ? [{ id: node.id, name: node.title.english || node.title.romaji || node.title.native || "", year: node.seasonYear ?? undefined }]
+            : []),
+          ...relations.filter((relation) => seasonFormats.has(relation.format ?? "")),
+        ];
+        const uniqueSeasons = [...new Map(seasons.map((season) => [season.id, season])).values()];
+        const root = [...uniqueSeasons].sort(
+          (left, right) => (left.year ?? Number.MAX_SAFE_INTEGER) - (right.year ?? Number.MAX_SAFE_INTEGER),
+        )[0];
+        const title = root?.name || node.title.english || node.title.romaji || node.title.native;
+        return uniqueSeasons.length > 1 ? `${title} | Seasons: ${uniqueSeasons.length}` : title;
+      }),
+    );
+    seasonMetadata.forEach((title) => add("anime", title));
+
+    for (const edge of relationEdges) {
       if (edge.relationType !== "ADAPTATION" || !edge.node) continue;
       const title = edge.node.title.english || edge.node.title.romaji || edge.node.title.native;
-      if (edge.node.type === "ANIME") add("anime", title);
-      else if (edge.node.type === "MANGA" && edge.node.format !== "NOVEL") add("manga", title);
+      if (
+        !mangaDexHighConfidence &&
+        edge.node.type === "MANGA" &&
+        edge.node.format !== "NOVEL"
+      )
+        add("manga", title);
     }
     for (const binding of wikidataData?.results?.bindings ?? []) {
       const description = binding.description?.value?.toLocaleLowerCase() ?? "";
