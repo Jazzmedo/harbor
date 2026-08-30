@@ -12,6 +12,7 @@ import {
   Highlighter,
   Languages,
   Link2,
+  Loader2,
   MessageSquareText,
   Moon,
   Pause,
@@ -23,6 +24,7 @@ import {
   Sun,
   Trash2,
   Type,
+  Upload,
   X,
 } from "lucide-react";
 import type { EBookChapter, EBookChapterContent } from "@/lib/ebook/providers";
@@ -43,6 +45,7 @@ import {
 } from "@/lib/ebook/reader-state";
 import { translateEBookChapter } from "@/lib/ebook/translation";
 import { BookFlip, type BookApi } from "@/views/manga/manga-reader/book-view";
+import { useCustomFonts } from "@/lib/custom-fonts";
 
 type Props = {
   profile: string;
@@ -69,6 +72,10 @@ const fontFamily = {
   arabic: '"Traditional Arabic", "Noto Naskh Arabic", serif',
   classic: '"Book Antiqua", Palatino, serif',
 };
+const readerFontFamily = (prefs: EBookReaderPrefs) =>
+  prefs.customFontId
+    ? `"harbor-font-${prefs.customFontId}", Georgia, serif`
+    : fontFamily[prefs.font];
 
 const paper = {
   dark: { desk: "#090a0c", page: "#17181b", ink: "#e9e3d8", muted: "#8f8b84" },
@@ -273,7 +280,7 @@ export function HarborReader({
       page: colors.page,
       ink: colors.ink,
       muted: colors.muted,
-      fontFamily: fontFamily[prefs.font],
+      fontFamily: readerFontFamily(prefs),
       fontSize: prefs.fontSize,
       lineHeight: prefs.lineHeight,
       cover: chapterIndex === 0 ? internalCover || bookCover : undefined,
@@ -303,6 +310,7 @@ export function HarborReader({
     effectiveDirection,
     internalCover,
     prefs.font,
+    prefs.customFontId,
     prefs.fontSize,
     prefs.lineHeight,
     prefs.mode,
@@ -1018,7 +1026,7 @@ export function HarborReader({
             background: colors.page,
             color: colors.ink,
             WebkitUserSelect: "text",
-            fontFamily: fontFamily[prefs.font],
+            fontFamily: readerFontFamily(prefs),
             fontSize: `${prefs.fontSize}px`,
             lineHeight: prefs.lineHeight,
           }}
@@ -1860,6 +1868,15 @@ function Settings({
   colors: (typeof paper)[keyof typeof paper];
 }) {
   const [adjustmentsOpen, setAdjustmentsOpen] = useState(true);
+  const { fonts, busy: fontBusy, error: fontError, addFont, removeFont } = useCustomFonts();
+  const fontInput = useRef<HTMLInputElement>(null);
+  const importFont = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    const id = await addFont(file);
+    if (id) patch({ customFontId: id });
+  };
   return (
     <div className="space-y-6">
       <Setting label="Reading mode">
@@ -1903,10 +1920,11 @@ function Settings({
           {(["literary", "arabic", "classic"] as const).map((font) => (
             <button
               key={font}
-              onClick={() => patch({ font })}
-              className={`rounded-xl border px-2 py-3 capitalize ${prefs.font === font ? "border-accent text-accent" : ""}`}
+              onClick={() => patch({ font, customFontId: undefined })}
+              className={`rounded-xl border px-2 py-3 capitalize ${!prefs.customFontId && prefs.font === font ? "border-accent text-accent" : ""}`}
               style={{
-                borderColor: prefs.font === font ? undefined : `${colors.muted}35`,
+                borderColor:
+                  !prefs.customFontId && prefs.font === font ? undefined : `${colors.muted}35`,
                 fontFamily: fontFamily[font],
               }}
             >
@@ -1914,6 +1932,59 @@ function Settings({
             </button>
           ))}
         </div>
+        {fonts.length > 0 && (
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            {fonts.map((font) => {
+              const active = prefs.customFontId === font.id;
+              return (
+                <div
+                  key={font.id}
+                  className={`group relative rounded-xl border transition ${active ? "border-accent bg-accent/10 text-accent" : "hover:bg-white/5"}`}
+                  style={{ borderColor: active ? undefined : `${colors.muted}35` }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => patch({ customFontId: font.id })}
+                    className="w-full px-3 py-3 pe-9 text-start"
+                    style={{ fontFamily: `"harbor-font-${font.id}", serif` }}
+                  >
+                    <span className="block truncate text-base">Aa أب</span>
+                    <span className="mt-1 block truncate text-[11px] opacity-60">{font.name}</span>
+                  </button>
+                  <button
+                    type="button"
+                    aria-label={`Remove ${font.name}`}
+                    onClick={() => {
+                      removeFont(font.id);
+                      if (active) patch({ customFontId: undefined });
+                    }}
+                    className="absolute end-2 top-2 grid h-7 w-7 place-items-center rounded-lg opacity-55 transition hover:bg-red-500/15 hover:text-red-400 hover:opacity-100"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+        <button
+          type="button"
+          disabled={fontBusy}
+          onClick={() => fontInput.current?.click()}
+          className="mt-2 flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-dashed text-sm font-medium transition hover:border-accent/60 hover:text-accent disabled:opacity-60"
+          style={{ borderColor: `${colors.muted}45` }}
+        >
+          {fontBusy ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
+          {fontBusy ? "Importing font…" : "Import font"}
+        </button>
+        <input
+          ref={fontInput}
+          type="file"
+          accept=".ttf,.otf,.woff,.woff2,font/ttf,font/otf,font/woff,font/woff2"
+          onChange={importFont}
+          className="sr-only"
+        />
+        {fontError && <p className="mt-2 text-xs text-red-400">{fontError}</p>}
       </Setting>
       <section>
         <button

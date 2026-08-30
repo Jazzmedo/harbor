@@ -13,6 +13,7 @@ export type EBookReaderPrefs = {
   mouseLineTrack: boolean;
   lineTrackColor: string;
   font: "literary" | "arabic" | "classic";
+  customFontId?: string;
 };
 
 export type EBookBookmark = {

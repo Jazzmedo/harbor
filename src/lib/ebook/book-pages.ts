@@ -49,6 +49,11 @@ export async function createEBookFlipPages(options: {
   const bodySize = Math.round(options.fontSize * 1.72);
   const rowHeight = Math.round(bodySize * options.lineHeight);
   const rowsPerPage = Math.max(8, Math.floor((HEIGHT - PAD_Y * 2) / rowHeight));
+  try {
+    await document.fonts.load(`${bodySize}px ${options.fontFamily}`);
+  } catch {
+    /* The declared fallback family remains available. */
+  }
   context.font = `${bodySize}px ${options.fontFamily}`;
   const paragraphs = (options.content.text ?? "")
     .replace(/\r/g, "")
