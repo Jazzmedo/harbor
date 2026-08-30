@@ -5,6 +5,7 @@ import { makeSafeTauriUnlisten } from "@/lib/tauri-unlisten";
 import { useSettings } from "@/lib/settings";
 import { useView } from "@/lib/view";
 import { dispatchTvNav } from "@/lib/keyboard-navigation";
+import { isGamepadCaptured } from "./capture";
 import { publishGamepads } from "./store";
 import { resetLiveGamepad, setLiveAxis, setLiveButton } from "./live";
 import { startWebGamepadSource } from "./web-source";
@@ -20,6 +21,16 @@ import {
 } from "./mapping";
 
 const isTauri = typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
+
+const CONTROLLER_ACTIVITY = "harbor:controller-activity";
+const NAV_WHEN_CONTROLS_UP = new Set<GpButton>(["dup", "ddown", "dleft", "dright", "south"]);
+
+function controlsUp(): boolean {
+  return (
+    typeof document !== "undefined" &&
+    document.documentElement.hasAttribute("data-player-chrome-visible")
+  );
+}
 
 function synthKey({ key, code }: PlayerKey): void {
   const init = { key, code, bubbles: true, cancelable: true };
@@ -134,10 +145,14 @@ export function useGamepad(): void {
     };
 
     const fireButton = (button: GpButton, repeat = false) => {
+      if (isGamepadCaptured()) return;
       if (playerRef.current) {
-        const key = PLAYER_BUTTON[button];
-        if (key) synthKey(key);
-        return;
+        window.dispatchEvent(new Event(CONTROLLER_ACTIVITY));
+        if (!(controlsUp() && NAV_WHEN_CONTROLS_UP.has(button))) {
+          const key = PLAYER_BUTTON[button];
+          if (key) synthKey(key);
+          return;
+        }
       }
       const nav = NAV_BUTTON[button];
       if (nav && !keyboardNav(nav)) {
@@ -149,10 +164,14 @@ export function useGamepad(): void {
     };
 
     const fireAxis = (axis: GpAxis, dir: "neg" | "pos", repeat = false) => {
+      if (isGamepadCaptured()) return;
       if (playerRef.current) {
-        const key = PLAYER_AXIS[axis]?.[dir];
-        if (key) synthKey(key);
-        return;
+        window.dispatchEvent(new Event(CONTROLLER_ACTIVITY));
+        if (!axisNavigates(axis)) {
+          const key = PLAYER_AXIS[axis]?.[dir];
+          if (key) synthKey(key);
+          return;
+        }
       }
       const nav = NAV_AXIS[axis]?.[dir];
       if (nav) dispatchTvNav(nav, repeat);
@@ -170,8 +189,11 @@ export function useGamepad(): void {
       else fireButton(button);
     };
 
+    const axisNavigates = (axis: GpAxis) =>
+      !playerRef.current || (controlsUp() && !!NAV_AXIS[axis] && axis !== "ry");
+
     const onAxis = (axis: GpAxis, value: number) => {
-      const mapped = playerRef.current ? PLAYER_AXIS[axis] : NAV_AXIS[axis];
+      const mapped = axisNavigates(axis) ? NAV_AXIS[axis] : PLAYER_AXIS[axis];
       const dz = Math.max(0.05, cfgRef.current.deadzone);
       const dir: "neg" | "pos" | null = !mapped
         ? null

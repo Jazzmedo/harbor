@@ -8,6 +8,7 @@ import { useGamepads } from "@/lib/gamepad/store";
 import { Section, ToggleRow } from "./shared";
 import { SettingGroup, SettingRow } from "./kit";
 import { ControllerPreview } from "./controllers-panel/controller-preview";
+import { CursorSection } from "./controllers-panel/cursor-section";
 
 const BROWSE_MAP: Array<{ control: string; action: string }> = [
   { control: "D-pad", action: "Move focus" },
@@ -75,6 +76,8 @@ export function ControllersPanel() {
       </Section>
 
       <ControllerPreview enabled={enabled} />
+
+      {enabled && <CursorSection />}
 
       <Section
         title={t("Connected controllers")}
