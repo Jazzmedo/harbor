@@ -7,6 +7,13 @@ import {
   type EBook,
 } from "./api";
 import { parseEpub, readEpubChapter, type EpubBook } from "./epub";
+import {
+  gutendexDetail,
+  gutendexEpub,
+  gutendexPopular,
+  gutendexSearch,
+  type GutendexBook,
+} from "./gutendex";
 import { listEBookSources, type EBookHtmlSourceConfig, type EBookSource } from "./sources";
 import { safeFetch } from "@/lib/safe-fetch";
 import {
@@ -328,6 +335,64 @@ async function scanLocalBooks(
   return books;
 }
 
+const gutendexEpubs = new Map<string, Promise<EpubBook>>();
+
+function gutendexPackage(id: string, url: string): Promise<EpubBook> {
+  let pending = gutendexEpubs.get(id);
+  if (!pending) {
+    pending = gutendexEpub(url).then((buffer) => parseEpub(buffer));
+    gutendexEpubs.set(id, pending);
+    if (gutendexEpubs.size > LOCAL_EPUB_CACHE_LIMIT) {
+      const oldest = gutendexEpubs.keys().next().value;
+      if (oldest !== undefined) gutendexEpubs.delete(oldest);
+    }
+  }
+  return pending;
+}
+
+function gutendexProvider(source: EBookSource): Provider {
+  const provider = { id: source.id, name: source.name, iconUrl: source.iconUrl } as Provider;
+  const summary = (book: GutendexBook): EBook => ({
+    id: routeId(provider.id, String(book.id)),
+    source: "source",
+    providerId: provider.id,
+    sourceItemId: String(book.id),
+    providerName: provider.name,
+    title: book.title,
+    authors: book.authors,
+    description: "",
+    genres: book.subjects,
+    cover: book.cover,
+  });
+  const resolve = async (id: string) => {
+    const book = await gutendexDetail(id);
+    if (!book?.epubUrl) throw new Error("This book has no EPUB edition.");
+    return { book, epub: await gutendexPackage(id, book.epubUrl) };
+  };
+  provider.popular = async (offset) => (await gutendexPopular(offset)).map(summary);
+  provider.search = async (query, offset) => (await gutendexSearch(query, offset)).map(summary);
+  provider.detail = async (id) => {
+    const book = await gutendexDetail(id);
+    if (!book) return null;
+    return { ...summary(book), description: book.subjects.join(", ") };
+  };
+  provider.chapters = async (id) => {
+    const { epub } = await resolve(id);
+    return epub.chapters.map((chapter, index) => ({
+      id: JSON.stringify([id, chapter.path]),
+      title: chapter.title,
+      chapter: String(index + 1),
+      position: index,
+    }));
+  };
+  provider.content = async (id) => {
+    const [bookId, chapter] = JSON.parse(id) as [string, string];
+    const { epub } = await resolve(bookId);
+    return { text: cleanSourceText(readEpubChapter(epub, chapter)) };
+  };
+  return provider;
+}
+
 function localProvider(source: EBookSource): Provider {
   const provider = { id: source.id, name: source.name, iconUrl: source.iconUrl } as Provider;
   const find = async (id: string) =>
@@ -588,6 +653,9 @@ async function providers(): Promise<Provider[]> {
           source.kind === "html" && !!source.config,
       )
       .map(htmlProvider),
+    ...listEBookSources()
+      .filter((source) => source.kind === "gutendex")
+      .map(gutendexProvider),
     ...installedEBookPlugins()
       .filter((plugin) => plugin.enabled)
       .map(pluginProvider),

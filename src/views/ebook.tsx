@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import {
   createContext,
+  Fragment,
   useCallback,
   useContext,
   useEffect,
@@ -34,6 +35,7 @@ import "./ebook-showcase.css";
 import { NavArrow } from "@/components/nav-arrow";
 import { CoverImg } from "@/components/cover-img";
 import { Poster } from "@/components/poster";
+import { EBookBook3D } from "./ebook/ebook-book3d";
 import { Row } from "@/components/row";
 import { useAnilist } from "@/lib/anilist/provider";
 import { useUiLanguage } from "@/lib/i18n";
@@ -105,7 +107,6 @@ import { useView } from "@/lib/view";
 import { useProfiles } from "@/lib/profiles";
 import { usePageVisible } from "@/lib/visibility";
 import { openUrl } from "@/lib/window";
-import { useArtGlow } from "./big-picture/bp-art-color";
 import { EBookSourcesView } from "./ebook/ebook-sources-panel";
 import { EBookSetup } from "./ebook/ebook-setup";
 import { EBookReader } from "./ebook/ebook-reader";
@@ -694,19 +695,23 @@ export function EBookView() {
 
   if (screen === "sources") {
     return (
-      <main data-ebook-page className="flex-1 overflow-y-auto overflow-x-hidden px-12 pb-16 pt-24">
+      <main data-ebook-page className="bg-canvas flex-1 overflow-y-auto overflow-x-hidden px-12 pb-16 pt-24">
         <EBookSourcesView onBack={() => setScreen("browse")} />
       </main>
     );
   }
 
-  if (sourcesReady && providers.length === 0) {
+  if (!sourcesReady) {
+    return <main data-ebook-page className="bg-canvas flex-1" />;
+  }
+
+  if (providers.length === 0) {
     return <EBookSetup onSetup={() => setScreen("sources")} />;
   }
 
   if (screen === "collections") {
     return (
-      <main data-ebook-page className="flex-1 overflow-y-auto overflow-x-hidden px-12 pb-16 pt-24">
+      <main data-ebook-page className="bg-canvas flex-1 overflow-y-auto overflow-x-hidden px-12 pb-16 pt-24">
         <button
           type="button"
           onClick={() => setScreen("browse")}
@@ -785,7 +790,7 @@ export function EBookView() {
     return (
       <EBookTitleLanguageContext.Provider value={titleLanguage}>
         <EBookCardMenuContext.Provider value={openCardMenu}>
-          <main data-ebook-page className="flex-1 overflow-y-auto overflow-x-hidden px-12 pb-16 pt-24">
+          <main data-ebook-page className="bg-canvas flex-1 overflow-y-auto overflow-x-hidden px-12 pb-16 pt-24">
             <button
               type="button"
               onClick={() => setScreen("browse")}
@@ -902,7 +907,7 @@ export function EBookView() {
   return (
     <EBookTitleLanguageContext.Provider value={titleLanguage}>
       <EBookCardMenuContext.Provider value={openCardMenu}>
-      <main data-ebook-page className="flex-1 overflow-y-auto overflow-x-hidden pb-20">
+      <main data-ebook-page className="bg-canvas flex-1 overflow-y-auto overflow-x-hidden pb-20">
         <EBookLibraryHero ebooks={heroBooks} onOpen={(ebook) => openEBook(String(ebook.id))} />
 
         <div className="flex w-full flex-col gap-9 px-12 pt-8">
@@ -1263,6 +1268,10 @@ function EBookBrowseDropdown({
 
 const EBOOK_HERO_ROTATE_MS = 9000;
 
+function heroSubject(value: string): string {
+  return value.split("--")[0].split(",")[0].trim();
+}
+
 function EBookLibraryHero({
   ebooks,
   onOpen,
@@ -1278,10 +1287,16 @@ function EBookLibraryHero({
   const [paused, setPaused] = useState(false);
   const pageVisible = usePageVisible();
   const current = ebooks[shown];
-  const currentTitle = current
-    ? ebookTitleForLanguage(current, titleLanguage)
-    : "A remarkable book for your shelf";
-  const artColor = useArtGlow(current?.cover);
+  const currentTitle = current ? ebookTitleForLanguage(current, titleLanguage) : "";
+  const authors = current?.authors.filter(Boolean).slice(0, 2).join(", ") ?? "";
+  const meta = current
+    ? [current.year ? String(current.year) : "", ...current.genres.map(heroSubject)]
+        .map((value) => value.trim())
+        .filter(Boolean)
+        .filter((value, index, all) => all.indexOf(value) === index)
+        .filter((value) => !authors.toLowerCase().includes(value.toLowerCase()))
+        .slice(0, 3)
+    : [];
 
   useEffect(() => {
     if (paused || ebooks.length < 2 || !pageVisible) return;
@@ -1316,7 +1331,6 @@ function EBookLibraryHero({
   return (
     <section
       className="group ebook-library-hero"
-      style={{ "--ebook-hero-accent": artColor ?? "205 116 50" } as CSSProperties}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onContextMenu={(event) => current && openMenu(current, event)}
@@ -1333,54 +1347,47 @@ function EBookLibraryHero({
           aria-hidden="true"
           focusable="false"
         >
-          <defs>
-            <radialGradient id="ebookHeroPaperWash" cx="18%" cy="14%" r="58%">
-              <stop offset="0%" stopColor={`rgb(${artColor ?? "205 116 50"})`} stopOpacity="0.1" />
-              <stop offset="72%" stopColor="#f2eddf" stopOpacity="0" />
-            </radialGradient>
-          </defs>
-          <path
-            className="ebook-hero-paper-fill"
-            d="M0 0H790C930 0 1005 54 984 118C965 176 858 160 852 216C846 269 975 268 996 332C1018 399 933 467 806 520H0Z"
-          />
-          <path
-            className="ebook-hero-paper-wash"
-            d="M0 0H790C930 0 1005 54 984 118C965 176 858 160 852 216C846 269 975 268 996 332C1018 399 933 467 806 520H0Z"
-          />
+          <path d="M0 0H790C930 0 1005 54 984 118C965 176 858 160 852 216C846 269 975 268 996 332C1018 399 933 467 806 520H0Z" />
         </svg>
 
         <div className="ebook-hero-copy" style={fade}>
-          <span className="ebook-hero-kicker">Featured books · Metadata picks</span>
+          <span className="ebook-hero-kicker">Featured book</span>
           <h1>{currentTitle}</h1>
-          <p>
-            {current?.description ||
-              "A living shelf for new worlds, beloved stories, and the books you have yet to meet."}
-          </p>
-          <div className="ebook-hero-meta">
-            {current?.year && <span>{current.year}</span>}
-            {current?.genres.slice(0, 2).map((genre) => (
-              <span key={genre}>{genre}</span>
-            ))}
-          </div>
+          {authors && <p className="ebook-hero-byline">{authors}</p>}
+          {current?.description && <p>{current.description}</p>}
+          {meta.length > 0 && (
+            <div className="ebook-hero-meta">
+              {meta.map((part, index) => (
+                <Fragment key={part}>
+                  {index > 0 && <i aria-hidden>·</i>}
+                  <span>{part}</span>
+                </Fragment>
+              ))}
+            </div>
+          )}
           {current && (
             <button type="button" onClick={() => onOpen(current)}>
-              <BookOpen size={17} /> Open featured book
+              <BookOpen size={16} strokeWidth={2.6} /> Read now
             </button>
           )}
         </div>
 
-        <div className="ebook-hero-showcase" aria-hidden="true" style={fade}>
-          <div className="ebook-hero-book-shadow" />
+        <div className="ebook-hero-showcase" style={fade}>
+          <div className="ebook-hero-book-shadow" aria-hidden="true" />
           <div className="ebook-hero-book-object">
-            <div className="ebook-hero-book-pages" />
-            <Poster
-              src={current?.cover}
-              seed={`ebook-hero:${current?.id ?? "loading"}`}
-              ratio="portrait"
-              className="ebook-hero-book-cover"
-            />
+            {current && (
+              <EBookBook3D
+                cover={current.cover}
+                seed={`ebook-hero:${current.id}`}
+                title={currentTitle}
+                author={authors || undefined}
+                text={current.description}
+                imprint={current.providerName}
+                scale={1.9}
+                thickness={13}
+              />
+            )}
           </div>
-          <span className="ebook-hero-edition">Featured pick</span>
         </div>
       </div>
 
@@ -1660,23 +1667,26 @@ function EBookCard({
       onContextMenu={(event) => openMenu(ebook, event)}
       className="group flex w-full min-w-0 flex-col gap-2 text-start"
     >
-      <div className="ebook-card-showcase">
-        <div className="ebook-card-showcase-book">
-          <div className="ebook-card-showcase-rear" aria-hidden="true" />
-          <div className="ebook-card-showcase-pages" aria-hidden="true" />
-          <Poster
-            src={ebook.cover}
-            seed={`ebook:${ebook.id}`}
-            ratio="portrait"
-            lazy
-            className="ebook-card-showcase-cover harbor-card-ring"
-          />
-          {readStatus && <EBookReadMark status={readStatus} />}
-        </div>
-      </div>
+      <EBookBook3D
+        cover={ebook.cover}
+        seed={`ebook:${ebook.id}`}
+        title={displayTitle}
+        author={ebook.authors[0]}
+        text={ebook.description}
+        imprint={ebook.providerName}
+        thickness={7}
+        lazy
+      >
+        {readStatus && <EBookReadMark status={readStatus} />}
+      </EBookBook3D>
       <p className="line-clamp-2 min-h-9 text-[13px] font-medium leading-snug text-ink">
         {displayTitle}
       </p>
+      {ebook.authors.length > 0 && (
+        <p className="-mt-1 line-clamp-1 text-[12px] leading-snug text-ink-muted">
+          {ebook.authors.slice(0, 2).join(", ")}
+        </p>
+      )}
       <p className="text-[11.5px] text-ink-subtle">
         {[
           ebook.books?.length ? `${ebook.books.length} books` : null,

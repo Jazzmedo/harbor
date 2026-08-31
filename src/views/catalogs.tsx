@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Check, Pin, Puzzle, SlidersHorizontal, X } from "lucide-react";
+import { PencilOutlineIcon } from "@/components/icons/pencil-outline";
 import { Search } from "@/components/icons/search-icon";
 import { useAuth } from "@/lib/auth";
 import { listBrowseCatalogs, type BrowseCatalog } from "@/lib/catalog-browse";
@@ -100,7 +101,7 @@ export function Catalogs({ active = true }: { active?: boolean }) {
                     : "border border-edge-soft bg-elevated/40 text-ink-muted hover:bg-elevated hover:text-ink"
                 }`}
               >
-                {customize ? <Check size={16} /> : <SlidersHorizontal size={15} />}
+                {customize ? <Check size={16} /> : <PencilOutlineIcon size={14} />}
                 {customize ? t("Done") : t("Customize")}
               </button>
             )}

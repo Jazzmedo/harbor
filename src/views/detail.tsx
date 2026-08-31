@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
-import { Check, HardDrive, Pencil, Plus, RotateCcw } from "lucide-react";
+import { Check, HardDrive, Plus, RotateCcw } from "lucide-react";
 import { Play } from "@/components/icons/play-filled";
 import { animeDetails, type AnimeDetailExtras, type FranchiseEntry } from "@/lib/providers/anime-detail";
 import { isTextInLanguage } from "@/lib/providers/anime-episode-build";
@@ -59,6 +59,7 @@ import { profileFromDetail, trackEvent } from "@/lib/discover";
 import { MOVIE_GENRES, TV_GENRES } from "@/lib/feed/tags";
 import { useScrollMemory, useView, type PlayEpisode } from "@/lib/view";
 import { prefetchSegments } from "@/lib/skip-intro";
+import { PencilOutlineIcon } from "@/components/icons/pencil-outline";
 import { useT } from "@/lib/i18n";
 import { AddToListMenu } from "@/components/lists/add-to-list-menu";
 import { HoverTooltip } from "@/components/hover-tooltip";
@@ -2014,7 +2015,7 @@ export function DetailView({
                       : "bg-white/[0.06] text-ink-muted hover:bg-white/[0.10] hover:text-ink"
                   }`}
                 >
-                  <Pencil size={12} strokeWidth={2.4} />
+                  <PencilOutlineIcon size={12} />
                   {layoutEdit ? t("Done editing") : t("Customize layout")}
                 </button>
               </div>
