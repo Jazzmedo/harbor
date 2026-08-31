@@ -90,6 +90,7 @@ export function DpadRemote() {
   useRegisterSheet(confirm !== null && !confirmLeaving);
 
   const holdDir = useRef<Dir | null>(null);
+  const didHold = useRef(false);
   const holdTimer = useRef<number | undefined>(undefined);
   const holdDelay = useRef(340);
   const releaseTimer = useRef<number | undefined>(undefined);
@@ -97,6 +98,7 @@ export function DpadRemote() {
   const tick = () => {
     const dir = holdDir.current;
     if (!dir) return;
+    didHold.current = true;
     nav(dir);
     setHolding(true);
     holdDelay.current = Math.max(85, holdDelay.current - 42);
@@ -105,7 +107,7 @@ export function DpadRemote() {
 
   const startPress = (dir: Dir) => {
     window.clearTimeout(releaseTimer.current);
-    nav(dir);
+    didHold.current = false;
     setPressed(dir);
     holdDir.current = dir;
     holdDelay.current = 340;
@@ -173,9 +175,12 @@ export function DpadRemote() {
               key={dir}
               type="button"
               aria-label={dir}
-              onPointerDown={(e) => {
-                e.preventDefault();
+              onPointerDown={() => {
                 startPress(dir);
+              }}
+              onClick={() => {
+                if (!didHold.current) nav(dir);
+                didHold.current = false;
               }}
               onPointerUp={endPress}
               onPointerLeave={endPress}
@@ -232,11 +237,8 @@ export function DpadRemote() {
         <button
           type="button"
           aria-label="Select"
-          onPointerDown={(e) => {
-            e.preventDefault();
-            setOkDown(true);
-            nav("select");
-          }}
+          onPointerDown={() => setOkDown(true)}
+          onClick={() => nav("select")}
           onPointerUp={() => setOkDown(false)}
           onPointerLeave={() => setOkDown(false)}
           onPointerCancel={() => setOkDown(false)}
@@ -298,7 +300,7 @@ export function DpadRemote() {
             <Circle label="Rewind" onPress={() => sendCommand({ action: "seek", positionSec: Math.max(0, snapshot.positionSec - 10) })}>
               <RemoteIcon name="previous" size={26} />
             </Circle>
-            <Circle label={playing ? "Pause" : "Play"} big onPress={() => sendCommand({ action: playing ? "pause" : "play" })}>
+            <Circle label={playing ? "Pause" : "Play"} big onPress={() => sendCommand({ action: "togglePlayback" })}>
               {playing ? <RemoteIcon name="pause" size={32} /> : <RemoteIcon name="play" size={32} />}
             </Circle>
             <Circle label="Forward" onPress={() => sendCommand({ action: "seek", positionSec: snapshot.positionSec + 10 })}>
@@ -436,7 +438,7 @@ function ProviderCard({ svc, service, onPress }: { svc: StreamingService; servic
   );
 }
 
-function ConfirmLeave({
+export function ConfirmLeave({
   snapshot,
   reduced,
   leaving,

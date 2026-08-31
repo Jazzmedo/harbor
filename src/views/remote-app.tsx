@@ -8,6 +8,8 @@ import type { CastDeviceInfo } from "@/lib/cast";
 import { useKeyboardNavigation } from "@/lib/keyboard-navigation";
 import { useRemoteClient } from "@/lib/remote/use-remote-client";
 import type { RemoteCastDevice, RemoteNavKey, RemoteSnapshot, RemoteTextEntry } from "@/lib/remote/protocol";
+import { ConfirmLeave } from "@/views/mobile/dpad-remote";
+import { useRegisterSheet } from "@/views/mobile/mobile-sheet-lock";
 
 function toCastDevice(d: RemoteCastDevice): CastDeviceInfo {
   return {
@@ -747,6 +749,11 @@ export function RemoteApp() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [wasConnected, setWasConnected] = useState(false);
   const [showDisconnected, setShowDisconnected] = useState(false);
+  const [confirmBack, setConfirmBack] = useState(false);
+  const reduced = typeof window !== "undefined" &&
+    !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const watching = !!snapshot.mediaId && !snapshot.idle;
+  useRegisterSheet(confirmBack);
 
   useEffect(() => {
     if (status === "connected") {
@@ -769,10 +776,16 @@ export function RemoteApp() {
       closeSheet();
       return true;
     }
-    // Drive the host display back — don't navigate the phone away from /remote.
-    sendCommand({ action: "nav", key: "back" });
+    // Confirm on the phone before asking the host player to leave playback.
+    if (watching) setConfirmBack(true);
+    else sendCommand({ action: "nav", key: "back" });
     return true;
-  }, [sheetOpen, closeSheet, sendCommand]);
+  }, [sheetOpen, closeSheet, sendCommand, watching]);
+
+  const onNav = useCallback((key: RemoteNavKey) => {
+    if (key === "back" && watching) setConfirmBack(true);
+    else sendCommand({ action: "nav", key });
+  }, [sendCommand, watching]);
 
   useKeyboardNavigation({ wrap: false, onBack });
 
@@ -836,7 +849,7 @@ export function RemoteApp() {
               onMute={() => sendCommand({ action: "setMuted", muted: !snapshot.muted })}
               onPrevEpisode={() => sendCommand({ action: "prevEpisode" })}
               onNextEpisode={() => sendCommand({ action: "nextEpisode" })}
-              onNav={(key) => sendCommand({ action: "nav", key })}
+              onNav={onNav}
               onSetText={(value) => sendCommand({ action: "setText", value })}
               onSubmitText={(value) => sendCommand({ action: "submitText", value })}
               onBlurText={() => sendCommand({ action: "blurText" })}
@@ -857,6 +870,18 @@ export function RemoteApp() {
               setSheetOpen(false);
             }}
           />
+          {confirmBack && (
+            <ConfirmLeave
+              snapshot={snapshot}
+              reduced={reduced}
+              leaving={false}
+              onCancel={() => setConfirmBack(false)}
+              onConfirm={() => {
+                sendCommand({ action: "nav", key: "back" });
+                setConfirmBack(false);
+              }}
+            />
+          )}
         </>
       )}
     </div>
