@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Bookmark, Check, Eye, Hash, MoveVertical, Popcorn } from "lucide-react";
+import { Bookmark, Eye, Hash, MoveVertical, Popcorn } from "lucide-react";
 import { useHydratedPoster, useSampleArtwork } from "@/lib/sample-artwork";
 import previewPoster3 from "@/assets/preview/poster3.webp";
 import letterboxdLogo from "@/assets/addon-logos/letterboxd.png";
@@ -223,7 +223,7 @@ function Choice({
   );
 }
 
-function WatchlistControl({
+export function WatchlistControl({
   value,
   onChange,
 }: {
@@ -345,18 +345,6 @@ export function CardBadgesPanel({
         </div>
       </SettingRow>
 
-      <WatchlistControl
-        value={settings.watchlistBadge}
-        onChange={(v) => update({ watchlistBadge: v })}
-      />
-
-      <ToggleRow
-        label={t("Watched badge")}
-        sub={t("Puts a check on titles you have already finished.")}
-        leading={<Check size={16} strokeWidth={2.6} className="text-ink-muted" />}
-        value={settings.showWatchedBadge}
-        onChange={(v) => update({ showWatchedBadge: v })}
-      />
     </div>
   );
 }

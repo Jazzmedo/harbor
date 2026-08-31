@@ -1,17 +1,32 @@
+import { AlertTriangle } from "lucide-react";
+import { useEffect, useState } from "react";
 import { isWindowsDesktop } from "@/lib/platform";
+import { probeMpv, type MpvProbe } from "@/lib/player/mpv";
 import { useSettings } from "@/lib/settings";
 import { useT } from "@/lib/i18n";
 import { SettingGroup } from "../kit";
 import { ToggleRow } from "../shared";
 import { BandwidthInput } from "./bandwidth-section";
 import { ChoiceBlock, Tag } from "./choice";
-import { DesktopOnlyBlock } from "./internals";
+import { DesktopOnlyBlock, isTauri } from "./internals";
 import { HdrModePicker } from "./hdr-mode";
 import { DisplayPanelSelector } from "./display-panel-selector";
 
 export function PlayerEnginePanel() {
   const { settings, update } = useSettings();
   const t = useT();
+  const [mpvProbe, setMpvProbe] = useState<MpvProbe | null>(null);
+
+  useEffect(() => {
+    if (!isTauri) return;
+    let cancelled = false;
+    void probeMpv().then((p) => {
+      if (!cancelled) setMpvProbe(p);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const choices: Array<{
     id: "auto" | "html5" | "mpv";
@@ -33,7 +48,7 @@ export function PlayerEnginePanel() {
     {
       id: "mpv",
       label: "mpv",
-      sub: t("Bundled with Harbor. Plays anything you throw at it."),
+      sub: t("Harbor's full video engine. Plays anything you throw at it."),
     },
   ];
 
@@ -51,6 +66,23 @@ export function PlayerEnginePanel() {
               tags={c.recommended ? <Tag accent text={t("Recommended")} /> : undefined}
             />
           ))}
+          {mpvProbe && !mpvProbe.available && (
+            <div className="flex items-start gap-2.5 rounded-md bg-elevated px-4 py-3.5 text-[12.5px] leading-relaxed text-ink">
+              <AlertTriangle size={14} strokeWidth={2.4} className="mt-[2px] shrink-0 text-danger" />
+              <span className="flex min-w-0 flex-1 flex-col gap-2">
+                <span>
+                  {t(
+                    "libmpv did not load, so playback falls back to HTML5 and formats like MKV may refuse to play. On Linux, install your distribution's libmpv package, then restart Harbor.",
+                  )}
+                </span>
+                {mpvProbe.error && (
+                  <span className="break-words rounded-md bg-canvas px-2.5 py-1.5 font-mono text-[11.5px] text-ink-subtle ring-1 ring-inset ring-edge-soft">
+                    {mpvProbe.error}
+                  </span>
+                )}
+              </span>
+            </div>
+          )}
           <ToggleRow
             label={t("Embed mpv inside Harbor window")}
             sub={t("Renders mpv inline so playback lives in Harbor itself. Disable to open it in a separate window instead.")}

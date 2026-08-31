@@ -422,6 +422,7 @@ export const DEFAULT: Settings = {
   fullscreenClockStyle: "glass",
   fullscreenClockShowSeconds: false,
   fullscreenClockShowEndTime: true,
+  fullscreenClockWindowed: false,
   fullscreenClockSizePx: DEFAULT_FULLSCREEN_CLOCK_SIZE_PX,
   hybridTitleBar: false,
   topbarScrollBlur: false,

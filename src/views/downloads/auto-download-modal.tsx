@@ -61,7 +61,7 @@ export function AutoDownloadModal({ onClose }: { onClose: () => void }) {
               Auto-download
             </h2>
             <p className="text-[13px] leading-snug text-ink-muted">
-              New episodes grab themselves in the background
+              Episodes that air after you add a series grab themselves
             </p>
           </div>
           <div className="flex shrink-0 items-center gap-1.5">

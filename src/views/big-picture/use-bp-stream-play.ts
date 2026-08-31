@@ -6,6 +6,7 @@ import { useSettings } from "@/lib/settings";
 import type { ScoredStream } from "@/lib/streams/types";
 import { useTogether } from "@/lib/together/provider";
 import { useView, type PlayEpisode, type PlayerSrc } from "@/lib/view";
+import { isLivePlaybackSrc } from "@/lib/player/live-src";
 import { humanError, streamIdentity } from "@/views/play-picker/picker-utils";
 import { useAutoCandidates } from "@/views/play-picker/use-auto-candidates";
 import { useAutoFire } from "@/views/play-picker/use-auto-fire";
@@ -16,7 +17,6 @@ import type { BpStreams } from "./use-bp-streams";
 const ANIME_ID_RE = /^(kitsu|mal|anilist|anidb):/;
 const RESOLVE_TIMEOUT_MS = 150_000;
 const AUTO_GIVEUP_MS = 45_000;
-const LIVE_TYPES = ["movie", "series", "anime"];
 
 export type BpStreamPlay = {
   play: (s: ScoredStream) => void;
@@ -94,7 +94,7 @@ export function useBpStreamPlay(params: {
   const season = isAnimeMetaId ? null : (episode?.season ?? null);
   const episodeNo = isAnimeMetaId ? null : (episode?.episode ?? null);
 
-  const isLiveLike = !!meta.type && !LIVE_TYPES.includes(String(meta.type).toLowerCase());
+  const isLiveLike = isLivePlaybackSrc({ meta });
   // onPick means the caller owns playback (switch source), so auto-fire must not
   // reach past it into openPlayer and start a second session.
   const autoActive =

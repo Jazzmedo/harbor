@@ -114,6 +114,9 @@ export function useGamepad(): void {
   const playerRef = useRef(!!player);
   playerRef.current = !!player;
 
+  const backgroundInputRef = useRef(backgroundInput);
+  backgroundInputRef.current = backgroundInput;
+
   useEffect(() => {
     if (!isTauri || !enabled) return;
 
@@ -252,6 +255,7 @@ export function useGamepad(): void {
         webPads = pads;
         publishMerged();
       },
+      inputAllowed: () => backgroundInputRef.current || document.hasFocus(),
     });
 
     return () => {

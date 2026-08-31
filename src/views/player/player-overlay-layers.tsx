@@ -169,6 +169,7 @@ export type PlayerOverlayLayersProps = {
   streamPillVariant: Pill["variant"] | null;
   mpvEmbedWindowsActive: boolean;
   setStreamCheckOpen: (v: boolean) => void;
+  dismissStreamPill: () => void;
   dvrOpen: boolean;
   setSwitcherOpen: (fn: (v: boolean) => boolean) => void;
   onSwitchStream: Switcher["onPick"];
@@ -444,7 +445,9 @@ export const PlayerOverlayLayers = memo(function PlayerOverlayLayers(p: PlayerOv
           visible
           compact={p.mpvEmbedWindowsActive}
           live={p.liveOverlay.isLive}
-          onLooksGood={p.streamPillVariant === "check" ? () => p.setStreamCheckOpen(false) : undefined}
+          onDismiss={
+            p.streamPillVariant === "check" ? () => p.setStreamCheckOpen(false) : p.dismissStreamPill
+          }
           onPickAnother={p.pickAnotherOrGuide}
         />
       )}

@@ -480,6 +480,7 @@ export type Settings = {
   fullscreenClockStyle: FullscreenClockStyle;
   fullscreenClockShowSeconds: boolean;
   fullscreenClockShowEndTime: boolean;
+  fullscreenClockWindowed: boolean;
   fullscreenClockSizePx: number;
   hybridTitleBar: boolean;
   topbarScrollBlur: boolean;
