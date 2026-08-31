@@ -108,7 +108,7 @@ export function EpisodePanel({
       source: "manual",
       playLocal: (e, o) => {
         onClose();
-        replacePlayerSrc({ ...localPlayerSrc(e), startFromZero: o?.fromStart });
+        replacePlayerSrc({ ...localPlayerSrc(e, undefined, ep), startFromZero: o?.fromStart });
       },
       playStream: streamFlow,
       setMode: (m) => update({ localPlaybackMode: m }),
