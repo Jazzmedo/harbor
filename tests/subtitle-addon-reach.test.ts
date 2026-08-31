@@ -4,7 +4,11 @@ import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 // @ts-expect-error Node test types are intentionally outside the browser-only tsconfig.
 import test from "node:test";
-import { filterTracksByPreferredLanguage } from "../src/lib/subtitles/language.ts";
+import {
+  filterTracksByPreferredLanguage,
+  isKnownLanguage,
+} from "../src/lib/subtitles/language.ts";
+import { subtitleLanguage } from "../src/lib/local-library/player-src.ts";
 
 const src = readFileSync(
   new URL("../src/lib/subtitles/providers/addons.ts", import.meta.url),
@@ -133,11 +137,22 @@ test("the subtitle menu only keeps configured languages", () => {
     { id: "ar", lang: "Arabic" },
     { id: "es", lang: "spa" },
     { id: "fr", lang: "French" },
+    { id: "untagged" },
   ];
   assert.deepEqual(
     filterTracksByPreferredLanguage(tracks, ["English", "Arabic"]).map((track) => track.id),
-    ["en", "ar"],
+    ["en", "ar", "untagged"],
   );
+});
+
+test("release suffixes are not mistaken for subtitle language tags", () => {
+  assert.equal(isKnownLanguage("eng"), true);
+  assert.equal(isKnownLanguage("en"), true);
+  assert.equal(isKnownLanguage("in"), true);
+  const video = "/movies/The.Imitation.Game.2014-Pahe.in.mkv";
+  assert.equal(subtitleLanguage(video, "/movies/The.Imitation.Game.2014-Pahe.in.srt"), undefined);
+  assert.equal(subtitleLanguage(video, "/movies/The.Imitation.Game.2014-Pahe.in.en.srt"), "en");
+  assert.equal(subtitleLanguage(video, "/movies/The.Imitation.Game.2014-Pahe.in.in.srt"), "id");
 });
 
 test("the configured languages reach the separate subtitle popup", () => {
