@@ -62,7 +62,7 @@ export function parseStream(stream: Stream): ParsedStream {
   const season = span?.season ?? ptt.season ?? null;
   const episode = span?.episode ?? ptt.episode ?? null;
   const episodeEnd = span?.episodeEnd ?? episode;
-  const seasonPack = parseSeasonPack(text, ptt);
+  const seasonPack = parseSeasonPack(text, ptt, filenameLine);
   const discIndex = parseDisc(text);
   const repackIteration = parseRepackIteration(text, ptt);
   const proper = ptt.proper === true;

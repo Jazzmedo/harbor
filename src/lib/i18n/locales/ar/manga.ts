@@ -63,7 +63,6 @@ const manga: Record<string, string> = {
   Creators: "المبدعون",
   "Custom source": "مصدر مخصّص",
   Dark: "داكن",
-  "Data from MangaUpdates": "البيانات من MangaUpdates",
   "Delete download": "حذف التنزيل",
   Direction: "الاتجاه",
   "Do it once on a browse page, once on a series page, once in the reader.":

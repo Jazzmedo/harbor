@@ -32,6 +32,7 @@ import { EditLayoutCard, FooterBar, ThemeTabs } from "./panel-bars";
 import { useChromeEdits } from "./use-chrome-edits";
 import { AdvisoryPreview } from "./advisory-preview";
 import { SeekBarPanel } from "../player-panel";
+import { FullscreenClockSettings } from "../theme-panel/fullscreen-clock-settings";
 import { Section, ToggleRow } from "../shared";
 import { pushActivityHint } from "@/lib/discord/activity-hint";
 import { useT } from "@/lib/i18n";
@@ -310,6 +311,13 @@ export function PlayerLayoutPanel() {
           onChange={(v) => update({ contentAdvisoryToast: v })}
           preview={<AdvisoryPreview />}
         />
+      </Section>
+
+      <Section
+        title={t("Fullscreen clock")}
+        subtitle={t("Keep your local time visible during fullscreen playback and choose how it looks.")}
+      >
+        <FullscreenClockSettings />
       </Section>
 
       <Section

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Award, Check, Eye, Tag } from "lucide-react";
+import { Award, Check, Eye, HardDrive, Tag, Trophy, Type } from "lucide-react";
 import { useSettings } from "@/lib/settings";
 import { useT } from "@/lib/i18n";
 import { Section, Segmented, ToggleRow } from "../shared";
@@ -8,7 +8,7 @@ import { SongCardStylePicker } from "../song-card-style-picker";
 import { HoverStyleGallery } from "../hover-style-preview";
 import { CardOverlayPreview } from "../card-overlay-preview";
 import { RatingsMatrix } from "../ratings-matrix";
-import { CardBadgesPanel, type PreviewFlags } from "../card-badges-panel";
+import { CardBadgesPanel, WatchlistControl, type PreviewFlags } from "../card-badges-panel";
 
 export function CardsTab() {
   const { settings, update } = useSettings();
@@ -48,147 +48,137 @@ export function CardsTab() {
 
   return (
     <>
-      <Section title={t("What shows on a card")}>
-        <SettingGroup label={t("Card overlays")}>
-          <CardOverlayPreview />
-          <ToggleRow
-            label={t("Show tags on cards")}
-            leading={
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-canvas text-ink-muted">
-                <Tag size={18} strokeWidth={2} />
-              </span>
-            }
-            sub={t(
-              "The New, In Cinema, Rerun, and Awards chips. Turn off for a cleaner grid. Score chips are separate, below.",
-            )}
-            value={settings.showCardBadges}
-            onChange={(v) => update({ showCardBadges: v })}
-          />
-          <ToggleRow
-            label={t("Award tab on cards")}
-            newId="library:award-tab"
-            sub={t(
-              "Show a laurel award tab on winning titles, like Netflix. Replaces the corner award chip and sits centered so it clears the rating and watchlist pills. Pick where it sits below.",
-            )}
-            value={settings.awardTabs}
-            onChange={(v) => update({ awardTabs: v })}
-          />
-          {settings.awardTabs && (
-            <Nested>
-              <SettingRow icon={<Award size={16} />} label={t("Award tab position")}>
-                <Segmented
-                  value={settings.awardTabPosition}
-                  options={[
-                    { value: "above", label: t("Above ratings") },
-                    { value: "below", label: t("Below ratings") },
-                    { value: "top", label: t("Top of card") },
-                  ]}
-                  onChange={(v) => update({ awardTabPosition: v as "above" | "below" | "top" })}
-                />
-              </SettingRow>
-            </Nested>
+      <Section title={t("On the poster")}>
+        <CardOverlayPreview />
+        <ToggleRow
+          label={t("Show tags on cards")}
+          leading={<Tag size={16} strokeWidth={2.2} className="text-ink-muted" />}
+          sub={t(
+            "The New, In Cinema, Rerun, and Awards chips. Turn off for a cleaner grid. Score chips are separate, below.",
           )}
-          <ToggleRow
-            label={t("Top 10 ribbon")}
-            newId="library:top-10"
-            sub={t(
-              "A TOP 10 corner ribbon on the Top 10 rail posters. The watchlist marker auto-moves to the opposite corner so nothing overlaps.",
-            )}
-            value={settings.top10Ribbon}
-            onChange={(v) => update({ top10Ribbon: v })}
-          />
-          {settings.top10Ribbon && (
-            <Nested>
-              <SettingRow label={t("Ribbon corner")}>
-                <Segmented
-                  value={settings.top10RibbonSide}
-                  options={[
-                    { value: "left", label: t("Top left") },
-                    { value: "right", label: t("Top right") },
-                  ]}
-                  onChange={(v) => update({ top10RibbonSide: v as "left" | "right" })}
-                />
-              </SettingRow>
-            </Nested>
+          value={settings.showCardBadges}
+          onChange={(v) => update({ showCardBadges: v })}
+        />
+        <ToggleRow
+          label={t("Award tab on cards")}
+          newId="library:award-tab"
+          leading={<Award size={16} strokeWidth={2.2} className="text-ink-muted" />}
+          sub={t(
+            "Show a laurel award tab on winning titles, like Netflix. Replaces the corner award chip and sits centered so it clears the rating and watchlist pills. Pick where it sits below.",
           )}
-          <ToggleRow
-            label={t("Mark watched button")}
-            leading={
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-success/15 text-success">
-                <Check size={18} strokeWidth={2.6} />
-              </span>
-            }
-            sub={t(
-              "Show a button on the detail page to mark a title or episode as watched. Syncs to Trakt and Simkl if connected.",
-            )}
-            value={settings.showWatchedButton}
-            onChange={(v) => update({ showWatchedButton: v })}
-          />
-        </SettingGroup>
-
-        <SettingGroup label={t("Score badges on cards")}>
-          <RatingsMatrix settings={settings} update={update} />
-          <CardBadgesPanel
-            settings={settings}
-            update={update}
-            flags={badgeFlags}
-            enabledBadgeCount={enabledBadgeCount}
-          />
-        </SettingGroup>
-
-        <SettingGroup label={t("Anime")}>
-          {settings.showMalBadge && (
-            <SettingRow
-              label={t("Anime card rating source")}
-              desc={t(
-                "Pick which score anime cards show. IMDb falls back to MAL when a title has no IMDb rating yet.",
-              )}
-            >
+          value={settings.awardTabs}
+          onChange={(v) => update({ awardTabs: v })}
+        />
+        {settings.awardTabs && (
+          <Nested>
+            <SettingRow label={t("Award tab position")}>
               <Segmented
-                value={settings.animeCardRating}
+                value={settings.awardTabPosition}
                 options={[
-                  { value: "mal", label: t("MAL") },
-                  { value: "imdb", label: t("IMDb") },
+                  { value: "above", label: t("Above ratings") },
+                  { value: "below", label: t("Below ratings") },
+                  { value: "top", label: t("Top of card") },
                 ]}
-                onChange={(v) => update({ animeCardRating: v as "mal" | "imdb" })}
+                onChange={(v) => update({ awardTabPosition: v as "above" | "below" | "top" })}
               />
             </SettingRow>
+          </Nested>
+        )}
+        <ToggleRow
+          label={t("Top 10 ribbon")}
+          newId="library:top-10"
+          leading={<Trophy size={16} strokeWidth={2.2} className="text-ink-muted" />}
+          sub={t(
+            "A TOP 10 corner ribbon on the Top 10 rail posters. The watchlist marker auto-moves to the opposite corner so nothing overlaps.",
           )}
-          <ToggleRow
-            label={t("Show DUB badge on anime cards")}
-            leading={
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center">
-                <span className="rounded-md bg-accent-soft px-1.5 py-1 text-[10.5px] font-extrabold uppercase tracking-[0.12em] text-canvas">
-                  DUB
-                </span>
-              </span>
-            }
-            sub={t(
-              "Flags anime with an English dub. Also tags dub / sub / dual on stream sources.",
-            )}
-            value={settings.showDubBadge}
-            onChange={(v) => update({ showDubBadge: v })}
-          />
-        </SettingGroup>
+          value={settings.top10Ribbon}
+          onChange={(v) => update({ top10Ribbon: v })}
+        />
+        {settings.top10Ribbon && (
+          <Nested>
+            <SettingRow label={t("Ribbon corner")}>
+              <Segmented
+                value={settings.top10RibbonSide}
+                options={[
+                  { value: "left", label: t("Top left") },
+                  { value: "right", label: t("Top right") },
+                ]}
+                onChange={(v) => update({ top10RibbonSide: v as "left" | "right" })}
+              />
+            </SettingRow>
+          </Nested>
+        )}
+        <WatchlistControl
+          value={settings.watchlistBadge}
+          onChange={(v) => update({ watchlistBadge: v })}
+        />
+        <ToggleRow
+          label={t("Watched badge")}
+          sub={t("Puts a check on titles you have already finished.")}
+          leading={<Check size={16} strokeWidth={2.6} className="text-ink-muted" />}
+          value={settings.showWatchedBadge}
+          onChange={(v) => update({ showWatchedBadge: v })}
+        />
+        <ToggleRow
+          label={t("Show an “on disk” badge on cards")}
+          leading={<HardDrive size={16} strokeWidth={2.2} className="text-ink-muted" />}
+          sub={t(
+            "Marks movies and shows across Home, the catalogs, and detail pages when a matching file already exists in your local library.",
+          )}
+          value={settings.showLocalLibraryBadge}
+          onChange={(v) => update({ showLocalLibraryBadge: v })}
+        />
+        <ToggleRow
+          label={t("Show DUB badge on anime cards")}
+          leading={
+            <span className="rounded bg-accent-soft px-1 py-0.5 text-[9px] font-extrabold uppercase tracking-[0.1em] text-canvas">
+              DUB
+            </span>
+          }
+          sub={t("Flags anime with an English dub. Also tags dub / sub / dual on stream sources.")}
+          value={settings.showDubBadge}
+          onChange={(v) => update({ showDubBadge: v })}
+        />
+      </Section>
 
-        <SettingGroup label={t("Titles")}>
-          <ToggleRow
-            label={t("Hide titles under posters")}
-            sub={t("Cleaner grid when your poster service already prints the title on the artwork.")}
-            value={settings.hidePosterTitles}
-            onChange={(v) => update({ hidePosterTitles: v })}
-          />
-          <ToggleRow
-            label={t("Show an “on disk” badge on cards")}
-            sub={t("Marks movies and shows across Home, the catalogs, and detail pages when a matching file already exists in your local library.")}
-            value={settings.showLocalLibraryBadge}
-            onChange={(v) => update({ showLocalLibraryBadge: v })}
-          />
-        </SettingGroup>
+      <Section title={t("Scores")}>
+        <RatingsMatrix settings={settings} update={update} />
+        <CardBadgesPanel
+          settings={settings}
+          update={update}
+          flags={badgeFlags}
+          enabledBadgeCount={enabledBadgeCount}
+        />
+        {settings.showMalBadge && (
+          <SettingRow
+            label={t("Anime card rating source")}
+            desc={t(
+              "Pick which score anime cards show. IMDb falls back to MAL when a title has no IMDb rating yet.",
+            )}
+          >
+            <Segmented
+              value={settings.animeCardRating}
+              options={[
+                { value: "mal", label: t("MAL") },
+                { value: "imdb", label: t("IMDb") },
+              ]}
+              onChange={(v) => update({ animeCardRating: v as "mal" | "imdb" })}
+            />
+          </SettingRow>
+        )}
+      </Section>
+
+      <Section title={t("Titles")}>
+        <ToggleRow
+          label={t("Hide titles under posters")}
+          leading={<Type size={16} strokeWidth={2.2} className="text-ink-muted" />}
+          sub={t("Cleaner grid when your poster service already prints the title on the artwork.")}
+          value={settings.hidePosterTitles}
+          onChange={(v) => update({ hidePosterTitles: v })}
+        />
       </Section>
 
       <SongCardStylePicker />
-
       <Section
         title={t("Hover preview")}
         subtitle={t("Rest the cursor on a poster to peek at it without opening. Off by default.")}

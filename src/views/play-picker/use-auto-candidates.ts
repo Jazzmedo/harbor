@@ -2,7 +2,12 @@ import { useMemo } from "react";
 import { isStreamDead } from "@/lib/dead-streams";
 import { engineP2pEligible } from "@/lib/torrent/stremio-stream";
 import type { ScoredStream } from "@/lib/streams/types";
-import { streamMatchesEntry, streamMatchesSource, type PlaybackEntry } from "@/lib/playback-history";
+import {
+  streamMatchesEntry,
+  streamMatchesReleaseLineage,
+  streamMatchesSource,
+  type PlaybackEntry,
+} from "@/lib/playback-history";
 import type { SourceDescriptor } from "@/lib/together/protocol";
 import { buildMatchScores } from "@/lib/together/source-match";
 import { hostSourceStream } from "@/lib/together/host-stream";
@@ -17,6 +22,7 @@ export function useAutoCandidates(args: {
   filteredPicker: { all: ScoredStream[]; allRaw: ScoredStream[]; primary: ScoredStream | null } | null;
   previousPlayback: PlaybackEntry | null;
   sourceEntry: PlaybackEntry | null;
+  sourceEntryLineage?: boolean;
   isCached: (s: ScoredStream) => boolean;
   addons: Array<{ manifest?: { id?: string } }> | null;
   hasStrongAddon: boolean;
@@ -32,7 +38,7 @@ export function useAutoCandidates(args: {
   isAnime?: boolean;
   filterDisabled?: boolean;
 }): ScoredStream[] {
-  const { filteredPicker, previousPlayback, sourceEntry, isCached, addons, hasStrongAddon, isTorrentioStream, preferredLangs, hostSource, prefer1080, preferPacks, season, episode, expectedTitle, expectedTitles, isAnime, filterDisabled } = args;
+  const { filteredPicker, previousPlayback, sourceEntry, sourceEntryLineage, isCached, addons, hasStrongAddon, isTorrentioStream, preferredLangs, hostSource, prefer1080, preferPacks, season, episode, expectedTitle, expectedTitles, isAnime, filterDisabled } = args;
   return useMemo(() => {
     const hostFallback = (): ScoredStream[] => {
       if (!hostSource) return [];
@@ -141,8 +147,9 @@ export function useAutoCandidates(args: {
       seen.add(k);
       out.push(s);
     };
-     const sourceMatch =
-      sourceEntry ? filteredPicker.allRaw.find((s) => streamMatchesSource(s, sourceEntry)) ?? null : null;
+    const matchSource = sourceEntryLineage ? streamMatchesReleaseLineage : streamMatchesSource;
+    const sourceMatch =
+      sourceEntry ? filteredPicker.allRaw.find((s) => matchSource(s, sourceEntry)) ?? null : null;
     const instantPlayable = (s: ScoredStream | null) => !!s && (isCached(s) || !!s.url);
     if (!matchScores) {
       if (instantPlayable(sourceMatch)) push(sourceMatch);
@@ -159,5 +166,5 @@ export function useAutoCandidates(args: {
       if (ownBest) return [ownBest];
     }
     return [];
-  }, [filteredPicker, previousPlayback, sourceEntry, isCached, addons, hasStrongAddon, isTorrentioStream, preferredLangs, hostSource, prefer1080, preferPacks, season, episode, expectedTitle, expectedTitles, isAnime, filterDisabled]);
+  }, [filteredPicker, previousPlayback, sourceEntry, sourceEntryLineage, isCached, addons, hasStrongAddon, isTorrentioStream, preferredLangs, hostSource, prefer1080, preferPacks, season, episode, expectedTitle, expectedTitles, isAnime, filterDisabled]);
 }

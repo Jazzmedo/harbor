@@ -30,6 +30,7 @@ const isTauri = typeof window !== "undefined" && "__TAURI_INTERNALS__" in window
 
 const RETENTIONS: Array<{ h: number; label: string }> = [
   { h: 0, label: "Off" },
+  { h: 12, label: "12 hours" },
   { h: 24, label: "1 day" },
   { h: 72, label: "3 days" },
   { h: 168, label: "1 week" },
@@ -39,6 +40,7 @@ const RETENTIONS: Array<{ h: number; label: string }> = [
 const CACHE_LIMITS: Array<{ gb: number; label: string }> = [
   { gb: 0, label: "Unlimited" },
   { gb: 10, label: "10 GB" },
+  { gb: 20, label: "20 GB" },
   { gb: 25, label: "25 GB" },
   { gb: 50, label: "50 GB" },
   { gb: 100, label: "100 GB" },
@@ -80,6 +82,8 @@ export function StreamCacheSection() {
 
   const retention = settings.streamCacheRetentionHours;
   const maxGb = settings.streamCacheMaxGb;
+  const knownRetention = RETENTIONS.some((r) => r.h === retention);
+  const knownMaxGb = CACHE_LIMITS.some((c) => c.gb === maxGb);
   const customDir = settings.streamCacheDir;
   const cachePath = useCachePath(customDir);
 
@@ -137,7 +141,12 @@ export function StreamCacheSection() {
             value={String(retention)}
             onChange={(v) => setRetention(Number(v))}
             className="w-[200px] shrink-0"
-            options={RETENTIONS.map((r) => ({ value: String(r.h), label: t(r.label) }))}
+            options={[
+              ...RETENTIONS.map((r) => ({ value: String(r.h), label: t(r.label) })),
+              ...(knownRetention
+                ? []
+                : [{ value: String(retention), label: t("{n} hours", { n: retention }) }]),
+            ]}
           />
         </SettingRow>
 
@@ -154,7 +163,10 @@ export function StreamCacheSection() {
             value={String(maxGb)}
             onChange={(v) => setMaxGb(Number(v))}
             className="w-[200px] shrink-0"
-            options={CACHE_LIMITS.map((c) => ({ value: String(c.gb), label: t(c.label) }))}
+            options={[
+              ...CACHE_LIMITS.map((c) => ({ value: String(c.gb), label: t(c.label) })),
+              ...(knownMaxGb ? [] : [{ value: String(maxGb), label: t("{n} GB", { n: maxGb }) }]),
+            ]}
           />
         </SettingRow>
 

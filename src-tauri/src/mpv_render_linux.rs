@@ -56,6 +56,8 @@ struct Embed {
     gtk_window: gtk::ApplicationWindow,
     vbox: gtk::Box,
     web_view: gtk::Widget,
+    render: Rc<RefCell<Option<RenderContext>>>,
+    window_was_app_paintable: bool,
 }
 
 thread_local! {
@@ -267,6 +269,7 @@ pub fn install(gtk_window: &gtk::ApplicationWindow, vbox: &gtk::Box) -> Result<(
         .with(|slot| slot.borrow_mut().take())
         .ok_or_else(|| "no pending mpv ctx for linux install".to_string())?;
 
+    let window_was_app_paintable = gtk_window.is_app_paintable();
     apply_rgba_visual(gtk_window);
     let web_view = vbox
         .children()
@@ -303,6 +306,7 @@ pub fn install(gtk_window: &gtk::ApplicationWindow, vbox: &gtk::Box) -> Result<(
     overlay.show_all();
 
     let render_cell: Rc<RefCell<Option<RenderContext>>> = Rc::new(RefCell::new(None));
+    let render_slot = render_cell.clone();
     let mpv = pending.mpv;
     let backend = pending.backend;
     let display_native = pending.display_native;
@@ -310,11 +314,10 @@ pub fn install(gtk_window: &gtk::ApplicationWindow, vbox: &gtk::Box) -> Result<(
     // Invalidate cached FBO dimensions on GLArea resize so the next
     // render call re-queries the physical GPU dimensions. This avoids
     // synchronous GL queries on every frame.
-    let area_clone = area.clone();
-    area.connect_resize(move |_a, _w, _h| {
+    area.connect_resize(|a, _w, _h| {
         FBO_WIDTH.store(-1, Ordering::Relaxed);
         FBO_HEIGHT.store(-1, Ordering::Relaxed);
-        area_clone.queue_render();
+        a.queue_render();
     });
 
     area.connect_render(move |area, _ctx| {
@@ -344,6 +347,8 @@ pub fn install(gtk_window: &gtk::ApplicationWindow, vbox: &gtk::Box) -> Result<(
             gtk_window: gtk_window.clone(),
             vbox: vbox.clone(),
             web_view,
+            render: render_slot,
+            window_was_app_paintable,
         })
     });
 
@@ -463,6 +468,10 @@ pub fn uninstall() -> Result<(), String> {
 }
 
 fn restore_webview(embed: Embed) {
+    if embed.render.borrow().is_some() && embed.area.is_realized() {
+        embed.area.make_current();
+    }
+    *embed.render.borrow_mut() = None;
     set_webview_opaque(&embed.web_view);
     if let Some(parent) = embed.web_view.parent() {
         if let Some(container) = parent.downcast_ref::<gtk::Container>() {
@@ -483,7 +492,9 @@ fn restore_webview(embed: Embed) {
     if embed.vbox.parent().is_none() {
         embed.gtk_window.add(&embed.vbox);
     }
+    embed.gtk_window.set_app_paintable(embed.window_was_app_paintable);
     embed.vbox.show_all();
+    embed.gtk_window.queue_draw();
 }
 
 fn schedule_redraw() {

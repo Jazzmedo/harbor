@@ -189,8 +189,6 @@ const settings: Record<string, string> = {
   "Groq API key (gsk-...)": "API-ключ Groq (gsk-...)",
   "Group Refresh on the left beside Back instead of the far right of the header.":
     "Разместить «Обновить» слева рядом с «Назад», а не у правого края шапки.",
-  "Harbor in your browser (Wi-Fi)": "Harbor в браузере (Wi-Fi)",
-  "Harbor in your browser (this computer)": "Harbor в браузере (этот компьютер)",
   "Harbor will not start the torrent engine, contact trackers, or run DHT. Use this if you only want debrid and direct links. Turn off to re-enable torrent streaming.":
     "Harbor не будет запускать торрент-движок, обращаться к трекерам и использовать DHT. Включите, если нужны только debrid и прямые ссылки. Отключите, чтобы вернуть торрент-потоки.",
   "Hide badge": "Скрыть значок",
@@ -248,8 +246,6 @@ const settings: Record<string, string> = {
   "Packs & import": "Пакеты и импорт",
   "Paste an image URL (png, webp, svg)": "Вставьте URL изображения (png, webp, svg)",
   "Pattern (e.g. \\\\bremux\\\\b)": "Шаблон (например, \\\\bremux\\\\b)",
-  "Phone remote (Wi-Fi)": "Пульт на телефоне (Wi-Fi)",
-  "Phone remote (this computer)": "Пульт на телефоне (этот компьютер)",
   "Pick a source once and Harbor keeps playing the rest of that season from the same release, no re-picking. Works best with a debrid season pack. For anime it locks the whole series to that release.":
     "Выберите источник один раз, и Harbor продолжит воспроизводить остальной сезон из того же релиза без повторного выбора. Лучше всего работает с сезонным пакетом debrid. Для аниме привязывает к этому релизу весь сериал.",
   "Play a short sound when changing the player volume. Off by default.":

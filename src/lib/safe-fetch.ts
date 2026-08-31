@@ -93,7 +93,25 @@ const TAURI_DIRECT_HOSTS = new Set([
 ]);
 
 const DIRECT_FAIL_LIMIT = 2;
-const directFailures = new Map<string, number>();
+const DIRECT_FAIL_DECAY_MS = 60000;
+const directFailures = new Map<string, { count: number; at: number }>();
+
+function directDemoted(host: string): boolean {
+  const entry = directFailures.get(host);
+  if (!entry) return false;
+  if (Date.now() - entry.at >= DIRECT_FAIL_DECAY_MS) {
+    directFailures.delete(host);
+    return false;
+  }
+  return entry.count >= DIRECT_FAIL_LIMIT;
+}
+
+function noteDirectFailure(host: string): void {
+  const now = Date.now();
+  const entry = directFailures.get(host);
+  const count = entry && now - entry.at < DIRECT_FAIL_DECAY_MS ? entry.count + 1 : 1;
+  directFailures.set(host, { count, at: now });
+}
 
 export function allowDirectHost(url: string): void {
   try {
@@ -107,7 +125,7 @@ function tauriDirectHost(url: string): string | null {
   try {
     const host = new URL(url).hostname;
     if (!TAURI_DIRECT_HOSTS.has(host)) return null;
-    if ((directFailures.get(host) ?? 0) >= DIRECT_FAIL_LIMIT) return null;
+    if (directDemoted(host)) return null;
     return host;
   } catch {
     return null;
@@ -263,12 +281,17 @@ export const safeFetch: typeof fetch = (input, init) => {
       const directHost = tauriDirectHost(input);
       if (directHost) {
         countCrossing("direct", input);
-        const attempt = fetch(input, init).catch((e: unknown) => {
-          if (isCancellation(e)) throw e;
-          countCrossing("directFail", input);
-          directFailures.set(directHost, (directFailures.get(directHost) ?? 0) + 1);
-          return tauriHarborFetch(input, init);
-        });
+        const attempt = fetch(input, init)
+          .then((res) => {
+            directFailures.delete(directHost);
+            return res;
+          })
+          .catch((e: unknown) => {
+            if (isCancellation(e)) throw e;
+            countCrossing("directFail", input);
+            noteDirectFailure(directHost);
+            return tauriHarborFetch(input, init);
+          });
         return withDeadline(attempt, init?.signal);
       }
       const exec = isIdempotent(init?.method)

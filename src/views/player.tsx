@@ -14,6 +14,7 @@ import { useQueue, useSleepAtEnd, queueIndexOf, setQueuePlaying } from "@/lib/qu
 import { useSkipSegments, useAdSegments } from "@/lib/skip-intro";
 import { withinAdWindow } from "@/lib/ad-report/window";
 import { isLocalUrl } from "@/lib/player/local-url";
+import { isLivePlaybackSrc } from "@/lib/player/live-src";
 import { hasPlaybackStartedForStallCheck, stallWaitMs } from "@/lib/player/stall-wait";
 import { useAuth } from "@/lib/auth";
 import { embedFlags } from "./player/player-utils";
@@ -95,6 +96,7 @@ import { subtitleStreamKey } from "@/lib/subtitles/subtitle-memory";
 import { SUBTITLE_FPS_TRANSITION_FAILED_EVENT } from "@/lib/player/subtitle-fps";
 import { PlayerInteractionLockControls } from "@/components/player/player-interaction-lock";
 import { usePlayerInteractionLock } from "./player/hooks/use-player-interaction-lock";
+import { isNextAired } from "@/lib/cw-resurface";
 
 let hdrFallbackNoticeShown = false;
 
@@ -300,7 +302,11 @@ export function PlayerView({ src }: { src: PlayerSrc }) {
     openPicker,
   });
 
-  const canChangeEpisode = src.meta.type === "series" && (!inRoom || isHost);
+  const airedNext =
+    adjacent.next && isNextAired(false, adjacent.next.airDate) ? adjacent.next : null;
+  const canChangeEpisode =
+    (src.meta.type === "series" || adjacent.next != null || adjacent.prev != null) &&
+    (!inRoom || isHost);
   const roomGuest = inRoom && !isHost;
   const broadcastEpisode = useCallback(
     (ep: PlayEpisode) => {
@@ -351,7 +357,7 @@ export function PlayerView({ src }: { src: PlayerSrc }) {
   useAutoNextEpisode({
     src,
     snap,
-    nextEp: settings.autoPlayNextEpisode && !queueOrSleepArmed ? adjacent.next : null,
+    nextEp: settings.autoPlayNextEpisode && !queueOrSleepArmed ? airedNext : null,
     canChangeEpisode,
     cancelled: autoNextCancelled,
     startedNearEndRef,
@@ -446,11 +452,7 @@ export function PlayerView({ src }: { src: PlayerSrc }) {
     src,
     replacePlayerSrc,
   });
-  const isLiveLike =
-    liveOverlay.isLive ||
-    !!src.meta.id?.startsWith("iptv:") ||
-    (!!src.meta.type &&
-      !["movie", "series", "anime"].includes(String(src.meta.type).toLowerCase()));
+  const isLiveLike = liveOverlay.isLive || isLivePlaybackSrc(src);
   const { hasNextEpisodeNow, hasPrevEpisodeNow, playNext, playPrev, playNextRef, playPrevRef } =
     useQueueNav({
       src,
@@ -852,7 +854,7 @@ export function PlayerView({ src }: { src: PlayerSrc }) {
   useAutoEndExit({
     src,
     snap,
-    nextEp: adjacent.next,
+    nextEp: airedNext,
     canChangeEpisode,
     roomGuest,
     isLive: isLiveLike,
@@ -882,7 +884,7 @@ export function PlayerView({ src }: { src: PlayerSrc }) {
     bridgeRef.current = null;
     openPicker(src.meta, src.episode, { autoPlay: false });
   }, [bridgeRef, closePlayer, isLocalSrc, openPicker, src.episode, src.meta]);
-  const streamPillVariant = useStreamPill({
+  const { variant: streamPillVariant, dismiss: dismissStreamPill } = useStreamPill({
     srcUrl: src.url,
     snap,
     pipMode,
@@ -1060,8 +1062,8 @@ export function PlayerView({ src }: { src: PlayerSrc }) {
     pendingSeekSec,
     skipSegments,
     hasNextEpisode: hasNextEpisodeNow,
-    hasNextEpDisplay: canChangeEpisode && !autoNextCancelled && !!adjacent.next,
-    nextEp: canChangeEpisode && !autoNextCancelled ? adjacent.next : null,
+    hasNextEpDisplay: canChangeEpisode && !autoNextCancelled && !!airedNext,
+    nextEp: canChangeEpisode && !autoNextCancelled ? airedNext : null,
     nextEpMask,
     pillsVisible: hasStarted || !inRoom,
     allowAutoSkip: !roomGuest,
@@ -1135,6 +1137,7 @@ export function PlayerView({ src }: { src: PlayerSrc }) {
     streamPillVariant,
     mpvEmbedWindowsActive,
     setStreamCheckOpen,
+    dismissStreamPill,
     dvrOpen,
     setSwitcherOpen,
     onSwitchStream,

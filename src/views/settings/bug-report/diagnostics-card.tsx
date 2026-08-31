@@ -15,6 +15,12 @@ export function DiagnosticsCard({ diag }: { diag: Diagnostics | null }) {
     );
   }
   const compact = `Harbor ${diag.appVersion} · ${diag.os}${diag.osVersion ? ` ${diag.osVersion}` : ""} · ${diag.viewport} · ${diag.locale}`;
+  const mpv = diag.mpvProbe;
+  const mpvLine = !mpv
+    ? "not probed"
+    : mpv.available
+      ? mpv.version || "available"
+      : `unavailable: ${mpv.error || "unknown"}`;
   return (
     <>
       <SettingRow
@@ -43,6 +49,7 @@ export function DiagnosticsCard({ diag }: { diag: Diagnostics | null }) {
           <Pair k="Viewport" v={diag.viewport} />
           <Pair k="Locale" v={diag.locale} />
           <Pair k="Player" v={diag.flags.playerEngine} />
+          <Pair k="libmpv" v={mpvLine} />
           <Pair k="Region" v={diag.flags.region} />
           <Pair k="TMDB key" v={diag.flags.hasTmdb ? "yes" : "no"} />
           <Pair k="RPDB key" v={diag.flags.hasRpdb ? "yes" : "no"} />

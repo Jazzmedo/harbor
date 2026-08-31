@@ -7,7 +7,7 @@ use serde::Serialize;
 use tauri::{AppHandle, Emitter};
 
 const APP_NAME: &str = "Harbor";
-const MAIN_EXE: &str = "harbor.exe";
+pub(crate) const MAIN_EXE: &str = "harbor.exe";
 const UNINST_KEY: &str = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\Harbor";
 
 #[derive(Clone, Serialize)]
@@ -44,12 +44,15 @@ const PAYLOAD_VERSION: &str = include_str!("../payload/version.txt");
 const UNINST_EXE: &str = "uninstall.exe";
 
 #[cfg(feature = "payload")]
-fn shipped_version() -> String {
+const MARKER: &str = "harbor-install.json";
+
+#[cfg(feature = "payload")]
+pub(crate) fn shipped_version() -> String {
     PAYLOAD_VERSION.trim().to_string()
 }
 
 #[cfg(not(feature = "payload"))]
-fn shipped_version() -> String {
+pub(crate) fn shipped_version() -> String {
     env!("CARGO_PKG_VERSION").to_string()
 }
 
@@ -417,7 +420,7 @@ fn start_menu_lnk() -> Option<PathBuf> {
     })
 }
 
-fn desktop_lnk() -> Option<PathBuf> {
+pub(crate) fn desktop_lnk() -> Option<PathBuf> {
     std::env::var("USERPROFILE").ok().map(|u| PathBuf::from(u).join("Desktop").join(format!("{APP_NAME}.lnk")))
 }
 
@@ -494,7 +497,7 @@ pub struct Existing {
 }
 
 #[cfg(windows)]
-fn scan_uninstall_roots() -> Option<Existing> {
+pub(crate) fn scan_uninstall_roots() -> Option<Existing> {
     use winreg::enums::*;
     use winreg::RegKey;
     let roots: [(isize, &str, &str); 3] = [
@@ -528,7 +531,7 @@ fn scan_uninstall_roots() -> Option<Existing> {
 }
 
 #[cfg(not(windows))]
-fn scan_uninstall_roots() -> Option<Existing> {
+pub(crate) fn scan_uninstall_roots() -> Option<Existing> {
     None
 }
 
@@ -538,7 +541,7 @@ pub fn existing_install() -> Option<Existing> {
     scan_uninstall_roots()
 }
 
-fn stop_harbor() {
+pub(crate) fn stop_harbor() {
     let mut kill = quiet("taskkill");
     kill.args(["/F", "/T", "/IM", MAIN_EXE]);
     for name in SIDECARS {
@@ -631,6 +634,10 @@ fn prune_stale(dest: &Path, shipped: &std::collections::BTreeSet<PathBuf>) {
         if rel.as_os_str().eq_ignore_ascii_case(UNINST_EXE) {
             continue;
         }
+        #[cfg(feature = "payload")]
+        if rel.as_os_str().eq_ignore_ascii_case(MARKER) {
+            continue;
+        }
         let full = dest.join(&rel);
         if me.as_deref() == Some(full.as_path()) {
             continue;
@@ -671,10 +678,54 @@ pub async fn run_install(app: AppHandle, dest: String, desktop_shortcut: bool) -
 #[cfg(feature = "payload")]
 fn install_blocking(app: AppHandle, dest: String, desktop_shortcut: bool) -> Result<(), String> {
     let dest = PathBuf::from(dest);
-    emit(&app, 1.0, "Preparing");
+    install_core(&dest, desktop_shortcut, &mut |pct, step| emit(&app, pct, step))
+}
+
+#[cfg(feature = "payload")]
+pub(crate) fn payload_version_number(version: &str) -> u64 {
+    let mut parts = version.trim().split(['.', '-', '+']);
+    let major: u64 = parts.next().and_then(|p| p.parse().ok()).unwrap_or(0);
+    let minor: u64 = parts.next().and_then(|p| p.parse().ok()).unwrap_or(0);
+    let patch: u64 = parts.next().and_then(|p| p.parse().ok()).unwrap_or(0);
+    major * 1_000_000 + minor * 1_000 + patch
+}
+
+#[cfg(feature = "payload")]
+pub(crate) fn read_marker_version(dest: &Path) -> u64 {
+    fs::read_to_string(dest.join(MARKER))
+        .ok()
+        .and_then(|text| serde_json::from_str::<serde_json::Value>(&text).ok())
+        .and_then(|v| v.get("payloadVersion").and_then(|n| n.as_u64()))
+        .unwrap_or(0)
+}
+
+#[cfg(feature = "payload")]
+fn write_install_marker(dest: &Path, version: &str) -> Result<(), String> {
+    let installed_at = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_secs())
+        .unwrap_or(0);
+    let body = serde_json::json!({
+        "payloadVersion": payload_version_number(version),
+        "version": version,
+        "installedAt": installed_at,
+        "installer": "harbor-setup",
+    });
+    let text = serde_json::to_string_pretty(&body).map_err(|e| e.to_string())?;
+    fs::write(dest.join(MARKER), text).map_err(|e| e.to_string())
+}
+
+#[cfg(feature = "payload")]
+pub(crate) fn install_core(
+    dest: &Path,
+    desktop_shortcut: bool,
+    progress: &mut dyn FnMut(f64, &str),
+) -> Result<(), String> {
+    let dest = dest.to_path_buf();
+    progress(1.0, "Preparing");
 
     let replacing = dest.join(MAIN_EXE).exists();
-    emit(&app, 3.0, if replacing { "Closing the running version" } else { "Preparing" });
+    progress(3.0, if replacing { "Closing the running version" } else { "Preparing" });
     stop_harbor();
 
     fs::create_dir_all(&dest).map_err(|e| format!("cannot create {}: {e}", dest.display()))?;
@@ -688,7 +739,7 @@ fn install_blocking(app: AppHandle, dest: String, desktop_shortcut: bool) -> Res
     let total = total.max(1);
     let mut done: u64 = 0;
 
-    emit(&app, 5.0, "Copying application files");
+    progress(5.0, "Copying application files");
     let mut shipped: std::collections::BTreeSet<PathBuf> = std::collections::BTreeSet::new();
     for i in 0..archive.len() {
         let mut entry = archive.by_index(i).map_err(|e| e.to_string())?;
@@ -714,15 +765,15 @@ fn install_blocking(app: AppHandle, dest: String, desktop_shortcut: bool) -> Res
         done += entry.size();
         let pct = 5.0 + (done as f64 / total as f64) * 80.0;
         let name = rel.file_name().map(|s| s.to_string_lossy().to_string()).unwrap_or_default();
-        emit(&app, pct, &format!("Copying {name}"));
+        progress(pct, &format!("Copying {name}"));
     }
 
     if replacing {
-        emit(&app, 86.0, "Clearing files from the old version");
+        progress(86.0, "Clearing files from the old version");
         prune_stale(&dest, &shipped);
     }
 
-    emit(&app, 88.0, "Registering shortcuts");
+    progress(88.0, "Registering shortcuts");
     let exe = dest.join(MAIN_EXE);
     let mut lnks: Vec<PathBuf> = Vec::new();
     if let Some(lnk) = start_menu_lnk() {
@@ -736,15 +787,18 @@ fn install_blocking(app: AppHandle, dest: String, desktop_shortcut: bool) -> Res
     make_shortcuts(&lnks, &exe, &dest)?;
 
     if !dest.join(UNINST_EXE).exists() {
-        emit(&app, 94.0, "Writing the uninstaller");
+        progress(94.0, "Writing the uninstaller");
         if let Ok(me) = std::env::current_exe() {
             let _ = fs::copy(&me, dest.join(UNINST_EXE));
         }
     }
-    emit(&app, 96.0, "Registering the uninstall entry");
+    progress(96.0, "Registering the uninstall entry");
     write_uninstall_entry(&dest, &shipped_version(), (total / 1024) as u32)?;
 
-    emit(&app, 100.0, "Finished");
+    progress(98.0, "Recording the install");
+    write_install_marker(&dest, &shipped_version())?;
+
+    progress(100.0, "Finished");
     Ok(())
 }
 
@@ -892,6 +946,7 @@ fn repair_blocking(app: AppHandle, dest: String) -> Result<RepairReport, String>
     let version = shipped_version();
     report.registry_restored = !uninstall_entry_intact(&dest, &version);
     write_uninstall_entry(&dest, &version, (total / 1024) as u32)?;
+    write_install_marker(&dest, &version)?;
 
     emit(&app, 100.0, "Finished");
     Ok(report)
