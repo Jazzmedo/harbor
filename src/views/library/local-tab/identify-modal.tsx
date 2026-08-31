@@ -5,7 +5,7 @@ import { Search } from "@/components/icons/search-icon";
 import { get, IMG } from "@/lib/providers/tmdb/tmdb-client";
 import { useSettings } from "@/lib/settings";
 import { useT } from "@/lib/i18n";
-import type { LocalEntry } from "@/lib/local-library";
+import { parseFilename, type LocalEntry } from "@/lib/local-library";
 
 type Candidate = {
   tmdbId: number;
@@ -87,8 +87,9 @@ export function IdentifyModal({
 
   useEffect(() => {
     if (!head) return;
-    setKind(head.type === "show" ? "tv" : "movie");
-    setQuery(seedQuery(head.title ?? ""));
+    const inferred = parseFilename(head.filename);
+    setKind(inferred.type === "show" || head.type === "show" ? "tv" : "movie");
+    setQuery(seedQuery(inferred.type === "show" ? inferred.title : head.title ?? ""));
     setResults([]);
   }, [head?.id]);
 
@@ -149,6 +150,9 @@ export function IdentifyModal({
 
   return createPortal(
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={t("What is this title?")}
       className="pointer-events-auto fixed inset-0 z-[170] flex items-start justify-center overflow-y-auto bg-black/72 py-[8vh] backdrop-blur-md animate-in fade-in duration-200"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
@@ -165,6 +169,9 @@ export function IdentifyModal({
             </p>
           </div>
           <button
+            autoFocus
+            data-tv-initial-focus
+            data-tv-modal-close
             onClick={onClose}
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-canvas/40 text-ink-subtle transition-colors hover:bg-canvas/60 hover:text-ink"
             aria-label={t("Cancel")}
@@ -191,7 +198,6 @@ export function IdentifyModal({
         <div className="flex items-center gap-2.5 rounded-2xl border border-edge-soft bg-canvas/50 px-3.5">
           <Search size={16} className="shrink-0 text-ink-subtle" />
           <input
-            autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("Search TMDB…")}

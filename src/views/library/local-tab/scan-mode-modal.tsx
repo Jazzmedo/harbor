@@ -31,6 +31,9 @@ export function ScanModeModal({
 
   return createPortal(
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={t("How should we import this folder?")}
       className="pointer-events-auto fixed inset-0 z-[170] flex items-center justify-center bg-black/72 backdrop-blur-md animate-in fade-in duration-200"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
@@ -57,6 +60,7 @@ export function ScanModeModal({
 
         <div className="flex flex-col gap-3">
           <ModeButton
+            initialFocus
             icon={<Film size={18} strokeWidth={2} />}
             title={t("Match with TMDB")}
             sub={t("Identify every file by its name and pull fresh titles and artwork from TMDB.")}
@@ -84,6 +88,7 @@ function ModeButton({
   onClick,
   disabled = false,
   disabledHint,
+  initialFocus = false,
 }: {
   icon: React.ReactNode;
   title: string;
@@ -91,9 +96,12 @@ function ModeButton({
   onClick: () => void;
   disabled?: boolean;
   disabledHint?: string;
+  initialFocus?: boolean;
 }) {
   return (
     <button
+      autoFocus={initialFocus}
+      data-tv-initial-focus={initialFocus || undefined}
       type="button"
       onClick={onClick}
       disabled={disabled}

@@ -7,7 +7,7 @@ import { WatchlistCard } from "./watchlist-card";
 export { WatchlistCard } from "./watchlist-card";
 export { hydrateLibraryMeta, loadLocalIds } from "./hydrate-meta";
 
-export type Tab = "library" | "watchlist" | "history" | "local" | "lists" | "favorites" | "trakt" | "anilist" | "simkl" | "letterboxd" | "mal";
+export type Tab = "library" | "watchlist" | "history" | "local" | "media-servers" | "lists" | "favorites" | "trakt" | "anilist" | "simkl" | "letterboxd" | "mal";
 
 export type TypeKey = "all" | "movie" | "series";
 
