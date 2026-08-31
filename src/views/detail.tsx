@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
-import { Check, HardDrive, Pencil, Plus, RotateCcw } from "lucide-react";
+import { Check, Pencil, Plus, RotateCcw } from "lucide-react";
 import { Play } from "@/components/icons/play-filled";
 import { animeDetails, type AnimeDetailExtras, type FranchiseEntry } from "@/lib/providers/anime-detail";
 import { isTextInLanguage } from "@/lib/providers/anime-episode-build";
@@ -48,10 +48,17 @@ import { useTogether } from "@/lib/together/provider";
 import { useTrakt } from "@/lib/trakt/provider";
 import { toggleWatchlist, useInWatchlist } from "@/lib/watchlist";
 import { PopIcon } from "@/components/pop-icon";
-import { findLocalSeriesEpisodes, useInLocalLibrary } from "@/lib/local-library";
+import { useInLocalLibrary } from "@/lib/local-library";
+import { LocalLibraryBrand } from "@/components/local-library-brand";
+import { MediaServerBrand, mediaServerProviderName } from "@/components/media-server-brand";
+import { useTitleMediaServers } from "@/hooks/use-title-media-servers";
 import { localPlayerSrc } from "@/lib/local-library/player-src";
-import { playLocalAware } from "@/lib/local-library/playback";
-import { openLocalEpisodes } from "@/lib/player/local-episodes-modal";
+import { resolveLocalPlayVersions } from "@/lib/local-library/playback";
+import { openLocalVersions } from "@/lib/player/local-versions-modal";
+import { mediaServerConnections } from "@/lib/media-server/connections";
+import { mediaServerItems } from "@/lib/media-server/index-store";
+import { matchingServerItems, serverPlayableCopies } from "@/lib/media-server/selectors";
+import { createMediaServerPlayerSrc, decidePlaybackSource } from "@/lib/media-server/playback";
 import { markMovieWatched, unmarkMovieWatched } from "@/lib/mark-watched";
 import { useIsFavorite, useMediaFavorites } from "@/lib/media-favorites";
 import { openUrl } from "@/lib/window";
@@ -187,7 +194,7 @@ export function DetailView({
   episodeHint?: { season: number; episode: number };
 }) {
   const t = useT();
-  const { settings, update } = useSettings();
+  const { settings } = useSettings();
   const contentDrag = useContentDrag();
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
@@ -278,6 +285,7 @@ export function DetailView({
   const { isConnected: traktConnected } = useTrakt();
   const inWatchlist = useInWatchlist(meta.id, [detail?.imdbId]);
   const inLocalLibrary = useInLocalLibrary(meta.id, [detail?.imdbId]);
+  const titleHomeServers = useTitleMediaServers(meta.id, detail?.imdbId);
   const { toggle: toggleFavorite } = useMediaFavorites();
   const isFav = useIsFavorite(meta.id, [detail?.imdbId]);
   const inSession = roomSnapshot.state === "joined" && roomSnapshot.participants.length >= 2;
@@ -1118,46 +1126,33 @@ export function DetailView({
   const smartPlay = useCallback(async (forcePicker = false) => {
     if (inSession) claimHost(true);
     const opts = { autoPlay: !forcePicker && settings.instantPlay, resume: !forcePicker };
-    const launch = (episode: PlayEpisode | undefined) => {
+    const launch = async (episode: PlayEpisode | undefined) => {
       const stream = () => openPicker(playMeta, episode, opts);
       if (forcePicker) {
         stream();
         return;
       }
-      if (isSeries && !isAnime && settings.localPlaybackMode !== "stream") {
-        const tmdbMatch = meta.id.match(/^tmdb:tv:(\d+)$/);
-        const tmdbId = tmdbMatch ? parseInt(tmdbMatch[1], 10) : null;
-        const seriesImdb = detail?.imdbId ?? (meta.id.startsWith("tt") ? meta.id : null);
-        if (findLocalSeriesEpisodes(tmdbId, seriesImdb).length > 0) {
-          openLocalEpisodes({
-            title: playMeta.name,
-            tmdbId,
-            imdbId: seriesImdb,
-            poster: playMeta.poster,
-            videos: cinemetaFull?.videos,
-            initialSeason: episode?.season,
-            highlightEpisode: episode?.episode,
-            onPlayLocal: (e) => openPlayer(localPlayerSrc(e, isAnime)),
-            onStream: stream,
-          });
-          return;
-        }
+      const tmdbMatch = meta.id.match(/^tmdb:(?:movie|tv):(\d+)$/);
+      const identity = { tmdbId: tmdbMatch ? Number(tmdbMatch[1]) : undefined, imdbId: detail?.imdbId ?? (meta.id.startsWith("tt") ? meta.id : undefined) };
+      const connections = mediaServerConnections();
+      const indexed = await mediaServerItems();
+      const serverItems = matchingServerItems(indexed, identity, isSeries ? "series" : "movie", episode?.season, episode?.episode);
+      const serverCopies = serverPlayableCopies(serverItems, connections);
+      const local = resolveLocalPlayVersions(playMeta, episode ?? null, detail?.imdbId);
+      const decision = decidePlaybackSource(settings, local.length, serverCopies);
+      if (decision.kind === "online") { stream(); return; }
+      if (decision.kind === "local" && local[0]) { openPlayer(localPlayerSrc(local[0], isAnime, episode)); return; }
+      const playServer = (copy: (typeof serverCopies)[number]) => { const connection = connections.find((entry) => entry.id === copy.connectionId); const item = serverItems.find((entry) => entry.connectionId === copy.connectionId && entry.id === copy.itemId); if (!connection || !item) return; void createMediaServerPlayerSrc({ meta: playMeta, imdbId: identity.imdbId, episode, connection, item, versionId: copy.version.id }).then(openPlayer); };
+      if (decision.kind === "home-server") { playServer(decision.copy); return; }
+      if (decision.kind === "chooser") {
+        openLocalVersions({ title: playMeta.name, poster: playMeta.poster, entries: local, onPlayLocal: (entry) => openPlayer(localPlayerSrc(entry, isAnime, episode)), serverCopies, onPlayServer: playServer, onStream: stream });
+        return;
       }
-      playLocalAware({
-        meta: playMeta,
-        episode: episode ?? null,
-        extraImdb: detail?.imdbId,
-        mode: settings.localPlaybackMode,
-        source: "manual",
-        playLocal: (e, o) => openPlayer({ ...localPlayerSrc(e, isAnime), startFromZero: o?.fromStart }),
-        playStream: stream,
-        setMode: (m) => update({ localPlaybackMode: m }),
-      });
     };
     if (!isSeries) {
       if (meta.type === "other" && cinemetaFull?.videos?.length) {
         const first = cinemetaFull.videos[0];
-        launch({
+        await launch({
           season: first.season ?? 0,
           episode: first.episode ?? 1,
           name: first.name ?? first.title,
@@ -1166,7 +1161,7 @@ export function DetailView({
         });
         return;
       }
-      launch(undefined);
+      await launch(undefined);
       return;
     }
     if (isAnime) {
@@ -1176,7 +1171,7 @@ export function DetailView({
           )
         : animeEpisodes[0];
       if (wantedEp) {
-        launch({
+        await launch({
           season: wantedEp.seasonNumber || 1,
           episode: wantedEp.number,
           name: wantedEp.title,
@@ -1192,11 +1187,11 @@ export function DetailView({
         });
         return;
       }
-      launch(undefined);
+      await launch(undefined);
       return;
     }
     if (lastPlay) {
-      launch({ season: lastPlay.season, episode: lastPlay.episode });
+      await launch({ season: lastPlay.season, episode: lastPlay.episode });
       return;
     }
     if (authKey) {
@@ -1219,15 +1214,15 @@ export function DetailView({
             season >= 1 &&
             episode >= 1
           ) {
-            launch({ season, episode });
+            await launch({ season, episode });
             return;
           }
         }
         if (item) break;
       }
     }
-    launch({ season: 1, episode: 1 });
-  }, [isSeries, isAnime, idAnime, animeCanonicalId, animeEpisodes, lastPlay, openPicker, openPlayer, playMeta, settings.instantPlay, settings.localPlaybackMode, update, inSession, claimHost, authKey, meta.id, detail?.imdbId, cinemetaFull?.videos]);
+    await launch({ season: 1, episode: 1 });
+  }, [isSeries, isAnime, idAnime, animeCanonicalId, animeEpisodes, lastPlay, openPicker, openPlayer, playMeta, settings.instantPlay, settings.playbackSourcePreference, settings.preferredMediaServerId, inSession, claimHost, authKey, meta.id, detail?.imdbId]);
   const smartPlayLabel = inSession && !liveContext
     ? t("Play Together")
     : isSeries && lastPlay
@@ -1254,13 +1249,29 @@ export function DetailView({
         </Pill>
       )}
       {inLocalLibrary && (
-        <Pill>
-          <span className="flex items-center gap-1.5">
-            <HardDrive size={12} strokeWidth={2.4} />
-            {t("In your local library")}
-          </span>
-        </Pill>
+        <HoverTooltip label={t("In your local library")} side="top" align="center" arrow>
+          <Pill>
+            <LocalLibraryBrand className="h-[17px] w-[17px]" />
+          </Pill>
+        </HoverTooltip>
       )}
+      {titleHomeServers.map((connection) => {
+        const provider = mediaServerProviderName(connection.provider);
+        return (
+          <HoverTooltip
+            key={connection.id}
+            label={t("Available in {name}", { name: provider })}
+            sublabel={connection.name !== provider ? connection.name : undefined}
+            side="top"
+            align="center"
+            arrow
+          >
+            <Pill>
+              <MediaServerBrand provider={connection.provider} name={connection.name} compact />
+            </Pill>
+          </HoverTooltip>
+        );
+      })}
       <HeroRatings
         rating={rating}
         isAnime={isAnime}
@@ -1415,6 +1426,7 @@ export function DetailView({
                   <PlayModeHint>
                   <button
                     {...playOnTrigger}
+                    data-tv-initial-focus
                     onClick={() => smartPlay(false)}
                     onContextMenu={(e) => {
                       e.preventDefault();
