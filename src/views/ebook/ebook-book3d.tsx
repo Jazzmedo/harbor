@@ -1,5 +1,6 @@
-import { type CSSProperties, type ReactNode } from "react";
+import { useCallback, useRef, type CSSProperties, type ReactNode } from "react";
 import { Poster } from "@/components/poster";
+import { useArtGlow } from "../big-picture/bp-art-color";
 import "../ebook-book3d.css";
 
 function openingLines(value: string): string {
@@ -19,6 +20,7 @@ export function EBookBook3D({
   scale = 1,
   thickness = 9,
   lazy = false,
+  mode = "open",
   children,
 }: {
   cover?: string;
@@ -30,13 +32,41 @@ export function EBookBook3D({
   scale?: number;
   thickness?: number;
   lazy?: boolean;
+  mode?: "open" | "lift";
   children?: ReactNode;
 }) {
+  const art = useArtGlow(cover);
   const opening = text ? openingLines(text) : "";
+  const root = useRef<HTMLDivElement>(null);
+  const track = useCallback(
+    (event: { clientX: number; clientY: number }) => {
+      const el = root.current;
+      if (!el) return;
+      const box = el.getBoundingClientRect();
+      if (!box.width || !box.height) return;
+      el.style.setProperty("--hbk-mx", String((event.clientX - box.left) / box.width - 0.5));
+      el.style.setProperty("--hbk-my", String((event.clientY - box.top) / box.height - 0.5));
+    },
+    [],
+  );
+  const release = useCallback(() => {
+    root.current?.style.setProperty("--hbk-mx", "0");
+    root.current?.style.setProperty("--hbk-my", "0");
+  }, []);
   return (
     <div
+      ref={root}
       className="hbk"
-      style={{ "--hbk-scale": scale, "--hbk-thick": `${thickness}px` } as CSSProperties}
+      data-mode={mode}
+      onPointerMove={mode === "lift" ? track : undefined}
+      onPointerLeave={mode === "lift" ? release : undefined}
+      style={
+        {
+          "--hbk-scale": scale,
+          "--hbk-thick": `${thickness}px`,
+          ...(art ? { "--hbk-art": art } : null),
+        } as CSSProperties
+      }
     >
       <div className="hbk-block">
         <div className="hbk-spine" aria-hidden="true" />

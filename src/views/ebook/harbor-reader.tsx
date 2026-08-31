@@ -1257,7 +1257,10 @@ export function HarborReader({
     const requestId = globalThis.crypto?.randomUUID?.() ?? `reader-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     narrationRequestId.current = requestId;
     const chapterText = paragraphs.slice(index).join("\n\n").trim();
-    if (!chapterText) return;
+    if (!chapterText) {
+      setNarrationNotice("There is nothing to read aloud on this page.");
+      return;
+    }
     const selectedVoice =
       availableNarrationVoices.find((voice) => voice.id === prefs.narrationVoice) ??
       fallbackNarrationVoices.find((voice) => voice.id === prefs.narrationVoice) ??

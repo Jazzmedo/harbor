@@ -136,6 +136,25 @@
   border-bottom: 1px solid var(--color-edge-soft);
 }
 
+.ebook-sources-case {
+  z-index: 1;
+  display: flex;
+  align-self: center;
+  justify-self: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  transform: scale(1.3);
+}
+
+.ebook-sources-case .ebook-shelf:nth-child(2) {
+  transform: scaleX(-1);
+}
+
+@media (max-width: 900px) {
+  .ebook-sources-case { display: none; }
+}
+
 @media (max-width: 900px) {
   .ebook-sources-hero { grid-template-columns: 1fr; }
   }

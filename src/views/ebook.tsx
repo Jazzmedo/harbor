@@ -95,6 +95,7 @@ import {
   type EBookChapterContent,
   type EBookCursor,
   type EBookProvider,
+  ebookProviderIcon,
 } from "@/lib/ebook/providers";
 import { subscribeEBookExtensions } from "@/lib/ebook/extensions";
 import { subscribeEBookSources } from "@/lib/ebook/sources";
@@ -1431,7 +1432,7 @@ function EBookDetailDropdown({
   onSelect,
   buttonLabel,
 }: {
-  options: Array<{ id: string; label: string }>;
+  options: Array<{ id: string; label: string; icon?: string }>;
   selected: string;
   onSelect: (id: string) => void;
   buttonLabel?: string;
@@ -1454,7 +1455,11 @@ function EBookDetailDropdown({
         onClick={() => setOpen((value) => !value)}
         className="inline-flex h-11 items-center gap-2 rounded-xl border border-edge-soft bg-surface/60 px-4 text-[14px] text-ink transition-colors hover:border-edge hover:bg-elevated/60"
       >
-        {buttonLabel && <Database size={16} className="text-ink-subtle" />}
+        {active?.icon ? (
+          <img src={active.icon} alt="" className="h-5 w-5 shrink-0 rounded object-contain" />
+        ) : (
+          buttonLabel && <Database size={16} className="text-ink-subtle" />
+        )}
         <span>{buttonLabel ? `${buttonLabel} · ${active?.label}` : active?.label}</span>
         <ChevronDown
           size={16}
@@ -1479,6 +1484,9 @@ function EBookDetailDropdown({
                 <Check size={15} className="text-accent" />
               ) : (
                 <span className="w-[15px]" />
+              )}
+              {option.icon && (
+                <img src={option.icon} alt="" className="h-5 w-5 shrink-0 rounded object-contain" />
               )}
               <span className="truncate">{option.label}</span>
             </button>
@@ -1675,6 +1683,7 @@ function EBookCard({
         text={ebook.description}
         imprint={ebook.providerName}
         thickness={7}
+        mode="lift"
         lazy
       >
         {readStatus && <EBookReadMark status={readStatus} />}
@@ -2880,6 +2889,7 @@ function EBookDetails({
                       options={sourceOptions.map((source) => ({
                         id: source.id,
                         label: source.providerName ?? source.title,
+                        icon: ebookProviderIcon(source.providerId),
                       }))}
                       selected={sourceRoute}
                       onSelect={setSourceRoute}

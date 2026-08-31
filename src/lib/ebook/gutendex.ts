@@ -1,4 +1,4 @@
-import { safeFetch } from "@/lib/safe-fetch";
+import { safeFetch, safeFetchBytes } from "@/lib/safe-fetch";
 
 export const GUTENDEX_ID = "gutendex";
 export const GUTENDEX_NAME = "Project Gutenberg";
@@ -92,7 +92,7 @@ export async function gutendexDetail(id: string): Promise<GutendexBook | null> {
 }
 
 export async function gutendexEpub(url: string): Promise<ArrayBuffer> {
-  const response = await safeFetch(url);
+  const response = await safeFetchBytes(url, undefined, 60000);
   if (!response.ok) throw new Error(`Gutenberg download ${response.status}`);
   return response.arrayBuffer();
 }

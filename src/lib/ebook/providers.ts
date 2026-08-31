@@ -15,6 +15,7 @@ import {
   type GutendexBook,
 } from "./gutendex";
 import { listEBookSources, type EBookHtmlSourceConfig, type EBookSource } from "./sources";
+import gutenbergLogo from "@/assets/gutenberg.png";
 import { safeFetch } from "@/lib/safe-fetch";
 import {
   cachedEBookTranslation,
@@ -351,7 +352,7 @@ function gutendexPackage(id: string, url: string): Promise<EpubBook> {
 }
 
 function gutendexProvider(source: EBookSource): Provider {
-  const provider = { id: source.id, name: source.name, iconUrl: source.iconUrl } as Provider;
+  const provider = { id: source.id, name: source.name, iconUrl: gutenbergLogo } as Provider;
   const summary = (book: GutendexBook): EBook => ({
     id: routeId(provider.id, String(book.id)),
     source: "source",
@@ -979,4 +980,11 @@ export async function prefetchSourceEBookContent(
   const cached = await ebookChapterCacheGet(key);
   if (cached && !cached.stale) return;
   await fetchAndCacheSourceEBookContent(route, chapterId).then(() => undefined);
+}
+
+export function ebookProviderIcon(providerId?: string): string | undefined {
+  if (!providerId) return undefined;
+  const source = listEBookSources().find((item) => item.id === providerId);
+  if (!source) return undefined;
+  return source.kind === "gutendex" ? gutenbergLogo : source.iconUrl;
 }

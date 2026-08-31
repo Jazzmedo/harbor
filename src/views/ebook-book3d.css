@@ -6,8 +6,9 @@
   --hbk-paper: #efe7d8;
   --hbk-paper-dim: #d9cfbd;
   --hbk-paper-ink: #3d382e;
-  --hbk-board: #201d19;
-  --hbk-board-dim: #16130f;
+  --hbk-art: 32 29 25;
+  --hbk-board: rgb(var(--hbk-art));
+  --hbk-board-dim: color-mix(in srgb, rgb(var(--hbk-art)) 70%, #000);
   --hbk-radius: 2px;
   position: relative;
   display: block;
@@ -89,7 +90,7 @@
   position: absolute;
   inset-block: 0;
   right: 0;
-  width: var(--hbk-thick);
+  width: calc(var(--hbk-thick) * 0.38);
   background: var(--hbk-board-dim);
   transform: rotateY(90deg);
   transform-origin: right center;
@@ -107,6 +108,7 @@
     var(--hbk-paper) 1px 3px
   );
   opacity: 0;
+  backface-visibility: hidden;
   transform: rotateY(90deg);
   transform-origin: left center;
 }
@@ -114,10 +116,11 @@
 .hbk-spine {
   position: absolute;
   z-index: 4;
-  inset-block: 0;
+  inset-block: 2px;
   left: 0;
   width: var(--hbk-thick);
   background: var(--hbk-board-dim);
+  backface-visibility: hidden;
   transform: rotateY(-90deg);
   transform-origin: left center;
 }
@@ -220,6 +223,28 @@
       150ms;
 }
 
+.hbk[data-mode="lift"]:hover .hbk-block,
+.hbk[data-mode="lift"]:focus-within .hbk-block {
+  transform: rotateY(calc(-11deg + var(--hbk-mx, 0) * 17deg))
+    rotateX(calc(var(--hbk-my, 0) * -11deg)) rotateZ(-1deg) translateZ(18px) scale(1.07);
+  transition: transform 170ms ease-out 0s;
+}
+
+.hbk[data-mode="lift"]:hover .hbk-cover,
+.hbk[data-mode="lift"]:focus-within .hbk-cover {
+  transform: rotateY(0deg);
+  transition-delay: 0s;
+}
+
+.hbk[data-mode="lift"] .hbk-cover {
+  transition-property: transform, box-shadow;
+}
+
+.hbk[data-mode="lift"]:hover .hbk-cover,
+.hbk[data-mode="lift"]:focus-within .hbk-cover {
+  box-shadow: 16px 20px 34px -14px rgba(0, 0, 0, 0.85);
+}
+
 :dir(rtl) .hbk {
   --hbk-open: 62deg;
   --hbk-turn: 15deg;
@@ -268,4 +293,5 @@
   .hbk-edge {
     transition: none;
   }
+
 }

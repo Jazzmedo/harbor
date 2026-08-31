@@ -21,6 +21,7 @@ import {
   X,
 } from "lucide-react";
 import "./ebook-sources-panel.css";
+import "./ebook-setup.css";
 import { createPortal } from "react-dom";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
@@ -983,6 +984,22 @@ export function EBookSourcesView({ onBack }: { onBack: () => void }) {
             <span><strong>{enabled}</strong><small>Active</small></span>
             <span><strong>{ebookRepoUrls().length}</strong><small>Repositories</small></span>
           </div>
+        </div>
+        <div className="ebook-sources-case" aria-hidden="true">
+          <span className="ebook-shelf">
+            <span className="ebook-shelf-slot" />
+            <span className="ebook-shelf-books">
+              <i /><i /><i /><i />
+            </span>
+            <span className="ebook-shelf-edge" />
+          </span>
+          <span className="ebook-shelf">
+            <span className="ebook-shelf-slot" />
+            <span className="ebook-shelf-books">
+              <i /><i /><i /><i />
+            </span>
+            <span className="ebook-shelf-edge" />
+          </span>
         </div>
       </section>
 
