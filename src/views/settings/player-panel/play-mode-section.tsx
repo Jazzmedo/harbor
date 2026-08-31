@@ -5,6 +5,8 @@ import { useT } from "@/lib/i18n";
 import { STALL_WAIT_OPTIONS, stallWaitSec } from "@/lib/player/stall-wait";
 import { SettingGroup, SettingRow } from "../kit";
 import { Segmented, ToggleRow } from "../shared";
+import { Dropdown } from "@/components/dropdown";
+import { mediaServerConnections } from "@/lib/media-server/connections";
 import { Anchored, Nested } from "./choice";
 import {
   RememberStreamArt,
@@ -84,6 +86,35 @@ export function PlayModePanel() {
   return (
     <div className="flex flex-col gap-5">
       <SettingGroup label={t("Playback")}>
+        <SettingRow
+          label={t("Play button behavior")}
+          desc={t("Choose whether Play asks, prefers this device, online sources, or one of your home servers.")}
+        >
+          <Dropdown
+            className="w-56"
+            value={settings.playbackSourcePreference}
+            onChange={(value) => update({ playbackSourcePreference: value as typeof settings.playbackSourcePreference })}
+            options={[
+              { value: "ask", label: t("Ask every time") },
+              { value: "online", label: t("Prefer online streams") },
+              { value: "local", label: t("Prefer this device") },
+              { value: "home-server", label: t("Prefer a home server") },
+            ]}
+          />
+        </SettingRow>
+        {settings.playbackSourcePreference === "home-server" && (
+          <SettingRow label={t("Preferred home server")} desc={t("Ask when more than one server has a copy, or always prefer a specific server.")}>
+            <Dropdown
+              className="w-56"
+              value={settings.preferredMediaServerId ?? ""}
+              onChange={(value) => update({ preferredMediaServerId: value || null })}
+              options={[
+                { value: "", label: t("Ask which server") },
+                ...mediaServerConnections().filter((connection) => connection.enabled).map((connection) => ({ value: connection.id, label: connection.name })),
+              ]}
+            />
+          </SettingRow>
+        )}
         <PlayModeChoice />
         <ToggleRow
           label={t("Stay on one source for a season")}
