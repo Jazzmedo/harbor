@@ -309,7 +309,10 @@ export const ContinueCard = memo(function ContinueCard({
     // the detail loader will resolve the same localized logo and backdrop used
     // when the title is opened from Search.
     const detailMeta = isAnime ? meta : { ...meta, background: undefined, logo: undefined };
-    openMeta(detailMeta, ep || isAnime ? { episodeHint: ep ?? undefined, exact: isAnime } : undefined);
+    openMeta(
+      detailMeta,
+      ep || isAnime ? { episodeHint: ep ?? undefined, exact: isAnime } : undefined,
+    );
   };
 
   const resolveEpisode = async (): Promise<PlayEpisode | undefined> => {
@@ -353,8 +356,12 @@ export const ContinueCard = memo(function ContinueCard({
     return episode;
   };
 
-  const openAvailableSources = async (episode: PlayEpisode | undefined, chooseEveryTime: boolean) => {
-    const stream = () => openPicker(meta, episode, { autoPlay: !chooseEveryTime, resume: !chooseEveryTime });
+  const openAvailableSources = async (
+    episode: PlayEpisode | undefined,
+    chooseEveryTime: boolean,
+  ) => {
+    const stream = () =>
+      openPicker(meta, episode, { autoPlay: !chooseEveryTime, resume: !chooseEveryTime });
     const tmdbMatch = meta.id.match(/^tmdb:(?:movie|tv):(\d+)$/);
     const identity = {
       tmdbId: tmdbMatch ? Number(tmdbMatch[1]) : undefined,
@@ -390,14 +397,16 @@ export const ContinueCard = memo(function ContinueCard({
         (entry) => entry.connectionId === copy.connectionId && entry.id === copy.itemId,
       );
       if (!connection || !item) return;
-      openPlayer(await createMediaServerPlayerSrc({
-        meta,
-        imdbId: identity.imdbId,
-        episode,
-        connection,
-        item,
-        versionId: copy.version.id,
-      }));
+      openPlayer(
+        await createMediaServerPlayerSrc({
+          meta,
+          imdbId: identity.imdbId,
+          episode,
+          connection,
+          item,
+          versionId: copy.version.id,
+        }),
+      );
     };
     const showChooser = () => {
       if (local.length === 0 && serverCopies.length === 0) {
@@ -576,7 +585,9 @@ export const ContinueCard = memo(function ContinueCard({
               background:
                 "linear-gradient(145deg, rgba(8,12,18,0.50), rgba(8,12,18,0.38) 52%, rgba(8,12,18,0.44))",
             }}
-            style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,0.10), inset 0 -1px 0 rgba(0,0,0,0.05)" }}
+            style={{
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.10), inset 0 -1px 0 rgba(0,0,0,0.05)",
+            }}
             className="pointer-events-none h-14 w-14 scale-95 rounded-full border border-white/[0.10] opacity-0 transition-[opacity,transform] duration-[120ms] group-hover:pointer-events-auto group-hover:scale-100 group-hover:opacity-100 focus-within:pointer-events-auto focus-within:scale-100 focus-within:opacity-100"
             contentClassName="flex h-full w-full"
           >
@@ -612,8 +623,8 @@ export const ContinueCard = memo(function ContinueCard({
       >
         {displayTitle}
       </button>
-      {onDismiss && (
-        settings.liquidGlass ? (
+      {onDismiss &&
+        (settings.liquidGlass ? (
           <div className="absolute end-0.5 top-0.5 z-10 flex h-11 w-11 items-center justify-center">
             <ThreeLiquidGlassSurface
               radius="9999px"
@@ -623,7 +634,9 @@ export const ContinueCard = memo(function ContinueCard({
                 background:
                   "linear-gradient(145deg, rgba(8,12,18,0.50), rgba(8,12,18,0.38) 52%, rgba(8,12,18,0.44))",
               }}
-              style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,0.10), inset 0 -1px 0 rgba(0,0,0,0.05)" }}
+              style={{
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.10), inset 0 -1px 0 rgba(0,0,0,0.05)",
+              }}
               className="pointer-events-none h-9 w-9 scale-95 rounded-full border border-white/[0.09] opacity-0 transition-[opacity,transform] duration-[120ms] group-hover:pointer-events-auto group-hover:scale-100 group-hover:opacity-100 focus-within:pointer-events-auto focus-within:scale-100 focus-within:opacity-100"
               contentClassName="flex h-full w-full"
             >
@@ -654,8 +667,7 @@ export const ContinueCard = memo(function ContinueCard({
               <X size={20} strokeWidth={2.4} />
             </span>
           </button>
-        )
-      )}
+        ))}
     </div>
   );
 });

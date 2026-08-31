@@ -51,22 +51,32 @@ export async function hydrateLibraryMeta(
         );
         if (r.ok) {
           const j = await r.json();
-          const localizedPoster = await tmdbLocalizedPoster(tmdbKey, id, j.original_language).catch(() => undefined);
+          const localizedPoster = await tmdbLocalizedPoster(tmdbKey, id, j.original_language).catch(
+            () => undefined,
+          );
           return {
             id,
             type,
             name: settings.translateTitles
               ? j.title || j.name || ""
               : j.original_title || j.original_name || j.title || j.name || "",
-            poster: localizedPoster ?? (j.poster_path ? `https://image.tmdb.org/t/p/w342${j.poster_path}` : undefined),
+            poster:
+              localizedPoster ??
+              (j.poster_path ? `https://image.tmdb.org/t/p/w342${j.poster_path}` : undefined),
             background: j.backdrop_path
               ? `https://image.tmdb.org/t/p/w780${j.backdrop_path}`
               : undefined,
             releaseInfo: (j.release_date || j.first_air_date)?.slice(0, 4),
             imdbRating: typeof j.vote_average === "number" ? j.vote_average.toFixed(1) : undefined,
             description: settings.translateDescriptions ? j.overview || undefined : undefined,
-            genres: Array.isArray(j.genres) ? j.genres.map((genre: { name?: string }) => genre.name).filter(Boolean) : undefined,
-            runtime: j.runtime ? `${j.runtime} min` : Array.isArray(j.episode_run_time) && j.episode_run_time[0] ? `${j.episode_run_time[0]} min` : undefined,
+            genres: Array.isArray(j.genres)
+              ? j.genres.map((genre: { name?: string }) => genre.name).filter(Boolean)
+              : undefined,
+            runtime: j.runtime
+              ? `${j.runtime} min`
+              : Array.isArray(j.episode_run_time) && j.episode_run_time[0]
+                ? `${j.episode_run_time[0]} min`
+                : undefined,
           } as Meta;
         }
       } catch {

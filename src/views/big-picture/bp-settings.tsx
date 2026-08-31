@@ -129,13 +129,16 @@ export function BpSettings() {
               />
             ))
           : controls.map((control, i) => {
-              const index = controls.slice(0, i).reduce(
-                (rows, entry) =>
-                  rows + (entry.kind === "options" && entry.columns === 2
-                    ? Math.max(1, Math.ceil(entry.options.length / 2))
-                    : 1),
-                0,
-              );
+              const index = controls
+                .slice(0, i)
+                .reduce(
+                  (rows, entry) =>
+                    rows +
+                    (entry.kind === "options" && entry.columns === 2
+                      ? Math.max(1, Math.ceil(entry.options.length / 2))
+                      : 1),
+                  0,
+                );
               if (control.kind === "options") {
                 return (
                   <BpOptionRow

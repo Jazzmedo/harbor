@@ -9,7 +9,12 @@ import {
   readNfo,
 } from "@/lib/local-library/sidecars";
 
-export type ScannedFile = { path: string; filename: string; size: number; subtitlePaths?: string[] };
+export type ScannedFile = {
+  path: string;
+  filename: string;
+  size: number;
+  subtitlePaths?: string[];
+};
 
 type Parsed = ReturnType<typeof parseFilename>;
 

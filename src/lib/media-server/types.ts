@@ -1,5 +1,12 @@
 export type MediaServerProvider = "jellyfin" | "emby" | "plex";
-export type MediaServerQuality = "original" | "4k-40" | "1080p-20" | "1080p-12" | "720p-4" | "480p-2" | "360p-0.7";
+export type MediaServerQuality =
+  | "original"
+  | "4k-40"
+  | "1080p-20"
+  | "1080p-12"
+  | "720p-4"
+  | "480p-2"
+  | "360p-0.7";
 export type MediaKind = "movie" | "series" | "season" | "episode";
 
 export type MediaIdentity = {
@@ -36,7 +43,13 @@ export type MediaServerConnection = {
   enabledLibraryIds?: string[];
 };
 
-export type MediaServerRefreshInterval = "launch" | "daily" | "three-days" | "weekly" | "custom" | "manual";
+export type MediaServerRefreshInterval =
+  | "launch"
+  | "daily"
+  | "three-days"
+  | "weekly"
+  | "custom"
+  | "manual";
 
 export type MediaServerLibrary = {
   id: string;
@@ -163,17 +176,44 @@ export type MediaServerPlaybackRequest = {
   playbackSessionId?: string;
 };
 
-export type SyncPage = { items: MediaServerItem[]; cursor?: string; deletedIds?: string[]; processed?: number; total?: number };
+export type SyncPage = {
+  items: MediaServerItem[];
+  cursor?: string;
+  deletedIds?: string[];
+  processed?: number;
+  total?: number;
+};
 export type AuthResult = { userId: string; userName: string; token: string };
 
 export interface MediaServerAdapter {
   readonly provider: MediaServerProvider;
   authenticate(input: Record<string, string>): Promise<AuthResult>;
   libraries(connection: MediaServerConnection): Promise<MediaServerLibrary[]>;
-  synchronize(connection: MediaServerConnection, library: MediaServerLibrary, cursor?: string): Promise<SyncPage>;
+  synchronize(
+    connection: MediaServerConnection,
+    library: MediaServerLibrary,
+    cursor?: string,
+  ): Promise<SyncPage>;
   lookup(connection: MediaServerConnection, identity: MediaIdentity): Promise<MediaServerItem[]>;
-  playback(connection: MediaServerConnection, item: MediaServerItem, request: MediaServerPlaybackRequest): Promise<MediaServerPlayback>;
-  stopPlayback?(connection: MediaServerConnection, item: MediaServerItem, playbackSessionId: string, positionMs?: number): Promise<void>;
-  reportProgress(connection: MediaServerConnection, item: MediaServerItem, progress: MediaServerProgress): Promise<void>;
-  setWatched(connection: MediaServerConnection, item: MediaServerItem, watched: boolean): Promise<void>;
+  playback(
+    connection: MediaServerConnection,
+    item: MediaServerItem,
+    request: MediaServerPlaybackRequest,
+  ): Promise<MediaServerPlayback>;
+  stopPlayback?(
+    connection: MediaServerConnection,
+    item: MediaServerItem,
+    playbackSessionId: string,
+    positionMs?: number,
+  ): Promise<void>;
+  reportProgress(
+    connection: MediaServerConnection,
+    item: MediaServerItem,
+    progress: MediaServerProgress,
+  ): Promise<void>;
+  setWatched(
+    connection: MediaServerConnection,
+    item: MediaServerItem,
+    watched: boolean,
+  ): Promise<void>;
 }

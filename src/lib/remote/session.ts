@@ -67,7 +67,10 @@ type StickyMedia = {
   canToggleSubtitles: boolean;
 };
 
-function subtitleFlags(b: RemotePlaybackBinding): { subtitlesOn: boolean; canToggleSubtitles: boolean } {
+function subtitleFlags(b: RemotePlaybackBinding): {
+  subtitlesOn: boolean;
+  canToggleSubtitles: boolean;
+} {
   const casting = !!b.castDevice;
   const tracks = b.snap.subtitleTracks ?? [];
   return {
@@ -351,9 +354,7 @@ function buildRemoteSnapshotInner(positionSec?: number): RemoteSnapshot {
   const playing = casting
     ? b.castPlaying
     : status === "playing" || status === "loading" || status === "ready";
-  const pos = casting
-    ? b.castPositionSec || positionSec || 0
-    : (positionSec ?? b.snap.positionSec);
+  const pos = casting ? b.castPositionSec || positionSec || 0 : (positionSec ?? b.snap.positionSec);
   const target: RemoteTarget = casting
     ? {
         kind: "cast",
@@ -463,7 +464,11 @@ export async function dispatchRemoteCommand(command: RemoteCommand): Promise<voi
       return;
     }
     case "setSleep": {
-      setSleepMode(command.minutes > 0 ? { kind: "minutes", total: command.minutes, firesAt: 0 } : { kind: "off" });
+      setSleepMode(
+        command.minutes > 0
+          ? { kind: "minutes", total: command.minutes, firesAt: 0 }
+          : { kind: "off" },
+      );
       return;
     }
     case "setProfile": {

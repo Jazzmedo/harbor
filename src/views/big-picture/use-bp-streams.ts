@@ -11,7 +11,11 @@ import { findLocalEpisodeVersions, findLocalMovieVersions } from "@/lib/local-li
 import { mediaServerConnections } from "@/lib/media-server/connections";
 import { mediaServerItems } from "@/lib/media-server/index-store";
 import { matchingServerItems, serverPlayableCopies } from "@/lib/media-server/selectors";
-import type { MediaServerConnection, MediaServerItem, PlayableCopy } from "@/lib/media-server/types";
+import type {
+  MediaServerConnection,
+  MediaServerItem,
+  PlayableCopy,
+} from "@/lib/media-server/types";
 import {
   readPlayback,
   streamMatchesEntry,
@@ -149,7 +153,8 @@ export function useBpStreams(params: { meta: Meta; episode?: PlayEpisode }): BpS
   // The host's own pick has to win the ordering, otherwise a guest picking by
   // position desyncs the room.
   const hostMatch = useMemo(
-    () => (hostSourceForMedia && result ? buildMatchScores(result.picker.all, hostSourceForMedia) : null),
+    () =>
+      hostSourceForMedia && result ? buildMatchScores(result.picker.all, hostSourceForMedia) : null,
     [hostSourceForMedia, result],
   );
   const hostMatchFor = useCallback(
@@ -194,9 +199,7 @@ export function useBpStreams(params: { meta: Meta; episode?: PlayEpisode }): BpS
   // Neither was read back here, so both settings silently did nothing.
   const previousPlayback = useMemo(
     () =>
-      settings.rememberLastStream
-        ? readPlayback(meta.id, episode?.season, episode?.episode)
-        : null,
+      settings.rememberLastStream ? readPlayback(meta.id, episode?.season, episode?.episode) : null,
     [meta.id, episode?.season, episode?.episode, settings.rememberLastStream],
   );
 

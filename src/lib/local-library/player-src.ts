@@ -5,7 +5,11 @@ import { episodeSpanLabel, parseEpisodeSpan } from "@/lib/episode-span";
 
 export function episodeLabel(e: LocalEntry): string | null {
   if (e.type === "show" && e.season != null && e.episode != null) {
-    return episodeSpanLabel({ season: e.season, episode: e.episode, episodeEnd: e.episodeEnd ?? parseEpisodeSpan(e.filename)?.episodeEnd });
+    return episodeSpanLabel({
+      season: e.season,
+      episode: e.episode,
+      episodeEnd: e.episodeEnd ?? parseEpisodeSpan(e.filename)?.episodeEnd,
+    });
   }
   return null;
 }
@@ -21,18 +25,31 @@ export function subtitleLanguage(videoPath: string, subtitlePath: string): strin
   const subtitleStem = fileStem(subtitlePath);
   if (subtitleStem === videoStem) return undefined;
   if (!subtitleStem.startsWith(`${videoStem}.`)) return undefined;
-  const candidate = subtitleStem.slice(videoStem.length + 1).split(".")[0]?.trim().toLowerCase();
+  const candidate = subtitleStem
+    .slice(videoStem.length + 1)
+    .split(".")[0]
+    ?.trim()
+    .toLowerCase();
   return candidate && /^[a-z]{2,3}(?:-[a-z]{2})?$/.test(candidate) && isKnownLanguage(candidate)
     ? normalizeLang(candidate)
     : undefined;
 }
 
-export function localPlayerSrc(entry: LocalEntry, isAnimeHint?: boolean, selectedEpisode?: { season: number; episode: number }): PlayerSrc {
+export function localPlayerSrc(
+  entry: LocalEntry,
+  isAnimeHint?: boolean,
+  selectedEpisode?: { season: number; episode: number },
+): PlayerSrc {
   const epLabel = episodeLabel(entry);
   const inferred = parseEpisodeSpan(entry.filename);
-  const episodeSpan = entry.season != null && entry.episode != null
-    ? { season: entry.season, episode: entry.episode, episodeEnd: entry.episodeEnd ?? inferred?.episodeEnd ?? entry.episode }
-    : undefined;
+  const episodeSpan =
+    entry.season != null && entry.episode != null
+      ? {
+          season: entry.season,
+          episode: entry.episode,
+          episodeEnd: entry.episodeEnd ?? inferred?.episodeEnd ?? entry.episode,
+        }
+      : undefined;
   return {
     meta: {
       id: entry.imdbId ?? `local:${entry.id}`,
@@ -43,13 +60,19 @@ export function localPlayerSrc(entry: LocalEntry, isAnimeHint?: boolean, selecte
     },
     imdbId: entry.imdbId ?? undefined,
     episode: epLabel
-      ? { season: selectedEpisode?.season ?? entry.season as number, episode: selectedEpisode?.episode ?? entry.episode as number, imdbId: entry.imdbId ?? undefined }
+      ? {
+          season: selectedEpisode?.season ?? (entry.season as number),
+          episode: selectedEpisode?.episode ?? (entry.episode as number),
+          imdbId: entry.imdbId ?? undefined,
+        }
       : undefined,
     episodeEnd: episodeSpan?.episodeEnd,
     episodeSpan,
     url: entry.path,
     title: entry.title,
-    subtitle: ["Local", epLabel ?? (entry.year ? String(entry.year) : entry.filename)].filter(Boolean).join(" · "),
+    subtitle: ["Local", epLabel ?? (entry.year ? String(entry.year) : entry.filename)]
+      .filter(Boolean)
+      .join(" · "),
     notWebReady: true,
     isAnime: isAnimeHint || entry.isAnime,
     subtitles: entry.subtitlePaths?.map((url) => ({

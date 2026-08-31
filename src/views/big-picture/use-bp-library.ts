@@ -14,10 +14,21 @@ import { useMal } from "@/lib/mal/provider";
 import { useSimkl } from "@/lib/simkl/provider";
 import { useLetterboxd } from "@/lib/stremboxd/provider";
 import { localEntryToMeta, useLocalLibrary, type LocalEntry } from "@/lib/local-library";
-import { mediaServerConnections, subscribeMediaServerConnections } from "@/lib/media-server/connections";
-import { mediaServerItems, mediaServerMetadata, putMediaServerMetadata } from "@/lib/media-server/index-store";
+import {
+  mediaServerConnections,
+  subscribeMediaServerConnections,
+} from "@/lib/media-server/connections";
+import {
+  mediaServerItems,
+  mediaServerMetadata,
+  putMediaServerMetadata,
+} from "@/lib/media-server/index-store";
 import { groupMediaServerTitles } from "@/lib/media-server/selectors";
-import { readLocalEntries, subscribeWatchlist, type LocalEntry as SavedEntry } from "@/lib/watchlist";
+import {
+  readLocalEntries,
+  subscribeWatchlist,
+  type LocalEntry as SavedEntry,
+} from "@/lib/watchlist";
 import { useCustomLists } from "@/lib/custom-lists";
 import { useMediaFavorites } from "@/lib/media-favorites";
 import { useCharacterFavorites } from "@/lib/character-favorites";
@@ -60,7 +71,13 @@ export function useBpLibraryTabs(): Array<{ id: BpLibTab; label: string }> {
     if (simkl.isConnected) out.push({ id: "simkl", label: "Simkl" });
     if (letterboxd.isActive) out.push({ id: "letterboxd", label: "Letterboxd" });
     return out;
-  }, [trakt.isConnected, anilist.isConnected, mal.isConnected, simkl.isConnected, letterboxd.isActive]);
+  }, [
+    trakt.isConnected,
+    anilist.isConnected,
+    mal.isConnected,
+    simkl.isConnected,
+    letterboxd.isActive,
+  ]);
 }
 
 function usable(i: LibraryItem): boolean {
@@ -184,42 +201,66 @@ function useMediaServerEntries(reload: number): BpLibFeed {
     let alive = true;
     const load = async () => {
       const connections = mediaServerConnections();
-      const enabled = new Set(connections.filter((connection) => connection.enabled).map((connection) => connection.id));
+      const enabled = new Set(
+        connections.filter((connection) => connection.enabled).map((connection) => connection.id),
+      );
       const allItems = await mediaServerItems();
-      const titles = groupMediaServerTitles(allItems.filter((item) => enabled.has(item.connectionId)));
+      const titles = groupMediaServerTitles(
+        allItems.filter((item) => enabled.has(item.connectionId)),
+      );
       const languageKey = `${settings.tmdbLanguage || "en"}:${(settings.tmdbImageLangs ?? []).join(",")}`;
-      const entries = await Promise.all(titles.map(async (title) => {
-        const key = `${title.key}:locale:${languageKey}`;
-        const cached = await mediaServerMetadata<Meta>(key);
-        const hydrated = cached ?? await hydrateLibraryMeta(title.key, title.kind, settings.tmdbKey).catch(() => null);
-        if (!cached && hydrated) await putMediaServerMetadata(key, hydrated);
-        return {
-          key: title.key,
-          meta: hydrated ?? { id: title.key, type: title.kind, name: title.fallbackTitle, releaseInfo: title.year ? String(title.year) : undefined },
-          date: title.addedAt ?? null,
-          groups: title.connectionIds,
-          libraries: title.libraryIds,
-        };
-      }));
+      const entries = await Promise.all(
+        titles.map(async (title) => {
+          const key = `${title.key}:locale:${languageKey}`;
+          const cached = await mediaServerMetadata<Meta>(key);
+          const hydrated =
+            cached ??
+            (await hydrateLibraryMeta(title.key, title.kind, settings.tmdbKey).catch(() => null));
+          if (!cached && hydrated) await putMediaServerMetadata(key, hydrated);
+          return {
+            key: title.key,
+            meta: hydrated ?? {
+              id: title.key,
+              type: title.kind,
+              name: title.fallbackTitle,
+              releaseInfo: title.year ? String(title.year) : undefined,
+            },
+            date: title.addedAt ?? null,
+            groups: title.connectionIds,
+            libraries: title.libraryIds,
+          };
+        }),
+      );
       const libraryNames = new Map<string, string>();
       for (const item of allItems) {
-        if (enabled.has(item.connectionId)) libraryNames.set(item.libraryId, item.libraryName || item.libraryId);
+        if (enabled.has(item.connectionId))
+          libraryNames.set(item.libraryId, item.libraryName || item.libraryId);
       }
-      if (alive) setFeed({
-        entries,
-        status: "ready",
-        groups: connections.filter((connection) => connection.enabled).map((connection) => ({ id: connection.id, label: connection.name })),
-        libraries: [...libraryNames].map(([id, label]) => ({ id, label })),
-      });
+      if (alive)
+        setFeed({
+          entries,
+          status: "ready",
+          groups: connections
+            .filter((connection) => connection.enabled)
+            .map((connection) => ({ id: connection.id, label: connection.name })),
+          libraries: [...libraryNames].map(([id, label]) => ({ id, label })),
+        });
     };
-    void load().catch(() => { if (alive) setFeed((current) => ({ ...current, status: "error" })); });
+    void load().catch(() => {
+      if (alive) setFeed((current) => ({ ...current, status: "error" }));
+    });
     const unsubscribe = subscribeMediaServerConnections(() => void load());
-    return () => { alive = false; unsubscribe(); };
+    return () => {
+      alive = false;
+      unsubscribe();
+    };
   }, [reload, settings.tmdbKey, settings.tmdbLanguage, settings.tmdbImageLangs]);
   return feed;
 }
 
-export function useBpLibraryFeed(tab: BpLibTab): BpLibFeed & { refresh: () => void; signedIn: boolean } {
+export function useBpLibraryFeed(
+  tab: BpLibTab,
+): BpLibFeed & { refresh: () => void; signedIn: boolean } {
   const [reload, setReload] = useState(0);
   const refresh = useCallback(() => setReload((n) => n + 1), []);
   const { settings } = useSettings();

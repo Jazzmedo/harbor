@@ -160,11 +160,12 @@ export function loadStoredSettings(rawKey: string = STORAGE_KEY): Settings {
       _playbackSourcePreferenceV1?: boolean;
     };
     if (!parsed._playbackSourcePreferenceV1) {
-      parsed.playbackSourcePreference = parsed.localPlaybackMode === "local"
-        ? "local"
-        : parsed.localPlaybackMode === "stream"
-          ? "online"
-          : "ask";
+      parsed.playbackSourcePreference =
+        parsed.localPlaybackMode === "local"
+          ? "local"
+          : parsed.localPlaybackMode === "stream"
+            ? "online"
+            : "ask";
       parsed.preferredMediaServerId = null;
       parsed._playbackSourcePreferenceV1 = true;
     }

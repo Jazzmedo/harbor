@@ -74,12 +74,18 @@ export function BpDetailHero({
       )}
 
       {detail?.tagline && (
-        <p data-bp-detail-tagline className="mt-[12px] max-w-[min(36vw,410px)] text-[13.4px] font-medium italic leading-snug text-ink-muted">
+        <p
+          data-bp-detail-tagline
+          className="mt-[12px] max-w-[min(36vw,410px)] text-[13.4px] font-medium italic leading-snug text-ink-muted"
+        >
           {detail.tagline}
         </p>
       )}
 
-      <div data-bp-hero-meta className="mt-[13px] flex flex-wrap items-center gap-x-[16px] gap-y-[6px] text-[13.4px] font-semibold tracking-[0.015em] text-ink-subtle">
+      <div
+        data-bp-hero-meta
+        className="mt-[13px] flex flex-wrap items-center gap-x-[16px] gap-y-[6px] text-[13.4px] font-semibold tracking-[0.015em] text-ink-subtle"
+      >
         {/* showDetailRatings and every per-provider detail flag are resolved
             inside useBpCardBadges, so an empty set here means the user turned
             them off, not that the hero forgot to ask. */}
@@ -115,7 +121,10 @@ export function BpDetailHero({
       <BpSynopsis text={overview} state={synopsis} />
       {!settings.tmdbKey && <BpTmdbKeyNote />}
 
-      <div data-bp-detail-awards className="pointer-events-none absolute inset-y-0 start-0 end-[calc(var(--bp-gutter)_-_40px)]">
+      <div
+        data-bp-detail-awards
+        className="pointer-events-none absolute inset-y-0 start-0 end-[calc(var(--bp-gutter)_-_40px)]"
+      >
         <MetaAwardsCorner meta={meta} imdbId={imdbId} />
       </div>
     </div>

@@ -21,7 +21,13 @@ import { EpisodeSection } from "./episodes";
 import { CastRow, CastSkeleton, CrewSection } from "./cast";
 import { RecRail } from "./recommendations";
 import { AwardsSection } from "./awards";
-import { dedupeCharacters, dedupeMeta, dedupeRelated, isAnimeId, useAnimeDetail } from "./anime-data";
+import {
+  dedupeCharacters,
+  dedupeMeta,
+  dedupeRelated,
+  isAnimeId,
+  useAnimeDetail,
+} from "./anime-data";
 import {
   AnimeInfo,
   AnimeRelatedRow,
@@ -130,16 +136,20 @@ function DetailBody({
   const overview = detail?.overview || full?.description || meta.description || "";
 
   const availability = useMemo(() => {
-    const ids = new Set([
-      meta.id,
-      detail ? `tmdb:${detail.kind}:${detail.id}` : "",
-      detail?.imdbId ?? "",
-    ].filter(Boolean).map((id) => id.toLowerCase()));
-    const tmdbId = detail?.id ?? (() => {
-      const match = meta.id.match(/^tmdb:(?:movie|tv|series):(\d+)$/i);
-      return match ? Number(match[1]) : undefined;
-    })();
-    const imdbId = (detail?.imdbId ?? (meta.id.startsWith("tt") ? meta.id : undefined))?.toLowerCase();
+    const ids = new Set(
+      [meta.id, detail ? `tmdb:${detail.kind}:${detail.id}` : "", detail?.imdbId ?? ""]
+        .filter(Boolean)
+        .map((id) => id.toLowerCase()),
+    );
+    const tmdbId =
+      detail?.id ??
+      (() => {
+        const match = meta.id.match(/^tmdb:(?:movie|tv|series):(\d+)$/i);
+        return match ? Number(match[1]) : undefined;
+      })();
+    const imdbId = (
+      detail?.imdbId ?? (meta.id.startsWith("tt") ? meta.id : undefined)
+    )?.toLowerCase();
     const matches = (item: NonNullable<typeof snapshot.library>["local"][number]) =>
       ids.has(item.id.toLowerCase()) ||
       (tmdbId != null && item.tmdbId === tmdbId) ||
@@ -207,7 +217,13 @@ function DetailBody({
         className="flex flex-col gap-8 px-5 pt-5"
         style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 44px)" }}
       >
-        <DetailActions meta={meta} detail={detail} title={title} trailerId={trailerId} onPlay={onPlay} />
+        <DetailActions
+          meta={meta}
+          detail={detail}
+          title={title}
+          trailerId={trailerId}
+          onPlay={onPlay}
+        />
 
         {overview ? (
           <Overview text={overview} />

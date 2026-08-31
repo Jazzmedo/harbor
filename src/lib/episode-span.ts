@@ -16,14 +16,16 @@ const SINGLE_PATTERNS = [
 ];
 
 export function parseEpisodeSpan(text: string): EpisodeSpan | null {
-  if (/(?:^|[^a-z0-9])s\d{1,3}[ ._-]*e\d{1,4}\s*-\s*s\d{1,3}[ ._-]*e\d{1,4}(?!\d)/i.test(text)) return null;
+  if (/(?:^|[^a-z0-9])s\d{1,3}[ ._-]*e\d{1,4}\s*-\s*s\d{1,3}[ ._-]*e\d{1,4}(?!\d)/i.test(text))
+    return null;
   for (const pattern of SPAN_PATTERNS) {
     const match = pattern.exec(text);
     if (!match) continue;
     const season = Number(match[1]);
     const episode = Number(match[2]);
     const episodeEnd = Number(match[3]);
-    if (season > 0 && episode > 0 && episodeEnd === episode + 1) return { season, episode, episodeEnd };
+    if (season > 0 && episode > 0 && episodeEnd === episode + 1)
+      return { season, episode, episodeEnd };
     return null;
   }
   for (const pattern of SINGLE_PATTERNS) {
@@ -41,10 +43,19 @@ export function episodeSpanContains(
   season: number,
   episode: number,
 ): boolean {
-  return span.season === season && span.episode != null && episode >= span.episode && episode <= (span.episodeEnd ?? span.episode);
+  return (
+    span.season === season &&
+    span.episode != null &&
+    episode >= span.episode &&
+    episode <= (span.episodeEnd ?? span.episode)
+  );
 }
 
-export function episodeSpanLabel(span: { season: number; episode: number; episodeEnd?: number | null }): string {
+export function episodeSpanLabel(span: {
+  season: number;
+  episode: number;
+  episodeEnd?: number | null;
+}): string {
   const start = String(span.episode).padStart(2, "0");
   const end = span.episodeEnd ?? span.episode;
   return `S${String(span.season).padStart(2, "0")}E${start}${end > span.episode ? `–E${String(end).padStart(2, "0")}` : ""}`;

@@ -9,7 +9,7 @@ import { HomeServersTab } from "./streaming-sources-panel/home-servers-tab";
 
 export type { DebridKey };
 
-type Tab = "services" | "home-servers" | "filters" | "sorting" | "picker" ;
+type Tab = "services" | "home-servers" | "filters" | "sorting" | "picker";
 
 export function StreamingSourcesPanel({
   rdDraft,
@@ -39,7 +39,9 @@ export function StreamingSourcesPanel({
   saveKey: (which: DebridKey, value: string) => void;
 }) {
   const t = useT();
-  const [tab, setTab] = useState<Tab>(() => sessionStorage.getItem("harbor.settings.streaming.home-servers") ? "home-servers" : "services");
+  const [tab, setTab] = useState<Tab>(() =>
+    sessionStorage.getItem("harbor.settings.streaming.home-servers") ? "home-servers" : "services",
+  );
   const tabs = [
     { id: "services" as const, label: t("Services") },
     { id: "home-servers" as const, label: t("Home servers") },

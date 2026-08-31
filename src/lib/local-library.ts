@@ -55,7 +55,8 @@ function normalizeEntries(entries: LocalEntry[]): LocalEntry[] {
       entry.season === parsed.season &&
       entry.episode === parsed.episode &&
       entry.episodeEnd === parsed.episodeEnd
-    ) return entry;
+    )
+      return entry;
     return {
       ...entry,
       type: "show",
@@ -184,7 +185,15 @@ export function findLocalEpisode(
   season: number,
   episode: number,
 ): LocalEntry | null {
-  return localShowEpisodes(show).find((e) => episodeSpanContains({ ...e, episodeEnd: e.episodeEnd ?? parseEpisodeSpan(e.filename)?.episodeEnd }, season, episode)) ?? null;
+  return (
+    localShowEpisodes(show).find((e) =>
+      episodeSpanContains(
+        { ...e, episodeEnd: e.episodeEnd ?? parseEpisodeSpan(e.filename)?.episodeEnd },
+        season,
+        episode,
+      ),
+    ) ?? null
+  );
 }
 
 export function addLocalEntries(entries: LocalEntry[]): void {
@@ -243,7 +252,11 @@ export function findLocalEpisodeByIds(
     read().find(
       (e) =>
         e.type === "show" &&
-        episodeSpanContains({ ...e, episodeEnd: e.episodeEnd ?? parseEpisodeSpan(e.filename)?.episodeEnd }, season, episode) &&
+        episodeSpanContains(
+          { ...e, episodeEnd: e.episodeEnd ?? parseEpisodeSpan(e.filename)?.episodeEnd },
+          season,
+          episode,
+        ) &&
         ((tmdbId != null && e.tmdbId === tmdbId) || (imdbId != null && e.imdbId === imdbId)),
     ) ?? null
   );
@@ -427,8 +440,10 @@ export function parseFilename(filename: string): ParsedFilename {
   const span = parseEpisodeSpan(stem);
   const tv = stem.match(TV_RX);
   const extras = !span && !tv ? stem.match(EXTRAS_RX) : null;
-  const season = extras ? 0 : span?.season ?? (tv ? parseInt(tv[1] ?? tv[3] ?? tv[5], 10) : null);
-  const episode = extras ? parseInt(extras[1], 10) : span?.episode ?? (tv ? parseInt(tv[2] ?? tv[4] ?? tv[6], 10) : null);
+  const season = extras ? 0 : (span?.season ?? (tv ? parseInt(tv[1] ?? tv[3] ?? tv[5], 10) : null));
+  const episode = extras
+    ? parseInt(extras[1], 10)
+    : (span?.episode ?? (tv ? parseInt(tv[2] ?? tv[4] ?? tv[6], 10) : null));
   const yearMatch = stem.match(YEAR_RX);
   const year = yearMatch ? parseInt(yearMatch[1], 10) : null;
   const resMatch = stem.match(/\b(2160p|1080p|720p|480p|4k|uhd)\b/i);
@@ -444,8 +459,8 @@ export function parseFilename(filename: string): ParsedFilename {
     .replace(NOISE_RX, " ")
     .replace(/\s+/g, " ")
     .trim()
-    .replace(/[\[\(\{].*?[\]\)\}]/g, "")
-    .replace(/[\[\](){}]/g, " ")
+    .replace(/(?:\[|\(|\{).*?(?:\]|\)|\})/g, "")
+    .replace(/(?:\[|\]|\(|\)|\{|\})/g, " ")
     .replace(/[\s\-–—_]+$/g, "")
     .replace(/^[\s\-–—_]+/g, "")
     .replace(/\s+/g, " ")

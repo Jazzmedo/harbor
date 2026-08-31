@@ -40,10 +40,7 @@ import { useLocalExport } from "./local-tab/use-local-export";
 import { useLocalScan } from "./local-tab/use-local-scan";
 import { LocalCwRow } from "./local-tab/cw-row";
 import { useReportFeatured } from "./featured-context";
-import {
-  readLibraryFilterPreferences,
-  writeLibraryFilterPreferences,
-} from "./filter-preferences";
+import { readLibraryFilterPreferences, writeLibraryFilterPreferences } from "./filter-preferences";
 
 type Tr = (key: string, vars?: Record<string, string | number>) => string;
 
@@ -136,9 +133,7 @@ export function LocalTab({ scrollRef }: { scrollRef?: RefObject<HTMLElement | nu
   const [query, setQuery] = useState("");
   const [sortKey, setSortKey] = useState<LocalSortKey>(savedFilters.sort ?? "added");
   const [sortDir, setSortDir] = useState<SortDir>(savedFilters.sortDir ?? "desc");
-  const [genres, setGenres] = useState<Set<string>>(
-    () => new Set(savedFilters.genres ?? []),
-  );
+  const [genres, setGenres] = useState<Set<string>>(() => new Set(savedFilters.genres ?? []));
   useEffect(() => {
     writeLibraryFilterPreferences("local", {
       type,

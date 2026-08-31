@@ -72,7 +72,12 @@ export function Hero({
           className="absolute end-3 z-10"
           style={{ top: "calc(env(safe-area-inset-top, 0px) + 10px)" }}
         >
-          <HeroAwardsCorner summary={awardSummary} inline onDark className="max-w-[58vw] text-end" />
+          <HeroAwardsCorner
+            summary={awardSummary}
+            inline
+            onDark
+            className="max-w-[58vw] text-end"
+          />
         </div>
       )}
 
@@ -153,7 +158,11 @@ function MetaPills({
       {availability.providers.map((provider) => (
         <Pill key={provider}>
           <span aria-label={`Available in ${mediaServerProviderName(provider)}`}>
-            <MediaServerBrand provider={provider} name={mediaServerProviderName(provider)} compact />
+            <MediaServerBrand
+              provider={provider}
+              name={mediaServerProviderName(provider)}
+              compact
+            />
           </span>
         </Pill>
       ))}

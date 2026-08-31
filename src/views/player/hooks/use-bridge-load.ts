@@ -132,7 +132,9 @@ export function useBridgeLoad(params: {
       // automatic resume preference. That preference only governs stored resume
       // progress when opening an item normally.
       const hasExplicitStart = src.startPositionMs != null;
-      const startSec = (hasExplicitStart ? startMs : !resumePlaybackRef.current || finishedNearEnd ? 0 : startMs) / 1000;
+      const startSec =
+        (hasExplicitStart ? startMs : !resumePlaybackRef.current || finishedNearEnd ? 0 : startMs) /
+        1000;
       const guestInRoom = inRoomRef.current && !isHostRef.current;
       const eligibleForPrompt =
         isFirstLoad &&

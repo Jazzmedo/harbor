@@ -28,12 +28,25 @@ export function mediaServerPlayerSrc(args: {
     imdbId,
     episode,
     episodeEnd: version?.episodeEnd ?? item.identity.episodeEnd,
-    episodeSpan: (version?.season ?? item.identity.season) != null && (version?.episode ?? item.identity.episode) != null
-      ? { season: (version?.season ?? item.identity.season)!, episode: (version?.episode ?? item.identity.episode)!, episodeEnd: version?.episodeEnd ?? item.identity.episodeEnd ?? (version?.episode ?? item.identity.episode)! }
-      : undefined,
+    episodeSpan:
+      (version?.season ?? item.identity.season) != null &&
+      (version?.episode ?? item.identity.episode) != null
+        ? {
+            season: (version?.season ?? item.identity.season)!,
+            episode: (version?.episode ?? item.identity.episode)!,
+            episodeEnd:
+              version?.episodeEnd ??
+              item.identity.episodeEnd ??
+              (version?.episode ?? item.identity.episode)!,
+          }
+        : undefined,
     url: playback.url,
     headers: playback.headers,
-    subtitles: playback.subtitles?.map((track) => ({ id: track.id, url: track.url, lang: track.language })),
+    subtitles: playback.subtitles?.map((track) => ({
+      id: track.id,
+      url: track.url,
+      lang: track.language,
+    })),
     title: meta.name,
     subtitle: `${providerName(connection.provider)} · ${connection.name} · ${playback.direct ? "Direct play" : "Transcode"}`,
     notWebReady: true,
@@ -75,7 +88,9 @@ export async function switchMediaServerQuality(args: {
   const context = args.src.homeServer;
   if (!context) throw new Error("This is not home-server playback.");
   const connection = mediaServerConnections().find((entry) => entry.id === context.connectionId);
-  const item = (await mediaServerItems(context.connectionId)).find((entry) => entry.id === context.itemId);
+  const item = (await mediaServerItems(context.connectionId)).find(
+    (entry) => entry.id === context.itemId,
+  );
   if (!connection || !item) throw new Error("This home-server copy is no longer available.");
   const adapter = mediaServerAdapter(connection);
   const next = await adapter.playback(connection, item, {
@@ -87,15 +102,25 @@ export async function switchMediaServerQuality(args: {
     ...args.src,
     url: next.url,
     headers: next.headers,
-    subtitles: next.subtitles?.map((track) => ({ id: track.id, url: track.url, lang: track.language })),
+    subtitles: next.subtitles?.map((track) => ({
+      id: track.id,
+      url: track.url,
+      lang: track.language,
+    })),
     startPositionMs: args.positionMs,
     startPaused: !args.playing,
-    homeServer: { ...context, quality: next.effectiveQuality, playbackSessionId: next.playbackSessionId },
+    homeServer: {
+      ...context,
+      quality: next.effectiveQuality,
+      playbackSessionId: next.playbackSessionId,
+    },
     subtitle: `${providerName(connection.provider)} · ${connection.name} · ${next.direct ? "Direct play" : "Transcode"}`,
   };
   updateMediaServerConnection(connection.id, { preferredQuality: args.quality });
   if (context.playbackSessionId && adapter.stopPlayback) {
-    void adapter.stopPlayback(connection, item, context.playbackSessionId, args.positionMs).catch(() => {});
+    void adapter
+      .stopPlayback(connection, item, context.playbackSessionId, args.positionMs)
+      .catch(() => {});
   }
   return replacement;
 }

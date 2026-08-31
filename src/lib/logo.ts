@@ -82,7 +82,7 @@ async function doResolve(tmdbKey: string, m: Meta): Promise<string | undefined> 
         if (localized) return localized;
       }
     }
-    const full = await fetchCinemeta(narrowMediaType(m.type),m.id);
+    const full = await fetchCinemeta(narrowMediaType(m.type), m.id);
     return full?.logo;
   }
   if (m.id.startsWith("tmdb:")) {
@@ -95,7 +95,7 @@ async function doResolve(tmdbKey: string, m: Meta): Promise<string | undefined> 
         if (curated) return curated;
       }
       if (tt) {
-        const full = await fetchCinemeta(narrowMediaType(m.type),tt);
+        const full = await fetchCinemeta(narrowMediaType(m.type), tt);
         if (full?.logo) return full.logo;
       }
     }

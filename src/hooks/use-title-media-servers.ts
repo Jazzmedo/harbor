@@ -7,7 +7,10 @@ import { identityMatches, mediaServerItems } from "@/lib/media-server/index-stor
 import { groupMediaServerTitles } from "@/lib/media-server/selectors";
 import type { MediaIdentity, MediaServerConnection } from "@/lib/media-server/types";
 
-function titleIdentity(metaId: string | undefined, imdbId: string | null | undefined): MediaIdentity {
+function titleIdentity(
+  metaId: string | undefined,
+  imdbId: string | null | undefined,
+): MediaIdentity {
   const tmdb = metaId?.match(/^tmdb:(?:movie|tv|series):(\d+)$/);
   return {
     tmdbId: tmdb ? Number(tmdb[1]) : undefined,

@@ -259,7 +259,11 @@ function BpTenFoot(props: BpTenFootProps) {
             icon={<Gauge size={21} strokeWidth={2.2} />}
             shellNav
           >
-            <HomeServerQualityPanel src={src} positionMs={Math.max(0, snap.positionSec * 1000)} playing={snap.status === "playing"} />
+            <HomeServerQualityPanel
+              src={src}
+              positionMs={Math.max(0, snap.positionSec * 1000)}
+              playing={snap.status === "playing"}
+            />
           </BpPlayerSlot>
         )}
       </BpPlayerShell>
@@ -372,27 +376,86 @@ function SourcesPanel(props: Omit<Parameters<typeof BpPlayerSources>[0], "onClos
   return <BpPlayerSources {...props} onClose={closePanel} />;
 }
 
-function HomeServerQualityPanel({ src, positionMs, playing }: { src: PlayerSrc; positionMs: number; playing: boolean }) {
+function HomeServerQualityPanel({
+  src,
+  positionMs,
+  playing,
+}: {
+  src: PlayerSrc;
+  positionMs: number;
+  playing: boolean;
+}) {
   const t = useBpT();
   const { closePanel } = useBpPlayer();
   const { replacePlayerSrc } = useView();
   const [switching, setSwitching] = useState<MediaServerQuality | null>(null);
   const [error, setError] = useState("");
   const select = async (quality: MediaServerQuality) => {
-    if (quality === src.homeServer?.quality) { closePanel(); return; }
-    setSwitching(quality); setError("");
+    if (quality === src.homeServer?.quality) {
+      closePanel();
+      return;
+    }
+    setSwitching(quality);
+    setError("");
     try {
       replacePlayerSrc(await switchMediaServerQuality({ src, quality, positionMs, playing }));
       closePanel();
     } catch (cause) {
-      setError(`${cause instanceof Error ? cause.message : String(cause)} ${t("The current stream is still playing. Original remains available.")}`);
-    } finally { setSwitching(null); }
+      setError(
+        `${cause instanceof Error ? cause.message : String(cause)} ${t("The current stream is still playing. Original remains available.")}`,
+      );
+    } finally {
+      setSwitching(null);
+    }
   };
-  return <div data-bp-dialog className="flex h-full flex-col justify-center gap-[clamp(14px,2vh,28px)] px-[var(--bp-gutter)]">
-    <div><h2 className="font-display text-[clamp(24px,4vh,52px)] font-semibold text-ink">{t("Home server quality")}</h2><p className="mt-2 text-[clamp(13px,1.8vh,20px)] text-ink-subtle">{t("Switch quality without losing your place.")}</p></div>
-    <div data-bp-scroll-y className="grid max-h-[58vh] grid-cols-2 gap-[clamp(8px,1vw,16px)] overflow-y-auto">
-      {MEDIA_SERVER_QUALITIES.map((quality, index) => { const active = quality.id === src.homeServer?.quality; return <button key={quality.id} type="button" data-bp-focusable data-bp-chip data-bp-autofocus={index === 0 ? "true" : undefined} disabled={switching != null} onClick={() => void select(quality.id)} className={`flex min-h-[clamp(64px,8vh,92px)] items-center justify-between rounded-[var(--bp-r-md)] px-[clamp(18px,2vw,30px)] text-[clamp(15px,2.1vh,23px)] font-semibold ${active ? "bg-[var(--bp-on)] text-ink" : "border border-[var(--bp-edge)] bg-[var(--bp-panel)] text-ink-subtle"}`}><span>{t(quality.label)}</span>{switching === quality.id ? <LoaderCircle className="animate-spin" size={22}/> : active ? <Check size={22}/> : null}</button>; })}
+  return (
+    <div
+      data-bp-dialog
+      className="flex h-full flex-col justify-center gap-[clamp(14px,2vh,28px)] px-[var(--bp-gutter)]"
+    >
+      <div>
+        <h2 className="font-display text-[clamp(24px,4vh,52px)] font-semibold text-ink">
+          {t("Home server quality")}
+        </h2>
+        <p className="mt-2 text-[clamp(13px,1.8vh,20px)] text-ink-subtle">
+          {t("Switch quality without losing your place.")}
+        </p>
+      </div>
+      <div
+        data-bp-scroll-y
+        className="grid max-h-[58vh] grid-cols-2 gap-[clamp(8px,1vw,16px)] overflow-y-auto"
+      >
+        {MEDIA_SERVER_QUALITIES.map((quality, index) => {
+          const active = quality.id === src.homeServer?.quality;
+          return (
+            <button
+              key={quality.id}
+              type="button"
+              data-bp-focusable
+              data-bp-chip
+              data-bp-autofocus={index === 0 ? "true" : undefined}
+              disabled={switching != null}
+              onClick={() => void select(quality.id)}
+              className={`flex min-h-[clamp(64px,8vh,92px)] items-center justify-between rounded-[var(--bp-r-md)] px-[clamp(18px,2vw,30px)] text-[clamp(15px,2.1vh,23px)] font-semibold ${active ? "bg-[var(--bp-on)] text-ink" : "border border-[var(--bp-edge)] bg-[var(--bp-panel)] text-ink-subtle"}`}
+            >
+              <span>{t(quality.label)}</span>
+              {switching === quality.id ? (
+                <LoaderCircle className="animate-spin" size={22} />
+              ) : active ? (
+                <Check size={22} />
+              ) : null}
+            </button>
+          );
+        })}
+      </div>
+      {error && (
+        <p
+          role="alert"
+          className="rounded-[var(--bp-r-sm)] bg-red-950/80 px-5 py-4 text-[clamp(13px,1.7vh,19px)] text-red-100 ring-1 ring-red-400/30"
+        >
+          {error}
+        </p>
+      )}
     </div>
-    {error && <p role="alert" className="rounded-[var(--bp-r-sm)] bg-red-950/80 px-5 py-4 text-[clamp(13px,1.7vh,19px)] text-red-100 ring-1 ring-red-400/30">{error}</p>}
-  </div>;
+  );
 }

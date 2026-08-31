@@ -11,7 +11,15 @@ const MARK = `${BP_METRIC_CHIP} text-[0.86em]`;
 // The provenance of a title is invisible on this page today: something served
 // by the user's own addon looks identical to a Cinemeta record. The addon ships
 // its own logo, so the mark is the asset rather than another grey rectangle.
-export function BpHeroMarks({ meta, inLibrary, homeServers }: { meta: Meta; inLibrary: boolean; homeServers: readonly MediaServerConnection[] }) {
+export function BpHeroMarks({
+  meta,
+  inLibrary,
+  homeServers,
+}: {
+  meta: Meta;
+  inLibrary: boolean;
+  homeServers: readonly MediaServerConnection[];
+}) {
   const t = useBpT();
   const origin = meta.addonOrigin;
 

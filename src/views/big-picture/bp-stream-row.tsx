@@ -1,5 +1,14 @@
 import type { CSSProperties } from "react";
-import { ArrowDownToLine, Check, Download, ExternalLink, HardDrive, History, Loader2, Share2 } from "lucide-react";
+import {
+  ArrowDownToLine,
+  Check,
+  Download,
+  ExternalLink,
+  HardDrive,
+  History,
+  Loader2,
+  Share2,
+} from "lucide-react";
 import { Play } from "@/components/icons/play-filled";
 import { AddonLogo } from "@/components/addon-logo";
 import { LocalVersionBadges } from "@/components/local-version-badges";
@@ -69,10 +78,13 @@ function editionText(edition: string): string {
 // Skin tone, VS16, ZWJ and the keycap are each outside Extended_Pictographic,
 // so dropping them leaves an invisible orphan behind the removed glyph.
 const PICTOGRAPH =
-  /[\p{Extended_Pictographic}\p{Regional_Indicator}\u{1F3FB}-\u{1F3FF}\u{FE0F}\u{200D}\u{20E3}]/gu;
+  /\p{Extended_Pictographic}|\p{Regional_Indicator}|[\u{1F3FB}-\u{1F3FF}]|\u{FE0F}|\u{200D}|\u{20E3}/gu;
 
 function plainLine(text: string): string {
-  return text.replace(PICTOGRAPH, "").replace(/\s{2,}/g, " ").trim();
+  return text
+    .replace(PICTOGRAPH, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
 }
 
 function detailLine(description: string, summary: string[], headline: string): string {
@@ -113,7 +125,9 @@ export function BpLocalRow({
       aria-label={`${t("Local Library")} ${entry.filename}`}
       className={`${ROW} items-center border-transparent text-ink`}
     >
-      <span className={`${SLOT} h-[clamp(46px,5.2vh,64px)] w-[clamp(46px,5.2vh,64px)] rounded-[var(--bp-r-sm)]`}>
+      <span
+        className={`${SLOT} h-[clamp(46px,5.2vh,64px)] w-[clamp(46px,5.2vh,64px)] rounded-[var(--bp-r-sm)]`}
+      >
         <HardDrive size={21} strokeWidth={2} className="text-[var(--bp-live)]" />
       </span>
       <span className="flex min-w-0 flex-1 flex-col gap-[clamp(3px,0.4vh,7px)]">
@@ -175,13 +189,20 @@ export function BpHomeServerRow({
       aria-label={`${connection.name} ${copy.label}`}
       className={`${ROW} items-center border-transparent text-ink disabled:cursor-not-allowed disabled:opacity-45`}
     >
-      <span className={`${SLOT} h-[clamp(46px,5.2vh,64px)] w-[clamp(46px,5.2vh,64px)] rounded-[var(--bp-r-sm)]`}>
+      <span
+        className={`${SLOT} h-[clamp(46px,5.2vh,64px)] w-[clamp(46px,5.2vh,64px)] rounded-[var(--bp-r-sm)]`}
+      >
         <MediaServerBrand provider={connection.provider} name={connection.name} compact />
       </span>
       <span className="flex min-w-0 flex-1 flex-col gap-[clamp(3px,0.4vh,7px)]">
         <span className={META}>
           <span className={TAG}>{connection.name}</span>
-          <MediaServerVersionBadges version={copy.version} filename={copy.label} size="md" showSize={false} />
+          <MediaServerVersionBadges
+            version={copy.version}
+            filename={copy.label}
+            size="md"
+            showSize={false}
+          />
         </span>
         <span className="line-clamp-1 text-[clamp(12.5px,1.65vh,18px)] font-medium leading-snug text-ink-muted [overflow-wrap:anywhere]">
           {copy.label}
@@ -254,11 +275,7 @@ export function BpStreamRow({
   const addonName = contributorLabel(stream) || stream.addonId;
   const headline = plainLine(displayTitle(stream, showName, episode) || addonName);
   const rawDescription = stream.title?.trim() || stream.description?.trim() || "";
-  const fullDescription = rawDescription
-    .split("\n")
-    .map(plainLine)
-    .filter(Boolean)
-    .join("\n");
+  const fullDescription = rawDescription.split("\n").map(plainLine).filter(Boolean).join("\n");
   const filename = settings.pickerShowFilename ? torrentFilename(stream) : "";
   const badges = settings.showQualityBadge ? streamBadges(stream) : [];
   const dubSub = settings.showDubBadge ? streamDubSub(stream.audioLanguages, isAnime) : null;
@@ -288,7 +305,9 @@ export function BpStreamRow({
             : "border-transparent"
       }`}
     >
-      <span className={`${SLOT} h-[clamp(46px,5.2vh,64px)] w-[clamp(46px,5.2vh,64px)] overflow-hidden rounded-[var(--bp-r-sm)]`}>
+      <span
+        className={`${SLOT} h-[clamp(46px,5.2vh,64px)] w-[clamp(46px,5.2vh,64px)] overflow-hidden rounded-[var(--bp-r-sm)]`}
+      >
         <AddonLogo
           addonId={stream.addonId}
           addonName={stream.addonName ?? stream.addonId}

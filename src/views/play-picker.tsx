@@ -516,7 +516,11 @@ export function PlayPicker({
     if (!filteredPicker || !previousPlayback) return null;
     const m = filteredPicker.allRaw.find((s) => streamMatchesEntry(s, previousPlayback)) ?? null;
     if (!m || isAnimeMetaId || !episode) return m;
-    if (m.episode != null && (episode.episode < m.episode || episode.episode > (m.episodeEnd ?? m.episode))) return null;
+    if (
+      m.episode != null &&
+      (episode.episode < m.episode || episode.episode > (m.episodeEnd ?? m.episode))
+    )
+      return null;
     if (
       m.episode != null &&
       m.season != null &&

@@ -243,12 +243,15 @@ export function BpConnecting({
       );
     }
     if (slow) return t("Found peers but no data yet. The torrent may be slow.");
-    if (snap.buffering) return t("The player has the stream open and is waiting on the next piece.");
+    if (snap.buffering)
+      return t("The player has the stream open and is waiting on the next piece.");
     if (status.torrent && status.peers === 0 && status.elapsedMs >= STILL_LOOKING_MS) {
       return t("Still looking. Some torrents take a minute to find their first peer.");
     }
     if (status.torrent && status.peers > 0) {
-      return t("Downloading the start of the file. Playback begins once there is enough to keep going.");
+      return t(
+        "Downloading the start of the file. Playback begins once there is enough to keep going.",
+      );
     }
     return null;
   }, [t, terminal, slow, snap.buffering, status.torrent, status.peers, status.elapsedMs]);
@@ -279,13 +282,39 @@ export function BpConnecting({
   const overscan = bpOverscan();
   const actions = terminal
     ? [
-        { key: "back", label: t("Go back"), icon: <ArrowLeft size={20} strokeWidth={2.4} />, loud: true, run: cancel },
-        { key: "retry", label: t("Try again"), icon: <RotateCcw size={19} strokeWidth={2.4} />, loud: false, run: tryAgain },
+        {
+          key: "back",
+          label: t("Go back"),
+          icon: <ArrowLeft size={20} strokeWidth={2.4} />,
+          loud: true,
+          run: cancel,
+        },
+        {
+          key: "retry",
+          label: t("Try again"),
+          icon: <RotateCcw size={19} strokeWidth={2.4} />,
+          loud: false,
+          run: tryAgain,
+        },
       ]
     : [
-        { key: "cancel", label: t("Cancel"), icon: <X size={19} strokeWidth={2.4} />, loud: false, run: cancel },
+        {
+          key: "cancel",
+          label: t("Cancel"),
+          icon: <X size={19} strokeWidth={2.4} />,
+          loud: false,
+          run: cancel,
+        },
         ...(slow
-          ? [{ key: "retry", label: t("Try again"), icon: <RotateCcw size={19} strokeWidth={2.4} />, loud: false, run: tryAgain }]
+          ? [
+              {
+                key: "retry",
+                label: t("Try again"),
+                icon: <RotateCcw size={19} strokeWidth={2.4} />,
+                loud: false,
+                run: tryAgain,
+              },
+            ]
           : []),
       ];
   const rootStyle = {
@@ -335,9 +364,7 @@ export function BpConnecting({
       <div className="absolute inset-0" style={{ background: "var(--bp-scrim-up)" }} />
 
       <div className="absolute inset-0 flex flex-col justify-end px-[var(--bp-gutter)] pb-[calc(clamp(38px,6vh,96px)_+_var(--bp-safe-y,0px))]">
-        <div
-          className="flex w-[min(100%,clamp(440px,54vw,1080px))] flex-col gap-[clamp(13px,1.8vh,30px)] [animation:bp-rise_var(--bp-dur-slow)_var(--bp-ease)_120ms_backwards] motion-reduce:[animation:none]"
-        >
+        <div className="flex w-[min(100%,clamp(440px,54vw,1080px))] flex-col gap-[clamp(13px,1.8vh,30px)] [animation:bp-rise_var(--bp-dur-slow)_var(--bp-ease)_120ms_backwards] motion-reduce:[animation:none]">
           <BpConnectMark logo={logo} title={title} />
 
           {(episode || source) && (

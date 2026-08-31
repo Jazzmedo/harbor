@@ -14,7 +14,8 @@ export function decidePlaybackSource(
 ): PlaybackSourceDecision {
   const preference = settings.playbackSourcePreference;
   if (preference === "ask") return { kind: "chooser", reason: "ask" };
-  if (preference === "local") return localCount > 0 ? { kind: "local" } : { kind: "chooser", reason: "missing" };
+  if (preference === "local")
+    return localCount > 0 ? { kind: "local" } : { kind: "chooser", reason: "missing" };
   if (preference === "online") return { kind: "online" };
   const copies = settings.preferredMediaServerId
     ? serverCopies.filter((copy) => copy.connectionId === settings.preferredMediaServerId)

@@ -11,11 +11,7 @@ import {
   setSecret,
 } from "@/lib/secret-store";
 import { setItemWithRecovery } from "@/lib/storage-recovery";
-import {
-  localLibraryReady,
-  readLocalLibrary,
-  restoreLocalLibrary,
-} from "@/lib/local-library";
+import { localLibraryReady, readLocalLibrary, restoreLocalLibrary } from "@/lib/local-library";
 
 declare const __APP_VERSION__: string;
 

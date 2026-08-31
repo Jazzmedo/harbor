@@ -12,13 +12,19 @@ import { VoiceSearch, getSpeechRecognition } from "./voice-search";
 
 type Service = (typeof SERVICES)[StreamingService];
 
-const PROVIDER_KEYS: StreamingService[] = ["netflix", "prime", "disney", "max", "hulu", "crunchyroll"];
+const PROVIDER_KEYS: StreamingService[] = [
+  "netflix",
+  "prime",
+  "disney",
+  "max",
+  "hulu",
+  "crunchyroll",
+];
 
 type Dir = "up" | "right" | "down" | "left";
 
 const prefersReducedMotion = () =>
-  typeof window !== "undefined" &&
-  window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
 const SEGMENTS: Array<{ dir: Dir; clip: string; fill: string }> = [
   { dir: "up", clip: "polygon(50% 47%, -17% -20%, 117% -20%)", fill: "to top" },
@@ -38,8 +44,18 @@ const SVC_EXIT_CSS = `
 
 const CHEVRONS: Array<{ dir: Dir; rotate: number; pos: string; nudge: string }> = [
   { dir: "up", rotate: 0, pos: "inset-x-0 top-[11%] mx-auto w-max", nudge: "translateY(-5px)" },
-  { dir: "down", rotate: 180, pos: "inset-x-0 bottom-[11%] mx-auto w-max", nudge: "translateY(5px)" },
-  { dir: "left", rotate: 270, pos: "inset-y-0 start-[10%] my-auto h-max", nudge: "translateX(-5px)" },
+  {
+    dir: "down",
+    rotate: 180,
+    pos: "inset-x-0 bottom-[11%] mx-auto w-max",
+    nudge: "translateY(5px)",
+  },
+  {
+    dir: "left",
+    rotate: 270,
+    pos: "inset-y-0 start-[10%] my-auto h-max",
+    nudge: "translateX(-5px)",
+  },
   { dir: "right", rotate: 90, pos: "inset-y-0 end-[10%] my-auto h-max", nudge: "translateX(5px)" },
 ];
 
@@ -54,7 +70,9 @@ export function DpadRemote() {
   const [kbOpen, setKbOpen] = useState(false);
   const [speedOpen, setSpeedOpen] = useState(false);
   const [voiceOpen, setVoiceOpen] = useState(false);
-  const [services, setServices] = useState<{ open: boolean; initial?: StreamingService }>({ open: false });
+  const [services, setServices] = useState<{ open: boolean; initial?: StreamingService }>({
+    open: false,
+  });
   const [servicesExiting, setServicesExiting] = useState(false);
   const closeServices = () => {
     setServicesExiting(true);
@@ -161,7 +179,11 @@ export function DpadRemote() {
         onClick={() => setSheetOpen(true)}
         className="flex items-center gap-2 text-[13.5px] font-semibold transition-opacity active:opacity-60"
       >
-        <Monitor size={15} strokeWidth={2.2} className={connected ? "text-ink" : "text-ink-subtle"} />
+        <Monitor
+          size={15}
+          strokeWidth={2.2}
+          className={connected ? "text-ink" : "text-ink-subtle"}
+        />
         <span className="text-ink">
           {connected ? snapshot.target.label || "Your computer" : "Connecting…"}
         </span>
@@ -209,7 +231,10 @@ export function DpadRemote() {
           <span
             aria-hidden
             className="pointer-events-none absolute inset-0"
-            style={{ background: "radial-gradient(circle at 50% 50%, var(--color-canvas) 33%, transparent 34%)" }}
+            style={{
+              background:
+                "radial-gradient(circle at 50% 50%, var(--color-canvas) 33%, transparent 34%)",
+            }}
           />
         </div>
 
@@ -219,7 +244,10 @@ export function DpadRemote() {
             aria-hidden
             className={`pointer-events-none absolute ${pos} text-ink-muted transition-[transform,color] duration-200 ease-[cubic-bezier(0.34,1.5,0.5,1)]`}
             style={{
-              transform: pressed === dir && !reduced ? `${nudge} scale(${holding ? 1.22 : 1.16})` : undefined,
+              transform:
+                pressed === dir && !reduced
+                  ? `${nudge} scale(${holding ? 1.22 : 1.16})`
+                  : undefined,
               color: pressed === dir ? "var(--color-accent)" : undefined,
             }}
           >
@@ -289,7 +317,12 @@ export function DpadRemote() {
             <Circle label="Back" onPress={() => (watching ? setConfirm("back") : nav("back"))}>
               <RemoteIcon name="back" size={26} />
             </Circle>
-            <Circle label="Home" onPress={() => (watching ? setConfirm("home") : sendCommand({ action: "goView", view: "home" }))}>
+            <Circle
+              label="Home"
+              onPress={() =>
+                watching ? setConfirm("home") : sendCommand({ action: "goView", view: "home" })
+              }
+            >
               <RemoteIcon name="home" size={26} />
             </Circle>
             <Circle label="Menu" onPress={() => sendCommand({ action: "openSearch" })}>
@@ -297,13 +330,31 @@ export function DpadRemote() {
             </Circle>
           </div>
           <div className="flex w-full items-center justify-around">
-            <Circle label="Rewind" onPress={() => sendCommand({ action: "seek", positionSec: Math.max(0, snapshot.positionSec - 10) })}>
+            <Circle
+              label="Rewind"
+              onPress={() =>
+                sendCommand({ action: "seek", positionSec: Math.max(0, snapshot.positionSec - 10) })
+              }
+            >
               <RemoteIcon name="previous" size={26} />
             </Circle>
-            <Circle label={playing ? "Pause" : "Play"} big onPress={() => sendCommand({ action: "togglePlayback" })}>
-              {playing ? <RemoteIcon name="pause" size={32} /> : <RemoteIcon name="play" size={32} />}
+            <Circle
+              label={playing ? "Pause" : "Play"}
+              big
+              onPress={() => sendCommand({ action: "togglePlayback" })}
+            >
+              {playing ? (
+                <RemoteIcon name="pause" size={32} />
+              ) : (
+                <RemoteIcon name="play" size={32} />
+              )}
             </Circle>
-            <Circle label="Forward" onPress={() => sendCommand({ action: "seek", positionSec: snapshot.positionSec + 10 })}>
+            <Circle
+              label="Forward"
+              onPress={() =>
+                sendCommand({ action: "seek", positionSec: snapshot.positionSec + 10 })
+              }
+            >
               <RemoteIcon name="previous" size={26} flip />
             </Circle>
           </div>
@@ -311,13 +362,36 @@ export function DpadRemote() {
 
         <Pane>
           <div className="flex w-full justify-around">
-            <Circle label="Volume down" onPress={() => sendCommand({ action: "setVolume", volume: Math.max(0, (snapshot.volume ?? 1) - 0.1) })}>
+            <Circle
+              label="Volume down"
+              onPress={() =>
+                sendCommand({
+                  action: "setVolume",
+                  volume: Math.max(0, (snapshot.volume ?? 1) - 0.1),
+                })
+              }
+            >
               <VolumeX size={26} strokeWidth={2.2} />
             </Circle>
-            <Circle label="Mute" onPress={() => sendCommand({ action: "setMuted", muted: !snapshot.muted })}>
-              {snapshot.muted ? <VolumeX size={26} strokeWidth={2.2} /> : <Volume2 size={26} strokeWidth={2.2} />}
+            <Circle
+              label="Mute"
+              onPress={() => sendCommand({ action: "setMuted", muted: !snapshot.muted })}
+            >
+              {snapshot.muted ? (
+                <VolumeX size={26} strokeWidth={2.2} />
+              ) : (
+                <Volume2 size={26} strokeWidth={2.2} />
+              )}
             </Circle>
-            <Circle label="Volume up" onPress={() => sendCommand({ action: "setVolume", volume: Math.min(1, (snapshot.volume ?? 1) + 0.1) })}>
+            <Circle
+              label="Volume up"
+              onPress={() =>
+                sendCommand({
+                  action: "setVolume",
+                  volume: Math.min(1, (snapshot.volume ?? 1) + 0.1),
+                })
+              }
+            >
               <Volume2 size={26} strokeWidth={2.2} />
             </Circle>
           </div>
@@ -331,7 +405,12 @@ export function DpadRemote() {
         <Pane>
           <div className="grid grid-cols-3 gap-2.5">
             {PROVIDER_KEYS.map((svc) => (
-              <ProviderCard key={svc} svc={svc} service={SERVICES[svc]} onPress={() => setServices({ open: true, initial: svc })} />
+              <ProviderCard
+                key={svc}
+                svc={svc}
+                service={SERVICES[svc]}
+                onPress={() => setServices({ open: true, initial: svc })}
+              />
             ))}
           </div>
         </Pane>
@@ -339,7 +418,10 @@ export function DpadRemote() {
 
       <div className="flex items-center gap-1.5">
         {[0, 1, 2].map((i) => (
-          <span key={i} className={`h-1.5 rounded-full transition-all ${i === page ? "w-4 bg-ink" : "w-1.5 bg-ink/25"}`} />
+          <span
+            key={i}
+            className={`h-1.5 rounded-full transition-all ${i === page ? "w-4 bg-ink" : "w-1.5 bg-ink/25"}`}
+          />
         ))}
       </div>
 
@@ -347,7 +429,9 @@ export function DpadRemote() {
       <KeyboardOverlay open={kbOpen} onClose={() => setKbOpen(false)} />
       <SpeedSleepSheet open={speedOpen} onClose={() => setSpeedOpen(false)} />
       {services.open && (
-        <div className={`fixed inset-0 z-[60] overflow-y-auto bg-canvas ${servicesExiting ? "harbor-svc-exit" : ""}`}>
+        <div
+          className={`fixed inset-0 z-[60] overflow-y-auto bg-canvas ${servicesExiting ? "harbor-svc-exit" : ""}`}
+        >
           <style>{SVC_EXIT_CSS}</style>
           <MobileServices initialService={services.initial} onBack={closeServices} />
         </div>
@@ -381,22 +465,51 @@ export function DpadRemote() {
   );
 }
 
-function RemoteIcon({ name, size = 22, flip = false }: { name: string; size?: number; flip?: boolean }) {
-  return <img src={`/remote-icons/${name}.png`} alt="" aria-hidden draggable={false} style={{ width: size, height: size, transform: flip ? "scaleX(-1)" : undefined }} className="object-contain" />;
+function RemoteIcon({
+  name,
+  size = 22,
+  flip = false,
+}: {
+  name: string;
+  size?: number;
+  flip?: boolean;
+}) {
+  return (
+    <img
+      src={`/remote-icons/${name}.png`}
+      alt=""
+      aria-hidden
+      draggable={false}
+      style={{ width: size, height: size, transform: flip ? "scaleX(-1)" : undefined }}
+      className="object-contain"
+    />
+  );
 }
 
 function Pane({ children }: { children: React.ReactNode }) {
   return <div className="flex w-full shrink-0 snap-center flex-col gap-6 px-2">{children}</div>;
 }
 
-function Util({ label, onPress, accent, children }: { label: string; onPress: () => void; accent?: boolean; children: React.ReactNode }) {
+function Util({
+  label,
+  onPress,
+  accent,
+  children,
+}: {
+  label: string;
+  onPress: () => void;
+  accent?: boolean;
+  children: React.ReactNode;
+}) {
   return (
     <button
       type="button"
       aria-label={label}
       onClick={onPress}
       className={`flex items-center justify-center rounded-full transition-transform duration-100 active:scale-90 ${
-        accent ? "h-14 w-14 bg-accent text-canvas shadow-[0_8px_20px_-8px_rgba(0,0,0,0.5)]" : "h-11 w-11 text-ink-muted"
+        accent
+          ? "h-14 w-14 bg-accent text-canvas shadow-[0_8px_20px_-8px_rgba(0,0,0,0.5)]"
+          : "h-11 w-11 text-ink-muted"
       }`}
     >
       {children}
@@ -404,14 +517,26 @@ function Util({ label, onPress, accent, children }: { label: string; onPress: ()
   );
 }
 
-function Circle({ label, onPress, big, children }: { label: string; onPress: () => void; big?: boolean; children: React.ReactNode }) {
+function Circle({
+  label,
+  onPress,
+  big,
+  children,
+}: {
+  label: string;
+  onPress: () => void;
+  big?: boolean;
+  children: React.ReactNode;
+}) {
   return (
     <button
       type="button"
       aria-label={label}
       onClick={onPress}
       className={`flex items-center justify-center rounded-full transition-transform duration-100 active:scale-90 ${
-        big ? "h-[64px] w-[64px] bg-accent text-canvas shadow-[0_10px_24px_-12px_rgba(0,0,0,0.55)]" : "h-[54px] w-[54px] bg-elevated/60 text-ink ring-1 ring-edge-soft/50"
+        big
+          ? "h-[64px] w-[64px] bg-accent text-canvas shadow-[0_10px_24px_-12px_rgba(0,0,0,0.55)]"
+          : "h-[54px] w-[54px] bg-elevated/60 text-ink ring-1 ring-edge-soft/50"
       }`}
     >
       {children}
@@ -419,7 +544,15 @@ function Circle({ label, onPress, big, children }: { label: string; onPress: () 
   );
 }
 
-function ProviderCard({ svc, service, onPress }: { svc: StreamingService; service: Service; onPress: () => void }) {
+function ProviderCard({
+  svc,
+  service,
+  onPress,
+}: {
+  svc: StreamingService;
+  service: Service;
+  onPress: () => void;
+}) {
   return (
     <button
       type="button"
@@ -474,7 +607,11 @@ export function ConfirmLeave({
       <style>{SHEET_EXIT_CSS}</style>
       <div
         className={`flex flex-col gap-5 rounded-t-2xl border-t border-edge-soft/60 bg-elevated px-5 pt-4 ${
-          reduced ? "" : leaving ? "harbor-sheet-panel-out" : "animate-in slide-in-from-bottom-4 duration-300"
+          reduced
+            ? ""
+            : leaving
+              ? "harbor-sheet-panel-out"
+              : "animate-in slide-in-from-bottom-4 duration-300"
         }`}
         style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 24px)" }}
         onClick={(e) => e.stopPropagation()}
@@ -494,7 +631,9 @@ export function ConfirmLeave({
             )}
             <div className="flex min-w-0 flex-col gap-0.5">
               {snapshot.mediaTitle && (
-                <span className="truncate text-[14.5px] font-semibold text-ink">{snapshot.mediaTitle}</span>
+                <span className="truncate text-[14.5px] font-semibold text-ink">
+                  {snapshot.mediaTitle}
+                </span>
               )}
               {meta && <span className="truncate text-[12.5px] text-ink-muted">{meta}</span>}
             </div>

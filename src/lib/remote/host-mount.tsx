@@ -13,7 +13,10 @@ import { traktItemToMeta } from "@/lib/trakt/to-meta";
 import type { TraktItem } from "@/lib/trakt/types";
 import { readLocalEntries, subscribeWatchlist, type LocalEntry } from "@/lib/watchlist";
 import { localEntryToMeta, useLocalLibrary } from "@/lib/local-library";
-import { mediaServerConnections, subscribeMediaServerConnections } from "@/lib/media-server/connections";
+import {
+  mediaServerConnections,
+  subscribeMediaServerConnections,
+} from "@/lib/media-server/connections";
 import { mediaServerItems } from "@/lib/media-server/index-store";
 import { groupMediaServerTitles } from "@/lib/media-server/selectors";
 import { subscribeMediaServerSyncProgress } from "@/lib/media-server/sync";
@@ -102,7 +105,11 @@ function capped(map: Map<string, Dated>): RemoteLibraryItem[] {
     .map((d) => d.item);
 }
 
-function mergeWatchlist(local: LocalEntry[], stremio: LibraryItem[], trakt: TraktItem[]): RemoteLibraryItem[] {
+function mergeWatchlist(
+  local: LocalEntry[],
+  stremio: LibraryItem[],
+  trakt: TraktItem[],
+): RemoteLibraryItem[] {
   const byKey = new Map<string, Dated>();
   for (const i of stremio) {
     const item: RemoteLibraryItem = {
@@ -235,19 +242,19 @@ function useFavoriteItems(): RemoteLibraryItem[] {
   );
 }
 
-function useRemoteLocalLibrary(
-  tmdbKey: string,
-  localeKey: string,
-): RemoteLibraryItem[] {
+function useRemoteLocalLibrary(tmdbKey: string, localeKey: string): RemoteLibraryItem[] {
   const files = useLocalLibrary();
   const [items, setItems] = useState<RemoteLibraryItem[]>([]);
   useEffect(() => {
     let alive = true;
-    const byId = new Map<string, {
-      base: NonNullable<ReturnType<typeof localEntryToMeta>>;
-      tmdbId?: number;
-      imdbId?: string;
-    }>();
+    const byId = new Map<
+      string,
+      {
+        base: NonNullable<ReturnType<typeof localEntryToMeta>>;
+        tmdbId?: number;
+        imdbId?: string;
+      }
+    >();
     for (const file of files) {
       const meta = localEntryToMeta(file);
       if (meta) {
@@ -259,31 +266,42 @@ function useRemoteLocalLibrary(
         });
       }
     }
-    void Promise.all([...byId.values()].slice(0, LIBRARY_CAP).map(async ({ base, tmdbId, imdbId }) => {
-      const type = base.type === "series" ? "series" : "movie";
-      const hydrated = await hydrateLibraryMeta(base.id, type, tmdbKey || null).catch(() => null);
-      return {
-        id: hydrated?.id ?? base.id,
-        type: hydrated?.type ?? base.type,
-        tmdbId,
-        imdbId,
-        name: hydrated?.name || base.name,
-        poster: hydrated?.poster || base.poster,
-        background: hydrated?.background,
-        local: true,
-      } satisfies RemoteLibraryItem;
-    })).then((next) => {
+    void Promise.all(
+      [...byId.values()].slice(0, LIBRARY_CAP).map(async ({ base, tmdbId, imdbId }) => {
+        const type = base.type === "series" ? "series" : "movie";
+        const hydrated = await hydrateLibraryMeta(base.id, type, tmdbKey || null).catch(() => null);
+        return {
+          id: hydrated?.id ?? base.id,
+          type: hydrated?.type ?? base.type,
+          tmdbId,
+          imdbId,
+          name: hydrated?.name || base.name,
+          poster: hydrated?.poster || base.poster,
+          background: hydrated?.background,
+          local: true,
+        } satisfies RemoteLibraryItem;
+      }),
+    ).then((next) => {
       if (alive) setItems(next);
     });
-    return () => { alive = false; };
+    return () => {
+      alive = false;
+    };
   }, [files, tmdbKey, localeKey]);
   return items;
 }
 
-function useRemoteMediaServers(enabled: boolean, tmdbKey: string, localeKey: string): RemoteLibraryItem[] {
+function useRemoteMediaServers(
+  enabled: boolean,
+  tmdbKey: string,
+  localeKey: string,
+): RemoteLibraryItem[] {
   const [items, setItems] = useState<RemoteLibraryItem[]>([]);
   useEffect(() => {
-    if (!enabled) { setItems([]); return; }
+    if (!enabled) {
+      setItems([]);
+      return;
+    }
     let alive = true;
     const load = async () => {
       const connections = mediaServerConnections().filter((connection) => connection.enabled);
@@ -291,36 +309,58 @@ function useRemoteMediaServers(enabled: boolean, tmdbKey: string, localeKey: str
       const titles = groupMediaServerTitles(
         (await mediaServerItems()).filter((item) => byConnection.has(item.connectionId)),
       ).slice(0, LIBRARY_CAP);
-      const next = await Promise.all(titles.map(async (title) => {
-        const canonicalId = title.identity.tmdbId != null
-          ? `tmdb:${title.kind === "movie" ? "movie" : "tv"}:${title.identity.tmdbId}`
-          : title.identity.imdbId ?? title.key;
-        const meta = await hydrateLibraryMeta(canonicalId, title.kind, tmdbKey || null).catch(() => null);
-        const providers = [...new Set(title.connectionIds
-          .map((id) => byConnection.get(id)?.provider)
-          .filter((provider): provider is "jellyfin" | "emby" | "plex" => !!provider))];
-        return {
-          id: meta?.id ?? canonicalId,
-          type: meta?.type ?? title.kind,
-          tmdbId: title.identity.tmdbId,
-          imdbId: title.identity.imdbId,
-          name: meta?.name || title.fallbackTitle,
-          poster: meta?.poster,
-          background: meta?.background,
-          mediaServerProviders: providers,
-        } satisfies RemoteLibraryItem;
-      }));
+      const next = await Promise.all(
+        titles.map(async (title) => {
+          const canonicalId =
+            title.identity.tmdbId != null
+              ? `tmdb:${title.kind === "movie" ? "movie" : "tv"}:${title.identity.tmdbId}`
+              : (title.identity.imdbId ?? title.key);
+          const meta = await hydrateLibraryMeta(canonicalId, title.kind, tmdbKey || null).catch(
+            () => null,
+          );
+          const providers = [
+            ...new Set(
+              title.connectionIds
+                .map((id) => byConnection.get(id)?.provider)
+                .filter((provider): provider is "jellyfin" | "emby" | "plex" => !!provider),
+            ),
+          ];
+          return {
+            id: meta?.id ?? canonicalId,
+            type: meta?.type ?? title.kind,
+            tmdbId: title.identity.tmdbId,
+            imdbId: title.identity.imdbId,
+            name: meta?.name || title.fallbackTitle,
+            poster: meta?.poster,
+            background: meta?.background,
+            mediaServerProviders: providers,
+          } satisfies RemoteLibraryItem;
+        }),
+      );
       if (alive) setItems(next);
     };
-    void load().catch(() => { if (alive) setItems([]); });
+    void load().catch(() => {
+      if (alive) setItems([]);
+    });
     const unsubConnections = subscribeMediaServerConnections(() => void load());
-    const unsubSync = subscribeMediaServerSyncProgress((progress) => { if (!progress.active) void load(); });
-    return () => { alive = false; unsubConnections(); unsubSync(); };
+    const unsubSync = subscribeMediaServerSyncProgress((progress) => {
+      if (!progress.active) void load();
+    });
+    return () => {
+      alive = false;
+      unsubConnections();
+      unsubSync();
+    };
   }, [enabled, tmdbKey, localeKey]);
   return items;
 }
 
-function useHostLibrary(enabled: boolean, bookmarkedOnly: boolean, tmdbKey: string, localeKey: string): RemoteLibrary | null {
+function useHostLibrary(
+  enabled: boolean,
+  bookmarkedOnly: boolean,
+  tmdbKey: string,
+  localeKey: string,
+): RemoteLibrary | null {
   const stremio = useStremioLibrary(enabled);
   const trakt = useTraktData(enabled);
   const local = useLocalWatchlist();
@@ -338,7 +378,17 @@ function useHostLibrary(enabled: boolean, bookmarkedOnly: boolean, tmdbKey: stri
       local: localLibrary,
       mediaServers,
     };
-  }, [enabled, bookmarkedOnly, stremio, trakt.watchlist, trakt.history, local, favorites, localLibrary, mediaServers]);
+  }, [
+    enabled,
+    bookmarkedOnly,
+    stremio,
+    trakt.watchlist,
+    trakt.history,
+    local,
+    favorites,
+    localLibrary,
+    mediaServers,
+  ]);
 }
 
 /**
@@ -349,7 +399,12 @@ export function RemoteHostMount() {
   const { settings } = useSettings();
   const enabled = settings.serveWebUi || settings.remoteControlEnabled;
   const localeKey = `${settings.tmdbLanguage}:${settings.tmdbImageLangs.join(",")}:${settings.translateTitles}:${settings.translateDescriptions}`;
-  const hostLibrary = useHostLibrary(enabled, settings.libraryBookmarkedOnly, settings.tmdbKey, localeKey);
+  const hostLibrary = useHostLibrary(
+    enabled,
+    settings.libraryBookmarkedOnly,
+    settings.tmdbKey,
+    localeKey,
+  );
   const { authKey } = useAuth();
   const { isConnected: traktConnected } = useTrakt();
   const { isConnected: simklConnected } = useSimkl();
@@ -496,13 +551,15 @@ export function RemoteHostMount() {
     unsubs.push(installTextEntryListeners());
 
     setRemoteCastDiscovering(true);
-    void discoverCastDevices().then((devices) => {
-      if (!cancelled) {
-        setRemoteCastDevices(devices);
-      }
-    }).finally(() => {
-      if (!cancelled) setRemoteCastDiscovering(false);
-    });
+    void discoverCastDevices()
+      .then((devices) => {
+        if (!cancelled) {
+          setRemoteCastDevices(devices);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setRemoteCastDiscovering(false);
+      });
 
     timerRef.current = window.setInterval(() => {
       pushSnapshot();

@@ -122,7 +122,11 @@ export function findLocalEpisodeVersions(
     readLocalLibrary().filter(
       (e) =>
         e.type === "show" &&
-        episodeSpanContains({ ...e, episodeEnd: e.episodeEnd ?? parseEpisodeSpan(e.filename)?.episodeEnd }, season, episode) &&
+        episodeSpanContains(
+          { ...e, episodeEnd: e.episodeEnd ?? parseEpisodeSpan(e.filename)?.episodeEnd },
+          season,
+          episode,
+        ) &&
         ((tmdbId != null && e.tmdbId === tmdbId) || (imdbId != null && e.imdbId === imdbId)),
     ),
   );

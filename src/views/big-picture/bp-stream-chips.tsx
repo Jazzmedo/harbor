@@ -13,7 +13,17 @@ export type BpSourceKind = "all" | "local" | "media-server" | "online";
 const TRACK =
   "flex items-center gap-[clamp(8px,0.75vw,15px)] overflow-x-auto px-[var(--bp-gutter)] pt-[clamp(22px,2.6vh,40px)] pb-[60px] -mb-[38px] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
 
-export function BpStreamChips({ s, sourceKind, onSourceKind, onClose }: { s: BpStreams; sourceKind: BpSourceKind; onSourceKind: (kind: BpSourceKind) => void; onClose: () => void }) {
+export function BpStreamChips({
+  s,
+  sourceKind,
+  onSourceKind,
+  onClose,
+}: {
+  s: BpStreams;
+  sourceKind: BpSourceKind;
+  onSourceKind: (kind: BpSourceKind) => void;
+  onClose: () => void;
+}) {
   const t = useBpT();
   const [menu, setMenu] = useState<string | null>(null);
 
@@ -23,11 +33,12 @@ export function BpStreamChips({ s, sourceKind, onSourceKind, onClose }: { s: BpS
     addons: t("Addons only"),
     p2p: t("P2P only"),
   };
-  const sourceLabel = sourceKind === "local"
-    ? t("Local Library")
-    : sourceKind === "media-server"
-      ? t("Media servers")
-      : modeLabel[s.streamMode];
+  const sourceLabel =
+    sourceKind === "local"
+      ? t("Local Library")
+      : sourceKind === "media-server"
+        ? t("Media servers")
+        : modeLabel[s.streamMode];
   const sourceMenuOptions: BpMenuOption[] = [
     { id: "all", label: t("All sources") },
     { id: "local", label: t("Local Library"), count: s.localFiles.length },
@@ -209,7 +220,11 @@ export function BpStreamChips({ s, sourceKind, onSourceKind, onClose }: { s: BpS
         <BpStreamMenu
           title={t("Sources")}
           options={sourceMenuOptions}
-          value={sourceKind === "online" || (sourceKind === "all" && s.streamMode !== "both") ? s.streamMode : sourceKind}
+          value={
+            sourceKind === "online" || (sourceKind === "all" && s.streamMode !== "both")
+              ? s.streamMode
+              : sourceKind
+          }
           onPick={(id) => {
             if (id === "addons" || id === "p2p") {
               s.setStreamMode(id);

@@ -19,13 +19,20 @@ export async function discoverAndAuthenticate(
   throw new Error(failures.at(-1) ?? "Could not find a media server at that address");
 }
 
-export async function discoverExistingConnection(connection: MediaServerConnection, address: string): Promise<string> {
+export async function discoverExistingConnection(
+  connection: MediaServerConnection,
+  address: string,
+): Promise<string> {
   let lastError: unknown;
   for (const origin of candidateServerOrigins(address, connection.provider)) {
     try {
       await mediaServerAdapter({ ...connection, origin }).libraries({ ...connection, origin });
       return origin;
-    } catch (cause) { lastError = cause; }
+    } catch (cause) {
+      lastError = cause;
+    }
   }
-  throw lastError instanceof Error ? lastError : new Error("Could not find a media server at that address");
+  throw lastError instanceof Error
+    ? lastError
+    : new Error("Could not find a media server at that address");
 }

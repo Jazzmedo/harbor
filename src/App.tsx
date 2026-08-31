@@ -23,7 +23,11 @@ import { MiddleClickScroll } from "@/lib/use-middle-click-scroll";
 import { exitWindowFullscreenOnPlayerClose, toggleWindowFullscreen } from "@/lib/fullscreen-state";
 import { flushCloudSync } from "@/views/player/hooks/use-stremio-sync";
 import { startWriteQueueFlusher } from "@/lib/stremio-write-queue";
-import { mediaServerConnections, mediaServerSyncDue, updateMediaServerConnection } from "@/lib/media-server/connections";
+import {
+  mediaServerConnections,
+  mediaServerSyncDue,
+  updateMediaServerConnection,
+} from "@/lib/media-server/connections";
 import { synchronizeMediaServer } from "@/lib/media-server/sync";
 import { setNativeMemoryActive } from "@/lib/native-memory";
 import { useOverlayPinned } from "@/lib/overlay-pin";
@@ -494,29 +498,59 @@ const MEDIA_SERVER_SYNC_MS = 15 * 60 * 1000;
 
 function MediaServerSyncRunner() {
   useEffect(() => {
-    let cancelled = false; let running = false;
+    let cancelled = false;
+    let running = false;
     const launchSynced = new Set<string>();
     const refresh = async () => {
       if (running) return;
       running = true;
       try {
-        for (const connection of mediaServerConnections().filter((entry) => mediaServerSyncDue(entry) && (entry.refreshInterval !== "launch" || !launchSynced.has(entry.id)))) {
+        for (const connection of mediaServerConnections().filter(
+          (entry) =>
+            mediaServerSyncDue(entry) &&
+            (entry.refreshInterval !== "launch" || !launchSynced.has(entry.id)),
+        )) {
           if (cancelled) break;
           if (connection.refreshInterval === "launch") launchSynced.add(connection.id);
           await synchronizeMediaServer(connection).catch((cause) => {
             const at = Date.now();
-            updateMediaServerConnection(connection.id, { lastSyncResult: { ok: false, message: cause instanceof Error ? cause.message : String(cause), at } }, connection.profileId);
+            updateMediaServerConnection(
+              connection.id,
+              {
+                lastSyncResult: {
+                  ok: false,
+                  message: cause instanceof Error ? cause.message : String(cause),
+                  at,
+                },
+              },
+              connection.profileId,
+            );
           });
         }
-      } finally { running = false; }
+      } finally {
+        running = false;
+      }
     };
-    const onWake = () => { if (document.visibilityState === "visible") void refresh(); };
+    const onWake = () => {
+      if (document.visibilityState === "visible") void refresh();
+    };
     const timer = window.setInterval(() => void refresh(), MEDIA_SERVER_SYNC_MS);
     const initial = window.setTimeout(() => void refresh(), 2500);
-    const onProfile = () => { launchSynced.clear(); void refresh(); };
+    const onProfile = () => {
+      launchSynced.clear();
+      void refresh();
+    };
     window.addEventListener("harbor:active-profile-changed", onProfile);
-    window.addEventListener("online", refresh); document.addEventListener("visibilitychange", onWake);
-    return () => { cancelled = true; window.clearInterval(timer); window.clearTimeout(initial); window.removeEventListener("harbor:active-profile-changed", onProfile); window.removeEventListener("online", refresh); document.removeEventListener("visibilitychange", onWake); };
+    window.addEventListener("online", refresh);
+    document.addEventListener("visibilitychange", onWake);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+      window.clearTimeout(initial);
+      window.removeEventListener("harbor:active-profile-changed", onProfile);
+      window.removeEventListener("online", refresh);
+      document.removeEventListener("visibilitychange", onWake);
+    };
   }, []);
   return null;
 }

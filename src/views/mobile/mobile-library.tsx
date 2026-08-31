@@ -21,11 +21,31 @@ const SECTIONS: Array<{ id: SectionId; label: string; icon: LucideIcon }> = [
 ];
 
 const EMPTY: Record<SectionId, { icon: LucideIcon; title: string; body: string }> = {
-  watchlist: { icon: Bookmark, title: "Your watchlist is empty", body: "Save a movie or show from any detail page and it lines up here for later." },
-  history: { icon: Clock, title: "Nothing watched yet", body: "Press play on something. It shows up here once you start watching." },
-  favorites: { icon: Star, title: "No favorites yet", body: "Tap the star on any movie or show to keep it close." },
-  local: { icon: FolderOpen, title: "Your local library is empty", body: "Scan local folders in Harbor and your movies and shows will appear here." },
-  mediaServers: { icon: Server, title: "No media-server titles", body: "Enable and sync Plex, Jellyfin, or Emby in Harbor to browse them here." },
+  watchlist: {
+    icon: Bookmark,
+    title: "Your watchlist is empty",
+    body: "Save a movie or show from any detail page and it lines up here for later.",
+  },
+  history: {
+    icon: Clock,
+    title: "Nothing watched yet",
+    body: "Press play on something. It shows up here once you start watching.",
+  },
+  favorites: {
+    icon: Star,
+    title: "No favorites yet",
+    body: "Tap the star on any movie or show to keep it close.",
+  },
+  local: {
+    icon: FolderOpen,
+    title: "Your local library is empty",
+    body: "Scan local folders in Harbor and your movies and shows will appear here.",
+  },
+  mediaServers: {
+    icon: Server,
+    title: "No media-server titles",
+    body: "Enable and sync Plex, Jellyfin, or Emby in Harbor to browse them here.",
+  },
 };
 
 const TAB_KEY = "harbor.mobile.library.tab";
@@ -44,7 +64,14 @@ const VIEW_SWAP_CSS = `
 function readSavedTab(): SectionId {
   try {
     const v = localStorage.getItem(TAB_KEY);
-    if (v === "watchlist" || v === "history" || v === "favorites" || v === "local" || v === "mediaServers") return v;
+    if (
+      v === "watchlist" ||
+      v === "history" ||
+      v === "favorites" ||
+      v === "local" ||
+      v === "mediaServers"
+    )
+      return v;
   } catch {}
   return "watchlist";
 }
@@ -153,7 +180,14 @@ function GridTile({ meta, onOpenDetail }: { meta: Meta; onOpenDetail: (m: Meta) 
       onClick={() => onOpenDetail(meta)}
       className="text-start transition-transform duration-150 active:scale-[0.96] motion-reduce:transition-none"
     >
-      <Poster src={src} onError={onError} seed={meta.id} ratio="portrait" lazy className="rounded-[12px]" />
+      <Poster
+        src={src}
+        onError={onError}
+        seed={meta.id}
+        ratio="portrait"
+        lazy
+        className="rounded-[12px]"
+      />
       {meta.name && (
         <p className="mt-1.5 line-clamp-2 text-[12px] font-medium leading-snug text-ink-muted">
           {meta.name}

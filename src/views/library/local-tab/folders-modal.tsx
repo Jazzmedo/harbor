@@ -59,7 +59,9 @@ export function FoldersModal({
           <div className="flex flex-col gap-1">
             <h2 className="text-[19px] font-medium tracking-tight text-ink">{t("Your folders")}</h2>
             <p className="text-[12.5px] leading-relaxed text-ink-muted">
-              {t("Folders Harbor imported your movies and shows from. Rescan to pick up new files.")}
+              {t(
+                "Folders Harbor imported your movies and shows from. Rescan to pick up new files.",
+              )}
             </p>
           </div>
           <button
@@ -102,7 +104,11 @@ export function FoldersModal({
                 aria-label={t("Rescan")}
                 className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-raised text-ink-muted transition-colors hover:bg-elevated hover:text-ink disabled:opacity-40"
               >
-                {busy ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} strokeWidth={2.2} />}
+                {busy ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <RefreshCw size={14} strokeWidth={2.2} />
+                )}
               </button>
               <button
                 type="button"
@@ -124,12 +130,21 @@ export function FoldersModal({
           disabled={busy}
           className="flex h-10 items-center justify-center gap-2 rounded-full bg-ink px-5 text-[13px] font-semibold text-canvas transition-colors hover:bg-ink/90 disabled:cursor-wait disabled:opacity-60"
         >
-          {busy ? <Loader2 size={14} className="animate-spin" /> : <FolderPlus size={14} strokeWidth={2.2} />}
+          {busy ? (
+            <Loader2 size={14} className="animate-spin" />
+          ) : (
+            <FolderPlus size={14} strokeWidth={2.2} />
+          )}
           {t("Add folder")}
         </button>
 
         {removeTarget && (
-          <div role="dialog" aria-modal="true" aria-label={t("Remove folder?")} className="absolute inset-0 z-10 flex items-center justify-center rounded-3xl bg-black/65 px-6 backdrop-blur-sm">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={t("Remove folder?")}
+            className="absolute inset-0 z-10 flex items-center justify-center rounded-3xl bg-black/65 px-6 backdrop-blur-sm"
+          >
             <div className="w-full max-w-[400px] rounded-2xl border border-edge-soft bg-elevated p-5 shadow-2xl">
               <div className="flex items-start gap-3">
                 <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-danger/15 text-danger">
@@ -138,16 +153,38 @@ export function FoldersModal({
                 <div className="min-w-0">
                   <h3 className="text-[16px] font-semibold text-ink">{t("Remove folder?")}</h3>
                   <p className="mt-1 text-[12.5px] leading-relaxed text-ink-muted">
-                    {t("Remove this folder and its {n} items? Files on your disk are not deleted.", { n: removeTarget.count })}
+                    {t(
+                      "Remove this folder and its {n} items? Files on your disk are not deleted.",
+                      { n: removeTarget.count },
+                    )}
                   </p>
-                  <p className="mt-2 truncate text-[11px] text-ink-subtle" title={removeTarget.path}>{removeTarget.path}</p>
+                  <p
+                    className="mt-2 truncate text-[11px] text-ink-subtle"
+                    title={removeTarget.path}
+                  >
+                    {removeTarget.path}
+                  </p>
                 </div>
               </div>
               <div className="mt-5 flex justify-end gap-2">
-                <button type="button" autoFocus data-tv-initial-focus data-tv-modal-close onClick={() => setRemoveTarget(null)} className="h-9 rounded-full bg-raised px-4 text-[12.5px] font-semibold text-ink-muted hover:text-ink">
+                <button
+                  type="button"
+                  autoFocus
+                  data-tv-initial-focus
+                  data-tv-modal-close
+                  onClick={() => setRemoveTarget(null)}
+                  className="h-9 rounded-full bg-raised px-4 text-[12.5px] font-semibold text-ink-muted hover:text-ink"
+                >
                   {t("Cancel")}
                 </button>
-                <button type="button" onClick={() => { onRemove(removeTarget.path); setRemoveTarget(null); }} className="h-9 rounded-full bg-danger px-4 text-[12.5px] font-semibold text-white hover:bg-danger/90">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onRemove(removeTarget.path);
+                    setRemoveTarget(null);
+                  }}
+                  className="h-9 rounded-full bg-danger px-4 text-[12.5px] font-semibold text-white hover:bg-danger/90"
+                >
                   {t("Remove")}
                 </button>
               </div>

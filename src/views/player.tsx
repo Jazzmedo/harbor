@@ -1012,7 +1012,15 @@ export function PlayerView({ src }: { src: PlayerSrc }) {
     snap,
     engine,
     src,
-    homeServerQualityControl: <HomeServerQualityControl src={src} positionMs={Math.max(0, snap.positionSec * 1000)} playing={playing} theme={resolveChromeTheme(settings.theme, settings.playerChromeTheme)} replace={replacePlayerSrc} />,
+    homeServerQualityControl: (
+      <HomeServerQualityControl
+        src={src}
+        positionMs={Math.max(0, snap.positionSec * 1000)}
+        playing={playing}
+        theme={resolveChromeTheme(settings.theme, settings.playerChromeTheme)}
+        replace={replacePlayerSrc}
+      />
+    ),
     adStreamRef: playStreamRef,
     adUrl: playUrl,
     subShowInPip: settings.subShowInPip,

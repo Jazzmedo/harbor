@@ -1,4 +1,14 @@
-import { BarChart3, Bookmark, Clock, Eye, EyeOff, HardDrive, Library, Server, Star } from "lucide-react";
+import {
+  BarChart3,
+  Bookmark,
+  Clock,
+  Eye,
+  EyeOff,
+  HardDrive,
+  Library,
+  Server,
+  Star,
+} from "lucide-react";
 import { UiIcon } from "@/components/ui-icon";
 import { useEffect, useMemo, useRef, useState } from "react";
 import traktLogo from "@/assets/trakt.svg";

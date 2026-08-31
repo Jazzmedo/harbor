@@ -226,17 +226,23 @@ export function bpSettingsControls(
         ],
         columns: 2 as const,
       },
-      ...(s.playbackSourcePreference === "home-server" ? [{
-        kind: "options" as const,
-        id: "preferredMediaServer",
-        label: t("Preferred home server"),
-        value: s.preferredMediaServerId ?? "",
-        options: [
-          { value: "", label: t("Ask which server") },
-          ...mediaServerConnections().filter((connection) => connection.enabled).map((connection) => ({ value: connection.id, label: connection.name })),
-        ],
-        columns: 2 as const,
-      }] : []),
+      ...(s.playbackSourcePreference === "home-server"
+        ? [
+            {
+              kind: "options" as const,
+              id: "preferredMediaServer",
+              label: t("Preferred home server"),
+              value: s.preferredMediaServerId ?? "",
+              options: [
+                { value: "", label: t("Ask which server") },
+                ...mediaServerConnections()
+                  .filter((connection) => connection.enabled)
+                  .map((connection) => ({ value: connection.id, label: connection.name })),
+              ],
+              columns: 2 as const,
+            },
+          ]
+        : []),
       {
         kind: "options",
         id: "engine",

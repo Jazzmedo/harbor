@@ -1,6 +1,14 @@
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
-import { ArrowDownWideNarrow, ArrowUpNarrowWide, CheckSquare, Download, Square, Wifi, X } from "lucide-react";
+import {
+  ArrowDownWideNarrow,
+  ArrowUpNarrowWide,
+  CheckSquare,
+  Download,
+  Square,
+  Wifi,
+  X,
+} from "lucide-react";
 import { Play } from "@/components/icons/play-filled";
 import { useT } from "@/lib/i18n";
 import { useSettings } from "@/lib/settings";
@@ -189,11 +197,13 @@ function GridModal({ payload }: { payload: LocalEpisodesPayload }) {
     );
     if (sortDesc) byEp.reverse();
     const seen = new Set<string>();
-    return byEp.flatMap(([, versions]) => versions).filter((entry) => {
-      if (seen.has(entry.id)) return false;
-      seen.add(entry.id);
-      return true;
-    });
+    return byEp
+      .flatMap(([, versions]) => versions)
+      .filter((entry) => {
+        if (seen.has(entry.id)) return false;
+        seen.add(entry.id);
+        return true;
+      });
   }, [localBySeason, selected, sortDesc]);
 
   const multiVersionEpisodes = useMemo(() => {
@@ -273,9 +283,18 @@ function GridModal({ payload }: { payload: LocalEpisodesPayload }) {
               {payload.title}
             </h2>
             <span className="text-[12px] text-ink-subtle">
-              {payload.sourceLabel ?? (Array.from(localBySeason.values()).reduce((sum, episodes) => sum + episodes.size, 0) === 1
-                ? t("1 episode on disk")
-                : t("{n} episodes on disk", { n: Array.from(localBySeason.values()).reduce((sum, episodes) => sum + episodes.size, 0) }))}
+              {payload.sourceLabel ??
+                (Array.from(localBySeason.values()).reduce(
+                  (sum, episodes) => sum + episodes.size,
+                  0,
+                ) === 1
+                  ? t("1 episode on disk")
+                  : t("{n} episodes on disk", {
+                      n: Array.from(localBySeason.values()).reduce(
+                        (sum, episodes) => sum + episodes.size,
+                        0,
+                      ),
+                    }))}
             </span>
           </div>
           <button
@@ -382,7 +401,37 @@ function GridModal({ payload }: { payload: LocalEpisodesPayload }) {
             </button>
           </div>
 
-          {payload.onDownload && <div className="flex items-center gap-2 rounded-xl bg-canvas/50 p-2 ring-1 ring-edge-soft"><button type="button" className="rounded-md px-3 py-1.5 text-[11.5px] font-semibold text-ink-muted hover:bg-raised hover:text-ink" onClick={() => setDownloadSelection(new Set(listEps.map((entry) => entry.id)))}>{t("Select season")}</button><button type="button" className="rounded-md px-3 py-1.5 text-[11.5px] font-semibold text-ink-muted hover:bg-raised hover:text-ink" onClick={() => setDownloadSelection(new Set(localEps.map((entry) => entry.id)))}>{t("Select all seasons")}</button><button type="button" disabled={downloadSelection.size === 0} className="ms-auto inline-flex items-center gap-2 rounded-md bg-ink px-3 py-1.5 text-[11.5px] font-semibold text-canvas disabled:opacity-40" onClick={() => { for (const entry of localEps) if (downloadSelection.has(entry.id)) void payload.onDownload?.(entry); setDownloadSelection(new Set()); }}><Download size={13}/>{t("Download selected ({n})", { n: downloadSelection.size })}</button></div>}
+          {payload.onDownload && (
+            <div className="flex items-center gap-2 rounded-xl bg-canvas/50 p-2 ring-1 ring-edge-soft">
+              <button
+                type="button"
+                className="rounded-md px-3 py-1.5 text-[11.5px] font-semibold text-ink-muted hover:bg-raised hover:text-ink"
+                onClick={() => setDownloadSelection(new Set(listEps.map((entry) => entry.id)))}
+              >
+                {t("Select season")}
+              </button>
+              <button
+                type="button"
+                className="rounded-md px-3 py-1.5 text-[11.5px] font-semibold text-ink-muted hover:bg-raised hover:text-ink"
+                onClick={() => setDownloadSelection(new Set(localEps.map((entry) => entry.id)))}
+              >
+                {t("Select all seasons")}
+              </button>
+              <button
+                type="button"
+                disabled={downloadSelection.size === 0}
+                className="ms-auto inline-flex items-center gap-2 rounded-md bg-ink px-3 py-1.5 text-[11.5px] font-semibold text-canvas disabled:opacity-40"
+                onClick={() => {
+                  for (const entry of localEps)
+                    if (downloadSelection.has(entry.id)) void payload.onDownload?.(entry);
+                  setDownloadSelection(new Set());
+                }}
+              >
+                <Download size={13} />
+                {t("Download selected ({n})", { n: downloadSelection.size })}
+              </button>
+            </div>
+          )}
 
           <div className="flex shrink-0 flex-col gap-1">
             {listEps.map((ep) => {
@@ -396,15 +445,34 @@ function GridModal({ payload }: { payload: LocalEpisodesPayload }) {
                 <button
                   key={ep.id}
                   type="button"
-                  onClick={() => { if (payload.onDownload && downloadSelection.size > 0) { setDownloadSelection((current) => { const next = new Set(current); if (next.has(ep.id)) next.delete(ep.id); else next.add(ep.id); return next; }); } else play(ep); }}
+                  onClick={() => {
+                    if (payload.onDownload && downloadSelection.size > 0) {
+                      setDownloadSelection((current) => {
+                        const next = new Set(current);
+                        if (next.has(ep.id)) next.delete(ep.id);
+                        else next.add(ep.id);
+                        return next;
+                      });
+                    } else play(ep);
+                  }}
                   autoFocus={isHighlight || (hlEpisode == null && ep.id === listEps[0]?.id)}
-                  data-tv-initial-focus={isHighlight || (hlEpisode == null && ep.id === listEps[0]?.id) || undefined}
+                  data-tv-initial-focus={
+                    isHighlight || (hlEpisode == null && ep.id === listEps[0]?.id) || undefined
+                  }
                   className={`group/ep relative flex items-center gap-3 overflow-hidden rounded-xl px-3 py-2.5 text-start transition-colors hover:bg-raised ${
                     isHighlight ? "bg-accent/10 ring-1 ring-accent" : ""
                   }`}
                 >
                   <span className="flex h-8 min-w-11 shrink-0 items-center justify-center whitespace-nowrap rounded-md bg-canvas/60 px-2 font-mono text-[11px] font-bold tabular-nums text-ink-muted ring-1 ring-edge-soft">
-                    {payload.onDownload && downloadSelection.size > 0 ? (downloadSelection.has(ep.id) ? <CheckSquare size={15}/> : <Square size={15}/>) : entryEpisodeLabel(ep)}
+                    {payload.onDownload && downloadSelection.size > 0 ? (
+                      downloadSelection.has(ep.id) ? (
+                        <CheckSquare size={15} />
+                      ) : (
+                        <Square size={15} />
+                      )
+                    ) : (
+                      entryEpisodeLabel(ep)
+                    )}
                   </span>
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="truncate text-[13px] text-ink" title={ep.filename}>
@@ -418,7 +486,10 @@ function GridModal({ payload }: { payload: LocalEpisodesPayload }) {
                     {episodeSource && (
                       <span className="mt-0.5 flex min-w-0 items-center text-[10.5px] font-semibold text-ink-muted">
                         {episodeSource.kind === "home-server" ? (
-                          <MediaServerBrand provider={episodeSource.provider} name={episodeSource.label} />
+                          <MediaServerBrand
+                            provider={episodeSource.provider}
+                            name={episodeSource.label}
+                          />
                         ) : (
                           <span className="truncate">{episodeSource.label}</span>
                         )}

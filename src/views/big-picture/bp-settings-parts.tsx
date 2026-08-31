@@ -133,9 +133,12 @@ export function BpOptionRow({
   onPick: (value: string) => void;
   onCellFocus?: (value: string) => void;
 }) {
-  const rows = columns === 2
-    ? Array.from({ length: Math.ceil(options.length / 2) }, (_, row) => options.slice(row * 2, row * 2 + 2))
-    : [options];
+  const rows =
+    columns === 2
+      ? Array.from({ length: Math.ceil(options.length / 2) }, (_, row) =>
+          options.slice(row * 2, row * 2 + 2),
+        )
+      : [options];
 
   return (
     <Fragment>
@@ -170,9 +173,7 @@ export function BpOptionRow({
                     onPick(o.value);
                   }}
                   className={`${CELL_BASE} ${CELL_H} ${on ? CELL_ON : CELL_OFF} min-w-[clamp(56px,6vw,96px)] px-[clamp(6px,0.7vw,14px)] ${
-                    columns === 2
-                      ? "w-[calc((100%-clamp(5px,0.5vw,10px))/2)] flex-none"
-                      : "flex-1"
+                    columns === 2 ? "w-[calc((100%-clamp(5px,0.5vw,10px))/2)] flex-none" : "flex-1"
                   }`}
                   style={letter ? { fontSize: LETTER_PX[o.value] ?? "17px" } : undefined}
                 >

@@ -353,9 +353,14 @@ export function usePickHandler({
         imdbIdVerified: imdbIdVerified === true,
         episode,
         episodeEnd: stream.episodeEnd ?? undefined,
-        episodeSpan: stream.season != null && stream.episode != null
-          ? { season: stream.season, episode: stream.episode, episodeEnd: stream.episodeEnd ?? stream.episode }
-          : undefined,
+        episodeSpan:
+          stream.season != null && stream.episode != null
+            ? {
+                season: stream.season,
+                episode: stream.episode,
+                episodeEnd: stream.episodeEnd ?? stream.episode,
+              }
+            : undefined,
         url: playUrl,
         title: episode
           ? episode.name || `Episode ${absoluteEpisode ?? episode.episode}`

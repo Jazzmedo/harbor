@@ -31,7 +31,8 @@ export async function loadLocalLibraryStore<T>(): Promise<T[] | null> {
   return new Promise((resolve) => {
     try {
       const request = db.transaction(STORE, "readonly").objectStore(STORE).get(ENTRIES_KEY);
-      request.onsuccess = () => resolve(Array.isArray(request.result) ? (request.result as T[]) : []);
+      request.onsuccess = () =>
+        resolve(Array.isArray(request.result) ? (request.result as T[]) : []);
       request.onerror = () => resolve(null);
     } catch {
       resolve(null);

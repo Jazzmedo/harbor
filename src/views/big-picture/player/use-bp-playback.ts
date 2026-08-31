@@ -1,9 +1,6 @@
 import { useCallback, useMemo, useRef, useSyncExternalStore } from "react";
 import { useHeroLogos } from "@/components/anime-hero/use-hero-logos";
-import {
-  usePlaybackBufferedGated,
-  usePlaybackPositionGated,
-} from "@/lib/player/playback-clock";
+import { usePlaybackBufferedGated, usePlaybackPositionGated } from "@/lib/player/playback-clock";
 import type { RemoteEpisodeRef, RemoteSnapshot, RemoteSourceInfo } from "@/lib/remote/protocol";
 import {
   buildRemoteSnapshot,

@@ -4,10 +4,7 @@ import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 // @ts-expect-error Node test types are intentionally outside the browser-only tsconfig.
 import test from "node:test";
-import {
-  filterTracksByPreferredLanguage,
-  isKnownLanguage,
-} from "../src/lib/subtitles/language.ts";
+import { filterTracksByPreferredLanguage, isKnownLanguage } from "../src/lib/subtitles/language.ts";
 import { subtitleLanguage } from "../src/lib/local-library/player-src.ts";
 
 const src = readFileSync(

@@ -34,7 +34,11 @@ type MetaOpen = Extract<RemoteOpen, { metaId: string }>;
 function toMeta(d: MetaOpen): Meta {
   return {
     id: d.metaId,
-    type: (d.metaType === "series" ? "series" : d.metaType === "anime" ? "anime" : "movie") as Meta["type"],
+    type: (d.metaType === "series"
+      ? "series"
+      : d.metaType === "anime"
+        ? "anime"
+        : "movie") as Meta["type"],
     name: d.name ?? "",
     poster: d.poster,
   };
@@ -86,8 +90,11 @@ export function RemoteOpenBridge() {
         return;
       }
       const episode: PlayEpisode | undefined =
-        d.season != null && d.episode != null ? { season: d.season, episode: d.episode } : undefined;
-      const stream = () => openPicker(meta, episode, { autoPlay: settings.instantPlay, resume: d.resume ?? true });
+        d.season != null && d.episode != null
+          ? { season: d.season, episode: d.episode }
+          : undefined;
+      const stream = () =>
+        openPicker(meta, episode, { autoPlay: settings.instantPlay, resume: d.resume ?? true });
       void (async () => {
         const tmdb = meta.id.match(/^tmdb:(?:movie|tv|series):(\d+)$/);
         const identity = {
@@ -106,18 +113,36 @@ export function RemoteOpenBridge() {
         );
         const serverCopies = serverPlayableCopies(serverItems, connections);
         const decision = decidePlaybackSource(settings, local.length, serverCopies);
-        if (decision.kind === "online") { stream(); return; }
+        if (decision.kind === "online") {
+          stream();
+          return;
+        }
         if (decision.kind === "local" && local[0]) {
           openPlayer(localPlayerSrc(local[0], metaIsAnime(meta), episode));
           return;
         }
         const playServer = async (copy: (typeof serverCopies)[number]) => {
-          const item = serverItems.find((candidate) => candidate.connectionId === copy.connectionId && candidate.id === copy.itemId);
-          const connection = item && connections.find((candidate) => candidate.id === item.connectionId);
+          const item = serverItems.find(
+            (candidate) =>
+              candidate.connectionId === copy.connectionId && candidate.id === copy.itemId,
+          );
+          const connection =
+            item && connections.find((candidate) => candidate.id === item.connectionId);
           if (!item || !connection) return;
-          openPlayer(await createMediaServerPlayerSrc({ meta, episode, connection, item, versionId: copy.version.id }));
+          openPlayer(
+            await createMediaServerPlayerSrc({
+              meta,
+              episode,
+              connection,
+              item,
+              versionId: copy.version.id,
+            }),
+          );
         };
-        if (decision.kind === "home-server") { await playServer(decision.copy); return; }
+        if (decision.kind === "home-server") {
+          await playServer(decision.copy);
+          return;
+        }
         openLocalVersions({
           title: meta.name,
           poster: meta.poster,

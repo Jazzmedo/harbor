@@ -88,7 +88,13 @@ export type PlayerSrc = {
   liveProgram?: string;
   isLive?: boolean;
   headers?: Record<string, string>;
-  homeServer?: { connectionId: string; itemId: string; versionId: string; quality: import("./media-server/types").MediaServerQuality; playbackSessionId?: string };
+  homeServer?: {
+    connectionId: string;
+    itemId: string;
+    versionId: string;
+    quality: import("./media-server/types").MediaServerQuality;
+    playbackSessionId?: string;
+  };
   startPositionMs?: number;
   startPaused?: boolean;
 };

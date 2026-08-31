@@ -167,8 +167,17 @@ export function TransportStremio(p: TransportStremioProps) {
   const controlsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    onMenuOpenChange?.(audioMenuOpen || subtitleMenuOpen || speedMenuOpen || aspectMenuOpen || anime4kMenuOpen);
-  }, [audioMenuOpen, subtitleMenuOpen, speedMenuOpen, aspectMenuOpen, anime4kMenuOpen, onMenuOpenChange]);
+    onMenuOpenChange?.(
+      audioMenuOpen || subtitleMenuOpen || speedMenuOpen || aspectMenuOpen || anime4kMenuOpen,
+    );
+  }, [
+    audioMenuOpen,
+    subtitleMenuOpen,
+    speedMenuOpen,
+    aspectMenuOpen,
+    anime4kMenuOpen,
+    onMenuOpenChange,
+  ]);
 
   useEffect(() => {
     const refresh = () => setConfig(readPlayerChromeConfig("stremio"));
@@ -337,9 +346,7 @@ export function TransportStremio(p: TransportStremioProps) {
             setCastModalOpen(false);
             castModalPlay(m, ep);
           }}
-          currentEpisode={
-            season != null && episode != null ? { season, episode } : null
-          }
+          currentEpisode={season != null && episode != null ? { season, episode } : null}
         />
       )}
     </>

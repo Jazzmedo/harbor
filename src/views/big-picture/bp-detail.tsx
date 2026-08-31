@@ -1,11 +1,4 @@
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useSyncExternalStore,
-  type ReactNode,
-} from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import type { Meta } from "@/lib/cinemeta";
 import { type PlayEpisode } from "@/lib/view";
 import { useHeroLogos } from "@/components/anime-hero/use-hero-logos";
@@ -159,7 +152,8 @@ export function BpDetail({
       !ep ||
       !mark.ep ||
       (ep.season === mark.ep.season && ep.episode === mark.ep.episode);
-    const auto = settings.playbackSourcePreference === "online" &&
+    const auto =
+      settings.playbackSourcePreference === "online" &&
       (settings.instantPlay || (fromStrip && settings.seasonSourceLock));
     onSources(meta, ep, onResumeTarget, auto, true);
   };
@@ -232,7 +226,9 @@ export function BpDetail({
         body={
           loading
             ? ""
-            : t("Harbor couldn't reach the catalog servers. Check the connection and reopen Big Picture.")
+            : t(
+                "Harbor couldn't reach the catalog servers. Check the connection and reopen Big Picture.",
+              )
         }
         action={t("Go back")}
         onAction={() => runBpBack()}
@@ -311,12 +307,12 @@ export function BpDetail({
 
   return (
     <>
-      <div ref={scrollRef} data-bp-scroll-y className="relative h-full overflow-y-auto pb-[var(--bp-hint-h)] pt-[var(--bp-page-top)] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <div
-          ref={groundRef}
-          aria-hidden
-          className="pointer-events-none fixed inset-0 -z-10"
-        />
+      <div
+        ref={scrollRef}
+        data-bp-scroll-y
+        className="relative h-full overflow-y-auto pb-[var(--bp-hint-h)] pt-[var(--bp-page-top)] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        <div ref={groundRef} aria-hidden className="pointer-events-none fixed inset-0 -z-10" />
         <BpDetailHero
           meta={meta}
           detail={detail}
@@ -364,9 +360,7 @@ export function BpDetail({
       {dialog === "facts" && detail && (
         <BpFactsDialog detail={detail} title={title} onClose={() => setDialog(null)} />
       )}
-      {activeTracker && (
-        <BpStatusDialog tracker={activeTracker} onClose={() => setDialog(null)} />
-      )}
+      {activeTracker && <BpStatusDialog tracker={activeTracker} onClose={() => setDialog(null)} />}
       {openAward && (
         <BpAwardDetailDialog
           type={openAward.type}
@@ -374,9 +368,7 @@ export function BpDetail({
           onClose={() => setAwardType(null)}
         />
       )}
-      {download && (
-        <BpStreams meta={meta} intent="download" onClose={() => setDownload(false)} />
-      )}
+      {download && <BpStreams meta={meta} intent="download" onClose={() => setDownload(false)} />}
       {seasonMenu && !anime.owns && episodeStrip.seasons.length > 1 && (
         <BpSeasonMenu
           seasons={episodeStrip.seasons}

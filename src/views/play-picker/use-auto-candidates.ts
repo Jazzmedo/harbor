@@ -19,7 +19,11 @@ const RES_PREF: Record<string, number> = { "1080p": 0, "720p": 1, "480p": 2, "4K
 const LIKELY_PACK_BYTES = 12 * 1024 * 1024 * 1024;
 
 export function useAutoCandidates(args: {
-  filteredPicker: { all: ScoredStream[]; allRaw: ScoredStream[]; primary: ScoredStream | null } | null;
+  filteredPicker: {
+    all: ScoredStream[];
+    allRaw: ScoredStream[];
+    primary: ScoredStream | null;
+  } | null;
   previousPlayback: PlaybackEntry | null;
   sourceEntry: PlaybackEntry | null;
   sourceEntryLineage?: boolean;
@@ -38,7 +42,26 @@ export function useAutoCandidates(args: {
   isAnime?: boolean;
   filterDisabled?: boolean;
 }): ScoredStream[] {
-  const { filteredPicker, previousPlayback, sourceEntry, sourceEntryLineage, isCached, addons, hasStrongAddon, isTorrentioStream, preferredLangs, hostSource, prefer1080, preferPacks, season, episode, expectedTitle, expectedTitles, isAnime, filterDisabled } = args;
+  const {
+    filteredPicker,
+    previousPlayback,
+    sourceEntry,
+    sourceEntryLineage,
+    isCached,
+    addons,
+    hasStrongAddon,
+    isTorrentioStream,
+    preferredLangs,
+    hostSource,
+    prefer1080,
+    preferPacks,
+    season,
+    episode,
+    expectedTitle,
+    expectedTitles,
+    isAnime,
+    filterDisabled,
+  } = args;
   return useMemo(() => {
     const hostFallback = (): ScoredStream[] => {
       if (!hostSource) return [];
@@ -54,7 +77,9 @@ export function useAutoCandidates(args: {
     };
     const episodeExact = (s: ScoredStream) =>
       episode != null &&
-      (season != null && s.season != null ? episodeSpanContains(s, season, episode) : s.episode === episode) &&
+      (season != null && s.season != null
+        ? episodeSpanContains(s, season, episode)
+        : s.episode === episode) &&
       (season == null || s.season == null || s.season === season);
     const instantTier = (s: ScoredStream) => {
       if (!isCached(s)) return 2;
@@ -85,7 +110,7 @@ export function useAutoCandidates(args: {
     });
     const matchScores = hostSource ? buildMatchScores(filteredPicker.all, hostSource) : null;
     const previousMatch = previousPlayback
-      ? filteredPicker.allRaw.find((s) => streamMatchesEntry(s, previousPlayback)) ?? null
+      ? (filteredPicker.allRaw.find((s) => streamMatchesEntry(s, previousPlayback)) ?? null)
       : null;
     for (const s of filteredPicker.all) s.nameAbsent = !nameKnown(s);
     const sorted = filteredPicker.all.slice().sort((a, b) => {
@@ -148,8 +173,9 @@ export function useAutoCandidates(args: {
       out.push(s);
     };
     const matchSource = sourceEntryLineage ? streamMatchesReleaseLineage : streamMatchesSource;
-    const sourceMatch =
-      sourceEntry ? filteredPicker.allRaw.find((s) => matchSource(s, sourceEntry)) ?? null : null;
+    const sourceMatch = sourceEntry
+      ? (filteredPicker.allRaw.find((s) => matchSource(s, sourceEntry)) ?? null)
+      : null;
     const instantPlayable = (s: ScoredStream | null) => !!s && (isCached(s) || !!s.url);
     if (!matchScores) {
       if (instantPlayable(sourceMatch)) push(sourceMatch);
@@ -160,11 +186,28 @@ export function useAutoCandidates(args: {
     const synthetic = hostFallback();
     if (synthetic.length > 0) return synthetic;
     if (hostSource) {
-      const ownBest = sorted.find(
-        (s) => !isStreamDead(s) && !isWatchHub(s) && !episodeConflict(s),
-      );
+      const ownBest = sorted.find((s) => !isStreamDead(s) && !isWatchHub(s) && !episodeConflict(s));
       if (ownBest) return [ownBest];
     }
     return [];
-  }, [filteredPicker, previousPlayback, sourceEntry, sourceEntryLineage, isCached, addons, hasStrongAddon, isTorrentioStream, preferredLangs, hostSource, prefer1080, preferPacks, season, episode, expectedTitle, expectedTitles, isAnime, filterDisabled]);
+  }, [
+    filteredPicker,
+    previousPlayback,
+    sourceEntry,
+    sourceEntryLineage,
+    isCached,
+    addons,
+    hasStrongAddon,
+    isTorrentioStream,
+    preferredLangs,
+    hostSource,
+    prefer1080,
+    preferPacks,
+    season,
+    episode,
+    expectedTitle,
+    expectedTitles,
+    isAnime,
+    filterDisabled,
+  ]);
 }
