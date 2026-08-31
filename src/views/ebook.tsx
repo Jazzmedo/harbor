@@ -6,6 +6,7 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Database,
   ExternalLink,
   Heart,
   LayoutGrid,
@@ -39,16 +40,26 @@ import { useUiLanguage } from "@/lib/i18n";
 import {
   EBOOK_CATEGORIES,
   browsePopularEBooks,
+  dedupeEBooks,
+  eBooksMatch,
   ebookAdaptations,
   ebookDetail,
   mergeEBookMetadata,
-  recommendedEBooks,
   searchEBooks,
   type EBook,
   type EBookAdaptation,
   type EBookAdaptations,
   type EBookCategoryGroup,
 } from "@/lib/ebook/api";
+import {
+  applyEBookBrowseFilters,
+  EBOOK_FILTER_GENRES,
+  ebookMatchesGenre,
+  ebookSourceBrowseTag,
+  type EBookBrowseLanguage,
+  type EBookBrowseSort,
+  type EBookBrowseStatus,
+} from "@/lib/ebook/browse-filters";
 import {
   buildSourceEBookCollections,
   eBookCollectionCacheScope,
@@ -68,11 +79,12 @@ import {
   toggleEBookFavorite,
   toggleEBookLibrary,
 } from "@/lib/ebook/library";
-import { loadEBookResume, saveEBookResume } from "@/lib/ebook/reader-state";
+import { loadEBookProgress, loadEBookResume, saveEBookResume } from "@/lib/ebook/reader-state";
 import {
   listEBookProviders,
   loadSourceEBookCatalogPage,
   loadSourceEBookPage,
+  prefetchSourceEBookContent,
   searchSourceEBookCatalog,
   sourceEBookChapters,
   sourceEBookContent,
@@ -84,7 +96,11 @@ import {
 } from "@/lib/ebook/providers";
 import { subscribeEBookExtensions } from "@/lib/ebook/extensions";
 import { subscribeEBookSources } from "@/lib/ebook/sources";
-import { fetchEBookListCollection, flushPendingEBookTracking } from "@/lib/ebook/tracking";
+import {
+  fetchEBookListCollection,
+  flushPendingEBookTracking,
+  getEBookTracking,
+} from "@/lib/ebook/tracking";
 import { useView } from "@/lib/view";
 import { useProfiles } from "@/lib/profiles";
 import { usePageVisible } from "@/lib/visibility";
@@ -106,7 +122,7 @@ type Rail = {
   loadingMore?: boolean;
 };
 
-type EBookBrowseType = EBookCategoryGroup | "Genre";
+type EBookBrowseType = EBookCategoryGroup | "All";
 type EBookTitleLanguage = "auto" | "en" | "ar" | "original";
 
 const EBookTitleLanguageContext = createContext<EBookTitleLanguage>("auto");
@@ -146,37 +162,12 @@ function labelNumber(value: string): number | undefined {
 }
 
 function updateSourceItems(current: EBook[] | null, incoming: EBook[], replace = false): EBook[] {
-  const key = (ebook: EBook) =>
-    (ebook.seriesTitle || ebook.title)
-      .normalize("NFKD")
-      .toLowerCase()
-      .replace(/[^\p{L}\p{N}]+/gu, " ")
-      .trim();
-  const groups = [...(current ?? [])];
-  for (const ebook of incoming) {
-    const incomingIds = new Set((ebook.books ?? [ebook]).map((book) => book.id));
-    const index = groups.findIndex((existing) =>
-      (existing.books ?? [existing]).some((book) => incomingIds.has(book.id)),
-    );
-    const fallback =
-      index < 0 ? groups.findIndex((existing) => key(existing) === key(ebook)) : index;
-    if (fallback < 0) {
-      groups.push(ebook);
-      continue;
-    }
-    const existing = groups[fallback];
-    const books = new Map(
-      [...(existing.books ?? [existing]), ...(ebook.books ?? [ebook])].map((book) => [
-        book.id,
-        book,
-      ]),
-    );
-    groups[fallback] = {
-      ...(replace ? ebook : existing),
-      books: books.size > 1 ? [...books.values()] : undefined,
-    };
+  const byId = new Map<string, EBook>();
+  for (const ebook of [...(current ?? []), ...incoming].flatMap((item) => item.books ?? [item])) {
+    if (!replace && byId.has(ebook.id)) continue;
+    byId.set(ebook.id, ebook);
   }
-  return groups;
+  return dedupeEBooks([...byId.values()]);
 }
 
 function scheduleEBookBackground(run: () => void, delay = 1_200): () => void {
@@ -207,12 +198,23 @@ export function EBookView() {
   const [providers, setProviders] = useState<EBookProvider[]>([]);
   const [sourcesReady, setSourcesReady] = useState(false);
   const [providerId, setProviderId] = useState("");
+  const [selectedProviderId, setSelectedProviderId] = useState("");
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<EBook[] | null>(null);
-  const [categoryGroup, setCategoryGroup] = useState<EBookBrowseType>("Genre");
+  const [categoryGroup, setCategoryGroup] = useState<EBookBrowseType>("All");
+  const [appliedCategoryGroup, setAppliedCategoryGroup] =
+    useState<EBookBrowseType>("All");
   const [category, setCategory] = useState("");
-  const [browseAll, setBrowseAll] = useState(false);
+  const [appliedCategory, setAppliedCategory] = useState("");
   const [titleLanguage, setTitleLanguage] = useState<EBookTitleLanguage>("auto");
+  const [browseStatus, setBrowseStatus] = useState<EBookBrowseStatus>("any");
+  const [browseLanguage, setBrowseLanguage] = useState<EBookBrowseLanguage>("any");
+  const [browseSort, setBrowseSort] = useState<EBookBrowseSort>("popular");
+  const [appliedBrowseStatus, setAppliedBrowseStatus] = useState<EBookBrowseStatus>("any");
+  const [appliedBrowseLanguage, setAppliedBrowseLanguage] =
+    useState<EBookBrowseLanguage>("any");
+  const [appliedBrowseSort, setAppliedBrowseSort] =
+    useState<EBookBrowseSort>("popular");
   const [selected, setSelected] = useState<EBook | null>(null);
   const [wheelTarget, setWheelTarget] = useState<EBookWheelTarget | null>(null);
   const [readIntent, setReadIntent] = useState<string | null>(null);
@@ -233,6 +235,7 @@ export function EBookView() {
   const providerIdRef = useRef("");
   const cursorRef = useRef<EBookCursor>({});
   const loadingMoreRef = useRef(false);
+  const browseTagRef = useRef<string | undefined>(ebookSourceBrowseTag("any", "popular"));
   const awardSearchScopesRef = useRef(new Set<string>());
   const needsPopularMetadata = sourceCatalogItems !== null && sourceCatalogItems.length === 0;
   const openCardMenu = useCallback((ebook: EBook, event: ReactMouseEvent<HTMLElement>) => {
@@ -320,6 +323,20 @@ export function EBookView() {
       .sort((left, right) => right.resume!.updatedAt - left.resume!.updatedAt)
       .map((item) => item.ebook);
   }, [activeId, displayFavorites, displaySaved, results, resumeVersion, sourceCatalogItems, sourceItems]);
+  const loadedSourceCandidates = useMemo(() => {
+    const candidates = new Map<string, EBook>();
+    for (const item of [...(sourceItems ?? []), ...(sourceCatalogItems ?? []), ...(results ?? [])]) {
+      for (const book of item.books ?? [item]) {
+        if (book.source === "source") candidates.set(book.id, book);
+      }
+    }
+    return [...candidates.values()];
+  }, [results, sourceCatalogItems, sourceItems]);
+  const mergeResolvedSources = useCallback((books: EBook[]) => {
+    setSourceItems((current) => updateSourceItems(current, books, true));
+    setSourceCatalogItems((current) => updateSourceItems(current, books, true));
+    setResults((current) => (current ? updateSourceItems(current, books, true) : current));
+  }, []);
   const loadAnilistLibrary = useCallback(() => {
     if (!isConnected || !session) {
       return;
@@ -357,7 +374,7 @@ export function EBookView() {
     if (liveCollections.length) writeSourceEBookCollections(collectionScope, liveCollections);
   }, [collectionScope, liveCollections]);
 
-  const loadSources = useCallback((requestedProvider?: string) => {
+  const loadSources = useCallback((requestedProvider?: string, requestedTag?: string) => {
     const seq = ++sourceSeq.current;
     cursorRef.current = {};
     setHasMore(false);
@@ -375,6 +392,7 @@ export function EBookView() {
           : (list[0]?.id ?? "");
         providerIdRef.current = selected;
         setProviderId(selected);
+        setSelectedProviderId(selected);
         return loadSourceEBookPage(
           undefined,
           selected,
@@ -387,10 +405,13 @@ export function EBookView() {
               }
             },
             onMetadata: (items) => {
-              if (seq === sourceSeq.current)
+              if (seq === sourceSeq.current) {
                 setSourceItems((current) => updateSourceItems(current, items, true));
+                setSourceCatalogItems((current) => updateSourceItems(current, items, true));
+              }
             },
           },
+          requestedTag ?? browseTagRef.current,
         );
       })
       .then((page) => {
@@ -400,6 +421,8 @@ export function EBookView() {
         void page.enriched.then((items) => {
           if (seq === sourceSeq.current)
             setSourceItems((current) => updateSourceItems(current, items, true));
+          if (seq === sourceSeq.current)
+            setSourceCatalogItems((current) => updateSourceItems(current, items, true));
         });
       })
       .catch(() => {
@@ -427,7 +450,11 @@ export function EBookView() {
             .map((ebook) => ebook.id),
         );
         for (let pageIndex = 0; pageIndex < 4; pageIndex++) {
-          const page = await loadSourceEBookCatalogPage(providerId, nextCursor);
+          const page = await loadSourceEBookCatalogPage(
+            providerId,
+            nextCursor,
+            browseTagRef.current,
+          );
           if (!active || seq !== sourceSeq.current) return;
           const fresh = page.items.filter((ebook) => !known.has(ebook.id));
           if (!fresh.length) break;
@@ -512,7 +539,10 @@ export function EBookView() {
       .then((detail) => {
         if (!detail) return;
         setSelected((current) => {
-          return current?.books?.length ? { ...detail, books: current.books } : detail;
+          if (!current?.books?.length) return detail;
+          const books = current.books.map((book) => (book.id === detail.id ? detail : book));
+          if (current.id !== detail.id) return { ...current, books };
+          return { ...detail, books };
         });
       })
       .catch(() => {});
@@ -561,6 +591,7 @@ export function EBookView() {
               setResults((current) => updateSourceItems(current, items, true));
           },
         },
+        browseTagRef.current,
       )
         .then((page) => {
           if (seq === searchSeq.current) {
@@ -600,7 +631,7 @@ export function EBookView() {
         if (term) setResults((currentItems) => updateSourceItems(currentItems, items, true));
         else setSourceItems((currentItems) => updateSourceItems(currentItems, items, true));
       },
-    })
+    }, browseTagRef.current)
       .then((page) => {
         if (sourceId !== sourceSeq.current || searchId !== searchSeq.current) return;
         cursorRef.current = page.cursor;
@@ -642,6 +673,8 @@ export function EBookView() {
     return (
       <EBookDetails
         ebook={selected}
+        sourceCandidates={loadedSourceCandidates}
+        onSourcesResolved={mergeResolvedSources}
         profile={activeId ?? "default"}
         autoRead={readIntent === ebookId}
         onAutoReadConsumed={() => setReadIntent(null)}
@@ -770,6 +803,8 @@ export function EBookView() {
                 hasMore={false}
                 onEndReached={() => {}}
                 onOpen={(ebook) => openEBook(String(ebook.id))}
+                resumeProfile={activeId ?? "default"}
+                hideZeroProgress
               />
             ) : (
               <div className="grid min-h-[320px] place-items-center rounded-3xl border border-dashed border-edge-soft bg-elevated/20 px-8 text-center">
@@ -792,31 +827,32 @@ export function EBookView() {
   }
 
   const matchesCategory = (ebook: EBook) => {
-    if (browseAll) return true;
-    const wanted = category || (categoryGroup === "Genre" ? "" : categoryGroup);
+    const wanted =
+      appliedCategory || (appliedCategoryGroup === "All" ? "" : appliedCategoryGroup);
     if (!wanted) return true;
-    const categories = category
-      ? [category]
-      : [categoryGroup, ...EBOOK_CATEGORIES[categoryGroup as EBookCategoryGroup]];
-    return ebook.genres.some((genre) =>
-      categories.some((item) => genre.toLowerCase().includes(item.toLowerCase())),
-    );
+    const categories = appliedCategory
+      ? [appliedCategory]
+      : [
+          appliedCategoryGroup,
+          ...EBOOK_CATEGORIES[appliedCategoryGroup as EBookCategoryGroup],
+        ];
+    return categories.some((item) => ebookMatchesGenre(ebook.genres, item));
   };
-  const catalog = sourceItems?.filter(matchesCategory) ?? sourceItems;
-  const genreGroups = new Map<string, EBook[]>();
-  for (const ebook of sourceItems ?? []) {
-    for (const genre of ebook.genres) {
-      const name = genre.trim();
-      if (!name || (category && name.toLocaleLowerCase() !== category.toLocaleLowerCase()))
-        continue;
-      const books = genreGroups.get(name) ?? [];
-      if (!books.some((book) => book.id === ebook.id)) books.push(ebook);
-      genreGroups.set(name, books);
-    }
-  }
-  const genreRails = [...genreGroups.entries()]
-    .sort((left, right) => right[1].length - left[1].length || left[0].localeCompare(right[0]))
-    .map(([title, items]) => ({ title, items: items.slice(0, 12) }));
+  const filteredSourceItems = sourceItems
+    ? applyEBookBrowseFilters(sourceItems, {
+        status: appliedBrowseStatus,
+        language: appliedBrowseLanguage,
+        sort: appliedBrowseSort,
+      })
+    : sourceItems;
+  const catalog = filteredSourceItems?.filter(matchesCategory) ?? filteredSourceItems;
+  const filteredResults = results
+    ? applyEBookBrowseFilters(results, {
+        status: appliedBrowseStatus,
+        language: appliedBrowseLanguage,
+        sort: appliedBrowseSort,
+      }).filter(matchesCategory)
+    : results;
   const popularBooks = preferredEBookPopular(sourceCatalogItems, popular);
   const featuredBooks = (popularBooks ?? []).filter(
     (ebook) => ebook.cover && !/(?:^|\/)default(?:\.[a-z0-9]+)?(?:[?#]|$)/i.test(ebook.cover),
@@ -866,6 +902,7 @@ export function EBookView() {
             <EBookRail
               key={`${rail.title}:${providerId}`}
               {...rail}
+              profile={activeId ?? "default"}
               onOpen={(ebook) => {
                 if (rail.resumeReading) setReadIntent(ebook.id);
                 openEBook(String(ebook.id));
@@ -995,7 +1032,7 @@ export function EBookView() {
             </div>
             <div className="order-2">
               <EBookBrowseDropdown
-                label="Language"
+                label="Titles"
                 value={titleLanguage}
                 options={[
                   { id: "auto", label: "Auto" },
@@ -1014,30 +1051,23 @@ export function EBookView() {
                 label="Type"
                 value={categoryGroup}
                 options={[
-                  { id: "Genre", label: "Genre" },
+                  { id: "All", label: "All" },
                   { id: "Fiction", label: "Fiction" },
                   { id: "Non-fiction", label: "Non-fiction" },
                 ]}
                 onSelect={(value) => {
                   setCategoryGroup(value as EBookBrowseType);
-                  setBrowseAll(false);
                   setCategory("");
-                  setQuery("");
-                  setResults(null);
                 }}
               />
               <EBookBrowseDropdown
                 label="Catalog"
-                value={providerId}
-                badge={providers.find((source) => source.id === providerId)?.name?.charAt(0)}
+                value={selectedProviderId}
+                badge={providers
+                  .find((source) => source.id === selectedProviderId)
+                  ?.name?.charAt(0)}
                 options={providers.map((source) => ({ id: source.id, label: source.name }))}
-                onSelect={(id) => {
-                  providerIdRef.current = id;
-                  setProviderId(id);
-                  setQuery("");
-                  setResults(null);
-                  loadSources(id);
-                }}
+                onSelect={setSelectedProviderId}
               />
               <EBookBrowseDropdown
                 label="Genre"
@@ -1046,52 +1076,101 @@ export function EBookView() {
                   { id: "", label: "All genres" },
                   ...Array.from(
                     new Set(
-                      categoryGroup && categoryGroup !== "Genre"
-                        ? EBOOK_CATEGORIES[categoryGroup]
-                        : Object.values(EBOOK_CATEGORIES).flat(),
+                      categoryGroup !== "All"
+                        ? [
+                            ...EBOOK_CATEGORIES[categoryGroup],
+                            ...(categoryGroup === "Fiction" ? EBOOK_FILTER_GENRES : []),
+                          ]
+                        : [...Object.values(EBOOK_CATEGORIES).flat(), ...EBOOK_FILTER_GENRES],
                     ),
                   ).map((item) => ({ id: item, label: item })),
                 ]}
-                onSelect={(value) => {
-                  setBrowseAll(false);
-                  setCategory(value);
-                  setQuery("");
-                  setResults(null);
-                }}
+                onSelect={setCategory}
+              />
+              <EBookBrowseDropdown
+                label="Status"
+                value={browseStatus}
+                options={[
+                  { id: "any", label: "Any" },
+                  { id: "ongoing", label: "Ongoing" },
+                  { id: "completed", label: "Completed" },
+                  { id: "hiatus", label: "Hiatus" },
+                ]}
+                onSelect={(value) => setBrowseStatus(value as EBookBrowseStatus)}
+              />
+              <EBookBrowseDropdown
+                label="Language"
+                value={browseLanguage}
+                options={[
+                  { id: "any", label: "Any" },
+                  { id: "chinese", label: "Chinese" },
+                  { id: "korean", label: "Korean" },
+                  { id: "japanese", label: "Japanese" },
+                ]}
+                onSelect={(value) => setBrowseLanguage(value as EBookBrowseLanguage)}
+              />
+              <EBookBrowseDropdown
+                label="Sort by"
+                value={browseSort}
+                options={[
+                  { id: "name", label: "Name" },
+                  { id: "popular", label: "Popular" },
+                  { id: "chapters", label: "Chapters" },
+                  { id: "rating", label: "Rating" },
+                  { id: "trending", label: "Trending" },
+                ]}
+                onSelect={(value) => setBrowseSort(value as EBookBrowseSort)}
               />
               <button
                 type="button"
                 onClick={() => {
-                  setBrowseAll(true);
-                  setCategory("");
+                  const tag = ebookSourceBrowseTag(browseStatus, browseSort);
+                  setAppliedCategoryGroup(categoryGroup);
+                  setAppliedCategory(category);
+                  setAppliedBrowseStatus(browseStatus);
+                  setAppliedBrowseLanguage(browseLanguage);
+                  setAppliedBrowseSort(browseSort);
+                  browseTagRef.current = tag;
                   setQuery("");
                   setResults(null);
+                  loadSources(selectedProviderId, tag);
                 }}
                 className="flex h-10 items-center gap-2 rounded-full bg-ink px-5 text-[13.5px] font-semibold text-canvas transition-transform hover:scale-[1.02] active:scale-[0.97]"
               >
-                Browse
+                Apply
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const tag = ebookSourceBrowseTag("any", "popular");
+                  setCategoryGroup("All");
+                  setAppliedCategoryGroup("All");
+                  setCategory("");
+                  setAppliedCategory("");
+                  setBrowseStatus("any");
+                  setAppliedBrowseStatus("any");
+                  setBrowseLanguage("any");
+                  setAppliedBrowseLanguage("any");
+                  setBrowseSort("popular");
+                  setAppliedBrowseSort("popular");
+                  browseTagRef.current = tag;
+                  setQuery("");
+                  setResults(null);
+                  loadSources(selectedProviderId, tag);
+                }}
+                className="flex h-10 items-center gap-2 rounded-full border border-edge-soft bg-canvas/50 px-4 text-[13.5px] font-semibold text-ink transition-colors hover:border-edge hover:bg-canvas/70 active:scale-[0.97]"
+              >
+                Reset
               </button>
             </div>
           </div>
-          {categoryGroup === "Genre" && !browseAll && query.trim().length < 2 ? (
-            <EBookGenreRails
-              rails={genreRails}
-              resetKey={`${providerId}:${category}`}
-              sourceLoaded={sourceItems !== null}
-              loadingMore={loadingMore}
-              hasMore={hasMore}
-              onLoadMore={loadMore}
-              onOpen={(ebook) => openEBook(String(ebook.id))}
-            />
-          ) : (
-            <EBookGrid
-              items={query.trim().length >= 2 ? results : catalog}
-              loadingMore={loadingMore}
-              hasMore={hasMore}
-              onEndReached={loadMore}
-              onOpen={(ebook) => openEBook(String(ebook.id))}
-            />
-          )}
+          <EBookGrid
+            items={query.trim().length >= 2 ? filteredResults : catalog}
+            loadingMore={loadingMore}
+            hasMore={hasMore}
+            onEndReached={loadMore}
+            onOpen={(ebook) => openEBook(String(ebook.id))}
+          />
         </div>
       </main>
       {wheelMenu}
@@ -1335,10 +1414,12 @@ function EBookDetailDropdown({
   options,
   selected,
   onSelect,
+  buttonLabel,
 }: {
   options: Array<{ id: string; label: string }>;
   selected: string;
   onSelect: (id: string) => void;
+  buttonLabel?: string;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -1358,7 +1439,8 @@ function EBookDetailDropdown({
         onClick={() => setOpen((value) => !value)}
         className="inline-flex h-11 items-center gap-2 rounded-xl border border-edge-soft bg-surface/60 px-4 text-[14px] text-ink transition-colors hover:border-edge hover:bg-elevated/60"
       >
-        <span>{active?.label}</span>
+        {buttonLabel && <Database size={16} className="text-ink-subtle" />}
+        <span>{buttonLabel ? `${buttonLabel} · ${active?.label}` : active?.label}</span>
         <ChevronDown
           size={16}
           className={`text-ink-subtle transition-transform ${open ? "rotate-180" : ""}`}
@@ -1400,7 +1482,9 @@ function EBookRail({
   onEndReached,
   loadingMore,
   hideEmpty,
-}: Rail & { onOpen: (ebook: EBook) => void }) {
+  resumeReading,
+  profile,
+}: Rail & { onOpen: (ebook: EBook) => void; profile?: string }) {
   if (items?.length === 0)
     return hideEmpty ? null : <p className="text-[14px] text-ink-muted">No eBooks found.</p>;
   return (
@@ -1417,76 +1501,17 @@ function EBookRail({
                 className="aspect-[2/3] animate-pulse rounded-xl bg-elevated/60 motion-reduce:animate-none"
               />
             ))
-          : items.map((ebook) => <EBookCard key={ebook.id} ebook={ebook} onOpen={onOpen} />)}
+          : items.map((ebook) => (
+              <EBookCard
+                key={ebook.id}
+                ebook={ebook}
+                onOpen={onOpen}
+                resumeProfile={resumeReading && profile ? profile : undefined}
+              />
+            ))}
       </Row>
       {loadingMore && <Loader2 size={18} className="animate-spin text-ink-subtle" />}
     </section>
-  );
-}
-
-function EBookGenreRails({
-  rails,
-  resetKey,
-  sourceLoaded,
-  loadingMore,
-  hasMore,
-  onLoadMore,
-  onOpen,
-}: {
-  rails: Array<{ title: string; items: EBook[] }>;
-  resetKey: string;
-  sourceLoaded: boolean;
-  loadingMore: boolean;
-  hasMore: boolean;
-  onLoadMore: () => void;
-  onOpen: (ebook: EBook) => void;
-}) {
-  const [visibleCount, setVisibleCount] = useState(3);
-  const sentinel = useRef<HTMLDivElement>(null);
-
-  useEffect(() => setVisibleCount(3), [resetKey]);
-
-  useEffect(() => {
-    const node = sentinel.current;
-    if (!node || loadingMore || (visibleCount >= rails.length && !hasMore)) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        if (visibleCount < rails.length) {
-          setVisibleCount((count) => Math.min(count + 3, rails.length));
-        } else if (hasMore) {
-          onLoadMore();
-        }
-      },
-      { rootMargin: "700px 0px" },
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [hasMore, loadingMore, onLoadMore, rails.length, visibleCount]);
-
-  if (sourceLoaded && rails.length === 0) {
-    return (
-      <p className="py-10 text-center text-[14px] text-ink-muted">
-        No genre metadata is available from this catalog.
-      </p>
-    );
-  }
-
-  return (
-    <div className="flex flex-col gap-9">
-      {rails.slice(0, visibleCount).map((rail) => (
-        <EBookRail
-          key={`genre:${rail.title}:${resetKey}`}
-          title={rail.title}
-          subtitle={`${rail.items.length} ${rail.items.length === 1 ? "book" : "books"}`}
-          items={rail.items}
-          onOpen={onOpen}
-        />
-      ))}
-      <div ref={sentinel} className="flex h-8 items-center justify-center">
-        {loadingMore && <Loader2 size={18} className="animate-spin text-ink-subtle" />}
-      </div>
-    </div>
   );
 }
 
@@ -1496,12 +1521,16 @@ function EBookGrid({
   hasMore,
   onEndReached,
   onOpen,
+  resumeProfile,
+  hideZeroProgress,
 }: {
   items: EBook[] | null;
   loadingMore: boolean;
   hasMore: boolean;
   onEndReached: () => void;
   onOpen: (ebook: EBook) => void;
+  resumeProfile?: string;
+  hideZeroProgress?: boolean;
 }) {
   const sentinel = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -1527,7 +1556,15 @@ function EBookGrid({
                 className="aspect-[2/3] animate-pulse rounded-xl bg-elevated/60 motion-reduce:animate-none"
               />
             ))
-          : items.map((ebook) => <EBookCard key={ebook.id} ebook={ebook} onOpen={onOpen} />)}
+          : items.map((ebook) => (
+              <EBookCard
+                key={ebook.id}
+                ebook={ebook}
+                onOpen={onOpen}
+                resumeProfile={resumeProfile}
+                hideZeroProgress={hideZeroProgress}
+              />
+            ))}
       </div>
       <div ref={sentinel} className="h-4" />
       {loadingMore && (
@@ -1544,10 +1581,70 @@ function EBookGrid({
   );
 }
 
-function EBookCard({ ebook, onOpen }: { ebook: EBook; onOpen: (ebook: EBook) => void }) {
+function useEBookReadStatus(ebook: EBook | null, profile: string) {
+  const [, setVersion] = useState(0);
+  const ebookId = ebook?.id;
+  const resume = ebookId ? loadEBookResume(profile, ebookId) : null;
+  const tracking = ebookId ? getEBookTracking(ebookId) : { status: "PLANNING", progress: 0 };
+  const savedLine =
+    ebookId && resume ? loadEBookProgress(profile, ebookId, `${resume.chapterId}:harbor`) : 0;
+  const status =
+    tracking.status === "COMPLETED" ||
+    (resume?.chapterIndex !== undefined &&
+      resume.totalChapters !== undefined &&
+      resume.chapterIndex === resume.totalChapters - 1 &&
+      (resume.chapterProgress ?? 0) >= 100)
+      ? "read"
+      : tracking.progress > 0 ||
+          savedLine > 0 ||
+          (resume?.chapterProgress ?? 0) > 0 ||
+          (resume?.bookProgress ?? 0) > 0
+        ? "partial"
+        : null;
+
+  useEffect(() => {
+    if (!ebookId) return;
+    const refresh = (event: Event) => {
+      const detail = (event as CustomEvent<string>).detail;
+      if (!detail || detail === ebookId) setVersion((version) => version + 1);
+    };
+    window.addEventListener("harbor:ebook-resume", refresh);
+    window.addEventListener("harbor:ebook-tracking", refresh);
+    return () => {
+      window.removeEventListener("harbor:ebook-resume", refresh);
+      window.removeEventListener("harbor:ebook-tracking", refresh);
+    };
+  }, [ebookId]);
+
+  return status;
+}
+
+function EBookCard({
+  ebook,
+  onOpen,
+  resumeProfile,
+  hideZeroProgress = false,
+}: {
+  ebook: EBook;
+  onOpen: (ebook: EBook) => void;
+  resumeProfile?: string;
+  hideZeroProgress?: boolean;
+}) {
   const titleLanguage = useContext(EBookTitleLanguageContext);
   const openMenu = useContext(EBookCardMenuContext);
+  const { activeId } = useProfiles();
+  const profile = activeId ?? "default";
   const displayTitle = ebookTitleForLanguage(ebook, titleLanguage);
+  const resume = resumeProfile ? loadEBookResume(resumeProfile, ebook.id) : null;
+  const readStatus = useEBookReadStatus(ebook, profile);
+  const chapterProgress = Math.max(0, Math.min(100, resume?.chapterProgress ?? 0));
+  const fallbackBookProgress =
+    resume?.chapterIndex !== undefined && resume.totalChapters
+      ? ((resume.chapterIndex + chapterProgress / 100) / resume.totalChapters) * 100
+      : 0;
+  const bookProgress = Math.max(0, Math.min(100, resume?.bookProgress ?? fallbackBookProgress));
+  const showResumeProgress =
+    resume !== null && (!hideZeroProgress || chapterProgress > 0 || bookProgress > 0);
   return (
     <button
       type="button"
@@ -1566,6 +1663,7 @@ function EBookCard({ ebook, onOpen }: { ebook: EBook; onOpen: (ebook: EBook) => 
             lazy
             className="ebook-card-showcase-cover harbor-card-ring"
           />
+          {readStatus && <EBookReadMark status={readStatus} />}
         </div>
       </div>
       <p className="line-clamp-2 min-h-9 text-[13px] font-medium leading-snug text-ink">
@@ -1581,7 +1679,94 @@ function EBookCard({ ebook, onOpen }: { ebook: EBook; onOpen: (ebook: EBook) => 
           .filter(Boolean)
           .join(" · ")}
       </p>
+      {showResumeProgress && (
+        <div className="mt-0.5 flex w-full flex-col gap-2" aria-label="Reading progress">
+          <EBookProgressSeeker
+            label="Chapter"
+            value={chapterProgress}
+            accent
+            detail={resume.chapterLabel || resume.chapterTitle}
+          />
+          <EBookProgressSeeker
+            label="Complete book"
+            value={bookProgress}
+            detail={resume.volumeLabel}
+          />
+        </div>
+      )}
     </button>
+  );
+}
+
+function EBookReadMark({ status }: { status: "read" | "partial" }) {
+  const complete = status === "read";
+  return (
+    <span
+      aria-label={complete ? "Read" : "Partially read"}
+      title={complete ? "Read" : "Partially read"}
+      className={`ebook-card-read-mark pointer-events-none absolute right-2 top-2 z-10 inline-flex h-7 items-center gap-1.5 rounded-full border px-2.5 text-[9px] font-semibold uppercase tracking-[0.12em] shadow-lg backdrop-blur-md ${
+        complete
+          ? "border-accent/45 bg-accent/90 text-canvas shadow-accent/15"
+          : "border-white/15 bg-canvas/80 text-white/85 shadow-black/30"
+      }`}
+    >
+      {complete ? (
+        <Check size={12} strokeWidth={2.5} />
+      ) : (
+        <span className="relative h-3 w-3 rounded-full border border-current/70">
+          <span className="absolute inset-y-[2px] left-[2px] w-[3px] rounded-l-full bg-accent" />
+        </span>
+      )}
+      {complete ? "Read" : "Reading"}
+    </span>
+  );
+}
+
+function EBookProgressSeeker({
+  label,
+  value,
+  detail,
+  accent = false,
+}: {
+  label: string;
+  value: number;
+  detail?: string;
+  accent?: boolean;
+}) {
+  const percent = Math.round(value);
+  return (
+    <div className="group/progress w-full" title={`${label}: ${percent}%${detail ? ` · ${detail}` : ""}`}>
+      <div className="mb-1 flex items-center justify-between gap-2 text-[9.5px] leading-none">
+        <span className={accent ? "font-medium text-ink-muted" : "text-ink-subtle"}>{label}</span>
+        <span className={accent ? "tabular-nums text-accent" : "tabular-nums text-ink-muted"}>
+          {percent}%
+        </span>
+      </div>
+      <div
+        role="progressbar"
+        aria-label={label}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={percent}
+        className="relative h-1 overflow-visible rounded-full bg-raised"
+      >
+        <span
+          className={`absolute inset-y-0 left-0 rounded-full transition-[width] duration-500 ${
+            accent ? "bg-accent" : "bg-ink-subtle/55"
+          }`}
+          style={{ width: `${percent}%` }}
+        />
+        <span
+          aria-hidden
+          className={`absolute top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full border transition-transform group-hover/progress:scale-125 ${
+            accent
+              ? "border-accent bg-canvas shadow-[0_0_0_2px_color-mix(in_srgb,var(--color-accent)_18%,transparent)]"
+              : "border-ink-subtle bg-canvas"
+          }`}
+          style={{ left: `${percent}%` }}
+        />
+      </div>
+    </div>
   );
 }
 
@@ -1591,9 +1776,7 @@ function EBookChapterSection({
   volumeGroups,
   selectedVolume,
   onSelectVolume,
-  sourceOptions,
   sourceRoute,
-  onSelectSource,
   onRead,
 }: {
   chapters: EBookChapter[] | null;
@@ -1601,9 +1784,7 @@ function EBookChapterSection({
   volumeGroups: EBookVolumeGroup[];
   selectedVolume: string | null;
   onSelectVolume: (volume: string) => void;
-  sourceOptions: EBook[];
   sourceRoute: string | null;
-  onSelectSource: (route: string) => void;
   onRead: (chapter: EBookChapter) => void;
 }) {
   const [query, setQuery] = useState("");
@@ -1786,16 +1967,6 @@ function EBookChapterSection({
               </button>
             ))}
           </div>
-          {sourceOptions.length > 1 && sourceRoute && (
-            <EBookDetailDropdown
-              options={sourceOptions.map((source) => ({
-                id: source.id,
-                label: source.providerName ?? source.title,
-              }))}
-              selected={sourceRoute}
-              onSelect={onSelectSource}
-            />
-          )}
         </div>
       </div>
 
@@ -2225,6 +2396,8 @@ function EBookInformation({ ebook }: { ebook: EBook }) {
 
 function EBookDetails({
   ebook,
+  sourceCandidates,
+  onSourcesResolved,
   profile,
   autoRead,
   onAutoReadConsumed,
@@ -2232,6 +2405,8 @@ function EBookDetails({
   onOpen,
 }: {
   ebook: EBook | null;
+  sourceCandidates: EBook[];
+  onSourcesResolved: (books: EBook[]) => void;
   profile: string;
   autoRead: boolean;
   onAutoReadConsumed: () => void;
@@ -2260,12 +2435,19 @@ function EBookDetails({
     error?: string;
   } | null>(null);
   const ebookId = ebook?.id;
+  const readStatus = useEBookReadStatus(ebook, profile);
   const sourceKey = (ebook?.books ?? (ebook ? [ebook] : []))
     .filter((book) => book.source === "source")
     .map((book) => book.id)
     .join("\0");
+  const sourceAliasKey = [
+    ...(ebook?.sourceAliases ?? []),
+    ...(ebook?.verifiedAliases ?? []),
+    ...(ebook?.altTitle?.split("|") ?? []),
+  ].join("\0");
   const genreKey = ebook?.genres.join("\0");
   const authorKey = ebook?.authors.join("\0");
+  const sourceCandidateKey = sourceCandidates.map((book) => book.id).sort().join("\0");
   useEffect(() => {
     const element = detailScrollRef.current;
     if (!element) return;
@@ -2323,9 +2505,65 @@ function EBookDetails({
     let active = true;
     setRecommendations(null);
     setRecommendationsError(false);
-    void recommendedEBooks(ebook)
-      .then((items) => {
-        if (active) setRecommendations(items);
+    const normalizeTitle = (value: string) =>
+      value
+        .normalize("NFKD")
+        .toLocaleLowerCase()
+        .replace(/[^\p{L}\p{N}]+/gu, " ")
+        .trim();
+    const currentTitles = new Set(
+      [
+        ebook.title,
+        ebook.altTitle,
+        ...(ebook.books ?? []).flatMap((book) => [book.title, book.altTitle]),
+      ]
+        .filter((title): title is string => Boolean(title))
+        .map(normalizeTitle),
+    );
+    const normalizeGenre = (value: string) =>
+      value
+        .normalize("NFKD")
+        .toLocaleLowerCase()
+        .replace(/[^\p{L}\p{N}]+/gu, " ")
+        .trim();
+    const currentGenres = ebook.genres.map(normalizeGenre).filter(Boolean);
+    const genreScore = (item: EBook) => {
+      const candidateGenres = item.genres.map(normalizeGenre).filter(Boolean);
+      return currentGenres.reduce(
+        (score, genre) =>
+          score +
+          Number(
+            candidateGenres.some(
+              (candidate) =>
+                candidate === genre || candidate.includes(genre) || genre.includes(candidate),
+            ),
+          ),
+        0,
+      );
+    };
+    const sourceRecommendations = (items: EBook[]) => {
+      const seen = new Set<string>();
+      return items
+        .filter((item) => {
+          const title = normalizeTitle(item.title);
+          if (item.id === ebook.id || currentTitles.has(title)) return false;
+          const key = `${item.source}:${item.id}`;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        })
+        .map((item) => ({ item, score: genreScore(item) }))
+        .filter(({ score }) => score > 0)
+        .sort((left, right) => right.score - left.score)
+        .map(({ item }) => item)
+        .slice(0, 18);
+    };
+    void loadSourceEBookPage(undefined, "all")
+      .then(async (page) => {
+        const sourceItems = sourceRecommendations(page.items);
+        if (active && sourceItems.length) setRecommendations(sourceItems);
+        const enriched = await page.enriched.catch(() => page.items);
+        if (active) setRecommendations(sourceRecommendations(enriched));
       })
       .catch(() => {
         if (!active) return;
@@ -2335,40 +2573,72 @@ function EBookDetails({
     return () => {
       active = false;
     };
-  }, [ebookId, ebook?.anilistId, genreKey, recommendationsAttempt]);
+  }, [ebookId, genreKey, recommendationsAttempt]);
   useEffect(() => {
     setReading(null);
     if (!ebook) return;
-    if (ebook.source === "source") {
-      const options = (ebook.books ?? [ebook]).filter((book) => book.source === "source");
-      setSourceOptions(options);
-      setSourceRoute(options[0]?.id ?? ebook.id);
-      setResolvingSource(false);
-      return;
-    }
     let active = true;
-    setSourceOptions([]);
-    setSourceRoute(null);
-    setResolvingSource(true);
-    const key = (value: string) =>
-      value
-        .normalize("NFKD")
-        .toLowerCase()
-        .replace(/[^\p{L}\p{N}]+/gu, " ")
-        .trim();
-    void loadSourceEBookPage(ebook.title)
-      .then(({ items }) => {
+    const existing = (ebook.books ?? [ebook]).filter((book) => book.source === "source");
+    setSourceOptions(existing);
+    setSourceRoute(existing[0]?.id ?? null);
+    setResolvingSource(existing.length === 0);
+    const queries = [
+      ebook.title,
+      ...(ebook.sourceAliases ?? []),
+      ...(ebook.verifiedAliases ?? []),
+      ...(ebook.altTitle?.split("|") ?? []),
+    ]
+      .map((title) => title.trim())
+      .filter(Boolean);
+    const normalizedAuthors = new Set(
+      ebook.authors.map((author) => author.normalize("NFKD").toLocaleLowerCase().trim()).filter(Boolean),
+    );
+    const hasArabic = (value: string) => /\p{Script=Arabic}/u.test(value);
+    const ebookIsArabic = hasArabic(ebook.title);
+    void Promise.all(
+      [...new Set(queries)].slice(0, 6).map((query) => searchSourceEBookCatalog(query, "all")),
+    )
+      .then(async (results) => {
         if (!active) return;
-        const matches = items.filter((item) => key(item.title) === key(ebook.title));
-        setSourceOptions(matches);
-        setSourceRoute(matches[0]?.id ?? null);
+        const searched = results.flat().flatMap((item) => item.books ?? [item]);
+        const candidates = [...existing, ...searched, ...sourceCandidates];
+        const uniqueCandidates = [...new Map(candidates.map((item) => [item.id, item])).values()];
+        const promising = uniqueCandidates
+          .filter((candidate) => {
+            if (existing.some((book) => book.id === candidate.id) || eBooksMatch(candidate, ebook))
+              return true;
+            const sharesAuthor = candidate.authors.some((author) =>
+              normalizedAuthors.has(author.normalize("NFKD").toLocaleLowerCase().trim()),
+            );
+            return sharesAuthor || hasArabic(candidate.title) !== ebookIsArabic;
+          })
+          .slice(0, 32);
+        const hydrated = await Promise.all(
+          promising.map((candidate) =>
+            sourceEBookDetail(candidate.id).then((detail) => detail ?? candidate).catch(() => candidate),
+          ),
+        );
+        if (!active) return;
+        const resolvedCandidates = [...uniqueCandidates, ...hydrated];
+        const matches = dedupeEBooks(resolvedCandidates)
+          .filter((item) => eBooksMatch(item, ebook) || item.books?.some((book) => eBooksMatch(book, ebook)))
+          .flatMap((item) => item.books ?? [item]);
+        const uniqueMatches = [...new Map(matches.map((item) => [item.id, item])).values()];
+        setSourceOptions(uniqueMatches);
+        setSourceRoute((current) =>
+          current && uniqueMatches.some((item) => item.id === current)
+            ? current
+            : (uniqueMatches[0]?.id ?? null),
+        );
+        const currentIds = new Set(existing.map((item) => item.id));
+        if (uniqueMatches.some((item) => !currentIds.has(item.id))) onSourcesResolved(uniqueMatches);
       })
       .catch(() => {})
       .finally(() => active && setResolvingSource(false));
     return () => {
       active = false;
     };
-  }, [ebookId, ebook?.source, ebook?.title, sourceKey]);
+  }, [ebookId, ebook?.source, ebook?.title, sourceAliasKey, sourceKey, sourceCandidateKey]);
   useEffect(() => {
     let active = true;
     if (!sourceRoute) {
@@ -2432,11 +2702,22 @@ function EBookDetails({
       });
       setReading({ chapter, content: null });
       void sourceEBookContent(sourceRoute, chapter.id, chapter.title)
-        .then((content) =>
+        .then((content) => {
           setReading((current) =>
             current?.chapter.id === chapter.id ? { chapter, content } : current,
-          ),
-        )
+          );
+          const position = chapters?.findIndex((item) => item.id === chapter.id) ?? -1;
+          const next = position >= 0 ? chapters?.[position + 1] : undefined;
+          if (next) {
+            const prefetch = () =>
+              void prefetchSourceEBookContent(sourceRoute, next.id).catch(() => undefined);
+            const idle = window as typeof window & {
+              requestIdleCallback?: (callback: () => void, options?: { timeout?: number }) => number;
+            };
+            if (idle.requestIdleCallback) idle.requestIdleCallback(prefetch, { timeout: 3_000 });
+            else window.setTimeout(prefetch, 1_000);
+          }
+        })
         .catch(() =>
           setReading((current) =>
             current?.chapter.id === chapter.id
@@ -2445,7 +2726,7 @@ function EBookDetails({
           ),
         );
     },
-    [ebook, profile, sourceRoute],
+    [chapters, ebook, profile, sourceRoute],
   );
   useEffect(() => {
     if (!autoRead || !ebook || chapters === null || !sourceRoute) return;
@@ -2515,12 +2796,18 @@ function EBookDetails({
             </button>
             <div className="mt-6 flex flex-col gap-6 sm:flex-row sm:items-end">
               <div className="w-52 shrink-0 sm:self-start">
-                <Poster
-                  src={ebook.cover}
-                  seed={`ebook:${ebook.id}`}
-                  ratio="portrait"
-                  className="rounded-2xl shadow-xl ring-1 ring-edge"
-                />
+                <div className="ebook-details-book-cover">
+                  <div className="ebook-details-book-rear" aria-hidden="true" />
+                  <div className="ebook-details-book-pages" aria-hidden="true" />
+                  <Poster
+                    src={ebook.cover}
+                    seed={`ebook:${ebook.id}`}
+                    ratio="portrait"
+                    className="ebook-details-book-poster"
+                  />
+                  <span className="ebook-details-book-spine" aria-hidden="true" />
+                  {readStatus && <EBookReadMark status={readStatus} />}
+                </div>
               </div>
               <div className="flex min-w-0 flex-1 flex-col items-start gap-4">
                 <div className="flex flex-col gap-1.5">
@@ -2569,6 +2856,17 @@ function EBookDetails({
                     {saved ? <Library size={19} /> : <Bookmark size={19} />}
                     {saved ? "Bookmarked" : "Bookmark"}
                   </button>
+                  {sourceOptions.length > 0 && sourceRoute && (
+                    <EBookDetailDropdown
+                      options={sourceOptions.map((source) => ({
+                        id: source.id,
+                        label: source.providerName ?? source.title,
+                      }))}
+                      selected={sourceRoute}
+                      onSelect={setSourceRoute}
+                      buttonLabel="Source"
+                    />
+                  )}
                   <button
                     type="button"
                     aria-pressed={favorite}
@@ -2620,47 +2918,50 @@ function EBookDetails({
               volumeGroups={volumeGroups}
               selectedVolume={selectedVolume}
               onSelectVolume={setSelectedVolume}
-              sourceOptions={sourceOptions}
               sourceRoute={sourceRoute}
-              onSelectSource={setSourceRoute}
               onRead={readChapter}
             />
           )}
           {(ebook.books?.length ?? 0) > 1 && (
-            <section className="w-full max-w-3xl rounded-2xl border border-edge-soft bg-elevated/35 p-5">
-              <h2 className="text-[17px] font-semibold text-ink">Books & sources</h2>
-              <p className="mt-1 text-[12.5px] text-ink-subtle">
-                {ebook.books!.length} books grouped under {ebook.seriesTitle || ebook.title}
-              </p>
-              <div className="mt-4 divide-y divide-edge-soft">
+            <section className="flex w-fit max-w-full items-center gap-2.5 rounded-xl border border-edge-soft bg-elevated/30 p-2.5">
+              <div className="shrink-0 px-1">
+                <h2 className="text-[12px] font-semibold text-ink">Available sources</h2>
+                <p className="text-[9.5px] text-ink-subtle">Read from</p>
+              </div>
+              <div className="flex min-w-0 items-center gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {ebook.books!.map((book) => (
-                  <div key={book.id} className="flex items-center gap-4 py-3 first:pt-0 last:pb-0">
+                  <div
+                    key={book.id}
+                    className={`flex h-12 min-w-[160px] max-w-[205px] shrink-0 items-center gap-2.5 rounded-lg border px-2 transition-colors ${
+                      sourceRoute === book.id
+                        ? "border-accent/45 bg-accent/10"
+                        : "border-edge-soft bg-canvas/35 hover:bg-elevated/70"
+                    }`}
+                  >
                     <Poster
                       src={book.cover}
                       seed={`ebook-book:${book.id}`}
                       ratio="portrait"
-                      className="w-11 shrink-0 rounded-md"
+                      className="w-8 shrink-0 rounded-sm"
                     />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-[13.5px] font-medium text-ink">{book.title}</p>
-                      <p className="truncate text-[11.5px] text-ink-subtle">
-                        {[
-                          book.authors[0],
-                          book.year,
-                          book.source === "anilist" ? "AniList" : "Open Library",
-                        ]
-                          .filter(Boolean)
-                          .join(" · ")}
-                      </p>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => book.source === "source" && setSourceRoute(book.id)}
+                      className="min-w-0 flex-1 text-left"
+                    >
+                      <span className="block truncate text-[11px] font-medium text-ink">
+                        {book.providerName ?? book.title}
+                      </span>
+                      <span className="block truncate text-[9px] text-ink-subtle">{book.title}</span>
+                    </button>
                     {book.siteUrl && (
                       <button
                         type="button"
                         aria-label={`Open ${book.title}`}
                         onClick={() => openUrl(book.siteUrl!)}
-                        className="grid size-9 shrink-0 place-items-center rounded-full border border-edge-soft text-ink-muted hover:bg-elevated hover:text-ink"
+                        className="grid size-6 shrink-0 place-items-center rounded-full text-ink-subtle hover:bg-elevated hover:text-ink"
                       >
-                        <ExternalLink size={15} />
+                        <ExternalLink size={12} />
                       </button>
                     )}
                   </div>
@@ -2696,7 +2997,7 @@ function EBookDetails({
           ) : (
             <EBookRail
               title="Recommended eBooks"
-              subtitle="Books readers may also enjoy"
+              subtitle="Same-genre picks from your installed sources"
               items={recommendations}
               onOpen={onOpen}
               hideEmpty

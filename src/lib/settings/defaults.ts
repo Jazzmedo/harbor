@@ -513,6 +513,8 @@ export const DEFAULT: Settings = {
   webhookRules: [],
   downloadDir: "",
   downloadCreateFolders: false,
+  ebookDownloadDir: "",
+  ebookDownloadCreateFolders: false,
   stremioDeeplinkInstall: true,
   iptvPlaylists: [],
 

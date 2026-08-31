@@ -34,6 +34,10 @@ export type EBookResume = {
   chapterTitle: string;
   chapterLabel?: string;
   volumeLabel?: string;
+  chapterProgress?: number;
+  bookProgress?: number;
+  chapterIndex?: number;
+  totalChapters?: number;
   updatedAt: number;
 };
 
@@ -195,7 +199,12 @@ export function saveEBookResume(
   bookId: string,
   resume: Omit<EBookResume, "updatedAt">,
 ): EBookResume {
-  const value = { ...resume, updatedAt: Date.now() };
+  const previous = loadEBookResume(profile, bookId);
+  const value = {
+    ...(previous?.chapterId === resume.chapterId ? previous : undefined),
+    ...resume,
+    updatedAt: Date.now(),
+  };
   persistCritical(resumeKey(profile, bookId), JSON.stringify(value));
   window.dispatchEvent(new CustomEvent("harbor:ebook-resume", { detail: bookId }));
   return value;

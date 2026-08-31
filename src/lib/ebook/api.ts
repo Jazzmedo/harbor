@@ -16,6 +16,18 @@ export type EBook = {
   wikidataId?: string;
   isbn?: string;
   seriesTitle?: string;
+  /** Alternative titles explicitly supplied by the installed source. */
+  sourceAliases?: string[];
+  /** Titles obtained from a metadata result that passed Harbor's verification checks. */
+  verifiedAliases?: string[];
+  /** Stable identifiers explicitly supplied by the installed source. */
+  sourceIdentity?: {
+    anilistId?: number;
+    googleBooksId?: string;
+    openLibraryId?: string;
+    wikidataId?: string;
+    isbn?: string;
+  };
   books?: EBook[];
   title: string;
   altTitle?: string;
@@ -27,10 +39,12 @@ export type EBook = {
   year?: number;
   publishedAt?: string;
   status?: string;
+  originalLanguage?: string;
   genres: string[];
   chapters?: number;
   volumes?: number;
   score?: number;
+  trendingScore?: number;
   siteUrl?: string;
 };
 
@@ -110,6 +124,7 @@ export type RawEBook = {
   chapters: number | null;
   volumes: number | null;
   averageScore: number | null;
+  countryOfOrigin?: string | null;
   siteUrl: string | null;
   synonyms?: string[];
   staff?: { edges: Array<{ role: string; node: { name: { full: string } } }> };
@@ -127,6 +142,7 @@ const FIELDS = `
   chapters
   volumes
   averageScore
+  countryOfOrigin
   siteUrl
   synonyms
   staff(perPage: 10, sort: RELEVANCE) { edges { role node { name { full } } } }
@@ -449,6 +465,7 @@ export function mapEBook(n: RawEBook): EBook {
     year: n.startDate?.year ?? undefined,
     publishedAt: fuzzyDate(n.startDate),
     status: n.status?.replaceAll("_", " ").toLowerCase(),
+    originalLanguage: n.countryOfOrigin ?? undefined,
     genres: n.genres ?? [],
     chapters: n.chapters ?? undefined,
     volumes: n.volumes ?? undefined,
@@ -2027,6 +2044,88 @@ export function groupEBookSeries(ebooks: EBook[]): EBook[] {
   });
 }
 
+function identityAliases(ebook: EBook): Set<string> {
+  return new Set(
+    [
+      ebook.title,
+      ...(ebook.sourceAliases ??
+        (ebook.source === "source" ? (ebook.altTitle?.split("|") ?? []) : [])),
+      ...(ebook.verifiedAliases ?? []),
+    ]
+      .filter((title): title is string => Boolean(title?.trim()))
+      .map(identityTitleKey)
+      .filter(Boolean),
+  );
+}
+
+function explicitSourceIdentityMatch(left: EBook, right: EBook): boolean {
+  const a = left.sourceIdentity;
+  const b = right.sourceIdentity;
+  if (!a || !b) return false;
+  return Boolean(
+    (a.anilistId && a.anilistId === b.anilistId) ||
+      (a.googleBooksId && a.googleBooksId === b.googleBooksId) ||
+      (a.openLibraryId && a.openLibraryId === b.openLibraryId) ||
+      (a.wikidataId && a.wikidataId === b.wikidataId) ||
+      (a.isbn && a.isbn === b.isbn),
+  );
+}
+
+/** True when two catalog entries represent the same readable work, not merely the same series. */
+export function eBooksMatch(left: EBook, right: EBook): boolean {
+  if (left.id === right.id) return true;
+  if (explicitSourceIdentityMatch(left, right)) return true;
+  const leftAliases = identityAliases(left);
+  const sharedAliases = [...identityAliases(right)].filter((alias) => leftAliases.has(alias));
+  if (!sharedAliases.length) return false;
+  const leftPrimary = identityTitleKey(left.title);
+  const rightPrimary = identityTitleKey(right.title);
+  const crossLanguage =
+    /\p{Script=Arabic}/u.test(left.title) !== /\p{Script=Arabic}/u.test(right.title);
+  const leftExplicitAliases = new Set((left.sourceAliases ?? []).map(identityTitleKey));
+  const rightExplicitAliases = new Set((right.sourceAliases ?? []).map(identityTitleKey));
+  const leftVerifiedAliases = new Set((left.verifiedAliases ?? []).map(identityTitleKey));
+  const rightVerifiedAliases = new Set((right.verifiedAliases ?? []).map(identityTitleKey));
+  const leftTrustedAliases = new Set([...leftExplicitAliases, ...leftVerifiedAliases]);
+  const rightTrustedAliases = new Set([...rightExplicitAliases, ...rightVerifiedAliases]);
+  const crossLanguageAlias =
+    crossLanguage &&
+    sharedAliases.some(
+      (alias) =>
+        (leftTrustedAliases.has(alias) && alias === rightPrimary) ||
+        (rightTrustedAliases.has(alias) && alias === leftPrimary) ||
+        (leftTrustedAliases.has(alias) && rightTrustedAliases.has(alias)),
+    );
+  if (crossLanguageAlias) return true;
+  if (left.authors.length && right.authors.length)
+    return authorListsMatch(left.authors, right.authors);
+  return true;
+}
+
+/** Collapses duplicate works while retaining every source route in `books`. */
+export function dedupeEBooks(ebooks: EBook[]): EBook[] {
+  const unique = new Map<string, EBook>();
+  for (const ebook of ebooks.flatMap((item) => item.books ?? [item])) unique.set(ebook.id, ebook);
+  const groups: EBook[][] = [];
+  for (const ebook of unique.values()) {
+    const group = groups.find((items) => items.some((item) => eBooksMatch(item, ebook)));
+    if (group) group.push(ebook);
+    else groups.push([ebook]);
+  }
+  return groups.map((items) => {
+    const primary =
+      items.find(
+        (item) =>
+          /\p{Script=Latin}/u.test(item.title) && !/\p{Script=Arabic}/u.test(item.title),
+      ) ?? items[0];
+    const ordered = [primary, ...items.filter((item) => item.id !== primary.id)];
+    return {
+      ...primary,
+      books: ordered.length > 1 ? ordered : undefined,
+    };
+  });
+}
+
 function sourceFallback(ebook: EBook): EBook {
   if (ebook.source !== "source") return { ...ebook };
   if (/\p{Script=Arabic}/u.test(ebook.title)) return { ...ebook };
@@ -2073,6 +2172,13 @@ export function mergeEBookMetadata(sources: EBook[], metadata: EBook[]): EBook[]
     const source = sourceFallback(ebook);
     if (!candidates.length) return source;
     const meta = candidates[0];
+    const mergedAlternativeTitles = [
+      ...(source.altTitle?.split("|") ?? []),
+      meta.title,
+      ...(meta.altTitle?.split("|") ?? []),
+    ]
+      .map((title) => title?.trim())
+      .filter((title): title is string => Boolean(title) && title !== source.title);
     const embeddedSourceCover = /^data:image\//i.test(source.cover ?? "");
     const metadataGenres = candidates.find((candidate) => candidate.genres.length)?.genres ?? [];
     return {
@@ -2083,7 +2189,12 @@ export function mergeEBookMetadata(sources: EBook[], metadata: EBook[]): EBook[]
       wikidataId: meta.wikidataId ?? source.wikidataId,
       isbn: meta.isbn ?? source.isbn,
       title: keepArabicSource ? source.title : meta.title || source.title,
-      altTitle: meta.altTitle ?? source.altTitle,
+      altTitle: mergedAlternativeTitles.length
+        ? [...new Set(mergedAlternativeTitles)].join("|")
+        : undefined,
+      verifiedAliases: [meta.title, ...(meta.altTitle?.split("|") ?? [])]
+        .map((title) => title.trim())
+        .filter(Boolean),
       authors: meta.authors.length ? meta.authors : source.authors,
       internalCover:
         source.internalCover ??
@@ -2107,9 +2218,11 @@ export function mergeEBookMetadata(sources: EBook[], metadata: EBook[]): EBook[]
       year: meta.year ?? source.year,
       publishedAt: meta.publishedAt ?? source.publishedAt,
       status: meta.status ?? source.status,
+      originalLanguage: meta.originalLanguage ?? source.originalLanguage,
       chapters: source.chapters,
       volumes: source.volumes,
       score: meta.score ?? source.score,
+      trendingScore: meta.trendingScore ?? source.trendingScore,
       siteUrl: meta.siteUrl ?? source.siteUrl,
     };
   });

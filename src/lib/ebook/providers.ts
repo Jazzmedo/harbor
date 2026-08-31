@@ -1,9 +1,20 @@
 import { loadEBookExtensions, installedEBookPlugins, subscribeEBookExtensions } from "./extensions";
-import { fetchEBookMetadata, mergeEBookMetadata, type EBook } from "./api";
+import {
+  dedupeEBooks,
+  eBooksMatch,
+  fetchEBookMetadata,
+  mergeEBookMetadata,
+  type EBook,
+} from "./api";
 import { parseEpub, readEpubChapter, type EpubBook } from "./epub";
 import { listEBookSources, type EBookHtmlSourceConfig, type EBookSource } from "./sources";
 import { safeFetch } from "@/lib/safe-fetch";
-import { translateEBookChapter } from "./translation";
+import {
+  cachedEBookTranslation,
+  shouldAutomaticallyTranslateEBookChapter,
+  translateEBookChapter,
+} from "./translation";
+import { ebookChapterCacheGet, ebookChapterCachePut } from "./cache";
 import { PluginWorker } from "@/lib/manga/plugins/worker-host";
 import type { InstalledPlugin } from "@/lib/manga/plugins/types";
 
@@ -30,8 +41,8 @@ type Provider = {
   id: string;
   name: string;
   iconUrl?: string;
-  popular(offset: number): Promise<EBook[]>;
-  search(query: string, offset: number): Promise<EBook[]>;
+  popular(offset: number, tagId?: string): Promise<EBook[]>;
+  search(query: string, offset: number, tagId?: string): Promise<EBook[]>;
   detail(id: string): Promise<EBook | null>;
   chapters(id: string): Promise<EBookChapter[]>;
   content(id: string): Promise<EBookChapterContent>;
@@ -43,6 +54,7 @@ const details = new Map<string, Promise<EBook | null>>();
 const localBooks = new Map<string, Map<string, { title: string; paths: string[] }>>();
 const localEpubs = new Map<string, Promise<EpubBook>>();
 const LOCAL_EPUB_CACHE_LIMIT = 6;
+const chapterContentPending = new Map<string, Promise<EBookChapterContent>>();
 let extensionsReady: Promise<void> | null = null;
 
 subscribeEBookExtensions(() => {
@@ -138,6 +150,16 @@ function pluginEBook(provider: Provider, value: unknown): EBook | null {
       .match(/^Q\d+$/)?.[0],
     isbn: text(item.isbn)?.replace(/[^0-9X]/gi, ""),
     seriesTitle: sourceTitle(item.seriesTitle),
+    sourceAliases: [...new Set(altTitles)],
+    sourceIdentity: {
+      anilistId: positiveInt(item.anilistId),
+      googleBooksId: text(item.googleBooksId),
+      openLibraryId: text(item.openLibraryId)?.replace(/^\/works\//, ""),
+      wikidataId: text(item.wikidataId)
+        ?.toUpperCase()
+        .match(/^Q\d+$/)?.[0],
+      isbn: text(item.isbn)?.replace(/[^0-9X]/gi, ""),
+    },
     title,
     altTitle: altTitles.length ? [...new Set(altTitles)].join("|") : undefined,
     authors,
@@ -146,11 +168,14 @@ function pluginEBook(provider: Provider, value: unknown): EBook | null {
     description: text(item.description) ?? "",
     year: typeof item.year === "number" ? Math.trunc(item.year) : undefined,
     status: text(item.status),
+    originalLanguage: text(item.originalLanguage) ?? text(item.language),
     genres: Array.isArray(item.genres)
       ? item.genres.map(text).filter((genre): genre is string => !!genre)
       : [],
     chapters: typeof item.chapters === "number" ? Math.trunc(item.chapters) : undefined,
     volumes: typeof item.volumes === "number" ? Math.trunc(item.volumes) : undefined,
+    score: typeof item.score === "number" ? item.score : undefined,
+    trendingScore: typeof item.trendingScore === "number" ? item.trendingScore : undefined,
     siteUrl: url(item.siteUrl),
   };
 }
@@ -323,7 +348,18 @@ function localProvider(source: EBookSource): Provider {
     const books = [...(await scanLocalBooks(source))].filter(([, book]) =>
       book.title.toLocaleLowerCase().includes(query.toLocaleLowerCase()),
     );
-    return books.slice(offset, offset + 24).map(([id, book]) => summary(id, book));
+    return Promise.all(
+      books.slice(offset, offset + 24).map(async ([id, book]) => {
+        const item = summary(id, book);
+        const epub = await localPackage(book.paths[0]).catch(() => null);
+        if (!epub?.cover) return item;
+        return {
+          ...item,
+          cover: epub.cover,
+          internalCover: epub.cover,
+        };
+      }),
+    );
   };
   provider.popular = (offset) => list("", offset);
   provider.search = (query, offset) => list(query, offset);
@@ -381,10 +417,28 @@ function pluginProvider(plugin: InstalledPlugin): Provider {
     name: plugin.name,
     iconUrl: plugin.icon,
   } as Provider;
-  provider.popular = (offset) =>
-    call("popular", [offset]).then((items) => pluginList(provider, items));
-  provider.search = (query, offset) =>
-    call("search", [query, offset]).then((items) => pluginList(provider, items));
+  let supportedTags: Promise<Set<string>> | null = null;
+  const supportedTag = async (tagId?: string) => {
+    if (!tagId) return undefined;
+    supportedTags ??= call("tags", [])
+      .then((value) =>
+        new Set(
+          (Array.isArray(value) ? value : [])
+            .map((entry) => text(record(entry).id))
+            .filter((tag): tag is string => !!tag),
+        ),
+      )
+      .catch(() => new Set<string>());
+    return (await supportedTags).has(tagId) ? tagId : undefined;
+  };
+  provider.popular = async (offset, tagId) =>
+    call("popular", [offset, await supportedTag(tagId)]).then((items) =>
+      pluginList(provider, items),
+    );
+  provider.search = async (query, offset, tagId) =>
+    call("search", [query, offset, await supportedTag(tagId)]).then((items) =>
+      pluginList(provider, items),
+    );
   provider.detail = (itemId) =>
     call("detail", [itemId]).then((item) => pluginEBook(provider, item));
   provider.chapters = (itemId) => call("chapters", [itemId]).then(pluginChapters);
@@ -617,17 +671,18 @@ function selectedProviders(list: Provider[], providerId?: string): Provider[] {
 export async function loadSourceEBookCatalogPage(
   providerId?: string,
   cursor: EBookCursor = {},
+  tagId?: string,
 ): Promise<Omit<EBookPage, "enriched">> {
   const list = selectedProviders(await providers(), providerId);
   const pages = await Promise.all(
     list.map(async (provider) => {
       const offset = cursor[provider.id] ?? 0;
-      const items = await provider.popular(offset).catch(() => []);
+      const items = await provider.popular(offset, tagId).catch(() => []);
       return { provider, offset, items: mergeEBookMetadata(items, []) };
     }),
   );
   return {
-    items: pages.flatMap((page) => page.items),
+    items: dedupeEBooks(pages.flatMap((page) => page.items)),
     cursor: Object.fromEntries(
       pages.map(({ provider, offset, items }) => [provider.id, offset + items.length]),
     ),
@@ -643,7 +698,7 @@ export async function searchSourceEBookCatalog(
   const pages = await Promise.all(
     list.map((provider) => provider.search(query, 0).catch(() => [])),
   );
-  return mergeEBookMetadata(pages.flat(), []);
+  return dedupeEBooks(mergeEBookMetadata(pages.flat(), []));
 }
 
 export async function loadSourceEBookPage(
@@ -651,22 +706,91 @@ export async function loadSourceEBookPage(
   providerId?: string,
   cursor: EBookCursor = {},
   events?: EBookLoadEvents,
+  tagId?: string,
 ): Promise<EBookPage> {
-  const list = selectedProviders(await providers(), providerId);
+  const available = await providers();
+  const list = selectedProviders(available, providerId);
   const pages = await Promise.all(
     list.map(async (provider) => {
       const offset = cursor[provider.id] ?? 0;
-      const items = await (query ? provider.search(query, offset) : provider.popular(offset)).catch(
-        () => [],
-      );
+      const items = await (
+        query ? provider.search(query, offset, tagId) : provider.popular(offset, tagId)
+      ).catch(() => []);
       events?.onSource?.(mergeEBookMetadata(items, []));
       return { provider, offset, items, enriched: withMetadata(items, events?.onMetadata) };
     }),
   );
-  const sourceItems = pages.flatMap((page) => page.items);
+  const sourceItems = dedupeEBooks(pages.flatMap((page) => page.items));
   return {
     items: sourceItems,
-    enriched: Promise.all(pages.map((page) => page.enriched)).then((items) => items.flat()),
+    enriched: Promise.all(pages.map((page) => page.enriched)).then(async (selectedGroups) => {
+        const selected = selectedGroups.flat();
+        let selectedEntries = selected.flatMap((item) => item.books ?? [item]);
+        const authorKeys = (item: EBook) =>
+          item.authors
+            .map((author) => author.normalize("NFKD").toLocaleLowerCase().trim())
+            .filter(Boolean);
+        const candidateDetails = selectedEntries
+          .filter((item, index, entries) => {
+            const authors = new Set(authorKeys(item));
+            if (!authors.size) return false;
+            const arabic = /\p{Script=Arabic}/u.test(item.title);
+            return entries.some(
+              (other, otherIndex) =>
+                otherIndex !== index &&
+                /\p{Script=Arabic}/u.test(other.title) !== arabic &&
+                authorKeys(other).some((author) => authors.has(author)),
+            );
+          })
+          .slice(0, 24);
+        if (candidateDetails.length) {
+          const hydrated = await Promise.all(
+            candidateDetails.map((item) =>
+              sourceEBookDetail(item.id).then((detail) => detail ?? item).catch(() => item),
+            ),
+          );
+          const hydratedById = new Map(hydrated.map((item) => [item.id, item]));
+          selectedEntries = selectedEntries.map((item) => hydratedById.get(item.id) ?? item);
+        }
+        const searches = new Map<string, { provider: Provider; query: string }>();
+        for (const item of selectedEntries) {
+          const aliases = [
+            ...(item.sourceAliases ?? []),
+            ...(item.verifiedAliases ?? []),
+            ...(item.altTitle?.split("|") ?? []),
+            item.title,
+          ]
+            .map((title) => title.trim())
+            .filter(Boolean);
+          const crossScript = aliases.filter(
+            (title) => /\p{Script=Arabic}/u.test(title) !== /\p{Script=Arabic}/u.test(item.title),
+          );
+          const queries = (crossScript.length ? crossScript : aliases).slice(0, 2);
+          for (const provider of available) {
+            if (provider.id === item.providerId) continue;
+            for (const counterpartQuery of queries)
+              searches.set(`${provider.id}\0${counterpartQuery}`, {
+                provider,
+                query: counterpartQuery,
+              });
+          }
+        }
+        const jobs = [...searches.values()];
+        const companions: EBook[] = [];
+        let next = 0;
+        const worker = async () => {
+          while (next < jobs.length) {
+            const job = jobs[next++];
+            const found = await job.provider.search(job.query, 0).catch(() => []);
+            companions.push(...(await withMetadata(found)));
+          }
+        };
+        await Promise.all(Array.from({ length: Math.min(4, jobs.length) }, () => worker()));
+        const matchingCompanions = companions
+          .flatMap((item) => item.books ?? [item])
+          .filter((candidate) => selectedEntries.some((item) => eBooksMatch(item, candidate)));
+        return dedupeEBooks([...selectedEntries, ...matchingCompanions]);
+      }),
     cursor: Object.fromEntries(
       pages.map(({ provider, offset, items }) => [provider.id, offset + items.length]),
     ),
@@ -711,27 +835,80 @@ export async function sourceEBookChapters(route: string): Promise<EBookChapter[]
   return [];
 }
 
+const chapterCacheKey = (route: string, chapterId: string) => `${route}\n${chapterId}`;
+
+async function fetchAndCacheSourceEBookContent(
+  route: string,
+  chapterId: string,
+): Promise<EBookChapterContent> {
+  const key = chapterCacheKey(route, chapterId);
+  let pending = chapterContentPending.get(key);
+  if (!pending) {
+    pending = providerFor(route)
+      .then((found) => (found ? found.provider.content(chapterId) : {}))
+      .then(async (content) => {
+        await ebookChapterCachePut(key, content);
+        return content;
+      });
+    chapterContentPending.set(key, pending);
+    pending.then(
+      () => chapterContentPending.delete(key),
+      () => chapterContentPending.delete(key),
+    );
+  }
+  return pending;
+}
+
+async function rawSourceEBookContent(
+  route: string,
+  chapterId: string,
+): Promise<EBookChapterContent> {
+  const key = chapterCacheKey(route, chapterId);
+  const cached = await ebookChapterCacheGet(key);
+  if (cached) {
+    if (cached.stale) void fetchAndCacheSourceEBookContent(route, chapterId).catch(() => undefined);
+    return cached.content;
+  }
+  return fetchAndCacheSourceEBookContent(route, chapterId);
+}
+
 export async function sourceEBookContent(
   route: string,
   chapterId: string,
   chapterTitle = "",
+  options: { waitForTranslation?: boolean } = {},
 ): Promise<EBookChapterContent> {
-  const found = await providerFor(route);
-  const content = found ? await found.provider.content(chapterId) : {};
+  const content = await rawSourceEBookContent(route, chapterId);
   if (!content.text) return content;
-  try {
-    const translated = await translateEBookChapter(content.text, chapterTitle);
-    return translated.text === content.text
-      ? content
-      : {
-          ...content,
-          text: translated.text,
-          originalText: content.text,
-          translatedTitle: translated.title,
-          translated: true,
-        };
-  } catch (error) {
-    console.warn("[ebook/translation]", error);
-    return content;
+  const translated = await cachedEBookTranslation(content.text, chapterTitle);
+  if (translated)
+    return {
+      ...content,
+      text: translated.text,
+      originalText: content.text,
+      translatedTitle: translated.title,
+      translated: true,
+    };
+  if (options.waitForTranslation && shouldAutomaticallyTranslateEBookChapter()) {
+    const generated = await translateEBookChapter(content.text, chapterTitle);
+    if (generated.text !== content.text)
+      return {
+        ...content,
+        text: generated.text,
+        originalText: content.text,
+        translatedTitle: generated.title,
+        translated: true,
+      };
   }
+  return content;
+}
+
+export async function prefetchSourceEBookContent(
+  route: string,
+  chapterId: string,
+): Promise<void> {
+  const key = chapterCacheKey(route, chapterId);
+  const cached = await ebookChapterCacheGet(key);
+  if (cached && !cached.stale) return;
+  await fetchAndCacheSourceEBookContent(route, chapterId).then(() => undefined);
 }

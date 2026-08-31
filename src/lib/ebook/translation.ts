@@ -1,6 +1,10 @@
 import { getUiLanguage } from "@/lib/i18n";
 import { safeFetchStream } from "@/lib/safe-fetch";
 import { setItemWithRecovery } from "@/lib/storage-recovery";
+import {
+  ebookTranslationCacheGet,
+  ebookTranslationCachePut,
+} from "./cache";
 import translationInstructions from "./translation-instructions.md?raw";
 
 const STORAGE_KEY = "harbor.ebook.translation.v1";
@@ -17,6 +21,7 @@ export type EBookTranslationSettings = {
 const languageName = { en: "English", ar: "Arabic", pt: "Portuguese", ru: "Russian" };
 export type EBookTranslation = { title: string; text: string };
 const pending = new Map<string, Promise<EBookTranslation>>();
+let legacyMigrationScheduled = false;
 
 export type EBookTranslationProgress = {
   percent: number;
@@ -32,7 +37,62 @@ function hash(value: string): string {
   return `${value.length}:${result >>> 0}`;
 }
 
+function cacheSlot(
+  source: string,
+  title: string,
+  settings: EBookTranslationSettings,
+): string {
+  const model = settings.model.trim() || "deepseek-v4-flash";
+  const cacheKey = `${model}:${settings.targetLanguage}:${hash(translationInstructions)}:${hash(title)}:${hash(source)}`;
+  return `${CACHE_PREFIX}${hash(cacheKey)}`;
+}
+
+async function cachedTranslation(slot: string): Promise<EBookTranslation | null> {
+  const durable = await ebookTranslationCacheGet(slot);
+  if (durable?.text) return durable;
+  try {
+    const legacy = JSON.parse(localStorage.getItem(slot) ?? "null") as EBookTranslation | null;
+    if (!legacy?.text) return null;
+    // Move the legacy value only after IndexedDB confirms the durable write.
+    // This preserves every existing AI translation while releasing the much
+    // smaller localStorage quota that settings and reader state share.
+    if (await ebookTranslationCachePut(slot, legacy)) localStorage.removeItem(slot);
+    return legacy;
+  } catch {
+    return null;
+  }
+}
+
+function scheduleLegacyTranslationMigration(): void {
+  if (legacyMigrationScheduled || typeof window === "undefined") return;
+  legacyMigrationScheduled = true;
+  const migrate = () => {
+    const slots: string[] = [];
+    for (let index = 0; index < localStorage.length; index++) {
+      const key = localStorage.key(index);
+      if (key?.startsWith(CACHE_PREFIX)) slots.push(key);
+    }
+    void (async () => {
+      for (const slot of slots) {
+        try {
+          const value = JSON.parse(localStorage.getItem(slot) ?? "null") as EBookTranslation | null;
+          if (value?.text && (await ebookTranslationCachePut(slot, value)))
+            localStorage.removeItem(slot);
+        } catch {
+          /* A malformed legacy entry remains isolated from valid translations. */
+        }
+      }
+    })();
+  };
+  const idleWindow = window as typeof window & {
+    requestIdleCallback?: (callback: () => void, options?: { timeout?: number }) => number;
+  };
+  if (idleWindow.requestIdleCallback) idleWindow.requestIdleCallback(migrate, { timeout: 5_000 });
+  else window.setTimeout(migrate, 1_000);
+}
+
 export function loadEBookTranslationSettings(): EBookTranslationSettings {
+  scheduleLegacyTranslationMigration();
   const defaults: EBookTranslationSettings = {
     enabled: false,
     apiKey: "",
@@ -86,16 +146,12 @@ export async function translateEBookChapter(
   const model = settings.model.trim() || "deepseek-v4-flash";
   const original = { title, text: source };
   if (!source.trim()) return original;
-  const cacheKey = `${model}:${settings.targetLanguage}:${hash(translationInstructions)}:${hash(title)}:${hash(source)}`;
-  try {
-    const saved = JSON.parse(
-      localStorage.getItem(`${CACHE_PREFIX}${hash(cacheKey)}`) ?? "null",
-    ) as EBookTranslation | null;
-    if (saved?.text) {
-      onProgress?.({ percent: 100, etaMs: 0 });
-      return saved;
-    }
-  } catch {}
+  const slot = cacheSlot(source, title, settings);
+  const saved = await cachedTranslation(slot);
+  if (saved) {
+    onProgress?.({ percent: 100, etaMs: 0 });
+    return saved;
+  }
   if (!settings.enabled && !manual) return original;
   if (!apiKey.trim()) {
     if (manual) {
@@ -103,16 +159,34 @@ export async function translateEBookChapter(
     }
     return original;
   }
-  let request = pending.get(cacheKey);
+  let request = pending.get(slot);
   if (!request) {
     request = requestTranslation(source, title, settings, apiKey, model, onProgress);
-    pending.set(cacheKey, request);
-    request.catch(() => pending.delete(cacheKey));
+    pending.set(slot, request);
+    request.then(
+      () => pending.delete(slot),
+      () => pending.delete(slot),
+    );
   }
   const result = await request;
-  setItemWithRecovery(`${CACHE_PREFIX}${hash(cacheKey)}`, JSON.stringify(result));
+  const durable = await ebookTranslationCachePut(slot, result);
+  if (!durable) setItemWithRecovery(slot, JSON.stringify(result));
   onProgress?.({ percent: 100, etaMs: 0 });
   return result;
+}
+
+export async function cachedEBookTranslation(
+  source: string,
+  title = "",
+): Promise<EBookTranslation | null> {
+  if (!source.trim()) return null;
+  const settings = loadEBookTranslationSettings();
+  return cachedTranslation(cacheSlot(source, title, settings));
+}
+
+export function shouldAutomaticallyTranslateEBookChapter(): boolean {
+  const settings = loadEBookTranslationSettings();
+  return settings.enabled && !!settings.apiKey.trim();
 }
 
 async function requestTranslation(

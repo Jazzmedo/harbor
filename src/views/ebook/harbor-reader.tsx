@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import {
   Bookmark,
   BookOpen,
@@ -39,6 +39,7 @@ import {
   removeEBookAnnotation,
   saveEBookAnnotation,
   saveEBookProgress,
+  saveEBookResume,
   saveEBookReaderPrefs,
   type EBookAnnotation,
   type EBookReaderPrefs,
@@ -51,6 +52,7 @@ import {
   cancelNarration,
   clearNarrationCache,
   fetchEdgeNarrationVoices,
+  narrationWordCount,
   synthesizeNarration,
   type EdgeNarrationVoice,
 } from "@/lib/ebook/narration";
@@ -73,6 +75,17 @@ export type EBookReaderVolume = {
   volume: string;
   label: string;
   chapters: EBookChapter[];
+};
+
+type EBookFlipLayer = {
+  id: number;
+  pages: EBookFlipPages;
+  resumePage: number;
+  presentation: { rtl: boolean; background: string };
+};
+
+const releaseFlipPages = (pages: EBookFlipPages) => {
+  pages.urls.forEach((url) => url.startsWith("blob:") && URL.revokeObjectURL(url));
 };
 
 const fontFamily = {
@@ -574,8 +587,15 @@ export function HarborReader({
   const annotationHideTimer = useRef<number | undefined>(undefined);
   const bookApi = useRef<BookApi | null>(null);
   const [flipPages, setFlipPages] = useState<EBookFlipPages>({ urls: [], paragraphStarts: [] });
+  const flipPagesRef = useRef<EBookFlipPages>(flipPages);
+  const [flipLayers, setFlipLayers] = useState<EBookFlipLayer[]>([]);
+  const flipLayersRef = useRef<EBookFlipLayer[]>([]);
+  const flipLayerSequence = useRef(0);
+  const [activeFlipLayerId, setActiveFlipLayerId] = useState<number | null>(null);
+  const activeFlipLayerIdRef = useRef<number | null>(null);
+  const flipLayerRetireTimer = useRef<number | undefined>(undefined);
+  const flipGeneration = useRef(0);
   const [flipPage, setFlipPage] = useState(0);
-  const [bookResume, setBookResume] = useState(0);
   const progressId = `${chapter.id}:harbor`;
   const paragraphs = useMemo(
     () =>
@@ -586,41 +606,152 @@ export function HarborReader({
         .filter(Boolean),
     [readerText],
   );
+  const persistReadingPosition = useCallback(
+    (line: number) => {
+      if (!paragraphs.length || chapterIndex < 0 || !bookChapters.length) return;
+      const safeLine = Math.max(0, Math.min(paragraphs.length - 1, line));
+      const chapterProgress =
+        paragraphs.length <= 1 ? 100 : Math.round((safeLine / (paragraphs.length - 1)) * 100);
+      const bookProgress = Math.round(
+        ((chapterIndex + chapterProgress / 100) / bookChapters.length) * 100,
+      );
+      saveEBookProgress(profile, bookId, progressId, safeLine);
+      saveEBookResume(profile, bookId, {
+        chapterId: chapter.id,
+        chapterTitle: chapter.title,
+        chapterLabel: chapter.chapter,
+        volumeLabel: chapter.volumeTitle || (chapter.volume ? `Volume ${chapter.volume}` : undefined),
+        chapterProgress,
+        bookProgress,
+        chapterIndex,
+        totalChapters: bookChapters.length,
+      });
+    },
+    [bookChapters.length, bookId, chapter, chapterIndex, paragraphs.length, profile, progressId],
+  );
   const colors = paper[prefs.background];
   const effectiveDirection =
     prefs.direction === "auto" ? textDirection(readerText, direction) : prefs.direction;
 
+  const replaceFlipPages = useCallback(
+    (
+      next: EBookFlipPages,
+      targetParagraph: number,
+      presentation: { rtl: boolean; background: string },
+    ) => {
+      const page = pageForParagraph(next.paragraphStarts, targetParagraph);
+      const layer: EBookFlipLayer = {
+        id: ++flipLayerSequence.current,
+        pages: next,
+        resumePage: page,
+        presentation,
+      };
+      const retained = flipLayersRef.current.filter(
+        (item) => item.id === activeFlipLayerIdRef.current,
+      );
+      const discarded = flipLayersRef.current.filter(
+        (item) => item.id !== activeFlipLayerIdRef.current,
+      );
+      const staged = [...retained, layer];
+      flipLayersRef.current = staged;
+      setFlipLayers(staged);
+      if (discarded.length) {
+        window.requestAnimationFrame(() => discarded.forEach((item) => releaseFlipPages(item.pages)));
+      }
+    },
+    [],
+  );
+
+  const activateFlipLayer = useCallback((id: number, api: BookApi) => {
+    const layer = flipLayersRef.current.find((item) => item.id === id);
+    if (!layer || flipLayersRef.current.at(-1)?.id !== id) return;
+    window.clearTimeout(flipLayerRetireTimer.current);
+    bookApi.current = api;
+    activeFlipLayerIdRef.current = id;
+    setActiveFlipLayerId(id);
+    flipPagesRef.current = layer.pages;
+    setFlipPages(layer.pages);
+    setFlipPage(layer.resumePage);
+    flipLayerRetireTimer.current = window.setTimeout(() => {
+      const retired = flipLayersRef.current.filter((item) => item.id !== id);
+      const active = flipLayersRef.current.filter((item) => item.id === id);
+      flipLayersRef.current = active;
+      setFlipLayers(active);
+      retired.forEach((item) => releaseFlipPages(item.pages));
+    }, 260);
+  }, []);
+
+  useEffect(() => {
+    window.clearTimeout(flipLayerRetireTimer.current);
+    const previous = flipLayersRef.current;
+    flipLayersRef.current = [];
+    setFlipLayers([]);
+    activeFlipLayerIdRef.current = null;
+    setActiveFlipLayerId(null);
+    bookApi.current = null;
+    flipPagesRef.current = { urls: [], paragraphStarts: [] };
+    setFlipPages({ urls: [], paragraphStarts: [] });
+    previous.forEach((item) => releaseFlipPages(item.pages));
+  }, [progressId]);
+
+  useEffect(
+    () => () => {
+      flipGeneration.current += 1;
+      window.clearTimeout(flipLayerRetireTimer.current);
+      flipLayersRef.current.forEach((item) => releaseFlipPages(item.pages));
+      flipLayersRef.current = [];
+      flipPagesRef.current = { urls: [], paragraphStarts: [] };
+    },
+    [],
+  );
+
   useEffect(() => {
     if (prefs.mode !== "book") return;
-    let cancelled = false;
-    let generated: EBookFlipPages = { urls: [], paragraphStarts: [] };
-    setFlipPages({ urls: [], paragraphStarts: [] });
+    const controller = new AbortController();
+    const generation = ++flipGeneration.current;
+    const active = flipPagesRef.current;
     const saved = loadEBookProgress(profile, bookId, progressId);
-    void createEBookFlipPages({
-      content: { ...content, text: readerText },
-      title: readerTitle,
-      direction: effectiveDirection,
-      page: colors.page,
-      ink: colors.ink,
-      muted: colors.muted,
-      fontFamily: readerFontFamily(prefs),
-      fontSize: prefs.fontSize,
-      lineHeight: prefs.lineHeight,
-      cover: chapterIndex === 0 ? internalCover || bookCover : undefined,
-    }).then((next) => {
-      generated = next;
-      if (cancelled) {
-        next.urls.forEach((url) => url.startsWith("blob:") && URL.revokeObjectURL(url));
-        return;
-      }
-      const page = pageForParagraph(next.paragraphStarts, saved);
-      setBookResume(page);
-      setFlipPage(page);
-      setFlipPages(next);
-    });
+    const targetParagraph = active.urls.length
+      ? Math.max(0, tracedLine.current)
+      : saved;
+    const timer = window.setTimeout(
+      () => {
+        void createEBookFlipPages({
+          content: { ...content, text: readerText },
+          title: readerTitle,
+          direction: effectiveDirection,
+          page: colors.page,
+          ink: colors.ink,
+          muted: colors.muted,
+          fontFamily: readerFontFamily(prefs),
+          fontCacheKey: prefs.customFontId ?? prefs.font,
+          fontSize: prefs.fontSize,
+          lineHeight: prefs.lineHeight,
+          cover: chapterIndex === 0 ? internalCover || bookCover : undefined,
+          signal: controller.signal,
+        })
+          .then((next) => {
+            if (controller.signal.aborted || generation !== flipGeneration.current) {
+              next.urls.forEach(
+                (url) => url.startsWith("blob:") && URL.revokeObjectURL(url),
+              );
+              return;
+            }
+            replaceFlipPages(next, targetParagraph, {
+              rtl: effectiveDirection === "rtl",
+              background: colors.desk,
+            });
+          })
+          .catch((error) => {
+            if (!(error instanceof DOMException) || error.name !== "AbortError")
+              console.warn("[ebook/book-pages]", error);
+          });
+      },
+      active.urls.length ? 180 : 0,
+    );
     return () => {
-      cancelled = true;
-      generated.urls.forEach((url) => url.startsWith("blob:") && URL.revokeObjectURL(url));
+      window.clearTimeout(timer);
+      controller.abort();
     };
   }, [
     bookCover,
@@ -641,6 +772,7 @@ export function HarborReader({
     progressId,
     readerText,
     readerTitle,
+    replaceFlipPages,
   ]);
 
   useEffect(() => {
@@ -728,7 +860,7 @@ export function HarborReader({
         if (Number.isInteger(line) && tracedLine.current !== line) {
           tracedLine.current = line;
           setCurrent(line);
-          saveEBookProgress(profile, bookId, progressId, line);
+          persistReadingPosition(line);
         }
         const next = trackerRect(paragraphRect);
         setTrace((previous) =>
@@ -742,7 +874,7 @@ export function HarborReader({
         );
       });
     },
-    [bookId, profile, progressId],
+    [persistReadingPosition],
   );
 
   const patchPrefs = (patch: Partial<EBookReaderPrefs>) => {
@@ -782,10 +914,11 @@ export function HarborReader({
     const saved = loadEBookProgress(profile, bookId, progressId);
     const timer = window.setTimeout(() => {
       goTo(saved);
+      persistReadingPosition(saved);
       updateTrace();
     }, 80);
     return () => window.clearTimeout(timer);
-  }, [bookId, goTo, profile, progressId, updateTrace]);
+  }, [bookId, goTo, persistReadingPosition, profile, progressId, updateTrace]);
 
   useEffect(() => {
     const root = scroller.current;
@@ -802,7 +935,7 @@ export function HarborReader({
       root.removeEventListener("scroll", update);
       cancelAnimationFrame(frame);
     };
-  }, [bookId, profile, progressId, updateTrace]);
+  }, [bookId, prefs.mode, profile, progressId, updateTrace]);
 
   useEffect(() => {
     const page = article.current;
@@ -820,7 +953,7 @@ export function HarborReader({
       observer.disconnect();
       cancelAnimationFrame(frame);
     };
-  }, [updateTrace]);
+  }, [prefs.mode, updateTrace]);
 
   useEffect(() => {
     const root = scroller.current;
@@ -850,7 +983,7 @@ export function HarborReader({
       smartTarget.current = next;
       tracedLine.current = next;
       setCurrent(next);
-      saveEBookProgress(profile, bookId, progressId, next);
+      persistReadingPosition(next);
       const rect = paragraph.getBoundingClientRect();
       const safeTop = 88;
       const safeBottom = window.innerHeight - 104;
@@ -866,7 +999,7 @@ export function HarborReader({
       root.removeEventListener("wheel", onWheel);
       window.clearTimeout(reset);
     };
-  }, [bookId, paragraphs.length, profile, progressId, updateTrace]);
+  }, [paragraphs.length, persistReadingPosition, prefs.mode, updateTrace]);
 
   useEffect(() => {
     const root = scroller.current;
@@ -954,7 +1087,7 @@ export function HarborReader({
       root.removeEventListener("pointercancel", up);
       root.removeEventListener("click", click, true);
     };
-  }, [updateTrace]);
+  }, [prefs.mode, updateTrace]);
 
   useEffect(() => {
     return () => {
@@ -1125,12 +1258,16 @@ export function HarborReader({
     narrationRequestId.current = requestId;
     const chapterText = paragraphs.slice(index).join("\n\n").trim();
     if (!chapterText) return;
+    const selectedVoice =
+      availableNarrationVoices.find((voice) => voice.id === prefs.narrationVoice) ??
+      fallbackNarrationVoices.find((voice) => voice.id === prefs.narrationVoice) ??
+      fallbackNarrationVoices[0];
     const spokenParagraphs = paragraphs.slice(index);
     const spokenWeights = spokenParagraphs.map((text) => Math.max(1, text.trim().length));
     const totalWeight = spokenWeights.reduce((total, weight) => total + weight, 0);
     const spokenWordEnds: number[] = [];
     spokenParagraphs.reduce((total, text) => {
-      const count = text.match(/[\p{L}\p{N}'’]+/gu)?.length ?? 1;
+      const count = Math.max(1, narrationWordCount(text, selectedVoice.locale));
       const next = total + count;
       spokenWordEnds.push(next);
       return next;
@@ -1168,10 +1305,6 @@ export function HarborReader({
     setGenerationPercent(1);
     setNarrationNotice("");
     try {
-      const selectedVoice =
-        availableNarrationVoices.find((voice) => voice.id === prefs.narrationVoice) ??
-        fallbackNarrationVoices.find((voice) => voice.id === prefs.narrationVoice) ??
-        fallbackNarrationVoices[0];
       const { blob, boundaries } = await synthesizeNarration(
         requestId,
         chapterText,
@@ -1275,6 +1408,20 @@ export function HarborReader({
     }
     updateTrace();
   }, [prefs.mouseLineTrack, prefs.fontSize, prefs.lineHeight, prefs.width, updateTrace]);
+
+  useEffect(() => {
+    if (prefs.mode !== "harbor") return;
+    traceY.current = null;
+    smartTarget.current = tracedLine.current >= 0 ? tracedLine.current : 0;
+    let secondFrame = 0;
+    const firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(() => updateTrace());
+    });
+    return () => {
+      window.cancelAnimationFrame(firstFrame);
+      window.cancelAnimationFrame(secondFrame);
+    };
+  }, [prefs.mode, updateTrace]);
 
   const captureSelection = (event: React.MouseEvent<HTMLElement>) => {
     const selected = window.getSelection();
@@ -1515,25 +1662,45 @@ export function HarborReader({
 
       {prefs.mode === "book" ? (
         <div className="absolute inset-x-0 bottom-16 top-16 overflow-hidden">
-          {flipPages.urls.length ? (
-            <BookFlip
-              pages={flipPages.urls}
-              rtl={effectiveDirection === "rtl"}
-              bg={colors.desk}
-              resumePage={bookResume}
-              soundEnabled
-              onReady={(api) => {
-                bookApi.current = api;
-              }}
-              onProgress={(page) => {
-                const paragraph = flipPages.paragraphStarts[page] ?? 0;
-                setFlipPage(page);
-                setCurrent(paragraph);
-                tracedLine.current = paragraph;
-                saveEBookProgress(profile, bookId, progressId, paragraph);
-              }}
-            />
-          ) : (
+          {flipLayers.map((layer) => {
+            const isActive = layer.id === activeFlipLayerId;
+            const isWaiting =
+              !isActive && layer.id === flipLayers.at(-1)?.id;
+            const isReplacement = isActive && flipLayers.length > 1;
+            return (
+              <div
+                key={layer.id}
+                className={`absolute inset-0 ${
+                  isActive
+                    ? `pointer-events-auto opacity-100 ${isReplacement ? "ebook-book-crossfade-in" : ""}`
+                    : isWaiting
+                      ? "pointer-events-none opacity-0"
+                      : "pointer-events-none opacity-100 ebook-book-crossfade-out"
+                }`}
+                style={{ zIndex: isActive ? 2 : 1 }}
+                aria-hidden={!isActive}
+              >
+                <BookFlip
+                  instanceName={`harborEBook-${layer.id}`}
+                  pages={layer.pages.urls}
+                  rtl={layer.presentation.rtl}
+                  bg={layer.presentation.background}
+                  resumePage={layer.resumePage}
+                  soundEnabled={isActive}
+                  onReady={(api) => activateFlipLayer(layer.id, api)}
+                  onProgress={(page) => {
+                    if (activeFlipLayerIdRef.current !== layer.id) return;
+                    const paragraph = layer.pages.paragraphStarts[page] ?? 0;
+                    setFlipPage(page);
+                    setCurrent(paragraph);
+                    tracedLine.current = paragraph;
+                    persistReadingPosition(paragraph);
+                  }}
+                />
+              </div>
+            );
+          })}
+          {activeFlipLayerId == null && (
             <div className="grid h-full place-items-center text-sm" style={{ color: colors.muted }}>
               Preparing book…
             </div>
@@ -1549,11 +1716,12 @@ export function HarborReader({
             width: `min(100%, ${prefs.width}px)`,
             background: colors.page,
             color: colors.ink,
+            "--reader-read-color": `color-mix(in srgb, ${prefs.lineTrackColor} 62%, ${colors.ink})`,
             WebkitUserSelect: "text",
             fontFamily: readerFontFamily(prefs),
             fontSize: `${prefs.fontSize}px`,
             lineHeight: prefs.lineHeight,
-          }}
+          } as CSSProperties}
           onMouseUp={captureSelection}
           onMouseMove={(event) => prefs.mouseLineTrack && updateTrace(event.clientY)}
         >
@@ -1589,7 +1757,7 @@ export function HarborReader({
               ref={(node) => {
                 blocks.current[index] = node;
               }}
-              className={`relative mb-[1.1em] scroll-mt-24 text-pretty transition-colors ${index === current ? "reader-current" : ""}`}
+              className={`relative mb-[1.1em] scroll-mt-24 text-pretty transition-colors ${index === current ? "reader-current" : index < current ? "reader-read" : ""}`}
               style={{ textAlign: "start" }}
               onMouseEnter={() => prefs.mouseLineTrack && setCurrent(index)}
               onDoubleClick={() => {
@@ -2009,7 +2177,6 @@ export function HarborReader({
                 prefs={prefs}
                 patch={patchPrefs}
                 colors={colors}
-                narrationVoices={availableNarrationVoices}
               />
             )}
             {panel === "search" && (
@@ -2213,7 +2380,7 @@ export function HarborReader({
           onClose={() => setEditing(null)}
         />
       )}
-      <style>{`.reader-icon{display:grid;width:42px;height:42px;place-items:center;border-radius:999px;color:inherit;transition:.16s ease}.reader-icon:hover{background:rgba(127,127,127,.16);transform:translateY(-1px)}.reader-icon:active{transform:scale(.92)}.reader-icon:disabled{pointer-events:none;opacity:.28}.reader-icon-accent{background:var(--color-accent);color:#111}.reader-icon-cancel{background:rgba(239,68,68,.16);color:#f87171;box-shadow:inset 0 0 0 1px rgba(248,113,113,.28)}.reader-icon-cancel:hover{background:rgba(239,68,68,.25);color:#fca5a5}.reader-language-toggle{display:flex;width:auto;gap:6px;padding:0 12px;font-size:11px;font-weight:700}.reader-current{border-radius:4px}.reader-annotation{color:inherit;border-radius:3px;padding:.04em .02em;cursor:pointer}.reader-annotation:hover{outline:1px solid color-mix(in srgb,var(--color-accent) 60%,transparent)}.ebook-audio-seeker{appearance:none;background:transparent}.ebook-audio-seeker::-webkit-slider-runnable-track{height:4px;border-radius:99px;background:linear-gradient(90deg,var(--color-accent) var(--audio-progress),rgba(127,127,127,.28) var(--audio-progress))}.ebook-audio-seeker::-webkit-slider-thumb{appearance:none;width:12px;height:12px;margin-top:-4px;border:2px solid var(--color-accent);border-radius:50%;background:#111;box-shadow:0 0 0 3px color-mix(in srgb,var(--color-accent) 18%,transparent);transition:transform .15s}.ebook-audio-seeker:hover::-webkit-slider-thumb{transform:scale(1.2)}`}</style>
+      <style>{`.reader-icon{display:grid;width:42px;height:42px;place-items:center;border-radius:999px;color:inherit;transition:.16s ease}.reader-icon:hover{background:rgba(127,127,127,.16);transform:translateY(-1px)}.reader-icon:active{transform:scale(.92)}.reader-icon:disabled{pointer-events:none;opacity:.28}.reader-icon-accent{background:var(--color-accent);color:#111}.reader-icon-cancel{background:rgba(239,68,68,.16);color:#f87171;box-shadow:inset 0 0 0 1px rgba(248,113,113,.28)}.reader-icon-cancel:hover{background:rgba(239,68,68,.25);color:#fca5a5}.reader-language-toggle{display:flex;width:auto;gap:6px;padding:0 12px;font-size:11px;font-weight:700}.reader-current{border-radius:4px}.reader-read{color:var(--reader-read-color)}.reader-annotation{color:inherit;border-radius:3px;padding:.04em .02em;cursor:pointer}.reader-annotation:hover{outline:1px solid color-mix(in srgb,var(--color-accent) 60%,transparent)}.ebook-book-crossfade-in{animation:ebook-book-fade-in 240ms ease-out both;will-change:opacity}.ebook-book-crossfade-out{animation:ebook-book-fade-out 240ms ease-out both;will-change:opacity}@keyframes ebook-book-fade-in{from{opacity:0}to{opacity:1}}@keyframes ebook-book-fade-out{from{opacity:1}to{opacity:0}}@media(prefers-reduced-motion:reduce){.ebook-book-crossfade-in,.ebook-book-crossfade-out{animation:none}}.ebook-audio-seeker{appearance:none;background:transparent}.ebook-audio-seeker::-webkit-slider-runnable-track{height:4px;border-radius:99px;background:linear-gradient(90deg,var(--color-accent) var(--audio-progress),rgba(127,127,127,.28) var(--audio-progress))}.ebook-audio-seeker::-webkit-slider-thumb{appearance:none;width:12px;height:12px;margin-top:-4px;border:2px solid var(--color-accent);border-radius:50%;background:#111;box-shadow:0 0 0 3px color-mix(in srgb,var(--color-accent) 18%,transparent);transition:transform .15s}.ebook-audio-seeker:hover::-webkit-slider-thumb{transform:scale(1.2)}`}</style>
     </div>
   );
 }
@@ -2465,12 +2632,10 @@ function Settings({
   prefs,
   patch,
   colors,
-  narrationVoices,
 }: {
   prefs: EBookReaderPrefs;
   patch: (value: Partial<EBookReaderPrefs>) => void;
   colors: (typeof paper)[keyof typeof paper];
-  narrationVoices: ReaderNarrationVoice[];
 }) {
   const [adjustmentsOpen, setAdjustmentsOpen] = useState(true);
   const [audioCacheStatus, setAudioCacheStatus] = useState("");
@@ -2505,30 +2670,7 @@ function Settings({
           ))}
         </div>
       </Setting>
-      <Setting label="Narrator voice">
-        <div className="grid grid-cols-2 gap-2">
-          {narrationVoices.map((voice) => {
-            const active = prefs.narrationVoice === voice.id;
-            return (
-              <button
-                key={voice.id}
-                type="button"
-                aria-pressed={active}
-                onClick={() => patch({ narrationVoice: voice.id })}
-                className={`rounded-xl border px-3 py-2.5 text-start transition ${active ? "border-accent bg-accent/10 text-accent" : "hover:bg-white/5"}`}
-                style={{ borderColor: active ? undefined : `${colors.muted}35` }}
-              >
-                <span className="block text-sm font-semibold">{voice.label}</span>
-                <span className="mt-0.5 block text-[10px] uppercase tracking-[.14em] opacity-55">
-                  {voice.tone}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-        <p className="mt-2 text-[11px] leading-relaxed" style={{ color: colors.muted }}>
-          Microsoft Edge neural voices. Generated chapters stay saved for 30 days.
-        </p>
+      <Setting label="Saved audio">
         <button
           type="button"
           onClick={async () => {

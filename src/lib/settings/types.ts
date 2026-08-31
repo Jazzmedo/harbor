@@ -602,6 +602,8 @@ export type Settings = {
   }>;
   downloadDir: string;
   downloadCreateFolders: boolean;
+  ebookDownloadDir: string;
+  ebookDownloadCreateFolders: boolean;
   stremioDeeplinkInstall: boolean;  iptvPlaylists: Array<{
     id: string;
     name: string;

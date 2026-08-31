@@ -30,6 +30,20 @@ const CACHED_VOICE = "X-Harbor-Voice";
 const CACHED_LOCALE = "X-Harbor-Locale";
 let voicesRequest: Promise<EdgeNarrationVoice[]> | null = null;
 
+export function narrationWordCount(text: string, locale: string): number {
+  try {
+    const segmenter = new Intl.Segmenter(locale || undefined, { granularity: "word" });
+    let count = 0;
+    for (const segment of segmenter.segment(text)) {
+      if (segment.isWordLike) count += 1;
+    }
+    if (count > 0) return count;
+  } catch {
+    // Older WebViews fall back to a Unicode expression that keeps Arabic marks attached.
+  }
+  return text.match(/[\p{L}\p{M}\p{N}'’]+/gu)?.length ?? 0;
+}
+
 export function fetchEdgeNarrationVoices(): Promise<EdgeNarrationVoice[]> {
   if (!("__TAURI_INTERNALS__" in window)) return Promise.resolve([]);
   voicesRequest ??= invoke<EdgeNarrationVoice[]>("ebook_tts_voices").catch((error) => {

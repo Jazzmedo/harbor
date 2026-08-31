@@ -33,9 +33,22 @@ test("source browse enrichment does not block on a detail request per card", () 
   assert.match(implementation, /fetchEBookMetadata\(batch, \(partial\)/);
 });
 
+test("local EPUB catalog entries expose their embedded cover before metadata merging", () => {
+  const start = providers.indexOf("function localProvider(");
+  const end = providers.indexOf("function pluginProvider(", start);
+  const implementation = providers.slice(start, end);
+  assert.ok(start >= 0 && end > start);
+  assert.match(implementation, /localPackage\(book\.paths\[0\]\)/);
+  assert.match(implementation, /cover: epub\.cover/);
+  assert.match(implementation, /internalCover: epub\.cover/);
+});
+
 test("eBook collections use the installed source catalog without reverse metadata searches", () => {
   assert.match(view, /buildSourceEBookCollections\(/);
-  assert.match(view, /loadSourceEBookCatalogPage\(providerId, nextCursor\)/);
+  assert.match(
+    view,
+    /loadSourceEBookCatalogPage\(\s*providerId,\s*nextCursor,\s*browseTagRef\.current,\s*\)/,
+  );
   assert.match(view, /searchSourceEBookCatalog\(title, providerId\)/);
   assert.doesNotMatch(view, /ebookCollections\(/);
   assert.doesNotMatch(view, /searchSourceEBooks\(book\.title/);

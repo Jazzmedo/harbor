@@ -126,6 +126,7 @@ export function BookFlip({
   bg,
   resumePage,
   soundEnabled,
+  instanceName = NAME,
   zoom = 1,
   onProgress,
   onReady,
@@ -135,6 +136,7 @@ export function BookFlip({
   bg: string;
   resumePage: number;
   soundEnabled: boolean;
+  instanceName?: string;
   zoom?: number;
   onProgress: (page: number, spread: string) => void;
   onReady?: (api: BookApi) => void;
@@ -235,7 +237,7 @@ export function BookFlip({
 
     const onPage = (e: Event) => {
       const d = (e as CustomEvent).detail as { page?: string | number; name?: string } | undefined;
-      if (!d || d.name !== NAME) return;
+      if (!d || d.name !== instanceName) return;
       const spread = String(d.page);
       const first = Number(spread.split("-")[0]);
       if (!Number.isFinite(first) || first <= 0) return;
@@ -255,7 +257,7 @@ export function BookFlip({
       }
       const singlePageMode = aspect < 1.2 || aspect > 1.9;
       inst = new Ctor(ref.current, {
-        name: NAME,
+        name: instanceName,
         pages: pages.map((src) => ({ src })),
         viewMode: "webgl",
         singlePageMode,
@@ -378,7 +380,7 @@ export function BookFlip({
       }
       ref.current?.replaceChildren();
     };
-  }, [pages, rtl, bg, resumePage]);
+  }, [pages, rtl, bg, resumePage, instanceName]);
 
   return (
     <div className="relative h-full w-full overflow-hidden">

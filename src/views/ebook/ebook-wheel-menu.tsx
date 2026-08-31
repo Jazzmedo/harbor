@@ -22,14 +22,14 @@ import {
   toggleEBookReadLater,
 } from "@/lib/ebook/library";
 import {
-  exportEBookForOffline,
+  enqueueEBookExport,
   sourceRouteForEBook,
   type EBookExportFormat,
-  type EBookExportProgress,
 } from "@/lib/ebook/offline-export";
 import { sourceEBookChapters, sourceEBookDetail } from "@/lib/ebook/providers";
 import { loadEBookResume } from "@/lib/ebook/reader-state";
 import { getEBookTracking, saveEBookTracking } from "@/lib/ebook/tracking";
+import { useView } from "@/lib/view";
 
 export type EBookWheelTarget = { ebook: EBook; x: number; y: number };
 
@@ -97,6 +97,7 @@ export function EBookWheelMenu({
   onStartReading: (ebook: EBook) => void;
 }) {
   const { ebook } = target;
+  const { setView } = useView();
   const [mode, setMode] = useState<WheelMode>("wheel");
   const [onShelf, setOnShelf] = useState(() => ebookInLibrary(ebook.id));
   const [readLater, setReadLater] = useState(() => eBookIsReadLater(ebook.id));
@@ -105,7 +106,6 @@ export function EBookWheelMenu({
   const [stats, setStats] = useState<{ volumes: number; chapters: number } | null>(null);
   const [statsLoading, setStatsLoading] = useState(false);
   const [exporting, setExporting] = useState<EBookExportFormat | null>(null);
-  const [exportProgress, setExportProgress] = useState<EBookExportProgress | null>(null);
   const firstAction = useRef<HTMLButtonElement>(null);
   const resume = loadEBookResume(profile, ebook.id);
   const viewportWidth = typeof window === "undefined" ? 1_280 : window.innerWidth;
@@ -175,7 +175,7 @@ export function EBookWheelMenu({
         progress: next ? (ebook.chapters ?? getEBookTracking(ebook.id).progress) : 0,
         progressVolumes: next ? (ebook.volumes ?? getEBookTracking(ebook.id).progressVolumes) : 0,
       });
-      emitListToast(next ? "Marked as watched" : "Marked as unwatched");
+      emitListToast(next ? "Marked as read" : "Marked as unread");
     } catch {
       emitListToast("Saved locally; AniList sync is pending");
     }
@@ -185,10 +185,11 @@ export function EBookWheelMenu({
   const startExport = async (format: EBookExportFormat) => {
     if (exporting) return;
     setExporting(format);
-    setExportProgress(null);
     try {
-      const saved = await exportEBookForOffline(ebook, format, setExportProgress);
-      if (saved) emitListToast(format === "epub" ? "EPUB saved for offline reading" : "PDF print view opened");
+      await enqueueEBookExport(ebook, format);
+      emitListToast(`${format.toUpperCase()} added to Downloads`);
+      onClose();
+      setView("downloads");
     } catch (error) {
       emitListToast(error instanceof Error ? error.message : "This eBook could not be exported");
     } finally {
@@ -235,7 +236,7 @@ export function EBookWheelMenu({
       },
       {
         id: "watched",
-        label: completed ? "Marked as watched" : "Mark as watched",
+        label: completed ? "Marked as read" : "Mark as Read",
         Icon: completed ? Check : Eye,
         active: completed,
         onClick: () => void markCompleted(),
@@ -393,12 +394,9 @@ export function EBookWheelMenu({
                     <span className="text-[10.5px] text-ink-subtle">Print or save</span>
                   </button>
                 </div>
-                {exporting && (
-                  <div className="mt-4 rounded-xl bg-canvas/60 p-3 ring-1 ring-edge-soft">
-                    <div className="mb-2 flex items-center justify-between text-[10.5px] text-ink-muted"><span className="max-w-[250px] truncate">{exportProgress?.label || "Preparing chapters…"}</span><span>{exportProgress?.percent ?? 0}%</span></div>
-                    <div className="h-1.5 overflow-hidden rounded-full bg-raised"><div className="h-full rounded-full bg-accent transition-[width] duration-200" style={{ width: `${exportProgress?.percent ?? 0}%` }} /></div>
-                  </div>
-                )}
+                <p className="mt-4 text-center text-[11px] text-ink-subtle">
+                  Progress, speed, remaining time, and cancellation are managed on Downloads.
+                </p>
               </div>
             )}
           </div>
