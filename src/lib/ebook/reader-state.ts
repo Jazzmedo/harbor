@@ -29,6 +29,14 @@ export type EBookBookmark = {
   createdAt: number;
 };
 
+export type EBookResume = {
+  chapterId: string;
+  chapterTitle: string;
+  chapterLabel?: string;
+  volumeLabel?: string;
+  updatedAt: number;
+};
+
 export type EBookAnnotation = {
   id: string;
   chapterId: string;
@@ -69,6 +77,8 @@ const annotationsKey = (profile: string, bookId: string) =>
   `harbor.ebook.annotations.v1.${safe(profile)}.${safe(bookId)}`;
 const progressKey = (profile: string, bookId: string, chapterId: string) =>
   `harbor.ebook.progress.v1.${safe(profile)}.${safe(bookId)}.${safe(chapterId)}`;
+const resumeKey = (profile: string, bookId: string) =>
+  `harbor.ebook.resume.v1.${safe(profile)}.${safe(bookId)}`;
 
 export function loadEBookReaderPrefs(): EBookReaderPrefs {
   try {
@@ -167,4 +177,26 @@ export function saveEBookProgress(
   line: number,
 ): void {
   persistCritical(progressKey(profile, bookId, chapterId), String(line));
+}
+
+export function loadEBookResume(profile: string, bookId: string): EBookResume | null {
+  try {
+    const value = JSON.parse(localStorage.getItem(resumeKey(profile, bookId)) || "null") as
+      | EBookResume
+      | null;
+    return value?.chapterId ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+export function saveEBookResume(
+  profile: string,
+  bookId: string,
+  resume: Omit<EBookResume, "updatedAt">,
+): EBookResume {
+  const value = { ...resume, updatedAt: Date.now() };
+  persistCritical(resumeKey(profile, bookId), JSON.stringify(value));
+  window.dispatchEvent(new CustomEvent("harbor:ebook-resume", { detail: bookId }));
+  return value;
 }

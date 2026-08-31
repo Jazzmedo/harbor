@@ -59,6 +59,7 @@ import deepseekLogo from "@/assets/ai-logos/deepseek.png";
 import {
   loadEBookTranslationSettings,
   saveEBookTranslationSettings,
+  testEBookTranslationSettings,
   type EBookTranslationSettings,
 } from "@/lib/ebook/translation";
 
@@ -183,6 +184,7 @@ function TranslationSelect({
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const selected = options.find((option) => option.value === value) ?? options[0];
+  const hasOptions = options.length > 0;
   useEffect(() => {
     if (!open) return;
     const close = (event: PointerEvent) => {
@@ -206,7 +208,8 @@ function TranslationSelect({
           type="button"
           aria-haspopup="listbox"
           aria-expanded={open}
-          onClick={() => setOpen((current) => !current)}
+          disabled={!hasOptions}
+          onClick={() => hasOptions && setOpen((current) => !current)}
           className={`flex h-12 w-full items-center gap-3 rounded-xl border px-3.5 text-start outline-none transition-all ${
             open
               ? "border-accent/70 bg-accent/5 shadow-[0_0_0_3px_rgba(255,159,77,0.10)]"
@@ -215,7 +218,7 @@ function TranslationSelect({
         >
           <span className="h-2 w-2 shrink-0 rounded-full bg-accent shadow-[0_0_10px_rgba(255,159,77,0.55)]" />
           <span className="min-w-0 flex-1 truncate text-[14px] font-semibold text-ink">
-            {selected.label}
+            {selected?.label ?? "Loading models…"}
           </span>
           <ChevronDown
             size={16}
@@ -225,7 +228,7 @@ function TranslationSelect({
         {open && (
           <div
             role="listbox"
-            className="harbor-rise absolute inset-x-0 top-[calc(100%+7px)] z-40 overflow-hidden rounded-xl border border-edge bg-canvas/95 p-1.5 shadow-[0_20px_55px_-18px_rgba(0,0,0,0.82)] backdrop-blur-xl"
+            className="harbor-rise absolute inset-x-0 top-[calc(100%+7px)] z-40 max-h-[360px] overflow-y-auto overscroll-contain rounded-xl border border-edge bg-canvas/95 p-1.5 shadow-[0_20px_55px_-18px_rgba(0,0,0,0.82)] backdrop-blur-xl"
           >
             {options.map((option) => {
               const active = option.value === value;
@@ -274,17 +277,64 @@ function TranslationSelect({
 function Translation() {
   const [settings, setSettings] = useState(loadEBookTranslationSettings);
   const [saved, setSaved] = useState(false);
+  const [testing, setTesting] = useState(false);
+  const [testResult, setTestResult] = useState("");
   const patch = (next: Partial<EBookTranslationSettings>) =>
     setSettings((current) => ({ ...current, ...next }));
   const save = () => {
-    saveEBookTranslationSettings({ ...settings, apiKey: settings.apiKey.trim() });
+    const next = {
+      ...settings,
+      enabled: true,
+      apiKey: settings.apiKey.trim(),
+    };
+    const persisted = saveEBookTranslationSettings(next);
+    if (!persisted) {
+      setTestResult("Storage is full. Clear Harbor cache storage, then try saving again.");
+      return;
+    }
+    setSettings(next);
+    setTestResult("");
     setSaved(true);
     window.setTimeout(() => setSaved(false), 1200);
+  };
+  const test = async () => {
+    setTesting(true);
+    setTestResult("");
+    try {
+      await testEBookTranslationSettings(settings);
+      setTestResult("DeepSeek model is working.");
+    } catch (error) {
+      setTestResult(error instanceof Error ? error.message : "Translation test failed");
+    } finally {
+      setTesting(false);
+    }
   };
   return (
     <div className="flex flex-col gap-3">
       <SectionLabel>Translation</SectionLabel>
       <div className={`${CARD} flex flex-col gap-4 p-5`}>
+        <TranslationSelect
+          label="Translate to"
+          value={settings.targetLanguage}
+          onChange={(targetLanguage) =>
+            patch({
+              targetLanguage: targetLanguage as EBookTranslationSettings["targetLanguage"],
+            })
+          }
+          options={[
+            { value: "en", label: "English", sub: "English" },
+            { value: "ar", label: "Arabic", sub: "العربية" },
+            { value: "pt", label: "Portuguese", sub: "Português" },
+            { value: "ru", label: "Russian", sub: "Русский" },
+          ]}
+        />
+        <p className="text-[12.5px] leading-relaxed text-ink-subtle">
+          Translation runs when a chapter opens and keeps the original if a request fails or is
+          truncated.
+        </p>
+      </div>
+      <div>
+        <div className={`${CARD} flex flex-col gap-4 p-5`}>
         <div className="flex items-center gap-3.5">
           <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-white ring-1 ring-black/10">
             <img src={deepseekLogo} alt="" className="h-7 w-7 object-contain" />
@@ -310,40 +360,23 @@ function Translation() {
             />
           </button>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <TranslationSelect
-            label="Model"
-            value={settings.model}
-            onChange={(model) => patch({ model })}
-            options={[
-              {
-                value: "deepseek-v4-flash",
-                label: "DeepSeek V4 Flash",
-                sub: "Fast · recommended for chapters",
-              },
-              {
-                value: "deepseek-v4-pro",
-                label: "DeepSeek V4 Pro",
-                sub: "Higher quality · slower",
-              },
-            ]}
-          />
-          <TranslationSelect
-            label="Translate to"
-            value={settings.targetLanguage}
-            onChange={(targetLanguage) =>
-              patch({
-                targetLanguage: targetLanguage as EBookTranslationSettings["targetLanguage"],
-              })
-            }
-            options={[
-              { value: "en", label: "English", sub: "English" },
-              { value: "ar", label: "Arabic", sub: "العربية" },
-              { value: "pt", label: "Portuguese", sub: "Português" },
-              { value: "ru", label: "Russian", sub: "Русский" },
-            ]}
-          />
-        </div>
+        <TranslationSelect
+          label="Model"
+          value={settings.model}
+          onChange={(model) => patch({ model })}
+          options={[
+            {
+              value: "deepseek-v4-flash",
+              label: "DeepSeek V4 Flash",
+              sub: "Fast · recommended for chapters",
+            },
+            {
+              value: "deepseek-v4-pro",
+              label: "DeepSeek V4 Pro",
+              sub: "Higher quality · slower",
+            },
+          ]}
+        />
         <div className="flex gap-2">
           <input
             type="password"
@@ -353,15 +386,29 @@ function Translation() {
             autoComplete="off"
             className={`${INPUT} min-w-0 flex-1`}
           />
+          <button
+            type="button"
+            disabled={testing}
+            onClick={() => void test()}
+            className="flex h-12 items-center justify-center gap-2 rounded-xl border border-edge px-4 text-[13px] font-semibold text-ink transition hover:bg-elevated disabled:cursor-wait disabled:opacity-50"
+          >
+            {testing ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
+            Test
+          </button>
           <button type="button" onClick={save} className={`${PRIMARY_BTN} px-5`}>
             <Check size={17} /> {saved ? "Saved" : "Save"}
           </button>
         </div>
         <p className="text-[12.5px] leading-relaxed text-ink-subtle">
-          Translation runs when a chapter opens and uses one API request. If it fails or is
-          truncated, Harbor keeps the original chapter.
+          Uses your DeepSeek account and the selected DeepSeek model.
         </p>
+        </div>
       </div>
+      {testResult && (
+        <p role="status" className="px-1 text-[12.5px] leading-relaxed text-ink-muted">
+          {testResult}
+        </p>
+      )}
     </div>
   );
 }

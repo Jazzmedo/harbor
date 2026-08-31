@@ -40,14 +40,39 @@ export function loadEBookTranslationSettings(): EBookTranslationSettings {
     targetLanguage: getUiLanguage(),
   };
   try {
-    return { ...defaults, ...JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}") };
+    const stored = JSON.parse(
+      localStorage.getItem(STORAGE_KEY) ?? "{}",
+    ) as Partial<EBookTranslationSettings>;
+    return {
+      enabled: stored.enabled === true,
+      apiKey: typeof stored.apiKey === "string" ? stored.apiKey : defaults.apiKey,
+      model: typeof stored.model === "string" ? stored.model : defaults.model,
+      targetLanguage: ["en", "ar", "pt", "ru"].includes(stored.targetLanguage ?? "")
+        ? stored.targetLanguage!
+        : defaults.targetLanguage,
+    };
   } catch {
     return defaults;
   }
 }
 
-export function saveEBookTranslationSettings(settings: EBookTranslationSettings): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+export function saveEBookTranslationSettings(settings: EBookTranslationSettings): boolean {
+  return setItemWithRecovery(STORAGE_KEY, JSON.stringify(settings));
+}
+
+export async function testEBookTranslationSettings(
+  settings: EBookTranslationSettings,
+): Promise<EBookTranslation> {
+  const apiKey = settings.apiKey.trim();
+  const model = settings.model.trim() || "deepseek-v4-flash";
+  if (!apiKey) throw new Error("Add a DeepSeek API key first");
+  return requestTranslation(
+    "A quiet harbor welcomes every reader.",
+    "Translation test",
+    settings,
+    apiKey,
+    model,
+  );
 }
 
 export async function translateEBookChapter(
@@ -57,9 +82,11 @@ export async function translateEBookChapter(
   onProgress?: (progress: EBookTranslationProgress) => void,
 ): Promise<EBookTranslation> {
   const settings = loadEBookTranslationSettings();
+  const apiKey = settings.apiKey.trim();
+  const model = settings.model.trim() || "deepseek-v4-flash";
   const original = { title, text: source };
   if (!source.trim()) return original;
-  const cacheKey = `${settings.model}:${settings.targetLanguage}:${hash(translationInstructions)}:${hash(title)}:${hash(source)}`;
+  const cacheKey = `${model}:${settings.targetLanguage}:${hash(translationInstructions)}:${hash(title)}:${hash(source)}`;
   try {
     const saved = JSON.parse(
       localStorage.getItem(`${CACHE_PREFIX}${hash(cacheKey)}`) ?? "null",
@@ -70,13 +97,15 @@ export async function translateEBookChapter(
     }
   } catch {}
   if (!settings.enabled && !manual) return original;
-  if (!settings.apiKey.trim()) {
-    if (manual) throw new Error("Add a DeepSeek API key in eBook Sources first");
+  if (!apiKey.trim()) {
+    if (manual) {
+      throw new Error("Add a DeepSeek API key in eBook Sources first");
+    }
     return original;
   }
   let request = pending.get(cacheKey);
   if (!request) {
-    request = requestTranslation(source, title, settings, onProgress);
+    request = requestTranslation(source, title, settings, apiKey, model, onProgress);
     pending.set(cacheKey, request);
     request.catch(() => pending.delete(cacheKey));
   }
@@ -90,17 +119,19 @@ async function requestTranslation(
   source: string,
   title: string,
   settings: EBookTranslationSettings,
+  apiKey: string,
+  model: string,
   onProgress?: (progress: EBookTranslationProgress) => void,
 ): Promise<EBookTranslation> {
   onProgress?.({ percent: 0, etaMs: null });
   const response = await safeFetchStream(ENDPOINT, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${settings.apiKey.trim()}`,
+      Authorization: `Bearer ${apiKey.trim()}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: settings.model.trim() || "deepseek-v4-flash",
+      model,
       thinking: { type: "disabled" },
       temperature: 0,
       stream: true,
@@ -117,7 +148,17 @@ async function requestTranslation(
       ],
     }),
   });
-  if (!response.ok) throw new Error(`DeepSeek HTTP ${response.status}`);
+  if (!response.ok) {
+    const detail = await response.text().catch(() => "");
+    let message = detail;
+    try {
+      const parsed = JSON.parse(detail) as { error?: { message?: string } };
+      message = parsed.error?.message || detail;
+    } catch {}
+    throw new Error(
+      `DeepSeek HTTP ${response.status}${message ? `: ${message.slice(0, 240)}` : ""}`,
+    );
+  }
   if (!response.body) throw new Error("DeepSeek returned no response stream");
   const reader = response.body.getReader();
   const decoder = new TextDecoder();

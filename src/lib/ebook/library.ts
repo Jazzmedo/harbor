@@ -2,6 +2,7 @@ import type { EBook } from "./api";
 
 const KEY = "harbor.ebook.library.v1";
 const FAVORITES_KEY = "harbor.ebook.favorites.v1";
+const READ_LATER_KEY = "harbor.ebook.read-later.v1";
 const LEGACY_KEY = "harbor.novel.library.v1";
 const LEGACY_FAVORITES_KEY = "harbor.novel.favorites.v1";
 
@@ -54,6 +55,25 @@ export function toggleEBookFavorite(ebook: EBook): boolean {
   const exists = current.some((item) => item.id === ebook.id);
   localStorage.setItem(
     FAVORITES_KEY,
+    JSON.stringify(exists ? current.filter((item) => item.id !== ebook.id) : [ebook, ...current]),
+  );
+  window.dispatchEvent(new Event("harbor:ebook-library"));
+  return !exists;
+}
+
+export function eBookReadLater(): EBook[] {
+  return read(READ_LATER_KEY, "harbor.novel.read-later.v1");
+}
+
+export function eBookIsReadLater(id: string): boolean {
+  return eBookReadLater().some((ebook) => ebook.id === id);
+}
+
+export function toggleEBookReadLater(ebook: EBook): boolean {
+  const current = eBookReadLater();
+  const exists = current.some((item) => item.id === ebook.id);
+  localStorage.setItem(
+    READ_LATER_KEY,
     JSON.stringify(exists ? current.filter((item) => item.id !== ebook.id) : [ebook, ...current]),
   );
   window.dispatchEvent(new Event("harbor:ebook-library"));

@@ -2,6 +2,7 @@ import { anilistRequest } from "@/lib/anilist/client";
 import { animeRelations } from "@/lib/anilist/relations";
 import { getUiLanguage } from "@/lib/i18n";
 import { safeFetch } from "@/lib/safe-fetch";
+import { setItemWithRecovery } from "@/lib/storage-recovery";
 
 export type EBook = {
   id: string;
@@ -262,6 +263,10 @@ function verifiedMetadataMatch(source: EBook, metadata: EBook): boolean {
       authorListsMatch(source.authors, metadata.authors)
     );
   }
+  if (!source.authors.length || !metadata.authors.length) {
+    if (source.year && metadata.year && Math.abs(source.year - metadata.year) > 1) return false;
+    return true;
+  }
   return authorListsMatch(source.authors, metadata.authors);
 }
 
@@ -274,8 +279,130 @@ function metadataRequestKey(ebook: EBook): string {
     ebook.openLibraryId,
     ebook.wikidataId,
     ebook.isbn,
+    ebook.source === "source" ? ebook.providerId : undefined,
+    ebook.source === "source" ? ebook.sourceItemId : undefined,
+    ...ebook.authors.map(titleKey).sort(),
     ...metadataCandidates(ebook).map(titleKey),
   ].join(":");
+}
+
+type EBookMetadataCacheRecord = { at: number; metadata: EBook[] };
+
+const EBOOK_METADATA_CACHE_KEY = "harbor.ebook.metadata.v1";
+const EBOOK_METADATA_FRESH_MS = 7 * 24 * 60 * 60 * 1000;
+const EBOOK_METADATA_NEGATIVE_MS = 30 * 60 * 1000;
+const EBOOK_METADATA_STALE_MS = 30 * 24 * 60 * 60 * 1000;
+const EBOOK_METADATA_CACHE_LIMIT = 160;
+const metadataCache = new Map<string, EBookMetadataCacheRecord>();
+const metadataInflight = new Map<string, Promise<EBook[]>>();
+let metadataCacheLoaded = false;
+let metadataCacheFlushTimer: ReturnType<typeof setTimeout> | null = null;
+
+function loadMetadataCache(): void {
+  if (metadataCacheLoaded) return;
+  metadataCacheLoaded = true;
+  try {
+    const stored = JSON.parse(localStorage.getItem(EBOOK_METADATA_CACHE_KEY) ?? "{}") as Record<
+      string,
+      EBookMetadataCacheRecord
+    >;
+    const now = Date.now();
+    for (const [key, record] of Object.entries(stored)) {
+      if (
+        record &&
+        typeof record.at === "number" &&
+        Array.isArray(record.metadata) &&
+        now - record.at < EBOOK_METADATA_STALE_MS
+      )
+        metadataCache.set(key, record);
+    }
+  } catch {}
+}
+
+function flushMetadataCache(): void {
+  metadataCacheFlushTimer = null;
+  const entries = [...metadataCache.entries()]
+    .filter(([, record]) => Date.now() - record.at < EBOOK_METADATA_STALE_MS)
+    .sort((left, right) => right[1].at - left[1].at)
+    .slice(0, EBOOK_METADATA_CACHE_LIMIT);
+  metadataCache.clear();
+  for (const [key, record] of entries) metadataCache.set(key, record);
+  try {
+    setItemWithRecovery(EBOOK_METADATA_CACHE_KEY, JSON.stringify(Object.fromEntries(entries)));
+  } catch {}
+}
+
+function scheduleMetadataCacheFlush(): void {
+  if (metadataCacheFlushTimer != null) return;
+  metadataCacheFlushTimer = setTimeout(flushMetadataCache, 500);
+}
+
+function clearMetadataCache(): void {
+  metadataCache.clear();
+  metadataCacheLoaded = true;
+  if (metadataCacheFlushTimer != null) clearTimeout(metadataCacheFlushTimer);
+  metadataCacheFlushTimer = null;
+  try {
+    localStorage.removeItem(EBOOK_METADATA_CACHE_KEY);
+  } catch {}
+}
+
+function cachedMetadataRecord(ebook: EBook): EBookMetadataCacheRecord | null {
+  loadMetadataCache();
+  const key = metadataRequestKey(ebook);
+  const record = metadataCache.get(key);
+  if (!record || Date.now() - record.at >= EBOOK_METADATA_STALE_MS) {
+    if (record) metadataCache.delete(key);
+    return null;
+  }
+  const metadata = record.metadata.filter((candidate) => verifiedMetadataMatch(ebook, candidate));
+  return metadata.length === record.metadata.length ? record : { ...record, metadata };
+}
+
+function hasFreshMetadata(ebook: EBook): boolean {
+  const record = cachedMetadataRecord(ebook);
+  if (!record) return false;
+  const ttl = record.metadata.length ? EBOOK_METADATA_FRESH_MS : EBOOK_METADATA_NEGATIVE_MS;
+  return Date.now() - record.at < ttl;
+}
+
+function cachedMetadata(ebooks: EBook[]): EBook[] {
+  return combineMetadata(
+    ebooks.flatMap((ebook) => cachedMetadataRecord(ebook)?.metadata ?? []),
+  );
+}
+
+function combineMetadata(...groups: EBook[][]): EBook[] {
+  const unique = new Map<string, EBook>();
+  for (const ebook of groups.flat()) {
+    const key = [
+      ebook.source,
+      ebook.anilistId,
+      ebook.googleBooksId,
+      ebook.openLibraryId,
+      ebook.wikidataId,
+      ebook.isbn,
+      titleKey(ebook.seriesTitle || ebook.title),
+    ].join(":");
+    unique.set(key, ebook);
+  }
+  return [...unique.values()];
+}
+
+function cacheMetadataForSources(sources: EBook[], metadata: EBook[], complete = false): void {
+  loadMetadataCache();
+  for (const source of sources) {
+    const key = metadataRequestKey(source);
+    const matches = metadata.filter((candidate) => verifiedMetadataMatch(source, candidate));
+    if (!matches.length && !complete) continue;
+    const previous = complete ? [] : (metadataCache.get(key)?.metadata ?? []);
+    metadataCache.delete(key);
+    metadataCache.set(key, {
+      at: Date.now(),
+      metadata: combineMetadata(previous, matches),
+    });
+  }
+  scheduleMetadataCacheFlush();
 }
 
 function clean(text: string | null): string {
@@ -608,37 +735,55 @@ type OpenLibraryDoc = {
 const OPEN_LIBRARY_FIELDS =
   "key,title,alternative_title,author_name,cover_i,first_publish_year,isbn,series,subject,first_sentence";
 const OPEN_LIBRARY_CACHE_MS = 7 * 24 * 60 * 60 * 1000;
+const OPEN_LIBRARY_STALE_MS = 30 * 24 * 60 * 60 * 1000;
 const openLibraryMetadata = new Map<string, EBook | null>();
 const openLibraryAliases = new Map<string, string[]>();
+const jsonInflight = new Map<string, Promise<unknown>>();
+
+type CachedJsonValue<T> = { at: number; value: T };
 
 async function cachedJson<T>(url: string, timeoutMs = 8_000): Promise<T> {
   const cacheUrl = new URL(url);
   const authenticated = cacheUrl.searchParams.has("key");
   cacheUrl.searchParams.delete("key");
   const key = `harbor.ebook.openlibrary.v1.${authenticated ? "authenticated" : "anonymous"}.${cacheUrl}`;
+  let cached: CachedJsonValue<T> | null = null;
   try {
-    const cached = JSON.parse(localStorage.getItem(key) ?? "null") as {
-      at: number;
-      value: T;
-    } | null;
+    cached = JSON.parse(localStorage.getItem(key) ?? "null") as CachedJsonValue<T> | null;
     if (cached && Date.now() - cached.at < OPEN_LIBRARY_CACHE_MS) return cached.value;
   } catch {}
-  const response = await safeFetch(url, {
-    signal: AbortSignal.timeout(timeoutMs),
-    headers:
-      cacheUrl.hostname === "query.wikidata.org"
-        ? {
-            Accept: "application/sparql-results+json",
-            "User-Agent": "Harbor (eBook metadata)",
-          }
-        : undefined,
-  });
-  if (!response.ok) throw new Error(`eBook metadata HTTP ${response.status}`);
-  const value = (await response.json()) as T;
+  const existing = jsonInflight.get(key) as Promise<T> | undefined;
+  const request =
+    existing ??
+    (async () => {
+      const response = await safeFetch(url, {
+        signal: AbortSignal.timeout(timeoutMs),
+        headers:
+          cacheUrl.hostname === "query.wikidata.org"
+            ? {
+                Accept: "application/sparql-results+json",
+                "User-Agent": "Harbor (eBook metadata)",
+              }
+            : undefined,
+      });
+      if (!response.ok) throw new Error(`eBook metadata HTTP ${response.status}`);
+      const value = (await response.json()) as T;
+      try {
+        setItemWithRecovery(key, JSON.stringify({ at: Date.now(), value }));
+      } catch {}
+      return value;
+    })().finally(() => jsonInflight.delete(key));
+  if (!existing) jsonInflight.set(key, request);
+  if (cached && Date.now() - cached.at < OPEN_LIBRARY_STALE_MS) {
+    void request.catch(() => undefined);
+    return cached.value;
+  }
   try {
-    localStorage.setItem(key, JSON.stringify({ at: Date.now(), value }));
-  } catch {}
-  return value;
+    return await request;
+  } catch (error) {
+    if (cached) return cached.value;
+    throw error;
+  }
 }
 
 type GoogleBook = {
@@ -654,10 +799,15 @@ type GoogleBook = {
     averageRating?: number;
     imageLinks?: Record<string, string>;
     infoLink?: string;
+    seriesInfo?: {
+      bookDisplayNumber?: string;
+      volumeSeries?: Array<{ seriesId?: string; orderNumber?: number }>;
+    };
   };
 };
 
 const googleMetadata = new Map<string, EBook | null>();
+const googleSeriesIds = new Map<string, string>();
 const GOOGLE_BOOKS_KEY = "harbor.ebook.google-books-key";
 let googleUnavailableUntil = 0;
 let googleQueue = Promise.resolve();
@@ -671,6 +821,8 @@ export function setGoogleBooksApiKey(value: string): void {
   if (trimmed) localStorage.setItem(GOOGLE_BOOKS_KEY, trimmed);
   else localStorage.removeItem(GOOGLE_BOOKS_KEY);
   googleMetadata.clear();
+  googleSeriesIds.clear();
+  clearMetadataCache();
   googleUnavailableUntil = 0;
   for (let index = localStorage.length - 1; index >= 0; index -= 1) {
     const key = localStorage.key(index);
@@ -726,9 +878,17 @@ function mapGoogleBook(book: GoogleBook): EBook {
   };
 }
 
-async function fetchGoogleMetadata(ebooks: EBook[]): Promise<EBook[]> {
+async function fetchGoogleMetadata(
+  ebooks: EBook[],
+  onPartial?: (metadata: EBook[]) => void,
+): Promise<EBook[]> {
   const apiKey = googleBooksApiKey();
   if (!apiKey && Date.now() < googleUnavailableUntil) return [];
+  const current = () =>
+    ebooks.flatMap((ebook) => {
+      const match = googleMetadata.get(metadataRequestKey(ebook));
+      return match ? [match] : [];
+    });
   const resolve = async (ebook: EBook) => {
     const owner = ebook.seriesTitle || ebook.title;
     const key = metadataRequestKey(ebook);
@@ -773,12 +933,26 @@ async function fetchGoogleMetadata(ebooks: EBook[]): Promise<EBook[]> {
               book.volumeInfo.title,
               `${book.volumeInfo.title}: ${book.volumeInfo.subtitle ?? ""}`,
             ].some((title) => titleKey(title) === titleKey(candidate)) &&
-            authorListsMatch(ebook.authors, book.volumeInfo.authors ?? []),
+            (!ebook.authors.length ||
+              !book.volumeInfo.authors?.length ||
+              authorListsMatch(ebook.authors, book.volumeInfo.authors)),
         );
+      if (exact && apiKey && !exact.volumeInfo.seriesInfo) {
+        const detailUrl = new URL(
+          `https://www.googleapis.com/books/v1/volumes/${encodeURIComponent(exact.id)}`,
+        );
+        detailUrl.searchParams.set("includeNonComicsSeries", "true");
+        detailUrl.searchParams.set("key", apiKey);
+        exact =
+          (await cachedJson<GoogleBook>(detailUrl.toString()).catch(() => null)) ?? exact;
+      }
       if (exact || ebook.googleBooksId || ebook.isbn) break;
     }
+    const seriesId = exact?.volumeInfo.seriesInfo?.volumeSeries?.[0]?.seriesId;
+    if (seriesId) googleSeriesIds.set(key, seriesId);
     if (!failed)
       googleMetadata.set(key, exact ? { ...mapGoogleBook(exact), seriesTitle: owner } : null);
+    onPartial?.(current());
   };
   if (apiKey) await Promise.all(ebooks.map(resolve));
   else {
@@ -791,10 +965,7 @@ async function fetchGoogleMetadata(ebooks: EBook[]): Promise<EBook[]> {
     googleQueue = queued.catch(() => {});
     await queued;
   }
-  return ebooks.flatMap((ebook) => {
-    const match = googleMetadata.get(metadataRequestKey(ebook));
-    return match ? [match] : [];
-  });
+  return current();
 }
 
 type WikidataEntity = {
@@ -904,7 +1075,15 @@ function mapWikidata(entity: WikidataEntity, summary?: WikipediaSummary | null):
   };
 }
 
-async function fetchWikidataMetadata(ebooks: EBook[]): Promise<EBook[]> {
+async function fetchWikidataMetadata(
+  ebooks: EBook[],
+  onPartial?: (metadata: EBook[]) => void,
+): Promise<EBook[]> {
+  const current = () =>
+    ebooks.flatMap((ebook) => {
+      const match = wikidataMetadata.get(metadataRequestKey(ebook));
+      return match ? [match] : [];
+    });
   const pending = ebooks.filter((ebook) => !wikidataMetadata.has(metadataRequestKey(ebook)));
   if (pending.length) {
     const owners = new Map<string, Set<string>>();
@@ -949,6 +1128,7 @@ SELECT DISTINCT ?matched ?item ?itemDescription WHERE {
       url.searchParams.set("format", "json");
       const data = await cachedJson<{ results?: { bindings?: WikidataBinding[] } }>(
         url.toString(),
+        30_000,
       ).catch(() => null);
       if (!data) {
         complete = false;
@@ -1000,13 +1180,11 @@ SELECT DISTINCT ?matched ?item ?itemDescription WHERE {
             seriesTitle: owner,
           });
         } else if (complete) wikidataMetadata.set(metadataRequestKey(ebook), null);
+        onPartial?.(current());
       }),
     );
   }
-  return ebooks.flatMap((ebook) => {
-    const match = wikidataMetadata.get(metadataRequestKey(ebook));
-    return match ? [match] : [];
-  });
+  return current();
 }
 
 function mapOpenLibrary(n: OpenLibraryDoc): EBook {
@@ -1033,10 +1211,388 @@ function mapOpenLibrary(n: OpenLibraryDoc): EBook {
 export type EBookCollection = {
   name: string;
   books: EBook[];
+  kind?: "series" | "award";
 };
 
-export async function ebookCollection(ebook: EBook): Promise<EBookCollection | null> {
-  if (!ebook.wikidataId) {
+async function googleBookCollections(
+  ebooks: EBook[],
+): Promise<Array<{ book: EBook; collection: EBookCollection }>> {
+  const apiKey = googleBooksApiKey();
+  if (!apiKey) return [];
+  await fetchGoogleMetadata(ebooks).catch(() => []);
+  const grouped = new Map<string, EBook[]>();
+  for (const book of ebooks) {
+    const seriesId = googleSeriesIds.get(metadataRequestKey(book));
+    if (!seriesId) continue;
+    const books = grouped.get(seriesId) ?? [];
+    books.push(book);
+    grouped.set(seriesId, books);
+  }
+  const results: Array<{ book: EBook; collection: EBookCollection }> = [];
+  for (const [seriesId, owners] of grouped) {
+    const seriesUrl = new URL("https://www.googleapis.com/books/v1/series/get");
+    seriesUrl.searchParams.append("series_id", seriesId);
+    seriesUrl.searchParams.set("key", apiKey);
+    const membershipUrl = new URL(
+      "https://www.googleapis.com/books/v1/series/membership/get",
+    );
+    membershipUrl.searchParams.set("series_id", seriesId);
+    membershipUrl.searchParams.set("page_size", "50");
+    membershipUrl.searchParams.set("key", apiKey);
+    const [series, membership] = await Promise.all([
+      cachedJson<{ series?: Array<{ title?: string }> }>(seriesUrl.toString()).catch(() => null),
+      cachedJson<{ member?: GoogleBook[] }>(membershipUrl.toString()).catch(() => null),
+    ]);
+    const members = (membership?.member ?? []).map(mapGoogleBook);
+    if (members.length < 2) continue;
+    const name = series?.series?.[0]?.title ?? `${owners[0].title} Collection`;
+    for (const owner of owners) {
+      const books = members.filter(
+        (member) =>
+          member.googleBooksId !== owner.googleBooksId &&
+          titleKey(member.title) !== titleKey(owner.title),
+      );
+      if (books.length) results.push({ book: owner, collection: { name, books, kind: "series" } });
+    }
+  }
+  return results;
+}
+
+async function wikidataBookCollections(
+  ebooks: EBook[],
+): Promise<Array<{ book: EBook; collection: EBookCollection }>> {
+  await fetchWikidataMetadata(ebooks).catch(() => []);
+  const matched = ebooks.flatMap((book) => {
+    const metadata = wikidataMetadata.get(metadataRequestKey(book));
+    return metadata?.wikidataId ? [{ book, metadata }] : [];
+  });
+  if (!matched.length) return [];
+
+  const seeds = [...new Set(matched.map(({ metadata }) => metadata.wikidataId!))];
+  const query = `PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX ps: <http://www.wikidata.org/prop/statement/>
+PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
+SELECT DISTINCT ?seed ?item ?series ?seriesLabel ?ordinal ?kind WHERE {
+  VALUES ?seed { ${seeds.map((id) => `wd:${id}`).join(" ")} }
+  {
+    ?seed wdt:P179 ?series.
+    ?item wdt:P179 ?series.
+    OPTIONAL { ?item p:P179 ?statement. ?statement ps:P179 ?series. ?statement pq:P1545 ?ordinal. }
+    BIND("series" AS ?kind)
+  }
+  UNION
+  {
+    { ?seed (wdt:P155|wdt:P156) ?item. }
+    UNION
+    { ?item (wdt:P155|wdt:P156) ?seed. }
+    BIND(?seed AS ?series)
+    BIND("sequence" AS ?kind)
+  }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en,ar". }
+}`;
+  const url = new URL("https://query.wikidata.org/sparql");
+  url.searchParams.set("query", query);
+  url.searchParams.set("format", "json");
+  const data = await cachedJson<{
+    results?: {
+      bindings?: Array<{
+        seed: { value: string };
+        item: { value: string };
+        series: { value: string };
+        seriesLabel?: { value: string };
+        ordinal?: { value: string };
+        kind?: { value: string };
+      }>;
+    };
+  }>(url.toString(), 30_000).catch(() => null);
+  const bindings = data?.results?.bindings ?? [];
+  if (!bindings.length) return [];
+
+  const entityIds = [
+    ...new Set(
+      bindings.flatMap((binding) => [binding.item.value, binding.series.value]).flatMap((value) => {
+        const id = value.match(/Q\d+$/)?.[0];
+        return id ? [id] : [];
+      }),
+    ),
+  ];
+  const entities: Record<string, WikidataEntity> = {};
+  for (let start = 0; start < entityIds.length; start += 50) {
+    const entityUrl = new URL("https://www.wikidata.org/w/api.php");
+    entityUrl.search = new URLSearchParams({
+      action: "wbgetentities",
+      ids: entityIds.slice(start, start + 50).join("|"),
+      props: "labels|descriptions|aliases|claims|sitelinks",
+      languages: [...new Set([getUiLanguage(), "en", "ar", "pt", "ru", "ja"])].join("|"),
+      format: "json",
+      origin: "*",
+      maxlag: "5",
+    }).toString();
+    const page = await cachedJson<{ entities?: Record<string, WikidataEntity> }>(
+      entityUrl.toString(),
+    ).catch(() => null);
+    Object.assign(entities, page?.entities ?? {});
+  }
+
+  return matched.flatMap(({ book, metadata }) => {
+    const rows = bindings.filter(
+      (binding) => binding.seed.value.match(/Q\d+$/)?.[0] === metadata.wikidataId,
+    );
+    if (!rows.length) return [];
+    const ordinal = new Map(
+      rows.map((row) => [
+        row.item.value.match(/Q\d+$/)?.[0] ?? "",
+        Number.parseFloat(row.ordinal?.value ?? "") || Number.MAX_SAFE_INTEGER,
+      ]),
+    );
+    const unique = new Map<string, EBook>();
+    for (const row of rows) {
+      const id = row.item.value.match(/Q\d+$/)?.[0];
+      if (!id || id === metadata.wikidataId || !entities[id]) continue;
+      const member = mapWikidata(entities[id]);
+      const key = titleKey(member.title);
+      if (!key || key === titleKey(book.title)) continue;
+      const previous = unique.get(key);
+      if (!previous || (!previous.cover && member.cover)) unique.set(key, member);
+    }
+    const books = [...unique.values()].sort(
+      (left, right) =>
+        (ordinal.get(left.wikidataId ?? "") ?? Number.MAX_SAFE_INTEGER) -
+          (ordinal.get(right.wikidataId ?? "") ?? Number.MAX_SAFE_INTEGER) ||
+        (left.year ?? Number.MAX_SAFE_INTEGER) - (right.year ?? Number.MAX_SAFE_INTEGER),
+    );
+    if (!books.length) return [];
+    const seriesRow = rows.find((row) => row.kind?.value === "series");
+    const sequence = !seriesRow;
+    const primaryRow = seriesRow ?? rows[0];
+    const seriesId = primaryRow.series.value.match(/Q\d+$/)?.[0];
+    const labels = seriesId ? entities[seriesId]?.labels : undefined;
+    const firstBook = [book, ...books].sort(
+      (left, right) =>
+        (left.year ?? Number.MAX_SAFE_INTEGER) - (right.year ?? Number.MAX_SAFE_INTEGER),
+    )[0];
+    const name = sequence
+      ? `${firstBook.title} Collection`
+      : (labels?.en?.value ?? labels?.ar?.value ?? primaryRow.seriesLabel?.value ?? "Book");
+    return [{ book, collection: { name, books, kind: "series" } }];
+  });
+}
+
+async function wikidataAwardCollections(
+  ebooks: EBook[],
+): Promise<Array<{ book: EBook; collection: EBookCollection }>> {
+  await fetchWikidataMetadata(ebooks).catch(() => []);
+  const matched = ebooks.flatMap((book) => {
+    const metadata = wikidataMetadata.get(metadataRequestKey(book));
+    return metadata?.wikidataId ? [{ book, metadata }] : [];
+  });
+  if (!matched.length) return [];
+
+  const seeds = [...new Set(matched.map(({ metadata }) => metadata.wikidataId!))];
+  const awardQuery = `PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX ps: <http://www.wikidata.org/prop/statement/>
+PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
+SELECT DISTINCT ?seed ?award WHERE {
+  VALUES ?seed { ${seeds.map((id) => `wd:${id}`).join(" ")} }
+  { ?seed wdt:P166 ?award. }
+  UNION
+  { ?recipient p:P166 ?statement. ?statement ps:P166 ?award; pq:P1686 ?seed. }
+}`;
+  const awardUrl = new URL("https://query.wikidata.org/sparql");
+  awardUrl.searchParams.set("query", awardQuery);
+  awardUrl.searchParams.set("format", "json");
+  const awardsData = await cachedJson<{
+    results?: { bindings?: Array<{ seed: { value: string }; award: { value: string } }> };
+  }>(awardUrl.toString(), 30_000).catch(() => null);
+  const awardRows = awardsData?.results?.bindings ?? [];
+  const awardIds = [
+    ...new Set(
+      awardRows.flatMap((row) => row.award.value.match(/Q\d+$/)?.[0] ?? []),
+    ),
+  ];
+  if (!awardIds.length) return [];
+
+  const memberQuery = `PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX ps: <http://www.wikidata.org/prop/statement/>
+PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
+SELECT DISTINCT ?award ?item WHERE {
+  VALUES ?award { ${awardIds.map((id) => `wd:${id}`).join(" ")} }
+  {
+    ?item wdt:P166 ?award.
+  }
+  UNION
+  {
+    ?recipient p:P166 ?statement.
+    ?statement ps:P166 ?award; pq:P1686 ?item.
+  }
+}
+LIMIT 240`;
+  const memberUrl = new URL("https://query.wikidata.org/sparql");
+  memberUrl.searchParams.set("query", memberQuery);
+  memberUrl.searchParams.set("format", "json");
+  const memberData = await cachedJson<{
+    results?: { bindings?: Array<{ award: { value: string }; item: { value: string } }> };
+  }>(memberUrl.toString(), 30_000).catch(() => null);
+  const memberRows = memberData?.results?.bindings ?? [];
+  if (!memberRows.length) return [];
+
+  const entityIds = [
+    ...new Set(
+      [...awardIds, ...memberRows.flatMap((row) => row.item.value.match(/Q\d+$/)?.[0] ?? [])],
+    ),
+  ];
+  const entities: Record<string, WikidataEntity> = {};
+  for (let start = 0; start < entityIds.length; start += 50) {
+    const entityUrl = new URL("https://www.wikidata.org/w/api.php");
+    entityUrl.search = new URLSearchParams({
+      action: "wbgetentities",
+      ids: entityIds.slice(start, start + 50).join("|"),
+      props: "labels|descriptions|aliases|claims|sitelinks",
+      languages: [...new Set([getUiLanguage(), "en", "ar", "pt", "ru", "ja"])].join("|"),
+      format: "json",
+      origin: "*",
+      maxlag: "5",
+    }).toString();
+    const page = await cachedJson<{ entities?: Record<string, WikidataEntity> }>(
+      entityUrl.toString(),
+    ).catch(() => null);
+    Object.assign(entities, page?.entities ?? {});
+  }
+
+  const ownersByAward = new Map<string, EBook[]>();
+  for (const row of awardRows) {
+    const seedId = row.seed.value.match(/Q\d+$/)?.[0];
+    const awardId = row.award.value.match(/Q\d+$/)?.[0];
+    const owner = matched.find(({ metadata }) => metadata.wikidataId === seedId)?.book;
+    if (!awardId || !owner) continue;
+    const owners = ownersByAward.get(awardId) ?? [];
+    if (!owners.some((book) => book.id === owner.id)) owners.push(owner);
+    ownersByAward.set(awardId, owners);
+  }
+
+  const literaryKinds = new Set([
+    "Q571",
+    "Q8261",
+    "Q277759",
+    "Q1667921",
+    "Q7725634",
+    "Q47461344",
+  ]);
+  const isLiteraryWork = (entity: WikidataEntity) => {
+    const kinds = (entity.claims?.P31 ?? []).flatMap((statement) => {
+      const value = statement.mainsnak?.datavalue?.value;
+      return value && typeof value === "object" && "id" in value
+        ? [String((value as { id: unknown }).id)]
+        : [];
+    });
+    if (kinds.some((kind) => literaryKinds.has(kind))) return true;
+    const description = entity.descriptions?.en?.value ?? entity.descriptions?.ar?.value ?? "";
+    return /\b(?:book|novel|novella|literary work|short stor(?:y|ies))\b/i.test(description);
+  };
+  const literaryMetadata = new Map<string, EBook>();
+  const literaryBooks = new Map<string, EBook>();
+  for (const row of memberRows) {
+    const itemId = row.item.value.match(/Q\d+$/)?.[0];
+    const entity = itemId ? entities[itemId] : undefined;
+    if (!itemId || !entity || !isLiteraryWork(entity)) continue;
+    literaryBooks.set(itemId, mapWikidata(entity));
+  }
+  const rawLiteraryBooks = [...literaryBooks.values()];
+  for (let start = 0; start < rawLiteraryBooks.length; start += 12) {
+    const batch = rawLiteraryBooks.slice(start, start + 12);
+    const openLibrary = await fetchOpenLibraryMetadata(batch).catch(() => []);
+    for (const book of mergeEBookMetadata(batch, openLibrary)) {
+      if (book.wikidataId) literaryMetadata.set(book.wikidataId, book);
+    }
+  }
+
+  const results: Array<{ book: EBook; collection: EBookCollection }> = [];
+  for (const [awardId, owners] of ownersByAward) {
+    const members = new Map<string, EBook>();
+    for (const row of memberRows) {
+      if (row.award.value.match(/Q\d+$/)?.[0] !== awardId) continue;
+      const itemId = row.item.value.match(/Q\d+$/)?.[0];
+      const entity = itemId ? entities[itemId] : undefined;
+      if (!entity || !isLiteraryWork(entity)) continue;
+      const member = (itemId ? literaryMetadata.get(itemId) : undefined) ?? mapWikidata(entity);
+      if (!member.cover) continue;
+      const key = titleKey(member.title);
+      if (key) members.set(key, member);
+    }
+    const award = entities[awardId];
+    const name =
+      award?.labels?.en?.value ??
+      award?.labels?.[getUiLanguage()]?.value ??
+      award?.labels?.ar?.value;
+    if (!name || members.size < 2) continue;
+    for (const owner of owners) {
+      const books = [...members.values()].filter(
+        (member) => titleKey(member.title) !== titleKey(owner.title),
+      );
+      if (books.length) results.push({ book: owner, collection: { name, books, kind: "award" } });
+    }
+  }
+  return results;
+}
+
+export async function ebookCollections(
+  ebooks: EBook[],
+  onPartial?: (matches: Array<{ book: EBook; collection: EBookCollection }>) => void,
+): Promise<Array<{ book: EBook; collection: EBookCollection }>> {
+  const results: Array<{ book: EBook; collection: EBookCollection }> = [];
+  const append = (matches: Array<{ book: EBook; collection: EBookCollection }>) => {
+    for (const match of matches) {
+      const duplicate = results.some(
+        (existing) =>
+          existing.book.id === match.book.id &&
+          titleKey(existing.collection.name) === titleKey(match.collection.name),
+      );
+      if (!duplicate) results.push(match);
+    }
+    if (matches.length) onPartial?.([...results]);
+  };
+
+  // Wikidata is the primary collection source. Publish it immediately instead of
+  // withholding valid results while the optional providers finish their requests.
+  append(await wikidataBookCollections(ebooks).catch(() => []));
+  append(await wikidataAwardCollections(ebooks).catch(() => []));
+  append(await googleBookCollections(ebooks).catch(() => []));
+  const covered = new Set(results.map(({ book }) => book.id));
+  const unresolved = ebooks.filter((book) => !covered.has(book.id));
+  for (let start = 0; start < unresolved.length; start += 4) {
+    const batch = unresolved.slice(start, start + 4);
+    const collections = await Promise.all(
+      batch.map(async (book) => ({
+        book,
+        collection: await ebookCollection(book, false).catch(() => null),
+      })),
+    );
+    const matches: Array<{ book: EBook; collection: EBookCollection }> = [];
+    for (const match of collections) {
+      if (match.collection?.books.length) matches.push({ book: match.book, collection: match.collection });
+    }
+    append(matches);
+  }
+  return results;
+}
+
+export async function ebookCollection(
+  ebook: EBook,
+  includeWikidata = true,
+): Promise<EBookCollection | null> {
+  if (ebook.seriesTitle && ebook.books && ebook.books.length > 1) {
+    const books = ebook.books.filter(
+      (book) => book.id !== ebook.id && titleKey(book.title) !== titleKey(ebook.title),
+    );
+    if (books.length) return { name: ebook.seriesTitle, books };
+  }
+  if (includeWikidata && !ebook.wikidataId) {
     const wikidata = (await fetchWikidataMetadata([ebook]).catch(() => []))[0];
     if (wikidata?.wikidataId) {
       return ebookCollection({
@@ -1046,7 +1602,7 @@ export async function ebookCollection(ebook: EBook): Promise<EBookCollection | n
       });
     }
   }
-  if (ebook.wikidataId && /^Q\d+$/.test(ebook.wikidataId)) {
+  if (includeWikidata && ebook.wikidataId && /^Q\d+$/.test(ebook.wikidataId)) {
     const query = `PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 PREFIX p: <http://www.wikidata.org/prop/>
@@ -1070,7 +1626,7 @@ SELECT DISTINCT ?item ?series ?seriesLabel ?ordinal WHERE {
           ordinal?: { value: string };
         }>;
       };
-    }>(url.toString()).catch(() => null);
+    }>(url.toString(), 30_000).catch(() => null);
     const bindings = data?.results?.bindings ?? [];
     const ids = [
       ...new Set(
@@ -1122,9 +1678,7 @@ SELECT DISTINCT ?item ?series ?seriesLabel ?ordinal WHERE {
       );
       if (books.length) {
         const seriesLabels = seriesId ? entities[seriesId]?.labels : undefined;
-        const language = getUiLanguage();
         const name =
-          seriesLabels?.[language]?.value ??
           seriesLabels?.en?.value ??
           seriesLabels?.ar?.value ??
           bindings.find(
@@ -1252,7 +1806,9 @@ async function fetchOpenLibraryMetadata(ebooks: EBook[]): Promise<EBook[]> {
       docs.find(
         (doc) =>
           [doc.title, ...alternativeTitles(doc)].some((value) => keys.has(titleKey(value))) &&
-          authorListsMatch(source.authors, doc.author_name ?? []),
+          (!source.authors.length ||
+            !doc.author_name?.length ||
+            authorListsMatch(source.authors, doc.author_name)),
       );
     if (!exact && !complete) continue;
     const cacheKey = metadataRequestKey(source);
@@ -1268,19 +1824,39 @@ async function fetchOpenLibraryMetadata(ebooks: EBook[]): Promise<EBook[]> {
   });
 }
 
-export async function fetchEBookMetadata(ebooks: EBook[]): Promise<EBook[]> {
-  const [google, wikidata] = await Promise.all([
-    fetchGoogleMetadata(ebooks),
-    fetchWikidataMetadata(ebooks),
-  ]);
-  const primary = [...google, ...wikidata];
+async function fetchEBookMetadataNetwork(
+  ebooks: EBook[],
+  onPartial?: (metadata: EBook[]) => void,
+): Promise<EBook[]> {
+  let resolved: EBook[] = [];
+  const publish = (metadata: EBook[]) => {
+    if (!metadata.length) return;
+    resolved = combineMetadata(resolved, metadata);
+    cacheMetadataForSources(ebooks, resolved);
+    onPartial?.(resolved);
+  };
+  const google = fetchGoogleMetadata(ebooks, publish).then((metadata) => {
+    publish(metadata);
+    return metadata;
+  });
+  const wikidata = fetchWikidataMetadata(ebooks, publish).then((metadata) => {
+    publish(metadata);
+    return metadata;
+  });
+  await Promise.allSettled([google, wikidata]);
+  const primary = resolved;
   const unresolved = ebooks.filter(
     (source) => !primary.some((metadata) => verifiedMetadataMatch(source, metadata)),
   );
-  const [anilist, openLibrary] = await Promise.all([
-    fetchAniListEBookMetadata(unresolved),
-    fetchOpenLibraryMetadata(unresolved),
-  ]);
+  const anilist = fetchAniListEBookMetadata(unresolved).then((metadata) => {
+    publish(metadata);
+    return metadata;
+  });
+  const openLibrary = fetchOpenLibraryMetadata(unresolved).then((metadata) => {
+    publish(metadata);
+    return metadata;
+  });
+  await Promise.allSettled([anilist, openLibrary]);
   const aliasOwners = new Map<string, { alias: string; owner: string }>();
   for (const ebook of unresolved) {
     const owner = ebook.seriesTitle || ebook.title;
@@ -1304,7 +1880,50 @@ export async function fetchEBookMetadata(ebooks: EBook[]): Promise<EBook[]> {
     const owner = aliasOwners.get(titleKey(ebook.seriesTitle || ebook.title))?.owner;
     return owner ? [{ ...ebook, seriesTitle: owner }] : [];
   });
-  return [...primary, ...anilist, ...crosswalk, ...openLibrary];
+  publish(crosswalk);
+  cacheMetadataForSources(ebooks, resolved, true);
+  return resolved;
+}
+
+export async function fetchEBookMetadata(
+  ebooks: EBook[],
+  onPartial?: (metadata: EBook[]) => void,
+): Promise<EBook[]> {
+  const unique = [
+    ...new Map(ebooks.map((ebook) => [metadataRequestKey(ebook), ebook])).values(),
+  ];
+  const cached = cachedMetadata(unique);
+  if (cached.length) onPartial?.(cached);
+  const pending = unique.filter((ebook) => !hasFreshMetadata(ebook));
+  if (!pending.length) return cached;
+
+  const joined = new Set<Promise<EBook[]>>();
+  const owned: EBook[] = [];
+  for (const ebook of pending) {
+    const running = metadataInflight.get(metadataRequestKey(ebook));
+    if (running) joined.add(running);
+    else owned.push(ebook);
+  }
+  let ownedRequest: Promise<EBook[]> | null = null;
+  if (owned.length) {
+    ownedRequest = Promise.resolve().then(() =>
+      fetchEBookMetadataNetwork(owned, () => {
+        onPartial?.(cachedMetadata(unique));
+      }),
+    );
+    for (const ebook of owned) metadataInflight.set(metadataRequestKey(ebook), ownedRequest);
+    joined.add(ownedRequest);
+  }
+  await Promise.allSettled([...joined]);
+  if (ownedRequest) {
+    for (const ebook of owned) {
+      const key = metadataRequestKey(ebook);
+      if (metadataInflight.get(key) === ownedRequest) metadataInflight.delete(key);
+    }
+  }
+  const final = cachedMetadata(unique);
+  onPartial?.(final);
+  return final;
 }
 
 const SUBJECT_QUERY: Record<string, string> = {
@@ -1356,7 +1975,10 @@ export async function browsePopularEBooks(): Promise<EBook[]> {
   const url = new URL("https://openlibrary.org/search.json");
   url.searchParams.set("q", "language:eng");
   url.searchParams.set("sort", "readinglog");
-  url.searchParams.set("fields", "key,title,author_name,cover_i,first_publish_year,subject");
+  url.searchParams.set(
+    "fields",
+    "key,title,author_name,cover_i,first_publish_year,subject,series,isbn",
+  );
   url.searchParams.set("limit", "60");
   const data = await cachedJson<{ docs?: OpenLibraryDoc[] }>(url.toString(), 30_000);
   return groupEBookSeries((data.docs ?? []).map(mapOpenLibrary));

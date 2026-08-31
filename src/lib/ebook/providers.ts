@@ -582,23 +582,21 @@ async function withMetadata(
   );
   const resolved = new Map(items.map((item) => [item.id, item]));
   let next = 0;
-  while (next < batches.length) {
-    const batch = batches[next++];
-    const identified = await Promise.all(
-      batch.map(async (item) => {
-        if (item.source !== "source") return item;
-        const detail = await sourceDetail(item.id).catch(() => null);
-        return detail ? { ...item, ...detail, id: item.id, books: item.books } : item;
-      }),
-    );
-    onMetadata?.(mergeEBookMetadata(identified, []));
-    const enriched = mergeEBookMetadata(
-      identified,
-      await fetchEBookMetadata(identified).catch(() => []),
-    );
+  const publish = (batch: EBook[], metadata: EBook[]) => {
+    const enriched = mergeEBookMetadata(batch, metadata);
     enriched.forEach((item) => resolved.set(item.id, item));
     onMetadata?.(enriched);
-  }
+  };
+  const worker = async () => {
+    while (next < batches.length) {
+      const batch = batches[next++];
+      const metadata = await fetchEBookMetadata(batch, (partial) => publish(batch, partial)).catch(
+        () => [],
+      );
+      publish(batch, metadata);
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(2, batches.length) }, () => worker()));
   return items.map((item) => resolved.get(item.id) ?? item);
 }
 
@@ -614,6 +612,38 @@ function selectedProviders(list: Provider[], providerId?: string): Provider[] {
   return !providerId || providerId === "all"
     ? list
     : list.filter((provider) => provider.id === providerId);
+}
+
+export async function loadSourceEBookCatalogPage(
+  providerId?: string,
+  cursor: EBookCursor = {},
+): Promise<Omit<EBookPage, "enriched">> {
+  const list = selectedProviders(await providers(), providerId);
+  const pages = await Promise.all(
+    list.map(async (provider) => {
+      const offset = cursor[provider.id] ?? 0;
+      const items = await provider.popular(offset).catch(() => []);
+      return { provider, offset, items: mergeEBookMetadata(items, []) };
+    }),
+  );
+  return {
+    items: pages.flatMap((page) => page.items),
+    cursor: Object.fromEntries(
+      pages.map(({ provider, offset, items }) => [provider.id, offset + items.length]),
+    ),
+    hasMore: pages.some((page) => page.items.length > 0),
+  };
+}
+
+export async function searchSourceEBookCatalog(
+  query: string,
+  providerId?: string,
+): Promise<EBook[]> {
+  const list = selectedProviders(await providers(), providerId);
+  const pages = await Promise.all(
+    list.map((provider) => provider.search(query, 0).catch(() => [])),
+  );
+  return mergeEBookMetadata(pages.flat(), []);
 }
 
 export async function loadSourceEBookPage(

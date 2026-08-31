@@ -1073,7 +1073,7 @@ export function HarborReader({
       setShowOriginal(false);
       setTranslated(true);
     } catch (error) {
-      setTranslationError(error instanceof Error ? error.message : "DeepSeek translation failed");
+      setTranslationError(error instanceof Error ? error.message : "Translation failed");
     } finally {
       setTranslating(false);
     }
@@ -1434,6 +1434,7 @@ export function HarborReader({
       onClick={revealChrome}
     >
       <div
+        data-tauri-drag-region
         className={`absolute inset-x-0 top-0 z-30 flex h-16 items-center justify-between border-b px-5 backdrop-blur-xl transition duration-300 ${chrome ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"}`}
         style={{ background: `${colors.desk}df`, borderColor: `${colors.muted}35` }}
       >
@@ -1460,7 +1461,7 @@ export function HarborReader({
             <BookOpen size={19} />
           </button>
         </div>
-        <div className="min-w-0 text-center">
+        <div data-tauri-drag-region className="min-w-0 text-center">
           <div className="truncate text-sm font-semibold">{readerTitle}</div>
           <div className="mt-0.5 text-[11px]" style={{ color: colors.muted }}>
             {prefs.mode === "book"
@@ -1703,7 +1704,7 @@ export function HarborReader({
               ? showOriginal
                 ? "Show translation"
                 : "Show original language"
-              : "Translate chapter with DeepSeek"
+              : "Translate chapter"
           }
           title={
             translationError ||
@@ -1711,7 +1712,7 @@ export function HarborReader({
               ? showOriginal
                 ? "Show translation"
                 : "Show original language"
-              : "Translate with DeepSeek")
+              : "Translate chapter")
           }
         >
           {translating ? (

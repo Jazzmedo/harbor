@@ -45,6 +45,7 @@ const PRUNABLE_EXACT = new Set<string>([
   "harbor.playback-history.v1",
   "harbor.streamBadges.v1",
   "harbor.manga.popular.v1",
+  "harbor.ebook.metadata.v1",
   "harbor.heroPool.v1",
 ]);
 
@@ -55,6 +56,7 @@ const PRUNABLE_PREFIXES = [
   "harbor.manga.cache.v2.",
   "harbor.manga.art.",
   "harbor.ebook.translation.cache.v1.",
+  "harbor.ebook.openlibrary.v1.",
   "harbor.tvdbo.",
   "harbor.playback-history.v1.",
 ];
@@ -73,7 +75,11 @@ function prunableEntries(): Array<{ key: string; size: number }> {
     if (v == null) continue;
     out.push({ key, size: v.length + key.length });
   }
-  out.sort((a, b) => b.size - a.size);
+  out.sort((a, b) => {
+    const aTranslation = a.key.startsWith("harbor.ebook.translation.cache.v1.") ? 1 : 0;
+    const bTranslation = b.key.startsWith("harbor.ebook.translation.cache.v1.") ? 1 : 0;
+    return bTranslation - aTranslation || b.size - a.size;
+  });
   return out;
 }
 
@@ -133,6 +139,29 @@ export function setItemWithRecovery(key: string, value: string): boolean {
     } catch (e) {
       if (!isQuotaError(e)) throw e;
     }
+  }
+  // Replacing a value can still fail at the quota boundary because WebView storage
+  // reserves the new value before releasing the old one. Retry non-destructively by
+  // temporarily removing the previous value, and restore it if the replacement fails.
+  let previous: string | null = null;
+  try {
+    previous = localStorage.getItem(key);
+    if (previous != null) {
+      localStorage.removeItem(key);
+      try {
+        localStorage.setItem(key, value);
+        return true;
+      } catch (e) {
+        try {
+          localStorage.setItem(key, previous);
+        } catch {
+          console.error(`[storage] could not restore "${key}" after replacement failed`);
+        }
+        if (!isQuotaError(e)) throw e;
+      }
+    }
+  } catch (e) {
+    if (!isQuotaError(e)) throw e;
   }
   console.warn(`[storage] giving up on "${key}" after pruning every cache`);
   return false;
