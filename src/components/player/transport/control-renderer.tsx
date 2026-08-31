@@ -140,6 +140,7 @@ export type ControlContext = {
   anime4kMode?: string;
   onAnime4kMode?: (id: string) => void;
   anime4kAvailable?: boolean;
+  homeServerQualityControl?: ReactNode;
 };
 
 export function renderControl(id: PlayerControlId, ctx: ControlContext): ReactNode {
@@ -408,6 +409,8 @@ export function renderControl(id: PlayerControlId, ctx: ControlContext): ReactNo
         </BigButton>
       );
     }
+    case "home-server-quality":
+      return ctx.homeServerQualityControl ?? (ctx.editing ? <BigButton ariaLabel={t("Home server quality")}><SlidersHorizontal size={22} strokeWidth={1.9} /></BigButton> : null);
     case "audio-menu": {
       if (ctx.tight || ctx.engine === "html5") return null;
       return (

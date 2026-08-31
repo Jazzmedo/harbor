@@ -193,6 +193,7 @@ export type PlayerOverlayLayersProps = {
   syncApi: ReturnType<typeof useTextSync>;
   syncToast: ToastInfo | null;
   onSyncPlayPause: () => void;
+  homeServerQualityControl?: Shell["homeServerQualityControl"];
 };
 
 export const PlayerOverlayLayers = memo(function PlayerOverlayLayers(p: PlayerOverlayLayersProps) {
@@ -389,6 +390,7 @@ export const PlayerOverlayLayers = memo(function PlayerOverlayLayers(p: PlayerOv
           onOpenDvr={p.openDvr}
           sleep={p.sleep}
           onVolumeFeedback={p.onVolumeFeedback}
+          homeServerQualityControl={p.homeServerQualityControl}
         />
       )}
 

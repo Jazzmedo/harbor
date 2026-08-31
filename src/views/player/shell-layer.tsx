@@ -63,6 +63,7 @@ export const ShellLayer = memo(function ShellLayer({
   onOpenDvr,
   sleep,
   onVolumeFeedback,
+  homeServerQualityControl,
 }: {
   shellId: string;
   shellSnap: PlayerSnapshot;
@@ -119,6 +120,7 @@ export const ShellLayer = memo(function ShellLayer({
   onOpenDvr?: () => void;
   sleep: PlayerShellProps["sleep"];
   onVolumeFeedback?: (volume: number, muted: boolean) => void;
+  homeServerQualityControl?: PlayerShellProps["homeServerQualityControl"];
 }) {
   const ActiveShell = getPlayerShell(shellId).Component;
   return (
@@ -236,6 +238,7 @@ export const ShellLayer = memo(function ShellLayer({
       onDownloadReset={download?.reset}
       onOpenDvr={onOpenDvr}
       sleep={sleep}
+      homeServerQualityControl={homeServerQualityControl}
     />
   );
 });

@@ -25,6 +25,7 @@ export type PlayerControlId =
   | "seek-forward"
   | "next-episode"
   | "pick-another"
+  | "home-server-quality"
   | "audio-menu"
   | "subtitle-menu"
   | "speed-menu"
@@ -189,6 +190,7 @@ export const DEFAULT_DEFAULT_CONFIG: PlayerChromeConfig = {
     { id: "seek-forward", slot: "bottom-center", order: 30 },
     { id: "next-episode", slot: "bottom-center", order: 40 },
     { id: "pick-another", slot: "bottom-right", order: 0 },
+    { id: "home-server-quality", slot: "bottom-right", order: 5 },
     { id: "audio-menu", slot: "bottom-right", order: 10 },
     { id: "subtitle-menu", slot: "bottom-right", order: 20 },
     { id: "aspect-menu", slot: "bottom-right", order: 25, hidden: true },
@@ -228,6 +230,7 @@ export const DEFAULT_STREMIO_CONFIG: PlayerChromeConfig = {
     { id: "seek-forward", slot: "bottom-center", order: 20 },
     { id: "next-episode", slot: "bottom-center", order: 30 },
     { id: "speed-menu", slot: "bottom-right", order: 0 },
+    { id: "home-server-quality", slot: "bottom-right", order: 5 },
     { id: "audio-menu", slot: "bottom-right", order: 10 },
     { id: "subtitle-menu", slot: "bottom-right", order: 20 },
     { id: "aspect-menu", slot: "bottom-right", order: 25, hidden: true },
@@ -267,6 +270,7 @@ export const CONTROL_META: Record<
   "seek-forward": { label: "Seek forward", group: "transport", defaultSlot: "bottom-center" },
   "next-episode": { label: "Next episode", group: "transport", defaultSlot: "bottom-center" },
   "pick-another": { label: "Switch stream / TV Guide", group: "actions", defaultSlot: "bottom-right" },
+  "home-server-quality": { label: "Home server quality", group: "menus", defaultSlot: "bottom-right" },
   "audio-menu": { label: "Audio tracks", group: "menus", defaultSlot: "bottom-right" },
   "subtitle-menu": { label: "Subtitles", group: "menus", defaultSlot: "bottom-right" },
   "speed-menu": { label: "Playback speed", group: "menus", defaultSlot: "bottom-right" },

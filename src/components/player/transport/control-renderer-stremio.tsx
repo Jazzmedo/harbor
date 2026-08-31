@@ -2,6 +2,7 @@ import {
   Camera,
   ChevronLeft,
   Info,
+  Gauge,
   Maximize,
   Minimize,
   Pause,
@@ -14,6 +15,7 @@ import {
 import { NavGlyph } from "@/components/icons/nav-glyph";
 import { hdrFormatLabel, realQualityLabel } from "@/lib/player/resolution-label";
 import type { PlayerCapabilities, PlayerSnapshot } from "@/lib/player/bridge";
+import type { ReactNode } from "react";
 import type { SubtitleAddHandler } from "@/lib/player/subtitle-load";
 import type { Meta } from "@/lib/cinemeta";
 import { getCustomIcon, type CustomIconMap, type PlayerControlId, type TimeFormat, type VolumeStyle } from "@/lib/player-chrome";
@@ -128,6 +130,7 @@ export type StremioRenderCtx = {
   onDownloadReveal?: () => void;
   onDownloadReset?: () => void;
   onOpenDvr?: () => void;
+  homeServerQualityControl?: ReactNode;
 };
 
 function getStremioState(id: PlayerControlId, ctx: StremioRenderCtx): string | undefined {
@@ -408,6 +411,8 @@ export function RenderedStremioControl({
           useOverlayPopup={ctx.useOverlayPopups}
         />
       );
+    case "home-server-quality":
+      return ctx.homeServerQualityControl ?? (ctx.editing ? <StremioBtn ariaLabel={tr("Home server quality")}><Gauge size={22} strokeWidth={1.9} /></StremioBtn> : null);
     case "draw-toggle":
       if (!ctx.showDraw) return null;
       return (

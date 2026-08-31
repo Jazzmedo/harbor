@@ -94,6 +94,7 @@ export function Transport({
   onDownloadReset,
   onOpenDvr,
   sleep,
+  homeServerQualityControl,
 }: {
   snap: PlayerSnapshot;
   capabilities: PlayerCapabilities;
@@ -157,6 +158,7 @@ export function Transport({
   onDownloadReset?: () => void;
   onOpenDvr?: () => void;
   sleep?: import("@/views/player/hooks/use-sleep-timer").SleepTimerState;
+  homeServerQualityControl?: import("react").ReactNode;
 }) {
   const t = useT();
   const { settings } = useSettings();
@@ -272,6 +274,7 @@ export function Transport({
         onDownloadReset={onDownloadReset}
         onOpenDvr={onOpenDvr}
         sleep={sleep}
+        homeServerQualityControl={homeServerQualityControl}
       />
     );
   }
@@ -406,6 +409,7 @@ export function Transport({
     anime4kMode,
     onAnime4kMode,
     anime4kAvailable,
+    homeServerQualityControl,
   };
   const fadeClassName = `transition-opacity duration-300 ${visible ? "opacity-100" : "opacity-0"}`;
   const renderFadedControl = (id: PlayerControlId) => {

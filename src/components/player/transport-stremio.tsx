@@ -83,6 +83,7 @@ export type TransportStremioProps = {
   onDownloadReset?: () => void;
   onOpenDvr?: () => void;
   sleep?: import("@/views/player/hooks/use-sleep-timer").SleepTimerState;
+  homeServerQualityControl?: import("react").ReactNode;
 };
 
 export function TransportStremio(p: TransportStremioProps) {
@@ -146,6 +147,7 @@ export function TransportStremio(p: TransportStremioProps) {
     onDownloadReset,
     onOpenDvr,
     sleep,
+    homeServerQualityControl,
   } = p;
 
   const playing = snap.status === "playing";
@@ -262,6 +264,7 @@ export function TransportStremio(p: TransportStremioProps) {
     onDownloadReveal,
     onDownloadReset,
     onOpenDvr,
+    homeServerQualityControl,
   };
 
   const renderSlot = (slot: PlayerSlot) =>

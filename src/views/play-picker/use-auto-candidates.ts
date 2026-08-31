@@ -8,6 +8,7 @@ import { buildMatchScores } from "@/lib/together/source-match";
 import { hostSourceStream } from "@/lib/together/host-stream";
 import { hasInstantMarker, isWatchHub, needsDownload, streamMatchesLangs } from "./picker-utils";
 import { titleTokensPresent } from "@/lib/streams/trust";
+import { episodeSpanContains } from "@/lib/episode-span";
 
 const RES_PREF: Record<string, number> = { "1080p": 0, "720p": 1, "480p": 2, "4K": 3, SD: 4 };
 const LIKELY_PACK_BYTES = 12 * 1024 * 1024 * 1024;
@@ -42,12 +43,12 @@ export function useAutoCandidates(args: {
     const key = (s: ScoredStream) => s.url ?? s.infoHash ?? `${s.addonId}:${s.title ?? ""}`;
     const episodeConflict = (s: ScoredStream) => {
       if (episode == null || s.episode == null) return false;
-      if (s.episode !== episode) return true;
-      return season != null && s.season != null && s.season !== season;
+      if (season != null && s.season != null) return !episodeSpanContains(s, season, episode);
+      return s.episode !== episode;
     };
     const episodeExact = (s: ScoredStream) =>
       episode != null &&
-      s.episode === episode &&
+      (season != null && s.season != null ? episodeSpanContains(s, season, episode) : s.episode === episode) &&
       (season == null || s.season == null || s.season === season);
     const instantTier = (s: ScoredStream) => {
       if (!isCached(s)) return 2;

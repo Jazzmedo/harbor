@@ -48,7 +48,7 @@ export function useEpisodeNavigation(params: {
       return;
     }
     let cancelled = false;
-    const cur = { season: src.episode.season, episode: src.episode.episode };
+    const cur = { season: src.episode.season, episode: src.episodeEnd ?? src.episode.episode };
     fetchAdjacentEpisodes(src.meta, cur, {
       tmdbKey: settings.tmdbKey,
       kitsuStreamId: src.episode.kitsuStreamId,
@@ -85,7 +85,7 @@ export function useEpisodeNavigation(params: {
       if (localShowKey) {
         const local = findLocalEpisode(localShowKey, ep.season, ep.episode);
         if (local) {
-          replacePlayerSrc(localPlayerSrc(local));
+          replacePlayerSrc(localPlayerSrc(local, undefined, ep));
           return;
         }
       }
