@@ -121,6 +121,7 @@ type BpSourcesTarget = {
   episode?: PlayEpisode;
   resume: boolean;
   auto: boolean;
+  applyPreference: boolean;
 };
 
 export function BigPictureShell() {
@@ -372,8 +373,9 @@ export function BigPictureShell() {
       episode: PlayEpisode | undefined,
       resume: boolean,
       auto: boolean,
+      applyPreference: boolean,
     ) => {
-      setSources({ meta, episode, resume, auto });
+      setSources({ meta, episode, resume, auto, applyPreference });
     },
     [],
   );
@@ -519,6 +521,7 @@ export function BigPictureShell() {
                 episode={sources.episode}
                 resume={sources.resume}
                 autoPlay={sources.auto}
+                applyPreference={sources.applyPreference}
                 onClose={() => setSources(null)}
               />
             </Suspense>

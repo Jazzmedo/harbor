@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useRef, useSyncExternalStore } from "react";
+import { useHeroLogos } from "@/components/anime-hero/use-hero-logos";
 import {
   usePlaybackBufferedGated,
   usePlaybackPositionGated,
@@ -10,6 +11,7 @@ import {
   subscribeRemoteSession,
 } from "@/lib/remote/session";
 import type { PlayerSrc } from "@/lib/view";
+import { useSettings } from "@/lib/settings";
 
 export type BpPlayback = {
   /** False until the player has registered a real session with the hub. */
@@ -78,6 +80,9 @@ function run(command: Parameters<typeof dispatchRemoteCommand>[0]): void {
  * second and there is no reason to re-render the chrome while it is hidden.
  */
 export function useBpPlayback(src: PlayerSrc | null, tick: boolean): BpPlayback {
+  const { settings } = useSettings();
+  const logoSlides = useMemo(() => (src?.meta ? [src.meta] : []), [src?.meta]);
+  const localizedLogos = useHeroLogos(logoSlides, settings);
   const session = useRemoteSession();
   const positionSec = usePlaybackPositionGated(tick);
   const bufferedSec = usePlaybackBufferedGated(tick);
@@ -116,7 +121,7 @@ export function useBpPlayback(src: PlayerSrc | null, tick: boolean): BpPlayback 
     () => ({
       ready: !session.idle,
       title: src?.meta.name || src?.title || session.mediaTitle || "",
-      logoUrl: src?.meta.logo ?? null,
+      logoUrl: (src?.meta.id ? localizedLogos[src.meta.id] : undefined) ?? src?.meta.logo ?? null,
       posterUrl: src?.meta.poster ?? session.posterUrl,
       episode: session.episode,
       source: session.source,
@@ -146,6 +151,7 @@ export function useBpPlayback(src: PlayerSrc | null, tick: boolean): BpPlayback 
     [
       session,
       src,
+      localizedLogos,
       position,
       duration,
       bufferedSec,

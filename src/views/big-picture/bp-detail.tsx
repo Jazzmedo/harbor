@@ -11,6 +11,7 @@ import { type PlayEpisode } from "@/lib/view";
 import { useHeroLogos } from "@/components/anime-hero/use-hero-logos";
 import { useHideAnimeMetas } from "@/lib/anime-hide";
 import { useInLocalLibrary } from "@/lib/local-library";
+import { useTitleMediaServers } from "@/hooks/use-title-media-servers";
 import { useSettings } from "@/lib/settings";
 import { ratingTarget } from "@/lib/ratings/types";
 import type { AwardType } from "@/lib/providers/wikidata";
@@ -67,6 +68,7 @@ export function BpDetail({
     episode: PlayEpisode | undefined,
     resume: boolean,
     auto: boolean,
+    applyPreference: boolean,
   ) => void;
 }) {
   const { meta, detail: tmdbDetail, collection, providers, loading } = useBpDetail(metaId);
@@ -129,6 +131,7 @@ export function BpDetail({
     enabled: isSeries && !anime.owns,
   });
   const inLibrary = useInLocalLibrary(meta?.id, [imdbId]);
+  const homeServers = useTitleMediaServers(meta?.id, imdbId);
   const awardGroups = useBpTitleAwards(shell, imdbId);
   // No ref: a hero is on screen by definition. Surface "detail" is load bearing.
   // Harbor keeps two independent settings families, showXBadge for cards and
@@ -156,8 +159,9 @@ export function BpDetail({
       !ep ||
       !mark.ep ||
       (ep.season === mark.ep.season && ep.episode === mark.ep.episode);
-    const auto = settings.instantPlay || (fromStrip && settings.seasonSourceLock);
-    onSources(meta, ep, onResumeTarget, auto);
+    const auto = settings.playbackSourcePreference === "online" &&
+      (settings.instantPlay || (fromStrip && settings.seasonSourceLock));
+    onSources(meta, ep, onResumeTarget, auto, true);
   };
 
   const trailerYtId = detail?.trailerYtId ?? shell.trailerStreams?.[0]?.ytId ?? null;
@@ -177,6 +181,7 @@ export function BpDetail({
         onSources(
           meta,
           mark.ep ?? (isSeries ? bpEpisodeAt(1, 1, episodeIds) : undefined),
+          false,
           false,
           false,
         );
@@ -319,6 +324,7 @@ export function BpDetail({
           badges={badges}
           imdbId={imdbId}
           inLibrary={inLibrary}
+          homeServers={homeServers}
           mark={mark}
           cwEntry={cwEntry}
           actions={actions}

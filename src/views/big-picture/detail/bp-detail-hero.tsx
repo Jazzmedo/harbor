@@ -13,6 +13,7 @@ import type { BpCardBadge } from "../use-bp-card-badges";
 import type { BpDetailAction } from "../use-bp-detail-actions";
 import { BpHeroMarks, BpTmdbKeyNote } from "./bp-hero-notes";
 import { BpSynopsis, useBpSynopsis } from "./bp-synopsis";
+import type { MediaServerConnection } from "@/lib/media-server/types";
 
 export function BpDetailHero({
   meta,
@@ -21,6 +22,7 @@ export function BpDetailHero({
   badges,
   imdbId,
   inLibrary,
+  homeServers,
   mark,
   cwEntry,
   actions,
@@ -32,6 +34,7 @@ export function BpDetailHero({
   badges: readonly BpCardBadge[];
   imdbId: string | null;
   inLibrary: boolean;
+  homeServers: readonly MediaServerConnection[];
   mark: { ep?: PlayEpisode; resumed: boolean };
   cwEntry?: LibraryItem | null;
   actions: BpDetailAction[];
@@ -40,7 +43,7 @@ export function BpDetailHero({
   const t = useBpT();
   const { settings } = useSettings();
 
-  const logo = detail?.logo ?? meta.logo ?? heroLogo;
+  const logo = heroLogo ?? detail?.logo ?? meta.logo;
   const overview = detail?.overview || meta.description || "";
   const synopsis = useBpSynopsis(overview);
   const offset = cwEntry?.state?.timeOffset ?? 0;
@@ -86,7 +89,7 @@ export function BpDetailHero({
             {f}
           </span>
         ))}
-        <BpHeroMarks meta={meta} inLibrary={inLibrary} />
+        <BpHeroMarks meta={meta} inLibrary={inLibrary} homeServers={homeServers} />
       </div>
 
       <div className="mt-[14px]">

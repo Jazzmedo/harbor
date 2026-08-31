@@ -14,6 +14,9 @@ import { useMal } from "@/lib/mal/provider";
 import { useSimkl } from "@/lib/simkl/provider";
 import { useLetterboxd } from "@/lib/stremboxd/provider";
 import { localEntryToMeta, useLocalLibrary, type LocalEntry } from "@/lib/local-library";
+import { mediaServerConnections, subscribeMediaServerConnections } from "@/lib/media-server/connections";
+import { mediaServerItems, mediaServerMetadata, putMediaServerMetadata } from "@/lib/media-server/index-store";
+import { groupMediaServerTitles } from "@/lib/media-server/selectors";
 import { readLocalEntries, subscribeWatchlist, type LocalEntry as SavedEntry } from "@/lib/watchlist";
 import { useCustomLists } from "@/lib/custom-lists";
 import { useMediaFavorites } from "@/lib/media-favorites";
@@ -22,6 +25,7 @@ import { useMangaFavorites } from "@/lib/manga-favorites";
 import { parseTs, sortedGroups, type SortKey } from "@/views/library/shared";
 import { filterLibrary, mergeWatchlist } from "@/views/library/watchlist-tab";
 import { filterHistory, historyItemsToDated, mergeHistory } from "@/views/library/history-merge";
+import { hydrateLibraryMeta } from "@/views/library/hydrate-meta";
 import { useBpServiceFeed } from "./use-bp-library-services";
 import type {
   BpLibEntry,
@@ -36,6 +40,7 @@ const CORE_TABS: Array<{ id: BpLibTab; label: string }> = [
   { id: "watchlist", label: "Watchlist" },
   { id: "history", label: "History" },
   { id: "local", label: "Local" },
+  { id: "media-servers", label: "Media Servers" },
   { id: "lists", label: "My Lists" },
   { id: "favorites", label: "Favorites" },
 ];
@@ -147,16 +152,71 @@ function unresolvedMeta(file: LocalEntry): Meta {
 function localFileEntries(files: LocalEntry[]): BpLibEntry[] {
   const by = new Map<string, BpLibEntry>();
   for (const file of files) {
-    const meta = localEntryToMeta(file) ?? unresolvedMeta(file);
+    const base = localEntryToMeta(file) ?? unresolvedMeta(file);
+    const meta: Meta = {
+      ...base,
+      releaseInfo: file.year != null ? String(file.year) : base.releaseInfo,
+      imdbRating: file.rating != null ? String(file.rating) : base.imdbRating,
+      runtime: file.runtime != null ? `${file.runtime} min` : base.runtime,
+      genres: file.genres ?? base.genres,
+    };
     const at = by.get(meta.id);
     if (!at) {
       by.set(meta.id, { key: meta.id, meta, date: file.addedAt || null });
       continue;
     }
     if (!at.meta.poster && meta.poster) at.meta = meta;
+    if (meta.genres?.length) {
+      at.meta = {
+        ...at.meta,
+        genres: [...new Set([...(at.meta.genres ?? []), ...meta.genres])],
+      };
+    }
     at.date = Math.max(at.date ?? 0, file.addedAt || 0);
   }
   return [...by.values()];
+}
+
+function useMediaServerEntries(reload: number): BpLibFeed {
+  const { settings } = useSettings();
+  const [feed, setFeed] = useState<BpLibFeed>({ entries: [], status: "loading", groups: [] });
+  useEffect(() => {
+    let alive = true;
+    const load = async () => {
+      const connections = mediaServerConnections();
+      const enabled = new Set(connections.filter((connection) => connection.enabled).map((connection) => connection.id));
+      const allItems = await mediaServerItems();
+      const titles = groupMediaServerTitles(allItems.filter((item) => enabled.has(item.connectionId)));
+      const languageKey = `${settings.tmdbLanguage || "en"}:${(settings.tmdbImageLangs ?? []).join(",")}`;
+      const entries = await Promise.all(titles.map(async (title) => {
+        const key = `${title.key}:locale:${languageKey}`;
+        const cached = await mediaServerMetadata<Meta>(key);
+        const hydrated = cached ?? await hydrateLibraryMeta(title.key, title.kind, settings.tmdbKey).catch(() => null);
+        if (!cached && hydrated) await putMediaServerMetadata(key, hydrated);
+        return {
+          key: title.key,
+          meta: hydrated ?? { id: title.key, type: title.kind, name: title.fallbackTitle, releaseInfo: title.year ? String(title.year) : undefined },
+          date: title.addedAt ?? null,
+          groups: title.connectionIds,
+          libraries: title.libraryIds,
+        };
+      }));
+      const libraryNames = new Map<string, string>();
+      for (const item of allItems) {
+        if (enabled.has(item.connectionId)) libraryNames.set(item.libraryId, item.libraryName || item.libraryId);
+      }
+      if (alive) setFeed({
+        entries,
+        status: "ready",
+        groups: connections.filter((connection) => connection.enabled).map((connection) => ({ id: connection.id, label: connection.name })),
+        libraries: [...libraryNames].map(([id, label]) => ({ id, label })),
+      });
+    };
+    void load().catch(() => { if (alive) setFeed((current) => ({ ...current, status: "error" })); });
+    const unsubscribe = subscribeMediaServerConnections(() => void load());
+    return () => { alive = false; unsubscribe(); };
+  }, [reload, settings.tmdbKey, settings.tmdbLanguage, settings.tmdbImageLangs]);
+  return feed;
 }
 
 export function useBpLibraryFeed(tab: BpLibTab): BpLibFeed & { refresh: () => void; signedIn: boolean } {
@@ -174,6 +234,7 @@ export function useBpLibraryFeed(tab: BpLibTab): BpLibFeed & { refresh: () => vo
   const characters = useCharacterFavorites();
   const manga = useMangaFavorites();
   const service = useBpServiceFeed(tab, reload);
+  const mediaServers = useMediaServerEntries(reload);
 
   const keep = useMemo(
     () => stremio.items.filter((i) => usable(i) && !(hideAnime && isAnimeCwItem(i))),
@@ -211,6 +272,8 @@ export function useBpLibraryFeed(tab: BpLibTab): BpLibFeed & { refresh: () => vo
     if (tab === "local") {
       return { entries: localFileEntries(files), status: "ready", groups: [] };
     }
+
+    if (tab === "media-servers") return mediaServers;
 
     if (tab === "lists") {
       const entries: BpLibEntry[] = [];
@@ -281,6 +344,7 @@ export function useBpLibraryFeed(tab: BpLibTab): BpLibFeed & { refresh: () => vo
     characters,
     manga,
     service,
+    mediaServers,
     trakt.watchlist,
     trakt.history,
     trakt.status,
