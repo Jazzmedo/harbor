@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Bookmark, Clock, Star, WifiOff } from "lucide-react";
+import { Bookmark, Clock, FolderOpen, Server, Star, WifiOff } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { Meta } from "@/lib/cinemeta";
 import { Poster, usePosterChain } from "@/components/poster";
@@ -8,7 +8,7 @@ import type { RemoteLibraryItem } from "@/lib/remote/protocol";
 import { useMobileRemote } from "./mobile-remote";
 import { MobileDetail } from "./mobile-detail";
 
-type SectionId = "watchlist" | "history" | "favorites";
+type SectionId = "watchlist" | "history" | "favorites" | "local" | "mediaServers";
 type Entry = { meta: Meta; date: number };
 type SectionState = { entries: Entry[]; loading: boolean };
 
@@ -16,12 +16,16 @@ const SECTIONS: Array<{ id: SectionId; label: string; icon: LucideIcon }> = [
   { id: "watchlist", label: "Watchlist", icon: Bookmark },
   { id: "history", label: "History", icon: Clock },
   { id: "favorites", label: "Favorites", icon: Star },
+  { id: "local", label: "Local Library", icon: FolderOpen },
+  { id: "mediaServers", label: "Media Servers", icon: Server },
 ];
 
 const EMPTY: Record<SectionId, { icon: LucideIcon; title: string; body: string }> = {
   watchlist: { icon: Bookmark, title: "Your watchlist is empty", body: "Save a movie or show from any detail page and it lines up here for later." },
   history: { icon: Clock, title: "Nothing watched yet", body: "Press play on something. It shows up here once you start watching." },
   favorites: { icon: Star, title: "No favorites yet", body: "Tap the star on any movie or show to keep it close." },
+  local: { icon: FolderOpen, title: "Your local library is empty", body: "Scan local folders in Harbor and your movies and shows will appear here." },
+  mediaServers: { icon: Server, title: "No media-server titles", body: "Enable and sync Plex, Jellyfin, or Emby in Harbor to browse them here." },
 };
 
 const TAB_KEY = "harbor.mobile.library.tab";
@@ -40,7 +44,7 @@ const VIEW_SWAP_CSS = `
 function readSavedTab(): SectionId {
   try {
     const v = localStorage.getItem(TAB_KEY);
-    if (v === "watchlist" || v === "history" || v === "favorites") return v;
+    if (v === "watchlist" || v === "history" || v === "favorites" || v === "local" || v === "mediaServers") return v;
   } catch {}
   return "watchlist";
 }
@@ -89,7 +93,7 @@ function Header() {
 
 function TabStrip({ tab, onTab }: { tab: SectionId; onTab: (t: SectionId) => void }) {
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
       {SECTIONS.map((s) => {
         const on = s.id === tab;
         const Icon = s.icon;
@@ -99,7 +103,7 @@ function TabStrip({ tab, onTab }: { tab: SectionId; onTab: (t: SectionId) => voi
             type="button"
             onClick={() => onTab(s.id)}
             aria-current={on ? "page" : undefined}
-            className={`flex flex-1 items-center justify-center gap-1.5 rounded-full py-2.5 text-[13.5px] font-semibold transition-colors duration-200 active:scale-[0.97] motion-reduce:transition-none ${
+            className={`flex shrink-0 items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-[13.5px] font-semibold transition-colors duration-200 active:scale-[0.97] motion-reduce:transition-none ${
               on ? "bg-ink text-canvas" : "bg-surface text-ink-muted ring-1 ring-edge-soft"
             }`}
           >
@@ -231,6 +235,8 @@ function useLibraryData(): { data: Record<SectionId, SectionState>; connected: b
         watchlist: { entries: toEntries(lib?.watchlist), loading },
         history: { entries: toEntries(lib?.history), loading },
         favorites: { entries: toEntries(lib?.favorites), loading },
+        local: { entries: toEntries(lib?.local), loading },
+        mediaServers: { entries: toEntries(lib?.mediaServers), loading },
       },
     };
   }, [connected, lib]);

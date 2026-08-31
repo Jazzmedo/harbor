@@ -19,6 +19,10 @@ import { fetchAddonCatalogPage, fetchAddonMeta, isCollectionCatalog } from "@/li
 import { MobileDetail } from "./mobile-detail";
 import { MobileAwards } from "./mobile-awards";
 import { MobileGenrePage } from "./mobile-genre-page";
+import { useMobileRemote } from "./mobile-remote";
+import { LocalLibraryBrand } from "@/components/local-library-brand";
+import { MediaServerBrand } from "@/components/media-server-brand";
+import type { MediaServerProvider } from "@/lib/media-server/types";
 
 const prefersReducedMotion = () =>
   typeof window !== "undefined" &&
@@ -789,6 +793,12 @@ function Grid({ metas, onOpenDetail }: { metas: Meta[]; onOpenDetail: (m: Meta) 
 
 function GridTile({ meta, onOpenDetail }: { meta: Meta; onOpenDetail: (m: Meta) => void }) {
   const { settings } = useSettings();
+  const { snapshot } = useMobileRemote();
+  const local = snapshot.library?.local?.some((item) => item.id === meta.id) ?? false;
+  const providers = useMemo(() => {
+    const found = snapshot.library?.mediaServers?.find((item) => item.id === meta.id);
+    return found?.mediaServerProviders ?? [];
+  }, [snapshot.library?.mediaServers, meta.id]);
   const { src, onError } = usePosterChain(
     settings.rpdbKey,
     meta.id,
@@ -801,7 +811,17 @@ function GridTile({ meta, onOpenDetail }: { meta: Meta; onOpenDetail: (m: Meta) 
       onClick={() => onOpenDetail(meta)}
       className="text-start transition-transform duration-150 active:scale-[0.96] motion-reduce:transition-none"
     >
-      <Poster src={src} onError={onError} seed={meta.id} ratio="portrait" lazy className="rounded-[12px]" />
+      <div className="relative overflow-hidden rounded-[12px]">
+        <Poster src={src} onError={onError} seed={meta.id} ratio="portrait" lazy className="rounded-[12px]" />
+        {(local || providers.length > 0) && (
+          <span className="absolute end-1.5 top-1.5 flex items-center gap-1 rounded-lg bg-canvas/90 px-1.5 py-1 text-ink shadow-lg ring-1 ring-edge-soft backdrop-blur-md">
+            {local && <LocalLibraryBrand className="h-4 w-4" />}
+            {providers.map((provider) => (
+              <MediaServerBrand key={provider} provider={provider as MediaServerProvider} name={provider} compact />
+            ))}
+          </span>
+        )}
+      </div>
       <p className="mt-1.5 line-clamp-2 text-[12px] font-medium leading-snug text-ink-muted">{meta.name}</p>
     </button>
   );

@@ -60,7 +60,15 @@ export function MobileHome() {
     return () => {
       alive = false;
     };
-  }, [settings.tmdbKey, settings.homeMode, reloadKey]);
+  }, [
+    settings.tmdbKey,
+    settings.homeMode,
+    settings.tmdbLanguage,
+    settings.tmdbImageLangs,
+    settings.translateTitles,
+    settings.translateDescriptions,
+    reloadKey,
+  ]);
 
   const shownHero = useHideAnimeMetas(hero);
   const shownRows = useHideAnimeRows(rows);
