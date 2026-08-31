@@ -351,6 +351,8 @@ export type Settings = {
   showLocalLibraryBadge: boolean;
   showWatchedBadge: boolean;
   localPlaybackMode: "ask" | "local" | "stream";
+  playbackSourcePreference: "ask" | "local" | "online" | "home-server";
+  preferredMediaServerId: string | null;
   localMinFileSizeMb: number;
   catalogsPinned: string[];
   catalogsHidden: string[];
