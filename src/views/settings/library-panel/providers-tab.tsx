@@ -20,27 +20,7 @@ export function ProvidersTab(props: ProviderKeysArgs) {
 
   return (
     <>
-      <Section
-        title={t("API budget")}
-        subtitle={t(
-          "Daily call counter for OMDb rating lookups. Reset if it stops returning fresh scores.",
-        )}
-      >
-        <OmdbBudgetRow />
-      </Section>
-
       {modals}
-
-      <Section
-        title={t("Region & language")}
-        subtitle={t(
-          "Used for streaming availability and the Now Playing release window. Pick a country and Harbor can match the interface, metadata, and subtitle languages to it.",
-        )}
-      >
-        <RegionField />
-      </Section>
-
-      <AiSearchSection />
 
       <Section
         title={t("Metadata providers")}
@@ -55,6 +35,7 @@ export function ProvidersTab(props: ProviderKeysArgs) {
           {keyRow("mdblist")}
           {keyRow("fanart")}
           {keyRow("rpdb")}
+          {keyRow("postersrv")}
         </SettingGroup>
 
         <SettingGroup label={t("Titles and descriptions")}>
@@ -91,34 +72,46 @@ export function ProvidersTab(props: ProviderKeysArgs) {
           />
         </SettingGroup>
 
-        <SettingGroup>
+        <SettingGroup label={t("Episode order")}>
           <EpisodeOrderSetting />
         </SettingGroup>
+      </Section>
 
-        <SettingGroup label={t("Posters")}>
-          {keyRow("postersrv")}
-        </SettingGroup>
+      <Section
+        title={t("Region & language")}
+        subtitle={t(
+          "Used for streaming availability and the Now Playing release window. Pick a country and Harbor can match the interface, metadata, and subtitle languages to it.",
+        )}
+      >
+        <RegionField />
+      </Section>
 
-        <SettingGroup label={t("Song identification")}>
-          <SettingRow
-            icon={<Music size={16} />}
-            label={t("Song ID provider")}
-            desc={t("Which service names the track when you tap Identify song in the player.")}
-          >
-            <Segmented
-              value={settings.songIdProvider}
-              options={[
-                { value: "audd", label: t("AudD") },
-                { value: "ai", label: t("AI (Gemini)") },
-              ]}
-              onChange={(v) => update({ songIdProvider: v as "audd" | "ai" })}
-            />
-          </SettingRow>
-          <Nested>
-            {settings.songIdProvider === "ai" ? keyRow("songai") : keyRow("audd")}
-          </Nested>
-        </SettingGroup>
+      <AiSearchSection />
 
+      <Section
+        title={t("Song identification")}
+        subtitle={t("Which service names the track when you tap Identify song in the player.")}
+      >
+        <SettingRow icon={<Music size={16} />} label={t("Song ID provider")}>
+          <Segmented
+            value={settings.songIdProvider}
+            options={[
+              { value: "audd", label: t("AudD") },
+              { value: "ai", label: t("AI (Gemini)") },
+            ]}
+            onChange={(v) => update({ songIdProvider: v as "audd" | "ai" })}
+          />
+        </SettingRow>
+        <Nested>{settings.songIdProvider === "ai" ? keyRow("songai") : keyRow("audd")}</Nested>
+      </Section>
+
+      <Section
+        title={t("API budget")}
+        subtitle={t(
+          "Daily call counter for OMDb rating lookups. Reset if it stops returning fresh scores.",
+        )}
+      >
+        <OmdbBudgetRow />
       </Section>
     </>
   );

@@ -1,7 +1,12 @@
 import { Check, Copy, ExternalLink, Globe, Loader2, Play, RotateCw, Server, Square } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { BUNDLED_SERVER_URL, getCastServerStatus, restartCastServer } from "@/lib/stremio-server";
+import {
+  bundledServerPort,
+  bundledServerUrl,
+  getCastServerStatus,
+  restartCastServer,
+} from "@/lib/stremio-server";
 import { openUrl } from "@/lib/window";
 import { Section } from "../shared";
 import { SettingGroup, SettingRow, ROW_ACTION } from "../kit";
@@ -9,6 +14,8 @@ import { isTauri } from "./internals";
 import { useT } from "@/lib/i18n";
 
 type EngineState = "checking" | "running" | "starting" | "stopped";
+
+const PORT_TAKEN_RE = /unavailable|in use|EADDRINUSE|10048/i;
 
 const PILL: Record<EngineState, { dot: string; chip: string }> = {
   checking: { dot: "bg-ink-subtle", chip: "bg-raised text-ink-muted" },
@@ -21,7 +28,7 @@ async function probeBundled(): Promise<boolean> {
   try {
     const ctrl = new AbortController();
     const timer = window.setTimeout(() => ctrl.abort(), 1500);
-    const res = await fetch(`${BUNDLED_SERVER_URL}/settings`, { method: "GET", signal: ctrl.signal });
+    const res = await fetch(`${bundledServerUrl()}/settings`, { method: "GET", signal: ctrl.signal });
     window.clearTimeout(timer);
     return res.ok;
   } catch {
@@ -33,6 +40,7 @@ async function readEngineState(): Promise<EngineState> {
   const s = await getCastServerStatus();
   if (s?.ready) return "running";
   if (s?.running) return "starting";
+  if (s) return "stopped";
   return (await probeBundled()) ? "running" : "stopped";
 }
 
@@ -98,6 +106,7 @@ export function ServerAddressSection() {
   const t = useT();
   const [lanIp, setLanIp] = useState<string | null>(null);
   const [engine, setEngine] = useState<EngineState>("checking");
+  const [port, setPort] = useState(bundledServerPort());
   const [acting, setActing] = useState(false);
   const [lastError, setLastError] = useState<string | null>(null);
   const aliveRef = useRef(true);
@@ -107,6 +116,7 @@ export function ServerAddressSection() {
     const s = await getCastServerStatus();
     if (aliveRef.current) {
       setEngine(next);
+      setPort(bundledServerPort());
       setLastError(next === "stopped" ? s?.last_error ?? null : null);
     }
   };
@@ -144,7 +154,16 @@ export function ServerAddressSection() {
   const start = async () => {
     setActing(true);
     setEngine("starting");
-    await restartCastServer();
+    setLastError(null);
+    const failure = await restartCastServer();
+    if (failure) {
+      if (aliveRef.current) {
+        setEngine("stopped");
+        setLastError(failure);
+        setActing(false);
+      }
+      return;
+    }
     window.setTimeout(() => {
       void refresh().then(() => setActing(false));
     }, 1200);
@@ -211,6 +230,13 @@ export function ServerAddressSection() {
             <span className="text-[12.5px] leading-relaxed text-danger">
               <span className="font-semibold">{t("Server couldn't start:")}</span> {lastError}
             </span>
+            {PORT_TAKEN_RE.test(lastError) && (
+              <span className="text-[12.5px] leading-relaxed text-ink-muted">
+                {t(
+                  "Another program already holds this port, usually a Stremio server that is running on this machine. Harbor tried its spare ports too. Stop that server, or leave it running and point Harbor at it in Remote streaming server below.",
+                )}
+              </span>
+            )}
             {/not bundled/i.test(lastError) && (
               <span className="text-[12.5px] leading-relaxed text-ink-muted">
                 {t(
@@ -223,8 +249,8 @@ export function ServerAddressSection() {
       </SettingGroup>
 
       <SettingGroup label={t("Addresses")}>
-        <AddressRow label={t("On this computer")} url={BUNDLED_SERVER_URL} openable={running} />
-        {lanIp && <AddressRow label={t("From other devices on your Wi-Fi")} url={`http://${lanIp}:11470`} />}
+        <AddressRow label={t("On this computer")} url={`http://127.0.0.1:${port}`} openable={running} />
+        {lanIp && <AddressRow label={t("From other devices on your Wi-Fi")} url={`http://${lanIp}:${port}`} />}
       </SettingGroup>
 
       <p className="px-1 text-[12.5px] leading-relaxed text-ink-subtle">

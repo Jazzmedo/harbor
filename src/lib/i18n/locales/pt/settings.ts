@@ -192,8 +192,6 @@ const settings: Record<string, string> = {
   "Groq API key (gsk-...)": "Chave de API do Groq (gsk-...)",
   "Group Refresh on the left beside Back instead of the far right of the header.":
     "Agrupar Atualizar à esquerda, ao lado de Voltar, em vez de na extremidade direita do cabeçalho.",
-  "Harbor in your browser (Wi-Fi)": "Harbor no seu navegador (Wi-Fi)",
-  "Harbor in your browser (this computer)": "Harbor no seu navegador (este computador)",
   "Harbor will not start the torrent engine, contact trackers, or run DHT. Use this if you only want debrid and direct links. Turn off to re-enable torrent streaming.":
     "O Harbor não iniciará o mecanismo de torrent, não contatará trackers nem executará o DHT. Use isso se você quiser apenas debrid e links diretos. Desative para reativar o streaming por torrent.",
   "Hide badge": "Ocultar selo",
@@ -251,8 +249,6 @@ const settings: Record<string, string> = {
   "Packs & import": "Pacotes e importação",
   "Paste an image URL (png, webp, svg)": "Cole uma URL de imagem (png, webp, svg)",
   "Pattern (e.g. \\\\bremux\\\\b)": "Padrão (ex.: \\\\bremux\\\\b)",
-  "Phone remote (Wi-Fi)": "Controle pelo celular (Wi-Fi)",
-  "Phone remote (this computer)": "Controle pelo celular (este computador)",
   "Pick a source once and Harbor keeps playing the rest of that season from the same release, no re-picking. Works best with a debrid season pack. For anime it locks the whole series to that release.":
     "Escolha uma fonte uma vez e o Harbor continua reproduzindo o resto daquela temporada a partir do mesmo lançamento, sem escolher de novo. Funciona melhor com um pacote de temporada em debrid. Para anime, trava a série inteira nesse lançamento.",
   "Play a short sound when changing the player volume. Off by default.":

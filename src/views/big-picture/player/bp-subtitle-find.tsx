@@ -87,6 +87,7 @@ export function BpSubtitleFind(props: BpSubtitleFindProps) {
       const enabled = settings.subProvidersEnabled ?? {};
       const playing = tgt.imdbId === home.imdbId && tgt.title === home.title;
       const opts: SearchOptions = {
+        timeoutMs: 8_000,
         providers: {
           wyzie: tgt.imdbId ? enabled.wyzie === true : true,
           addons: enabled.addons ?? true,

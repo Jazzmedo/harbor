@@ -1,4 +1,4 @@
-import { Ruler } from "lucide-react";
+import { Check, Ruler } from "lucide-react";
 import { useSettings } from "@/lib/settings";
 import { useT } from "@/lib/i18n";
 import { Section, Segmented, ToggleRow } from "../shared";
@@ -15,6 +15,15 @@ export function DetailTab() {
         title={t("Show pages")}
         subtitle={t("How a show or movie detail page behaves when you open it.")}
       >
+        <ToggleRow
+          label={t("Mark watched button")}
+          leading={<Check size={16} strokeWidth={2.6} className="text-ink-muted" />}
+          sub={t(
+            "Show a button on the detail page to mark a title or episode as watched. Syncs to Trakt and Simkl if connected.",
+          )}
+          value={settings.showWatchedButton}
+          onChange={(v) => update({ showWatchedButton: v })}
+        />
         <ToggleRow
           label={t("Remember your place on show pages")}
           sub={t(

@@ -101,7 +101,12 @@ test("one slow subtitle addon cannot discard faster addon results", () => {
     /withSubtitleTimeout\(searchAddons\(/,
     "the combined addon result must not be discarded by one shared timeout",
   );
-  assert.match(search, /searchAddons\(opts\.addons, q, tmo\)/);
+  assert.match(
+    search,
+    /for \(const addon of opts\.addons\)/,
+    "one search task per addon so a slow addon cannot hold back the rest",
+  );
+  assert.match(search, /searchAddons\(\[addon\], q, tmo\)/);
 });
 
 test("an enriched addon timeout still falls back to the standard subtitle endpoint", () => {
@@ -119,11 +124,11 @@ test("an enriched addon timeout still falls back to the standard subtitle endpoi
 });
 
 test("automatic subtitle loading limits each preferred language independently", () => {
-  assert.match(fetchIntoPlayer, /const EXTRA_TRACKS_PER_LANGUAGE = 40/);
+  assert.match(fetchIntoPlayer, /const EXTRA_TRACKS_PER_LANGUAGE = 6/);
   assert.match(fetchIntoPlayer, /spreadBySourcePerLanguage\(/);
   assert.match(
     fetchIntoPlayer,
-    /spreadBySourcePerLanguage\(byPreferredLang, consumed, EXTRA_TRACKS_PER_LANGUAGE\)/,
+    /spreadBySourcePerLanguage\(eagerPool, consumed, EXTRA_TRACKS_PER_LANGUAGE\)/,
   );
 });
 

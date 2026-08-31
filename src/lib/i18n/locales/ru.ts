@@ -30,6 +30,7 @@ import plurals from "./ru/plurals";
 
 import bpSources from "./ru/bp-sources";
 import used from "./ru/used";
+import sweep from "./ru/sweep";
 
 const ru: Record<string, string> = {
   ...coverage,
@@ -63,6 +64,7 @@ const ru: Record<string, string> = {
   ...plurals,
   ...bpSources,
   ...used,
+  ...sweep,
 };
 
 export default ru;

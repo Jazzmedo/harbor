@@ -7,6 +7,7 @@ import { movieWatchedIds } from "@/lib/movie-watched";
 import { watchedFlagIds } from "@/lib/watched-flag";
 import { generatePool, usable, type PoolExclude } from "./generate";
 import { ensureRelated, prefetchRelated, relatedResolved } from "./affinity";
+import { themeById } from "./themes";
 import type { StoredVoyage, Voyage, VoyageState, VoyageTheme } from "./types";
 
 const KEY = "harbor.voyage.v1";
@@ -133,16 +134,24 @@ function rankHeadings(
     .map((x) => x.id);
 }
 
+function onTheme(m: Meta, genre?: string): boolean {
+  if (!genre) return true;
+  const want = genre.toLowerCase();
+  return (m.genres ?? []).some((g) => g.toLowerCase() === want);
+}
+
 function mergeRelated(
   v: Voyage,
   related: Meta[],
 ): { pool: Meta[]; recVotes: Record<string, number> } {
   const exclude = buildExclude();
+  const genre = themeById(v.themeId)?.genre;
   const have = new Set(v.pool.map((m) => m.id));
   const pool = v.pool.slice();
   const recVotes = { ...(v.recVotes ?? {}) };
   for (const m of related) {
     if (!usable(m, exclude)) continue;
+    if (!onTheme(m, genre)) continue;
     recVotes[m.id] = (recVotes[m.id] ?? 0) + 1;
     if (!have.has(m.id)) {
       have.add(m.id);

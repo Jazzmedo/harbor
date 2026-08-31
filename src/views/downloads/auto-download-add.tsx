@@ -7,6 +7,8 @@ import { searchAll, searchCinemeta } from "@/lib/search";
 import { useSettings } from "@/lib/settings";
 import { addAutoDownload, isAutoDownloaded } from "@/lib/auto-download";
 
+const MAX_RESULTS = 8;
+
 export function AutoDownloadAdd() {
   const { settings } = useSettings();
   const [query, setQuery] = useState("");
@@ -37,12 +39,18 @@ export function AutoDownloadAdd() {
         if (id !== reqRef.current) return;
         const seen = new Set<string>();
         const merged: Meta[] = [];
-        for (const m of [...tmdb, ...cine]) {
-          if (seen.has(m.id)) continue;
-          seen.add(m.id);
-          merged.push(m);
+        const rounds = Math.max(tmdb.length, cine.length);
+        for (let i = 0; i < rounds && merged.length < MAX_RESULTS; i++) {
+          for (const m of [tmdb[i], cine[i]]) {
+            if (!m || merged.length >= MAX_RESULTS) continue;
+            const title = `${m.name.trim().toLowerCase()}|${(m.releaseInfo ?? "").slice(0, 4)}`;
+            if (seen.has(m.id) || seen.has(title)) continue;
+            seen.add(m.id);
+            seen.add(title);
+            merged.push(m);
+          }
         }
-        setResults(merged.slice(0, 8));
+        setResults(merged);
         setLoading(false);
       })();
     }, 200);

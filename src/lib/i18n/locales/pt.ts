@@ -28,6 +28,7 @@ import controllers from "./pt/controllers";
 
 import bpSources from "./pt/bp-sources";
 import used from "./pt/used";
+import sweep from "./pt/sweep";
 
 const pt: Record<string, string> = {
   ...coverage,
@@ -59,6 +60,7 @@ const pt: Record<string, string> = {
   ...controllers,
   ...bpSources,
   ...used,
+  ...sweep,
 };
 
 export default pt;

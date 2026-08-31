@@ -21,7 +21,6 @@ import { MarketCta } from "./theme-panel/custom-themes-section/community-store/m
 import type { IconThumb } from "./theme-panel/custom-themes-section/community-store/market/icon-fan";
 import { AmbienceSection, DisplaySection } from "./theme-panel/display-section";
 import { FontGrid } from "./theme-panel/font-grid";
-import { FullscreenClockSettings } from "./theme-panel/fullscreen-clock-settings";
 import { LogoPicker } from "./theme-panel/logo-picker";
 import { HybridBarArt, TitleBarArt, WindowControlArt } from "./theme-panel/window-control-art";
 
@@ -55,7 +54,7 @@ export function ThemePanel() {
     { id: "type" as const, label: t("Typography") },
     { id: "interface" as const, label: t("Interface") },
     { id: "ambience" as const, label: t("Ambience") },
-    { id: "window" as const, label: t("Window") },
+    ...(isTauri ? [{ id: "window" as const, label: t("Window") }] : []),
   ];
 
   const active: Tab = libraryOpen ? "library" : tab;
@@ -212,13 +211,6 @@ function WindowTab() {
           </SettingGroup>
         </Section>
       )}
-
-      <Section
-        title={t("Fullscreen clock")}
-        subtitle={t("Keep your local time visible during fullscreen playback and choose how it looks.")}
-      >
-        <FullscreenClockSettings />
-      </Section>
     </>
   );
 }

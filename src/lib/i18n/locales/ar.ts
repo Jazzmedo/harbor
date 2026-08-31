@@ -27,6 +27,7 @@ import controllers from "./ar/controllers";
 
 import bpSources from "./ar/bp-sources";
 import used from "./ar/used";
+import sweep from "./ar/sweep";
 
 const ar: Record<string, string> = {
   ...coverage,
@@ -57,6 +58,7 @@ const ar: Record<string, string> = {
   ...controllers,
   ...bpSources,
   ...used,
+  ...sweep,
 };
 
 export default ar;
