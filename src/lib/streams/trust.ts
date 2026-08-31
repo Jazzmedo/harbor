@@ -1,4 +1,5 @@
 import type { ParsedStream, Resolution } from "./types";
+import { episodeSpanContains } from "@/lib/episode-span";
 export type { Resolution };
 
 export type TrustOptions = {
@@ -295,7 +296,7 @@ function checkOne(
     !s.seasonPack &&
     opts.expectedEpisode != null &&
     s.episode != null &&
-    s.episode !== opts.expectedEpisode
+    !episodeSpanContains(s, opts.expectedSeason ?? s.season ?? 0, opts.expectedEpisode)
   ) {
     return `episode-mismatch:${s.episode}-vs-${opts.expectedEpisode}`;
   }
