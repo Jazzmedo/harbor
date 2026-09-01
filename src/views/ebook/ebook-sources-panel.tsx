@@ -21,7 +21,6 @@ import {
   X,
 } from "lucide-react";
 import "./ebook-sources-panel.css";
-import "./ebook-setup.css";
 import { createPortal } from "react-dom";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
@@ -63,6 +62,108 @@ import {
   type EBookTranslationSettings,
 } from "@/lib/ebook/translation";
 import { openUrl } from "@/lib/window";
+
+const CASE_SHELVES: Array<{
+  base: number;
+  books: Array<[number, number, number]>;
+  accent: number;
+  stack?: [number, number];
+}> = [
+  {
+    base: 104,
+    books: [
+      [30, 15, 70],
+      [48, 12, 79],
+      [63, 20, 64],
+      [86, 11, 74],
+      [100, 16, 60],
+      [119, 13, 68],
+    ],
+    accent: -1,
+    stack: [168, 44],
+  },
+  {
+    base: 197,
+    books: [
+      [96, 14, 62],
+      [113, 19, 73],
+      [135, 11, 56],
+      [149, 16, 68],
+      [168, 12, 64],
+      [183, 17, 58],
+    ],
+    accent: 3,
+    stack: [30, 52],
+  },
+  {
+    base: 290,
+    books: [
+      [30, 18, 66],
+      [51, 12, 75],
+      [66, 15, 59],
+      [84, 11, 70],
+      [98, 20, 64],
+      [121, 13, 56],
+      [137, 16, 69],
+      [156, 12, 61],
+    ],
+    accent: -1,
+  },
+];
+
+function BookcaseArt() {
+  return (
+    <svg
+      className="ebook-sources-case"
+      viewBox="0 0 240 306"
+      role="img"
+      aria-label="An illustration of a bookcase"
+      focusable="false"
+    >
+      <g className="ebook-case-frame">
+        <path d="M12 6v294M228 6v294M12 8h216" />
+        {CASE_SHELVES.map((shelf) => (
+          <path key={shelf.base} d={`M12 ${shelf.base + 5}h216`} />
+        ))}
+      </g>
+      {CASE_SHELVES.map((shelf) =>
+        shelf.books.map(([x, width, height], index) => (
+          <rect
+            key={`${shelf.base}-${x}`}
+            className={index === shelf.accent ? "ebook-case-book is-accent" : "ebook-case-book"}
+            x={x}
+            y={shelf.base - height}
+            width={width}
+            height={height}
+            rx="1.5"
+            opacity={index % 2 ? 1 : 0.78}
+          />
+        )),
+      )}
+      {CASE_SHELVES.map((shelf) =>
+        shelf.stack ? (
+          <g key={`stack-${shelf.base}`}>
+            {[0, 1, 2].map((row) => (
+              <rect
+                key={row}
+                className="ebook-case-book"
+                x={shelf.stack![0] + row * 3}
+                y={shelf.base - 10 - row * 9}
+                width={shelf.stack![1] - row * 6}
+                height="8"
+                rx="1.5"
+                opacity={0.7 + row * 0.1}
+              />
+            ))}
+          </g>
+        ) : null,
+      )}
+      <g className="ebook-case-lean">
+        <rect x="0" y="0" width="13" height="58" rx="1.5" transform="translate(137 46) rotate(11)" />
+      </g>
+    </svg>
+  );
+}
 
 function SectionLabel({ children }: { children: ReactNode }) {
   return (
@@ -985,22 +1086,7 @@ export function EBookSourcesView({ onBack }: { onBack: () => void }) {
             <span><strong>{ebookRepoUrls().length}</strong><small>Repositories</small></span>
           </div>
         </div>
-        <div className="ebook-sources-case" aria-hidden="true">
-          <span className="ebook-shelf">
-            <span className="ebook-shelf-slot" />
-            <span className="ebook-shelf-books">
-              <i /><i /><i /><i />
-            </span>
-            <span className="ebook-shelf-edge" />
-          </span>
-          <span className="ebook-shelf">
-            <span className="ebook-shelf-slot" />
-            <span className="ebook-shelf-books">
-              <i /><i /><i /><i />
-            </span>
-            <span className="ebook-shelf-edge" />
-          </span>
-        </div>
+        <BookcaseArt />
       </section>
 
       <div className="grid items-start gap-7 lg:grid-cols-[240px_minmax(0,1fr)]">

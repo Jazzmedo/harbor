@@ -3,20 +3,18 @@
   min-height: 520px;
   overflow: hidden;
   isolation: isolate;
-  contain: paint;
-  background: var(--color-canvas);
 }
 
 .ebook-library-hero::after {
   content: "";
   position: absolute;
-  z-index: 4;
+  z-index: 1;
   inset: auto 0 0;
   height: 125px;
   background: linear-gradient(
     to top,
-    var(--color-canvas) 0 2px,
-    color-mix(in srgb, var(--color-canvas) 92%, transparent) 18%,
+    var(--color-canvas) 0 16%,
+    color-mix(in srgb, var(--color-canvas) 88%, transparent) 38%,
     transparent 100%
   );
   pointer-events: none;
@@ -27,6 +25,8 @@
   z-index: 0;
   inset: 0 -1% 0 30%;
   overflow: hidden;
+  -webkit-mask-image: linear-gradient(to top, transparent 0, #000 140px);
+  mask-image: linear-gradient(to top, transparent 0, #000 140px);
 }
 
 .ebook-hero-library-photo img {
@@ -60,7 +60,7 @@
   height: 100%;
   overflow: visible;
   fill: var(--color-canvas);
-  filter: drop-shadow(26px 0 40px rgba(0, 0, 0, 0.55));
+  filter: drop-shadow(22px 0 34px rgba(8, 7, 6, 0.28));
   pointer-events: none;
 }
 

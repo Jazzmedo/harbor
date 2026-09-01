@@ -137,10 +137,14 @@
 }
 
 .hbk-page-title {
+  display: -webkit-box;
+  overflow: hidden;
   font-family: var(--font-book);
-  font-size: clamp(11px, calc(var(--hbk-scale, 1) * 15px), 30px);
+  font-size: clamp(9px, calc(var(--hbk-scale, 1) * var(--hbk-title, 1) * 15px), 30px);
   font-weight: 500;
   line-height: 1.12;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
 }
 
 .hbk-page-by {
@@ -166,7 +170,7 @@
   font-size: clamp(6.5px, calc(var(--hbk-scale, 1) * 8.5px), 14px);
   line-height: 1.62;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 6;
+  -webkit-line-clamp: 5;
 }
 
 .hbk-page-mark {
@@ -294,4 +298,10 @@
     transition: none;
   }
 
+}
+
+[data-ebook-page] .harbor-row-track {
+  padding-inline: 26px;
+  margin-inline: -26px;
+  scroll-padding-inline: 26px;
 }

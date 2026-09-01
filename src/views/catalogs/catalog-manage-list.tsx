@@ -1,5 +1,6 @@
 import { useMemo, type ReactNode } from "react";
-import { ChevronDown, ChevronUp, Eye, EyeOff, Home, Pin, PinOff } from "lucide-react";
+import { ChevronDown, ChevronUp, Eye, EyeOff, Pin, PinOff } from "lucide-react";
+import { NavGlyph } from "@/components/icons/nav-glyph";
 import type { BrowseCatalog } from "@/lib/catalog-browse";
 import { togglePinnedCatalog, useIsPinned } from "@/lib/pinned-catalogs";
 import { useT } from "@/lib/i18n";
@@ -162,7 +163,7 @@ function ManageRow({
         onClick={toggleHome}
         active={pinnedHome}
       >
-        <Home size={16} />
+        <NavGlyph name="home" className="h-[17px] w-[17px]" />
       </IconBtn>
       <IconBtn label={hidden ? t("Show this catalog") : t("Hide this catalog")} onClick={onToggleHide} active={hidden}>
         {hidden ? <EyeOff size={16} /> : <Eye size={16} />}

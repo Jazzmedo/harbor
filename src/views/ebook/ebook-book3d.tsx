@@ -37,6 +37,7 @@ export function EBookBook3D({
 }) {
   const art = useArtGlow(cover);
   const opening = text ? openingLines(text) : "";
+  const titleFit = title.length > 78 ? 0.56 : title.length > 54 ? 0.68 : title.length > 34 ? 0.82 : 1;
   const root = useRef<HTMLDivElement>(null);
   const track = useCallback(
     (event: { clientX: number; clientY: number }) => {
@@ -64,6 +65,7 @@ export function EBookBook3D({
         {
           "--hbk-scale": scale,
           "--hbk-thick": `${thickness}px`,
+          "--hbk-title": titleFit,
           ...(art ? { "--hbk-art": art } : null),
         } as CSSProperties
       }

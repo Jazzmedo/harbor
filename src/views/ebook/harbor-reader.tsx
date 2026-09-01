@@ -1228,6 +1228,8 @@ export function HarborReader({
     onSelectChapter(target);
   };
 
+  const NARRATION_WINDOW_CHARS = 4000;
+
   const speakWithDevice = (index = current) => {
     if (!("speechSynthesis" in window) || !paragraphs.length) return;
     window.speechSynthesis.cancel();
@@ -1251,12 +1253,20 @@ export function HarborReader({
     next();
   };
 
-  const speakFrom = async (index = current) => {
+  const speakFrom = async (index = current): Promise<void> => {
     stopSpeech();
     const run = ++narrationRun.current;
     const requestId = globalThis.crypto?.randomUUID?.() ?? `reader-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     narrationRequestId.current = requestId;
-    const chapterText = paragraphs.slice(index).join("\n\n").trim();
+    let windowEnd = index;
+    let windowChars = 0;
+    while (windowEnd < paragraphs.length) {
+      const size = paragraphs[windowEnd].length + 2;
+      if (windowChars && windowChars + size > NARRATION_WINDOW_CHARS) break;
+      windowChars += size;
+      windowEnd += 1;
+    }
+    const chapterText = paragraphs.slice(index, windowEnd).join("\n\n").trim();
     if (!chapterText) {
       setNarrationNotice("There is nothing to read aloud on this page.");
       return;
@@ -1265,7 +1275,7 @@ export function HarborReader({
       availableNarrationVoices.find((voice) => voice.id === prefs.narrationVoice) ??
       fallbackNarrationVoices.find((voice) => voice.id === prefs.narrationVoice) ??
       fallbackNarrationVoices[0];
-    const spokenParagraphs = paragraphs.slice(index);
+    const spokenParagraphs = paragraphs.slice(index, windowEnd);
     const spokenWeights = spokenParagraphs.map((text) => Math.max(1, text.trim().length));
     const totalWeight = spokenWeights.reduce((total, weight) => total + weight, 0);
     const spokenWordEnds: number[] = [];
@@ -1300,7 +1310,7 @@ export function HarborReader({
         accumulated += spokenWeights[offset];
         if (target <= accumulated) return index + offset;
       }
-      return paragraphs.length - 1;
+      return windowEnd - 1;
     };
     setSpeaking(true);
     setNarrationPaused(false);
@@ -1343,6 +1353,10 @@ export function HarborReader({
       });
       URL.revokeObjectURL(url);
       audioUrl.current = "";
+      if (run === narrationRun.current && windowEnd < paragraphs.length) {
+        void speakFrom(windowEnd);
+        return;
+      }
       if (run === narrationRun.current) {
         setSpeaking(false);
         setGenerationPercent(0);
@@ -1786,17 +1800,12 @@ export function HarborReader({
       {prefs.mode === "harbor" && trace && (
         <div
           dir={effectiveDirection}
-          className="pointer-events-none fixed z-20 rounded-sm border-s-2 transition-[top,height] duration-100"
+          className="pointer-events-none fixed z-20 rounded-md transition-[top,height] duration-100"
           style={{
             ...trace,
-            color: prefs.lineTrackColor,
-            borderInlineStartColor: `${prefs.lineTrackColor}99`,
-            background: `color-mix(in srgb, ${prefs.lineTrackColor} 10%, transparent)`,
-            boxShadow: `0 0 22px color-mix(in srgb, ${prefs.lineTrackColor} 8%, transparent)`,
+            background: `color-mix(in srgb, ${prefs.lineTrackColor} 15%, transparent)`,
           }}
-        >
-          <span className="absolute -start-8 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-current shadow-[0_0_12px_currentColor]" />
-        </div>
+        />
       )}
 
       {selection && !editing && (

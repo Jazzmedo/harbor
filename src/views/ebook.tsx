@@ -1027,7 +1027,7 @@ export function EBookView() {
                 title="Refresh source"
                 disabled={refreshing}
                 onClick={() => (query.trim().length >= 2 ? search(query) : loadSources())}
-                className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-edge-soft bg-elevated/45 text-ink-muted transition-colors hover:border-edge hover:bg-elevated/70 hover:text-ink disabled:pointer-events-none disabled:opacity-60"
+                className="grid h-12 w-12 shrink-0 place-items-center rounded-lg bg-white/[0.06] text-ink-muted ring-1 ring-inset ring-edge-soft transition-colors hover:bg-white/[0.10] hover:text-ink disabled:pointer-events-none disabled:opacity-60"
               >
                 <RefreshCw
                   size={17}
@@ -1244,7 +1244,7 @@ function EBookBrowseDropdown({
         />
       </button>
       {open && (
-        <div className="absolute start-0 z-40 mt-2 max-h-72 min-w-full overflow-y-auto rounded-xl border border-edge-soft bg-raised p-1.5 shadow-[0_18px_44px_-14px_rgba(0,0,0,0.75)]">
+        <div className="absolute start-0 z-40 mt-2 max-h-72 min-w-full overflow-y-auto rounded-lg bg-elevated p-1.5 ring-1 ring-edge-soft shadow-[0_10px_30px_-12px_rgba(0,0,0,0.6)]">
           {options.map((option) => (
             <button
               key={option.id || "all"}
@@ -1368,7 +1368,7 @@ function EBookLibraryHero({
           )}
           {current && (
             <button type="button" onClick={() => onOpen(current)}>
-              <BookOpen size={16} strokeWidth={2.6} /> Read now
+              Read now
             </button>
           )}
         </div>
@@ -1453,7 +1453,7 @@ function EBookDetailDropdown({
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex h-11 items-center gap-2 rounded-xl border border-edge-soft bg-surface/60 px-4 text-[14px] text-ink transition-colors hover:border-edge hover:bg-elevated/60"
+        className="inline-flex h-12 items-center gap-2.5 rounded-full bg-white/[0.06] px-6 text-[15px] font-semibold text-ink ring-1 ring-inset ring-edge-soft transition-colors duration-150 hover:bg-white/[0.10] active:scale-[0.98]"
       >
         {active?.icon ? (
           <img src={active.icon} alt="" className="h-5 w-5 shrink-0 rounded object-contain" />
@@ -1467,7 +1467,7 @@ function EBookDetailDropdown({
         />
       </button>
       {open && (
-        <div className="absolute right-0 z-30 mt-2 max-h-80 min-w-56 overflow-y-auto rounded-xl border border-edge-soft bg-elevated py-1.5 shadow-[0_18px_44px_rgba(0,0,0,0.45)]">
+        <div className="absolute right-0 z-30 mt-2 max-h-80 min-w-60 overflow-y-auto rounded-lg bg-elevated p-1.5 ring-1 ring-edge-soft shadow-[0_10px_30px_-12px_rgba(0,0,0,0.6)]">
           {options.map((option) => (
             <button
               key={option.id}
@@ -1476,8 +1476,8 @@ function EBookDetailDropdown({
                 onSelect(option.id);
                 setOpen(false);
               }}
-              className={`flex w-full items-center gap-2 px-4 py-2.5 text-left text-[14px] transition-colors hover:bg-raised ${
-                option.id === selected ? "text-ink" : "text-ink-muted"
+              className={`flex w-full items-center gap-2.5 rounded-md px-3 py-2.5 text-left text-[14px] transition-colors ${
+                option.id === selected ? "bg-raised text-ink" : "text-ink-muted hover:bg-raised"
               }`}
             >
               {option.id === selected ? (
@@ -1960,7 +1960,7 @@ function EBookChapterSection({
           <span className="text-[15px] text-ink-subtle">{selected.length}</span>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex h-11 items-center gap-1 rounded-xl border border-edge-soft bg-surface/60 p-1">
+          <div className="flex h-11 items-center gap-1 rounded-lg bg-canvas p-1 ring-1 ring-inset ring-edge-soft">
             {(
               [
                 ["list", List],
@@ -1980,7 +1980,7 @@ function EBookChapterSection({
               </button>
             ))}
           </div>
-          <div className="flex h-11 items-center gap-1 rounded-xl border border-edge-soft bg-surface/60 p-1">
+          <div className="flex h-11 items-center gap-1 rounded-lg bg-canvas p-1 ring-1 ring-inset ring-edge-soft">
             {(["newest", "oldest"] as const).map((value) => (
               <button
                 key={value}
@@ -2006,7 +2006,7 @@ function EBookChapterSection({
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search chapters..."
-          className="h-11 w-full rounded-xl border border-edge-soft bg-surface/60 pl-11 pr-4 text-[14px] text-ink transition-colors placeholder:text-ink-subtle focus:border-edge focus:outline-none"
+          className="h-11 w-full rounded-lg bg-canvas pl-11 pr-4 text-[14px] text-ink ring-1 ring-inset ring-edge-soft transition-colors placeholder:text-ink-subtle focus:ring-edge focus:outline-none"
         />
       </div>
 
@@ -2049,7 +2049,7 @@ function EBookChapterSection({
               key={chapter.id}
               type="button"
               onClick={() => onRead(chapter)}
-              className="group flex min-h-[64px] flex-col justify-between gap-2 rounded-xl border border-edge-soft bg-surface/60 px-4 py-3.5 text-start transition-colors hover:border-edge hover:bg-elevated/60"
+              className="group flex min-h-[64px] flex-col justify-between gap-2 rounded-lg bg-elevated px-4 py-3.5 text-start ring-1 ring-inset ring-edge-soft transition-colors hover:bg-raised"
             >
               <div className="flex flex-col gap-0.5">
                 {chapter.chapter && (
@@ -2841,7 +2841,7 @@ function EBookDetails({
                 <div className="flex flex-col gap-1.5">
                   <h1
                     className="text-[40px] font-medium leading-[1.05] tracking-tight text-ink drop-shadow-[0_2px_18px_rgba(0,0,0,0.5)]"
-                    style={{ fontFamily: '"QR Ames Beta", var(--font-display), serif' }}
+                    style={{ fontFamily: "var(--font-book)" }}
                   >
                     {ebook.title}
                   </h1>
@@ -2879,7 +2879,7 @@ function EBookDetails({
                       const next = toggleEBookLibrary(ebook);
                       setSaved(next);
                     }}
-                    className="inline-flex h-12 items-center gap-2 rounded-xl bg-accent px-6 text-[15px] font-bold text-canvas transition-transform hover:scale-[1.02] active:scale-[0.97]"
+                    className="inline-flex h-12 items-center gap-2.5 rounded-full bg-ink px-7 text-[15px] font-semibold text-canvas transition-transform duration-200 hover:scale-[1.03] active:scale-[0.98]"
                   >
                     {saved ? <Library size={19} /> : <Bookmark size={19} />}
                     {saved ? "Bookmarked" : "Bookmark"}
@@ -2901,9 +2901,13 @@ function EBookDetails({
                     aria-pressed={favorite}
                     aria-label={favorite ? "Remove favorite" : "Add favorite"}
                     onClick={() => setFavorite(toggleEBookFavorite(ebook))}
-                    className={`flex h-12 w-12 items-center justify-center rounded-xl border backdrop-blur-sm transition-colors ${favorite ? "border-rose-400/40 bg-rose-500/15 text-rose-300" : "border-edge bg-elevated/40 text-ink-muted hover:bg-elevated hover:text-ink"}`}
+                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-ink transition-[transform,background-color] duration-200 hover:bg-white/[0.10] active:scale-[0.94]"
                   >
-                    <Heart size={22} fill={favorite ? "currentColor" : "none"} />
+                    <Heart
+                      size={21}
+                      fill={favorite ? "currentColor" : "none"}
+                      className={favorite ? "text-accent" : "text-ink"}
+                    />
                   </button>
                   {ebook.siteUrl && (
                     <button
@@ -2911,7 +2915,7 @@ function EBookDetails({
                       aria-label={`Open in ${ebook.source === "anilist" ? "AniList" : "Open Library"}`}
                       title={ebook.source === "anilist" ? "AniList" : "Open Library"}
                       onClick={() => openUrl(ebook.siteUrl!)}
-                      className="flex h-12 w-12 items-center justify-center rounded-xl border border-edge bg-elevated/40 text-ink-muted backdrop-blur-sm transition-colors hover:bg-elevated hover:text-ink"
+                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-ink transition-[transform,background-color] duration-200 hover:bg-white/[0.10] active:scale-[0.94]"
                     >
                       <ExternalLink size={21} />
                     </button>
@@ -2952,36 +2956,39 @@ function EBookDetails({
             />
           )}
           {(ebook.books?.length ?? 0) > 1 && (
-            <section className="flex w-fit max-w-full items-center gap-2.5 rounded-xl border border-edge-soft bg-elevated/30 p-2.5">
+            <section className="flex w-fit max-w-full items-center gap-4 rounded-xl bg-elevated/40 p-3 ring-1 ring-edge-soft">
               <div className="shrink-0 px-1">
-                <h2 className="text-[12px] font-semibold text-ink">Available sources</h2>
-                <p className="text-[9.5px] text-ink-subtle">Read from</p>
+                <h2 className="text-[13.5px] font-semibold text-ink">Available sources</h2>
+                <p className="text-[11.5px] text-ink-subtle">Read from</p>
               </div>
-              <div className="flex min-w-0 items-center gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <div className="flex min-w-0 items-center gap-2.5 overflow-x-auto py-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {ebook.books!.map((book) => (
                   <div
                     key={book.id}
-                    className={`flex h-12 min-w-[160px] max-w-[205px] shrink-0 items-center gap-2.5 rounded-lg border px-2 transition-colors ${
+                    className={`flex w-[248px] shrink-0 items-center gap-3 rounded-lg p-2.5 ring-1 ring-inset transition-colors ${
                       sourceRoute === book.id
-                        ? "border-accent/45 bg-accent/10"
-                        : "border-edge-soft bg-canvas/35 hover:bg-elevated/70"
+                        ? "bg-elevated ring-accent/45"
+                        : "bg-surface ring-edge-soft hover:bg-elevated"
                     }`}
                   >
-                    <Poster
-                      src={book.cover}
-                      seed={`ebook-book:${book.id}`}
-                      ratio="portrait"
-                      className="w-8 shrink-0 rounded-sm"
-                    />
+                    <span className="w-12 shrink-0 overflow-hidden rounded ring-1 ring-inset ring-edge-soft">
+                      <Poster
+                        src={book.cover}
+                        seed={`ebook-book:${book.id}`}
+                        ratio="portrait"
+                      />
+                    </span>
                     <button
                       type="button"
                       onClick={() => book.source === "source" && setSourceRoute(book.id)}
                       className="min-w-0 flex-1 text-left"
                     >
-                      <span className="block truncate text-[11px] font-medium text-ink">
+                      <span className="block truncate text-[13px] font-semibold text-ink">
                         {book.providerName ?? book.title}
                       </span>
-                      <span className="block truncate text-[9px] text-ink-subtle">{book.title}</span>
+                      <span className="mt-0.5 block line-clamp-2 text-[11.5px] leading-snug text-ink-subtle">
+                        {book.title}
+                      </span>
                     </button>
                     {book.siteUrl && (
                       <button
@@ -3060,7 +3067,7 @@ function EBookDetails({
             type="button"
             onClick={() => detailScrollRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
             aria-label="Scroll to top"
-            className="flex h-14 items-center gap-2.5 rounded-full bg-accent px-6 text-canvas shadow-[0_16px_40px_-10px_rgba(0,0,0,0.7)] transition-transform duration-200 hover:scale-105 active:scale-95"
+            className="flex h-14 items-center gap-2.5 rounded-full bg-accent px-6 text-canvas shadow-[0_10px_30px_-12px_rgba(0,0,0,0.6)] transition-transform duration-200 hover:scale-[1.03] active:scale-[0.97]"
           >
             <ArrowUp size={24} strokeWidth={2.6} />
             <span className="text-[16px] font-bold">Top</span>
