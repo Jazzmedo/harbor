@@ -162,15 +162,52 @@
 }
 
 .hbk-page-text {
-  display: -webkit-box;
   min-height: 0;
+  max-height: calc(5lh);
   overflow: hidden;
   color: color-mix(in srgb, var(--hbk-paper-ink) 76%, transparent);
   font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(6.5px, calc(var(--hbk-scale, 1) * 8.5px), 14px);
   line-height: 1.62;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 5;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 0.5lh,
+    #000 calc(100% - 0.5lh),
+    transparent 100%
+  );
+}
+
+.hbk-page-drift {
+  margin: 0;
+}
+
+.hbk:hover .hbk-page-drift,
+.hbk:focus-within .hbk-page-drift,
+.ebook-library-hero:hover .hbk-page-drift {
+  animation: hbk-page-drift 19s ease-in-out 1.4s infinite;
+}
+
+@keyframes hbk-page-drift {
+  0%,
+  15% {
+    transform: translateY(0);
+  }
+  50%,
+  65% {
+    transform: translateY(min(0px, calc(5lh - 100%)));
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hbk:hover .hbk-page-drift,
+  .hbk:focus-within .hbk-page-drift,
+  .ebook-library-hero:hover .hbk-page-drift {
+    animation: none;
+  }
 }
 
 .hbk-page-mark {

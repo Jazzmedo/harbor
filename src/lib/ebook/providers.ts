@@ -986,5 +986,16 @@ export function ebookProviderIcon(providerId?: string): string | undefined {
   if (!providerId) return undefined;
   const source = listEBookSources().find((item) => item.id === providerId);
   if (!source) return undefined;
-  return source.kind === "gutendex" ? gutenbergLogo : source.iconUrl;
+  if (source.kind === "gutendex") return gutenbergLogo;
+  if (source.iconUrl) return source.iconUrl;
+  return sourceFavicon(source.config?.baseUrl ?? source.location);
+}
+
+export function sourceFavicon(location?: string): string | undefined {
+  if (!location) return undefined;
+  try {
+    return new URL("/favicon.ico", location).href;
+  } catch {
+    return undefined;
+  }
 }

@@ -29,6 +29,7 @@ import {
   useState,
   type CSSProperties,
   type MouseEvent as ReactMouseEvent,
+  type ReactNode,
 } from "react";
 import "./ebook-hero.css";
 import "./ebook-showcase.css";
@@ -37,6 +38,12 @@ import { CoverImg } from "@/components/cover-img";
 import { Poster } from "@/components/poster";
 import { EBookBook3D } from "./ebook/ebook-book3d";
 import { Row } from "@/components/row";
+import { emitListToast } from "@/components/lists/list-toast";
+import { NytMark } from "@/components/icons/nyt-mark";
+import { NYT_ATTRIBUTION, type NytList } from "@/lib/ebook/nyt";
+import { isNytPlaceholder } from "@/lib/ebook/nyt-rail";
+import { nytRailItems, nytRankFor } from "@/lib/ebook/nyt-rail";
+import { useNytAvailability, useNytList, useResolveNytBooks } from "@/lib/ebook/use-nyt";
 import { useAnilist } from "@/lib/anilist/provider";
 import { useUiLanguage } from "@/lib/i18n";
 import {
@@ -104,7 +111,7 @@ import {
   flushPendingEBookTracking,
   getEBookTracking,
 } from "@/lib/ebook/tracking";
-import { useView } from "@/lib/view";
+import { useScrollMemory, useView } from "@/lib/view";
 import { useProfiles } from "@/lib/profiles";
 import { usePageVisible } from "@/lib/visibility";
 import { openUrl } from "@/lib/window";
@@ -122,6 +129,7 @@ type Rail = {
   hideEmpty?: boolean;
   onEndReached?: () => void;
   loadingMore?: boolean;
+  mark?: ReactNode;
 };
 
 type EBookBrowseType = EBookCategoryGroup | "All";
@@ -191,6 +199,8 @@ function scheduleEBookBackground(run: () => void, delay = 1_200): () => void {
 
 export function EBookView() {
   const { ebookId, openEBook, topKind } = useView();
+  const listScrollRef = useRef<HTMLElement | null>(null);
+  useScrollMemory("ebook", listScrollRef, !ebookId);
   const { activeId } = useProfiles();
   const { isConnected, session } = useAnilist();
   const uiLanguage = useUiLanguage();
@@ -619,6 +629,8 @@ export function EBookView() {
     }, 300);
   };
 
+  const staleStreakRef = useRef(0);
+  const loadFailRef = useRef(0);
   const loadMore = useCallback(() => {
     if (!hasMore || loadingMoreRef.current) return;
     const sourceId = sourceSeq.current;
@@ -649,7 +661,9 @@ export function EBookView() {
           (current ?? []).flatMap((ebook) => ebook.books ?? [ebook]).map((ebook) => ebook.id),
         );
         const fresh = page.items.filter((ebook) => !known.has(ebook.id));
-        setHasMore(page.hasMore && fresh.length > 0);
+        loadFailRef.current = 0;
+        staleStreakRef.current = fresh.length > 0 ? 0 : staleStreakRef.current + 1;
+        setHasMore(page.hasMore && staleStreakRef.current < 3);
         const bare = mergeEBookMetadata(fresh, []);
         if (term) setResults((items) => updateSourceItems(items, bare));
         else setSourceItems((items) => updateSourceItems(items, bare));
@@ -659,7 +673,10 @@ export function EBookView() {
           else setSourceItems((currentItems) => updateSourceItems(currentItems, items, true));
         });
       })
-      .catch(() => setHasMore(false))
+      .catch(() => {
+        loadFailRef.current += 1;
+        if (loadFailRef.current >= 3) setHasMore(false);
+      })
       .finally(() => {
         loadingMoreRef.current = false;
         setLoadingMore(false);
@@ -678,6 +695,10 @@ export function EBookView() {
       }}
     />
   ) : null;
+
+  const bestsellerList = useNytList();
+  useResolveNytBooks(bestsellerList, 15);
+  useNytAvailability();
 
   if (ebookId) {
     return (
@@ -871,7 +892,9 @@ export function EBookView() {
   const featuredBooks = (popularBooks ?? []).filter(
     (ebook) => ebook.cover && !/(?:^|\/)default(?:\.[a-z0-9]+)?(?:[?#]|$)/i.test(ebook.cover),
   );
-  const heroBooks = featuredBooks.slice(0, 5);
+  const bestsellerItems = nytRailItems(bestsellerList);
+  const bestsellerHero = (bestsellerItems ?? []).filter((ebook) => ebook.cover).slice(0, 5);
+  const heroBooks = bestsellerHero.length >= 3 ? bestsellerHero : featuredBooks.slice(0, 5);
   const refreshing = query.trim().length >= 2 ? results === null : sourceItems === null;
   const rails: Rail[] =
     query.trim().length >= 2
@@ -896,6 +919,16 @@ export function EBookView() {
                 },
               ]
             : []),
+          ...(bestsellerItems && bestsellerItems.length
+            ? [
+                {
+                  title: "New York Times Bestsellers",
+                  subtitle: NYT_ATTRIBUTION,
+                  items: bestsellerItems,
+                  mark: <NytMark />,
+                },
+              ]
+            : []),
           {
             title: "Popular eBooks",
             subtitle: sourceCatalogItems?.length
@@ -908,8 +941,22 @@ export function EBookView() {
   return (
     <EBookTitleLanguageContext.Provider value={titleLanguage}>
       <EBookCardMenuContext.Provider value={openCardMenu}>
-      <main data-ebook-page className="bg-canvas flex-1 overflow-y-auto overflow-x-hidden pb-20">
-        <EBookLibraryHero ebooks={heroBooks} onOpen={(ebook) => openEBook(String(ebook.id))} />
+      <main
+        ref={listScrollRef}
+        data-ebook-page
+        className="bg-canvas flex-1 overflow-y-auto overflow-x-hidden pb-20"
+      >
+        <EBookLibraryHero
+          ebooks={heroBooks}
+          bestsellers={bestsellerList}
+          onOpen={(ebook) => {
+            if (isNytPlaceholder(String(ebook.id))) {
+              emitListToast("Not available in your sources yet");
+              return;
+            }
+            openEBook(String(ebook.id));
+          }}
+        />
 
         <div className="flex w-full flex-col gap-9 px-12 pt-8">
           {rails.map((rail) => (
@@ -918,6 +965,10 @@ export function EBookView() {
               {...rail}
               profile={activeId ?? "default"}
               onOpen={(ebook) => {
+                if (isNytPlaceholder(String(ebook.id))) {
+                  emitListToast("Not available in your sources yet");
+                  return;
+                }
                 if (rail.resumeReading) setReadIntent(ebook.id);
                 openEBook(String(ebook.id));
               }}
@@ -1080,7 +1131,11 @@ export function EBookView() {
                 badge={providers
                   .find((source) => source.id === selectedProviderId)
                   ?.name?.charAt(0)}
-                options={providers.map((source) => ({ id: source.id, label: source.name }))}
+                options={providers.map((source) => ({
+                  id: source.id,
+                  label: source.name,
+                  icon: ebookProviderIcon(source.id),
+                }))}
                 onSelect={setSelectedProviderId}
               />
               <EBookBrowseDropdown
@@ -1202,11 +1257,12 @@ function EBookBrowseDropdown({
 }: {
   label: string;
   value: string;
-  options: Array<{ id: string; label: string }>;
+  options: Array<{ id: string; label: string; icon?: string }>;
   badge?: string;
   onSelect: (id: string) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const [broken, setBroken] = useState<Record<string, boolean>>({});
   const ref = useRef<HTMLDivElement>(null);
   const active = options.find((option) => option.id === value) ?? options[0];
 
@@ -1230,10 +1286,20 @@ function EBookBrowseDropdown({
         <span className="text-[10.5px] font-semibold uppercase tracking-[0.16em] text-ink-subtle">
           {label}
         </span>
-        {badge && (
-          <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] bg-elevated text-[10px] font-bold text-ink-subtle ring-1 ring-edge-soft">
-            {badge.toLocaleUpperCase()}
-          </span>
+        {active?.icon && !broken[active.id] ? (
+          <img
+            src={active.icon}
+            alt=""
+            draggable={false}
+            onError={() => setBroken((prev) => ({ ...prev, [active.id]: true }))}
+            className="h-[18px] w-[18px] shrink-0 rounded-[5px] object-contain"
+          />
+        ) : (
+          badge && (
+            <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] bg-elevated text-[10px] font-bold text-ink-subtle ring-1 ring-edge-soft">
+              {badge.toLocaleUpperCase()}
+            </span>
+          )
         )}
         <span className="max-w-[180px] truncate text-[13.5px] font-medium text-ink">
           {active?.label ?? "None"}
@@ -1258,6 +1324,15 @@ function EBookBrowseDropdown({
               }`}
             >
               <span className="w-4">{option.id === value && <Check size={14} />}</span>
+              {option.icon && !broken[option.id] && (
+                <img
+                  src={option.icon}
+                  alt=""
+                  draggable={false}
+                  onError={() => setBroken((prev) => ({ ...prev, [option.id]: true }))}
+                  className="h-4 w-4 shrink-0 rounded-[4px] object-contain"
+                />
+              )}
               <span className="whitespace-nowrap">{option.label}</span>
             </button>
           ))}
@@ -1275,9 +1350,11 @@ function heroSubject(value: string): string {
 
 function EBookLibraryHero({
   ebooks,
+  bestsellers,
   onOpen,
 }: {
   ebooks: EBook[];
+  bestsellers?: NytList | null;
   onOpen: (ebook: EBook) => void;
 }) {
   const titleLanguage = useContext(EBookTitleLanguageContext);
@@ -1290,8 +1367,15 @@ function EBookLibraryHero({
   const current = ebooks[shown];
   const currentTitle = current ? ebookTitleForLanguage(current, titleLanguage) : "";
   const authors = current?.authors.filter(Boolean).slice(0, 2).join(", ") ?? "";
+  const rank = current ? nytRankFor(bestsellers ?? null, current) : null;
+  const weeksLabel =
+    rank && rank.weeksOnList > 0
+      ? rank.weeksOnList === 1
+        ? "1 week on the list"
+        : `${rank.weeksOnList} weeks on the list`
+      : "";
   const meta = current
-    ? [current.year ? String(current.year) : "", ...current.genres.map(heroSubject)]
+    ? [weeksLabel, current.year ? String(current.year) : "", ...current.genres.map(heroSubject)]
         .map((value) => value.trim())
         .filter(Boolean)
         .filter((value, index, all) => all.indexOf(value) === index)
@@ -1352,7 +1436,9 @@ function EBookLibraryHero({
         </svg>
 
         <div className="ebook-hero-copy" style={fade}>
-          <span className="ebook-hero-kicker">Featured book</span>
+          <span className="ebook-hero-kicker">
+            {rank ? `#${rank.rank} New York Times Bestseller` : "Featured book"}
+          </span>
           <h1>{currentTitle}</h1>
           {authors && <p className="ebook-hero-byline">{authors}</p>}
           {current?.description && <p>{current.description}</p>}
@@ -1507,13 +1593,17 @@ function EBookRail({
   hideEmpty,
   resumeReading,
   profile,
-}: Rail & { onOpen: (ebook: EBook) => void; profile?: string }) {
+  mark,
+}: Rail & { onOpen: (ebook: EBook) => void; profile?: string; mark?: ReactNode }) {
   if (items?.length === 0)
     return hideEmpty ? null : <p className="text-[14px] text-ink-muted">No eBooks found.</p>;
   return (
     <section className="flex flex-col gap-3">
       <div>
-        <h2 className="text-[20px] font-semibold tracking-tight text-ink">{title}</h2>
+        <h2 className="flex items-center gap-2.5 text-[20px] font-semibold tracking-tight text-ink">
+          {mark}
+          {title}
+        </h2>
         <p className="text-[13px] text-ink-subtle">{subtitle}</p>
       </div>
       <Row min={144} shape="portrait" scrollKey={`ebook:${title}`} onEndReached={onEndReached}>
@@ -2440,6 +2530,8 @@ function EBookDetails({
   onBack: () => void;
   onOpen: (ebook: EBook) => void;
 }) {
+  const detailBestsellers = useNytList();
+  const detailRank = ebook ? nytRankFor(detailBestsellers, ebook) : null;
   const [saved, setSaved] = useState(() => (ebook ? ebookInLibrary(ebook.id) : false));
   const [favorite, setFavorite] = useState(() => (ebook ? ebookIsFavorite(ebook.id) : false));
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
@@ -2603,6 +2695,8 @@ function EBookDetails({
   }, [ebookId, genreKey, recommendationsAttempt]);
   useEffect(() => {
     setReading(null);
+  }, [ebookId]);
+  useEffect(() => {
     if (!ebook) return;
     let active = true;
     const existing = (ebook.books ?? [ebook]).filter((book) => book.source === "source");
@@ -2852,6 +2946,20 @@ function EBookDetails({
                     <p className="text-[14px] text-ink-muted">by {ebook.authors.join(", ")}</p>
                   )}
                 </div>
+                {detailRank && (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="rounded-full bg-accent-soft px-3 py-1 text-[13px] font-semibold text-accent ring-1 ring-inset ring-accent/25">
+                      {`#${detailRank.rank} New York Times Bestseller`}
+                    </span>
+                    {detailRank.weeksOnList > 0 && (
+                      <span className="rounded-full bg-elevated/60 px-3 py-1 text-[13px] text-ink-muted ring-1 ring-edge-soft backdrop-blur-sm">
+                        {detailRank.weeksOnList === 1
+                          ? "1 week on the list"
+                          : `${detailRank.weeksOnList} weeks on the list`}
+                      </span>
+                    )}
+                  </div>
+                )}
                 <div className="flex flex-wrap items-center gap-2">
                   {facts.map((fact) => (
                     <span

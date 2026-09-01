@@ -522,6 +522,7 @@ export const DEFAULT: Settings = {
   downloadCreateFolders: false,
   ebookDownloadDir: "",
   ebookDownloadCreateFolders: false,
+  nytKey: "",
   stremioDeeplinkInstall: true,
   iptvPlaylists: [],
 

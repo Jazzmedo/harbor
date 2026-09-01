@@ -51,17 +51,18 @@ export function useProviderKeys({
   const t = useT();
 
   const [mdblistDraft, setMdblistDraft] = useState(settings.mdblistKey);
+  const [nytDraft, setNytDraft] = useState(settings.nytKey);
   const [posterSrvDraft, setPosterSrvDraft] = useState(settings.posterBaseUrl);
   const [auddDraft, setAuddDraft] = useState(settings.auddKey);
   const [songAiDraft, setSongAiDraft] = useState(settings.songIdAiKey);
   const [extraSaved, setExtraSaved] = useState<
-    "mdblist" | "postersrv" | "ai" | "audd" | "songai" | null
+    "mdblist" | "postersrv" | "ai" | "audd" | "songai" | "nyt" | null
   >(null);
   const [tmdbGuide, setTmdbGuide] = useState(false);
   const [tvdbGuide, setTvdbGuide] = useState(false);
   const [keyModal, setKeyModal] = useState<KeyId | null>(null);
   const extraTimerRef = useRef<number | null>(null);
-  const flashExtra = (k: "mdblist" | "postersrv" | "ai" | "audd" | "songai") => {
+  const flashExtra = (k: "mdblist" | "postersrv" | "ai" | "audd" | "songai" | "nyt") => {
     setExtraSaved(k);
     if (extraTimerRef.current) window.clearTimeout(extraTimerRef.current);
     extraTimerRef.current = window.setTimeout(() => setExtraSaved(null), 1800);
@@ -281,6 +282,35 @@ export function useProviderKeys({
                 {"postersplus.elfhosted.com/poster?tmdb_id={tmdbId}&imdb_id={imdbId}&type={type}"}
               </code>
               .
+            </>
+          }
+        />
+      ),
+    },
+    {
+      id: "nyt",
+      name: t("New York Times"),
+      desc: t("Bestseller lists in the eBook section."),
+      value: nytDraft,
+      field: (
+        <KeyField
+          label={t("New York Times · bestseller lists")}
+          placeholder={t("NYT Books API key")}
+          value={nytDraft}
+          onChange={setNytDraft}
+          onSave={() => {
+            update({ nytKey: nytDraft.trim() });
+            flashExtra("nyt");
+          }}
+          saved={extraSaved === "nyt"}
+          help={
+            <>
+              Adds the New York Times bestseller lists to the eBook page, on the hero and as a
+              row, with rank and weeks on the list. Free key at{" "}
+              <ExtLink href="https://developer.nytimes.com/get-started">
+                developer.nytimes.com
+              </ExtLink>
+              . Enable the Books API on your app. Lists refresh weekly.
             </>
           }
         />

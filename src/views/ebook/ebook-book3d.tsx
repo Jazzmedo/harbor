@@ -79,7 +79,11 @@ export function EBookBook3D({
             <p className="hbk-page-title">{title}</p>
             {author && <p className="hbk-page-by">{author}</p>}
             <span className="hbk-page-rule" aria-hidden="true" />
-            {opening && <p className="hbk-page-text">{opening}</p>}
+            {opening && (
+              <div className="hbk-page-text">
+                <p className="hbk-page-drift">{opening}</p>
+              </div>
+            )}
             {imprint && <p className="hbk-page-mark">{imprint}</p>}
           </div>
         </div>

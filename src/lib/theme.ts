@@ -1,3 +1,4 @@
+import { kawaiiCss } from "./theme-kawaii";
 import auroraPreview from "@/assets/theme-previews/aurora.png";
 import crunchPreview from "@/assets/theme-previews/crunchy.png";
 import draculaPreview from "@/assets/theme-previews/dracula.png";
@@ -1406,6 +1407,32 @@ const feishinJs = `(function () {
 })();`;
 
 export const BETA_THEMES: ThemePreset[] = [
+  {
+    id: "kawaii" as ThemePresetId,
+    name: "Kawaii",
+    blurb: "Pink gingham over cream, white cards, rounded Japanese type. Sweet and soft.",
+    swatch: ["#fdefe0", "#fbd8e2", "#f090ae"],
+    tokens: {
+      "--color-canvas": "#fdefe0",
+      "--color-surface": "#ffffff",
+      "--color-elevated": "#ffffff",
+      "--color-raised": "#fdeef3",
+      "--color-ink": "#7d5c4e",
+      "--color-ink-muted": "#a5867a",
+      "--color-ink-subtle": "#c3a89c",
+      "--color-edge": "rgba(240,144,174,0.45)",
+      "--color-edge-soft": "rgba(240,144,174,0.22)",
+      "--color-accent": "#f090ae",
+      "--color-accent-soft": "rgba(240,144,174,0.20)",
+      "--color-danger": "#e2607a",
+    },
+    background: { image: "none", dim: 0 },
+    layout: "topdock",
+    cardStyle: "flat",
+    buttonStyle: "flat",
+    bokeh: false,
+    css: kawaiiCss,
+  },
   {
     id: "elegantfin" as ThemePresetId,
     name: "ElegantFin",
