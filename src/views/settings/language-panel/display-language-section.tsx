@@ -37,7 +37,7 @@ export function DisplayLanguageSection() {
                     selected ? "text-canvas/70" : "text-ink-subtle"
                   }`}
                 >
-                  {lang.rtl ? `${lang.label} · ${t("Right to left")}` : lang.label}
+                  {lang.rtl ? `${t(lang.label)} · ${t("Right to left")}` : t(lang.label)}
                 </span>
               </span>
               <span

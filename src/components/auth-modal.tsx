@@ -29,7 +29,7 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
       await signIn(email, password, remember);
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Sign-in failed");
+      setError(err instanceof Error ? err.message : t("Sign-in failed"));
       setBusy(false);
     }
   };

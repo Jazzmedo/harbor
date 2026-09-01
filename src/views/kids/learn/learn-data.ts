@@ -1,6 +1,7 @@
+import { t } from "@/lib/i18n";
 import type { LearnTopic } from "./learn-types";
 
-export const TOPICS: LearnTopic[] = [
+const TOPIC_SOURCE: LearnTopic[] = [
   {
     id: "space",
     title: "Space & Planets",
@@ -186,3 +187,19 @@ export const TOPICS: LearnTopic[] = [
     ],
   },
 ];
+
+export const TOPICS: LearnTopic[] = TOPIC_SOURCE.map((topic) => ({
+  ...topic,
+  title: t(topic.title),
+  cards: topic.cards.map((card) => ({
+    ...card,
+    title: t(card.title),
+    text: t(card.text),
+    funFact: t(card.funFact),
+  })),
+  quiz: topic.quiz.map((question) => ({
+    ...question,
+    q: t(question.q),
+    options: question.options.map((option) => t(option)),
+  })),
+}));

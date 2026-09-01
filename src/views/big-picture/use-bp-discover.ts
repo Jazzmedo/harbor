@@ -229,7 +229,16 @@ export function useBpDiscoverRails(count: number): BpDiscoverRail[] {
 
   const defs = useMemo(
     () => selectDailyRows(settings.tmdbKey, getStore().affinity, settings, count),
-    [settings.tmdbKey, settings.region, settings.streaming, count],
+    [
+      settings.tmdbKey,
+      settings.region,
+      settings.streaming,
+      settings.preferredLanguages,
+      settings.tmdbLanguage,
+      settings.feedLocaleBias,
+      settings.uiLanguage,
+      count,
+    ],
   );
 
   useEffect(() => {

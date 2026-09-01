@@ -6,6 +6,7 @@ import { IMG } from "@/lib/providers/tmdb/tmdb-client";
 import { useTmdbImdbId } from "@/lib/providers/tmdb/tmdb-imdb-resolve";
 import { useMetaWatched } from "@/lib/watched-flag";
 import { ImdbIcon } from "@/components/icons/imdb-icon";
+import { useT } from "@/lib/i18n";
 import { useCardImdb } from "./use-card-imdb";
 import { useCardPoster } from "./use-card-poster";
 
@@ -69,11 +70,12 @@ function ScrollRail({ children }: { children: React.ReactNode }) {
 }
 
 function RailArrow({ dir, onClick }: { dir: "left" | "right"; onClick: () => void }) {
+  const t = useT();
   return (
     <NavArrow
       dir={dir}
       onClick={onClick}
-      label={dir === "left" ? "Scroll left" : "Scroll right"}
+      label={dir === "left" ? t("Scroll left") : t("Scroll right")}
       size={24}
       className={`absolute top-[42%] z-10 h-9 w-9 -translate-y-1/2 opacity-0 transition-opacity duration-150 group-hover/rail:opacity-100 ${dir === "left" ? "left-0" : "right-0"}`}
     />

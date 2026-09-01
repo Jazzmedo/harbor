@@ -20,7 +20,7 @@ export function StremioWebButton({ onDone, disabled }: { onDone: () => void; dis
       await signInWithKey(key);
       onDone();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Sign-in failed.");
+      setError(e instanceof Error ? e.message : t("Sign-in failed."));
       setBusy(false);
     }
   };

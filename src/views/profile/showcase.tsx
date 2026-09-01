@@ -21,6 +21,7 @@ function compact(n: number): string {
 }
 
 function ThemeCard({ item }: { item: ShowcaseItem }) {
+  const t = useT();
   return (
     <div className="flex w-full items-center gap-4 rounded-md p-2">
       <div
@@ -32,7 +33,7 @@ function ThemeCard({ item }: { item: ShowcaseItem }) {
         )}
       </div>
       <div className="min-w-0">
-        <div className="text-[11px] uppercase tracking-[0.1em] text-accent">{KIND_LABEL.theme}</div>
+        <div className="text-[11px] uppercase tracking-[0.1em] text-accent">{t(KIND_LABEL.theme)}</div>
         <div className="mt-1 truncate font-display text-[19px] text-ink">{item.title}</div>
         {item.caption && <div className="mt-1 line-clamp-2 text-[13px] text-ink-muted">{item.caption}</div>}
         <div className="mt-1.5 flex items-center gap-3 text-[12.5px] tabular-nums text-ink-subtle">
@@ -180,10 +181,10 @@ export function Showcase({
   };
 
   return (
-    <section aria-label="Showcase" className="rounded-lg bg-surface p-5 ring-1 ring-edge-soft">
+    <section aria-label={t("Showcase")} className="rounded-lg bg-surface p-5 ring-1 ring-edge-soft">
       <div className="mb-4 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.12em] text-ink-subtle">
-          <Bookmark size={20} /> Showcase
+          <Bookmark size={20} /> {t("Showcase")}
         </div>
         {isOwner && !picking && (
           <button
@@ -209,7 +210,7 @@ export function Showcase({
                 <Poster src={item.posterUrl} seed={item.title} ratio="portrait" className="rounded-md" />
               </div>
               <div className="min-w-0">
-                <div className="text-[11px] uppercase tracking-[0.1em] text-accent">{KIND_LABEL[item.kind]}</div>
+                <div className="text-[11px] uppercase tracking-[0.1em] text-accent">{t(KIND_LABEL[item.kind])}</div>
                 <div className="mt-1 truncate font-display text-[19px] text-ink">{item.title}</div>
                 {item.caption && <div className="mt-1 line-clamp-2 text-[13px] text-ink-muted">{item.caption}</div>}
               </div>
@@ -221,17 +222,17 @@ export function Showcase({
               disabled={busy}
               className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-md border border-edge-soft text-[13px] font-medium text-ink-muted transition-colors hover:border-danger/40 hover:text-danger disabled:opacity-60"
             >
-              <X size={20} /> {busy ? "Removing" : "Remove from showcase"}
+              <X size={20} /> {busy ? t("Removing") : t("Remove from showcase")}
             </button>
           )}
         </div>
       ) : isOwner ? (
         <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-edge py-10 text-center">
-          <p className="text-[14px] text-ink-muted">Nothing on display yet</p>
-          <p className="mt-1 text-[12px] text-ink-subtle">A favorite title or one of your themes will appear here</p>
+          <p className="text-[14px] text-ink-muted">{t("Nothing on display yet")}</p>
+          <p className="mt-1 text-[12px] text-ink-subtle">{t("A favorite title or one of your themes will appear here")}</p>
         </div>
       ) : (
-        <p className="py-6 text-center text-[13px] text-ink-subtle">This user hasn't set a showcase</p>
+        <p className="py-6 text-center text-[13px] text-ink-subtle">{t("This user hasn't set a showcase")}</p>
       )}
       {isOwner && picking && <ThemePicker onPick={pickTheme} onClose={() => setPicking(false)} busy={busy} />}
     </section>

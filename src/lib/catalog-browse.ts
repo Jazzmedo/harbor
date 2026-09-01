@@ -2,6 +2,18 @@ import { createAddonCatalogFetcher, gatherCatalogAddons, isCollectionCatalog, ty
 
 const NON_CONTENT = new Set(["addon_catalog"]);
 
+const CATALOG_TYPE_LABEL_KEYS: Readonly<Record<string, string>> = {
+  movie: "Movies",
+  series: "Series",
+  anime: "Anime",
+  tv: "TV",
+  channel: "Channels",
+};
+
+export function catalogTypeLabelKey(type: string): string | undefined {
+  return CATALOG_TYPE_LABEL_KEYS[type];
+}
+
 export type BrowseCatalog = {
   key: string;
   addonName: string;

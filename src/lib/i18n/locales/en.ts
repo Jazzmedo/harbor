@@ -271,6 +271,23 @@ const en: Record<string, string> = {
   "Open settings": "Open settings",
   "All-time body of work, not who is trending. Trending and Top on TMDB are the live tabs.":
     "All-time body of work, not who is trending. Trending and Top on TMDB are the live tabs.",
+  "update.ready": "Update ready to install",
+  "update.installing": "Installing update",
+  "update.downloading": "Downloading update",
+  "update.failed": "Update failed",
+  "update.available": "Update available",
+  "update.harborVersion": "Harbor {version}",
+  "update.downloadComplete": "Download complete",
+  "update.fetching": "Fetching the latest version",
+  "update.errorServer": "There was an error connecting to the update server.",
+  "update.later": "Later",
+  "update.download": "Download",
+  "update.installRestart": "Install and restart",
+  "update.restartAuto": "Harbor will restart automatically.",
+  "update.tryAgain": "Try again",
+  "update.keepUsing": "Keep using Harbor while it downloads",
+  "update.of": "{downloaded} of {total}",
+  "mpv.conf": "mpv.conf",
 };
 
 export default en;

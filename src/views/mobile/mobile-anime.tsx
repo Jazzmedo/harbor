@@ -3,6 +3,7 @@ import { Check, Info, Plus, TrendingUp } from "lucide-react";
 import { Play } from "@/components/icons/play-filled";
 import type { Meta } from "@/lib/cinemeta";
 import { useSettings } from "@/lib/settings";
+import { useT } from "@/lib/i18n";
 import { useHeroLogos } from "@/components/anime-hero/use-hero-logos";
 import { toggleWatchlist, useInWatchlist } from "@/lib/watchlist";
 import { ImdbIcon } from "@/components/icons/imdb-icon";
@@ -45,6 +46,7 @@ function initRows(): Record<string, RowState> {
 }
 
 export function MobileAnime() {
+  const t = useT();
   const { settings } = useSettings();
   const [rowsByKey, setRowsByKey] = useState<Record<string, RowState>>(initRows);
   const [anilistTrending, setAnilistTrending] = useState<Meta[]>([]);
@@ -167,16 +169,16 @@ export function MobileAnime() {
         <HeroSkeleton />
       )}
       {composed.top10.length >= 6 && (
-        <MobileRankRail title={rankTitle(topSpec?.title ?? "Airing")} metas={composed.top10} onOpenDetail={setDetailMeta} />
+        <MobileRankRail title={t(rankTitle(topSpec?.title ?? "Airing"))} metas={composed.top10} onOpenDetail={setDetailMeta} />
       )}
       {composed.trend.length > 0 && (
-        <MobileRail title="Trending Anime" metas={composed.trend.slice(0, 18)} onOpenDetail={setDetailMeta} />
+        <MobileRail title={t("Trending Anime")} metas={composed.trend.slice(0, 18)} onOpenDetail={setDetailMeta} />
       )}
       {composed.rows.map((r) =>
         r.rank ? (
-          <MobileRankRail key={r.key} title={r.title} metas={r.metas} onOpenDetail={setDetailMeta} />
+          <MobileRankRail key={r.key} title={t(r.title)} metas={r.metas} onOpenDetail={setDetailMeta} />
         ) : (
-          <MobileRail key={r.key} title={r.title} metas={r.metas} onOpenDetail={setDetailMeta} />
+          <MobileRail key={r.key} title={t(r.title)} metas={r.metas} onOpenDetail={setDetailMeta} />
         ),
       )}
       <div className="h-4" />
@@ -194,6 +196,7 @@ function AnimeHeroMobile({
   trending: Record<string, string>;
   onOpenDetail: (m: Meta) => void;
 }) {
+  const t = useT();
   const { settings } = useSettings();
   const { playOnHost } = useMobileRemote();
   const [active, setActive] = useState(0);
@@ -222,7 +225,7 @@ function AnimeHeroMobile({
     <section className="flex flex-col gap-3.5">
       <button
         type="button"
-        aria-label={`Open ${current.name}`}
+        aria-label={t("Open {title}", { title: current.name })}
         onClick={() => onOpenDetail(current)}
         className="relative block aspect-[4/5] w-full overflow-hidden bg-surface text-start"
       >
@@ -245,11 +248,11 @@ function AnimeHeroMobile({
             className="flex h-[52px] flex-1 items-center justify-center gap-2.5 rounded-full bg-ink text-[16px] font-semibold text-canvas shadow-[0_6px_20px_-6px_rgba(0,0,0,0.4)] transition-transform duration-150 active:scale-[0.97]"
           >
             <Play size={19} strokeWidth={0} fill="currentColor" />
-            Play
+            {t("Play")}
           </button>
           <button
             type="button"
-            aria-label={inWl ? "In My List" : "Add to My List"}
+            aria-label={inWl ? t("In My List") : t("Add to My List")}
             onClick={() =>
               toggleWatchlist({
                 id: current.id,
@@ -266,7 +269,7 @@ function AnimeHeroMobile({
           </button>
           <button
             type="button"
-            aria-label="More info"
+            aria-label={t("More info")}
             onClick={() => onOpenDetail(current)}
             className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border border-edge bg-canvas/55 text-ink transition-transform duration-150 active:scale-[0.94]"
           >
@@ -279,7 +282,7 @@ function AnimeHeroMobile({
               <button
                 key={m.id}
                 type="button"
-                aria-label={`Slide ${i + 1}`}
+                aria-label={t("Slide {number}", { number: i + 1 })}
                 onClick={() => {
                   setActive(i);
                   pausedUntil.current = Date.now() + 12000;
@@ -295,6 +298,7 @@ function AnimeHeroMobile({
 }
 
 function HeroArt({ meta, logo, source, priority }: { meta: Meta; logo?: string; source?: string; priority?: boolean }) {
+  const t = useT();
   const bg = meta.background || meta.poster;
   const year = (meta.releaseInfo ?? "").slice(0, 4);
   return (
@@ -322,7 +326,7 @@ function HeroArt({ meta, logo, source, priority }: { meta: Meta; logo?: string; 
         {source && (
           <span className="inline-flex items-center gap-1.5 self-start rounded-md bg-black/45 px-2.5 py-1 text-[11.5px] font-semibold text-white backdrop-blur-md">
             <TrendingUp size={12} strokeWidth={2.6} className="text-accent" />
-            Trending on {source}
+            {t("Trending on {source}", { source })}
           </span>
         )}
         {logo ? (
@@ -405,18 +409,19 @@ function AnimeSkeleton() {
 }
 
 function FailedState({ onRetry }: { onRetry: () => void }) {
+  const t = useT();
   return (
     <div className="flex h-[70vh] flex-col items-center justify-center gap-4 px-8 text-center">
-      <h2 className="font-display text-[20px] font-medium text-ink">Couldn't load anime</h2>
+      <h2 className="font-display text-[20px] font-medium text-ink">{t("Couldn't load anime")}</h2>
       <p className="max-w-xs text-[13.5px] leading-relaxed text-ink-muted">
-        Harbor couldn't reach MyAnimeList or AniList. Check your connection and try again.
+        {t("Harbor couldn't reach MyAnimeList or AniList. Check your connection and try again.")}
       </p>
       <button
         type="button"
         onClick={onRetry}
         className="flex h-11 items-center rounded-full bg-ink px-6 text-[14px] font-semibold text-canvas transition-transform active:scale-95"
       >
-        Try again
+        {t("Try again")}
       </button>
     </div>
   );

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { t } from "@/lib/i18n";
 import { browseThemes, type StoreTheme } from "@/lib/theme-store";
 import { MOOD_MIN, MOOD_RAILS, moodScores, type Mood } from "./color-rank";
 
@@ -43,7 +44,7 @@ export function useStoreThemes(): {
         cache = list;
         setAll(list);
       })
-      .catch((e) => !cancelled && setError(e instanceof Error ? e.message : "Could not reach the theme library."))
+      .catch((e) => !cancelled && setError(e instanceof Error ? e.message : t("Could not reach the theme library.")))
       .finally(() => !cancelled && setLoading(false));
     return () => {
       cancelled = true;

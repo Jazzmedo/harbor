@@ -6,6 +6,7 @@ import { CopyLinkButton, resolveStreamLink } from "@/components/player/copy-link
 import { FormatBadge, RuleBadges, streamBadges } from "@/components/format-badge";
 import { HostMatchChip } from "@/components/host-match-chip";
 import type { Meta } from "@/lib/cinemeta";
+import { useT } from "@/lib/i18n";
 import { useDebridClients } from "@/lib/debrid/registry";
 import { useSettings } from "@/lib/settings";
 import type { ScoredStream } from "@/lib/streams/types";
@@ -44,6 +45,7 @@ export function PrimaryCard({
   isPreviouslyPlayed?: boolean;
   match?: "same" | "close" | null;
 }) {
+  const t = useT();
   const { settings } = useSettings();
   const cachedDebrids = debrids.filter((d) => stream.cached[d.slug]);
   const libraryDebrids = debrids.filter((d) => stream.inLibrary[d.slug]);
@@ -58,12 +60,37 @@ export function PrimaryCard({
     isPreviouslyPlayed;
   const queueTarget = debrids.find((d) => d.queueCache);
   const canStream = !isCached && directStreamAvailable(stream);
-  const summary = streamSummaryParts(stream);
+  const summary = streamSummaryParts(stream).map((part) =>
+    stream.seeders != null && part === `${stream.seeders} seeds`
+      ? t("{n} seeds", { n: stream.seeders })
+      : part,
+  );
   const title = displayTitle(stream, meta.name, episode, absoluteEpisode);
   const fname = settings.pickerShowFilename ? torrentFilename(stream) : "";
   const badges = settings.showQualityBadge ? streamBadges(stream) : [];
   const knownLanguages = stream.audioLanguages.filter((l) => l && l.toLowerCase() !== "unknown");
-  const titleConfirmation = !episode ? confirmationLabel(meta, stream) : null;
+  const rawTitleConfirmation = !episode ? confirmationLabel(meta, stream) : null;
+  const titleConfirmation = rawTitleConfirmation
+    ?.split(" · ")
+    .map((part) => {
+      switch (part) {
+        case "In Theatres":
+          return t("In Theatres");
+        case "Theatrical Capture":
+          return t("Theatrical Capture");
+        case "Telecine Print":
+          return t("Telecine Print");
+        case "Screener Copy":
+          return t("Screener Copy");
+        case "Disc Source":
+          return t("Disc Source");
+        case "Web Release":
+          return t("Web Release");
+        default:
+          return part;
+      }
+    })
+    .join(" · ");
   const landscapeImage = episode?.still || meta.background || null;
   const heroImage = landscapeImage || meta.poster || meta.background || null;
   const isLandscape = Boolean(landscapeImage);
@@ -135,13 +162,13 @@ export function PrimaryCard({
                   })()}
                 {knownLanguages.length > 6 && (
                   <span className="text-[13px] font-semibold tracking-[0.04em] text-ink-subtle">
-                    +{knownLanguages.length - 6} more
+                    {t("+{n} more", { n: knownLanguages.length - 6 })}
                   </span>
                 )}
               </div>
             ) : (
               <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-edge-soft/70 bg-canvas/60 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-subtle">
-                Audio not labeled
+                {t("Audio not labeled")}
               </span>
             )}
             {titleConfirmation && (
@@ -175,27 +202,31 @@ export function PrimaryCard({
                 {libraryDebrids.length > 0 ? (
                   <span className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold tracking-[0.04em] text-accent">
                     <Zap size={13} fill="currentColor" strokeWidth={0} />
-                    In your {libraryDebrids.map((d) => d.name).join(" + ")} library
+                    {t("In your {providers} library", {
+                      providers: libraryDebrids.map((d) => d.name).join(" + "),
+                    })}
                   </span>
                 ) : cachedDebrids.length > 0 ? (
                   <span className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold tracking-[0.04em] text-ink-muted">
                     <Zap size={13} fill="currentColor" strokeWidth={0} />
-                    Cached on {cachedDebrids.map((d) => d.name).join(" + ")}
+                    {t("Cached on {providers}", {
+                      providers: cachedDebrids.map((d) => d.name).join(" + "),
+                    })}
                   </span>
                 ) : addonCached ? (
                   <span className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold tracking-[0.04em] text-ink-muted">
                     <Zap size={13} fill="currentColor" strokeWidth={0} />
-                    Cached
+                    {t("Cached")}
                   </span>
                 ) : queued ? (
                   <span className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold tracking-[0.04em] text-emerald-300">
                     <Check size={13} strokeWidth={2.5} />
-                    Queued on {queueTarget?.name ?? "debrid"}
+                    {t("Queued on {provider}", { provider: queueTarget?.name ?? t("debrid") })}
                   </span>
                 ) : debrids.length > 0 && !stream.url ? (
                   <span className="inline-flex items-center gap-1.5 text-[12.5px] font-medium tracking-[0.04em] text-ink-subtle">
                     <Download size={12} strokeWidth={2.2} />
-                    Not cached yet
+                    {t("Not cached yet")}
                   </span>
                 ) : null}
                 {stream.remux && (
@@ -220,7 +251,7 @@ export function PrimaryCard({
                 className="group flex h-14 items-center gap-3 rounded-full border border-ink/30 bg-ink/[0.04] px-7 text-[14.5px] font-semibold tracking-[0.04em] text-ink transition-[transform,background-color,opacity] duration-200 hover:scale-[1.02] hover:bg-ink/[0.08] active:scale-[0.98]"
               >
                 <ExternalLink size={18} strokeWidth={2.2} />
-                Open in browser
+                {t("Open in browser")}
               </button>
             ) : isCached ? (
               <button
@@ -238,7 +269,7 @@ export function PrimaryCard({
                     className="transition-transform group-hover:translate-x-0.5"
                   />
                 )}
-                {resolving ? "Connecting" : inSession ? "Play Together" : "Play"}
+                {resolving ? t("Connecting") : inSession ? t("Play Together") : t("Play")}
               </button>
             ) : queued ? (
               <button
@@ -246,7 +277,7 @@ export function PrimaryCard({
                 className="flex h-14 items-center gap-3 rounded-full bg-emerald-400/15 px-7 text-[14px] font-semibold tracking-[0.04em] text-emerald-300 ring-1 ring-emerald-400/40"
               >
                 <Check size={18} strokeWidth={2.5} />
-                Queued on {queueTarget?.name ?? "debrid"}
+                {t("Queued on {provider}", { provider: queueTarget?.name ?? t("debrid") })}
               </button>
             ) : queueTarget ? (
               <button
@@ -259,7 +290,9 @@ export function PrimaryCard({
                 ) : (
                   <Download size={18} strokeWidth={2.4} />
                 )}
-                {resolving ? "Sending to TorBox" : `Cache on ${queueTarget.name}`}
+                {resolving
+                  ? t("Sending to {provider}", { provider: queueTarget.name })
+                  : t("Cache on {provider}", { provider: queueTarget.name })}
               </button>
             ) : canStream ? (
               <button
@@ -277,14 +310,14 @@ export function PrimaryCard({
                     className="transition-transform group-hover:translate-x-0.5"
                   />
                 )}
-                {resolving ? "Connecting" : inSession ? "Stream Together" : "Stream"}
+                {resolving ? t("Connecting") : inSession ? t("Stream Together") : t("Stream")}
               </button>
             ) : (
               <button
                 disabled
                 className="flex h-14 items-center gap-3 rounded-full bg-canvas/60 px-7 text-[14px] font-semibold tracking-[0.04em] text-ink-subtle ring-1 ring-edge-soft"
               >
-                Not cached
+                {t("Not cached")}
               </button>
             )}
             <PlayProvenance stream={stream} debrids={debrids} isCached={isCached} addonLogo={addonLogo} />

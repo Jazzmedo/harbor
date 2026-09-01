@@ -127,6 +127,25 @@ export type PersonDetail = {
   crew: PersonCredit[];
 };
 
+const TMDB_DEPARTMENT_LABEL_KEYS: Readonly<Record<string, string>> = {
+  Acting: "Acting",
+  Art: "Art",
+  Camera: "Camera",
+  "Costume & Make-Up": "Costume & Make-Up",
+  Crew: "Crew",
+  Directing: "Directing",
+  Editing: "Editing",
+  Lighting: "Lighting",
+  Production: "Production",
+  Sound: "Sound",
+  "Visual Effects": "Visual Effects",
+  Writing: "Writing",
+};
+
+export function tmdbDepartmentLabelKey(department: string): string | undefined {
+  return TMDB_DEPARTMENT_LABEL_KEYS[department];
+}
+
 const personCache = new Map<number, PersonDetail>();
 const personInflight = new Map<number, Promise<PersonDetail | null>>();
 

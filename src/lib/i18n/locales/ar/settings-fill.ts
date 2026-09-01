@@ -8,7 +8,6 @@ const settingsFill: Record<string, string> = {
   "Use model": "استخدام النموذج",
   "Any model id from console.groq.com/docs/models works here.": "أي معرّف نموذج من console.groq.com/docs/models يعمل هنا.",
   "Any model id from openrouter.ai/models works here, including :free variants.": "أي معرّف نموذج من openrouter.ai/models يعمل هنا، بما في ذلك متغيّرات :free.",
-  ". Works without a key at low volume; add a key for higher quotas.": ". يعمل دون مفتاح عند الاستخدام المنخفض؛ أضِف مفتاحًا للحصول على حصص أعلى.",
   "SVP's files are here but its VapourSynth engine won't load ({err}). This usually means a stale VapourSynth entry or a missing Microsoft VC++ runtime. Reinstall SVP, or install the latest \"Visual C++ Redistributable (x64)\" from Microsoft, then reopen Harbor.": "ملفات SVP موجودة هنا لكن يتعذّر تحميل محرّك VapourSynth الخاص به ({err}). يعني هذا عادةً وجود إدخال قديم لـ VapourSynth أو فقدان وقت تشغيل Microsoft VC++. أعِد تثبيت SVP، أو ثبّت أحدث إصدار من \"Visual C++ Redistributable (x64)\" من Microsoft، ثم أعِد فتح Harbor.",
   "Smooth motion runs on the bundled mpv engine in the Harbor desktop app. It has no effect in the browser.": "تعمل الحركة السلسة على محرّك mpv المُضمَّن في تطبيق Harbor لسطح المكتب. ولا تأثير لها في المتصفّح.",
   "Subtitle auto-sync": "المزامنة التلقائية للترجمة",

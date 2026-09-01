@@ -1,7 +1,7 @@
 const library: Record<string, string> = {
   "My library": "Моя библиотека",
   "Your collection.": "Ваша коллекция.",
-  "Watchlist is what you've saved for later. History is everything you've watched. Local is files on your computer.": "Список просмотра — то, что сохранено на потом. История — всё просмотренное. Локальные — файлы на вашем компьютере.",
+  "Watchlist is what you've saved for later. History is everything you've watched. Local is files on your computer.": "Список просмотра – то, что сохранено на потом. История – всё просмотренное. Локальные – файлы на вашем компьютере.",
   "Watchlist only": "Только список просмотра",
   "Watchlist shows only saved titles": "В списке просмотра только сохранённое",
   "In Watchlist": "В списке просмотра",
@@ -42,7 +42,7 @@ const library: Record<string, string> = {
   "No {kind} releases this month. Try a different filter.": "В этом месяце нет релизов ({kind}). Попробуйте другой фильтр.",
   "TMDB has no notable releases for this month and region.": "В TMDB нет заметных релизов для этого месяца и региона.",
   "Your saved shows have no episodes scheduled for this month. Switch to All upcoming to browse the full release calendar.": "У сохранённых сериалов нет серий в этом месяце. Переключитесь на «Все ожидаемые», чтобы увидеть полный календарь релизов.",
-  "TMDB powers the firehose of every release this month. The free tier covers it. About 60 seconds to set up. Switch to My Library if you'd rather only see what you've saved.": "TMDB даёт полный поток всех релизов месяца. Бесплатного тарифа хватает. Настройка — около 60 секунд. Переключитесь на «Мою библиотеку», если хотите видеть только сохранённое.",
+  "TMDB powers the firehose of every release this month. The free tier covers it. About 60 seconds to set up. Switch to My Library if you'd rather only see what you've saved.": "TMDB даёт полный поток всех релизов месяца. Бесплатного тарифа хватает. Настройка – около 60 секунд. Переключитесь на «Мою библиотеку», если хотите видеть только сохранённое.",
   "Failed to load": "Не удалось загрузить",
   "Plan to Watch": "Запланировано",
   "On Hold": "Отложено",

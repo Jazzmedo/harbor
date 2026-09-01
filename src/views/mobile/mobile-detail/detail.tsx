@@ -4,6 +4,7 @@ import type { Meta } from "@/lib/cinemeta";
 import { awardSummary, pickHeroAwards, useAwards } from "@/lib/providers/wikidata";
 import { mergeBundledAwards } from "@/lib/awards-history";
 import { useSettings } from "@/lib/settings";
+import { useT } from "@/lib/i18n";
 import { useHideAnimeMetas } from "@/lib/anime-hide";
 import { useMobileRemote } from "../mobile-remote";
 import {
@@ -95,6 +96,7 @@ function DetailBody({
   onBack: () => void;
   onOpenMeta: (m: Meta) => void;
 }) {
+  const t = useT();
   const { settings } = useSettings();
   const { playOnHost, openOnHost } = useMobileRemote();
   const key = settings.tmdbKey;
@@ -218,23 +220,23 @@ function DetailBody({
         )}
 
         {detail && shownRecItems.length > 0 && (
-          <RecRail title="More Like This" items={shownRecItems} onOpen={onOpenMeta} />
+          <RecRail title={t("More Like This")} items={shownRecItems} onOpen={onOpenMeta} />
         )}
 
         {detail && shownSimItems.length > 0 && (
-          <RecRail title="You Might Also Like" items={shownSimItems} onOpen={onOpenMeta} />
+          <RecRail title={t("You Might Also Like")} items={shownSimItems} onOpen={onOpenMeta} />
         )}
 
         {isAnime && anilist && anilist.relatedAnime.length > 0 && (
           <AnimeRelatedRow
-            title="Related Anime"
+            title={t("Related Anime")}
             nodes={dedupeRelated(anilist.relatedAnime)}
             onOpen={(n) => onOpenMeta(relatedToMeta(n))}
           />
         )}
 
         {isAnime && anilist && anilist.adaptations.length > 0 && (
-          <AnimeRelatedRow title="Adaptations" nodes={dedupeRelated(anilist.adaptations)} />
+          <AnimeRelatedRow title={t("Adaptations")} nodes={dedupeRelated(anilist.adaptations)} />
         )}
 
         {isAnime && (detail || anilist) && (

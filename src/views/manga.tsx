@@ -295,10 +295,10 @@ export function MangaView() {
           className="mb-7 inline-flex items-center gap-1.5 rounded-full border border-edge-soft bg-canvas/40 px-4 py-2 text-[14px] text-ink-muted transition-colors hover:bg-elevated hover:text-ink"
         >
           <ChevronLeft size={18} />
-          Back
+          {t("Back")}
         </button>
         <h1 className="mb-8 font-display text-[32px] font-medium tracking-tight text-ink">
-          Collections
+          {t("Collections")}
         </h1>
         <MangaCollections onOpen={openMangaItem} />
       </main>
@@ -330,10 +330,11 @@ export function MangaView() {
       <BecauseYouWatched onOpen={openMangaItem} />
       <div className="mt-8">
         <MangaRail
-          title="Popular Manga"
-          subtitle="Most read right now"
+          title={t("Popular Manga")}
+          subtitle={t("Most read right now")}
           collapsibleKey="harbor.manga.popularRowOpen"
           hideKey="popular"
+          scrollKey="manga:Popular Manga"
           load={() => popularManga(0)}
           onOpen={openMangaItem}
         />
@@ -356,9 +357,9 @@ export function MangaView() {
           </span>
         </span>
         <div className="flex min-w-0 flex-1 flex-col">
-          <span className="text-[15.5px] font-semibold text-ink">Collections</span>
+          <span className="text-[15.5px] font-semibold text-ink">{t("Collections")}</span>
           <span className="truncate text-[13px] text-ink-muted">
-            Most popular, critically acclaimed, award winners and more
+            {t("Most popular, critically acclaimed, award winners and more")}
           </span>
         </div>
         <ChevronRight
@@ -376,7 +377,7 @@ export function MangaView() {
           className="inline-flex h-10 shrink-0 items-center gap-2 rounded-xl border border-edge-soft bg-surface/60 px-4 text-[13.5px] font-medium text-ink-muted transition-colors hover:border-edge hover:bg-elevated/60 hover:text-ink"
         >
           <ArrowDownToLine size={16} strokeWidth={2} />
-          Downloads
+          {t("Downloads")}
           {downloadsCount > 0 && (
             <span className="rounded-full bg-elevated px-2 py-0.5 text-[11.5px] font-semibold tabular-nums text-ink ring-1 ring-edge-soft">
               {downloadsCount}

@@ -91,6 +91,7 @@ function RailItem({
   onClick: () => void;
   onDelete?: () => void;
 }) {
+  const t = useT();
   return (
     <div
       className={`group/row relative flex items-center rounded-[9px] transition-colors ${
@@ -124,7 +125,7 @@ function RailItem({
         <button
           type="button"
           onClick={onDelete}
-          aria-label="Remove pack"
+          aria-label={t("Remove pack")}
           className="absolute end-1.5 flex h-6 w-6 items-center justify-center rounded-md text-ink-subtle opacity-0 transition-all hover:bg-danger/15 hover:text-danger group-hover/row:opacity-100"
         >
           <Trash2 size={13} strokeWidth={2.2} />

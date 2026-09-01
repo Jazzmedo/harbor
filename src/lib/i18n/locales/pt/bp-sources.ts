@@ -9,12 +9,12 @@ const bpSources: Record<string, string> = {
   "No sources found": "Nenhuma fonte encontrada",
   "Stream over P2P?": "Assistir via P2P?",
   "This source is not cached. Harbor will stream it peer to peer, which shares data with other peers.":
-    "Esta fonte nao esta em cache. O Harbor vai transmiti-la ponto a ponto, o que compartilha dados com outros pares.",
+    "Esta fonte não está em cache. O Harbor vai transmiti-la via P2P, compartilhando dados com outros pares.",
   "Your debrid service is not responding. Try a different source.":
-    "Seu servico de debrid nao esta respondendo. Tente outra fonte.",
+    "Seu serviço de debrid não está respondendo. Tente outra fonte.",
   "{n} seeds": "{n} seeds",
-  "{count} collections": "{count} colecoes",
-  "Unavailable": "Indisponivel",
+  "{count} collections": "{count} coleções",
+  "Unavailable": "Indisponível",
 };
 
 export default bpSources;

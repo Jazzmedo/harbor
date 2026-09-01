@@ -1,4 +1,5 @@
 import { ChevronLeft } from "lucide-react";
+import { useT } from "@/lib/i18n";
 import { ModeSwitcher } from "./mode-switcher";
 import type { LocalMode } from "./local-reader-types";
 
@@ -17,6 +18,7 @@ export function ReaderTopbar({
   onExit: () => void;
   onPickMode: (m: LocalMode) => void;
 }) {
+  const t = useT();
   return (
     <div
       className="bg-gradient-to-b from-[#0b0b0d]/95 via-[#0b0b0d]/70 to-transparent pb-7"
@@ -25,7 +27,7 @@ export function ReaderTopbar({
       <div className="flex items-center gap-2 px-3">
         <button
           type="button"
-          aria-label="Back to remote"
+          aria-label={t("Back to remote")}
           onClick={onExit}
           className="grid h-11 w-11 shrink-0 place-items-center rounded-full text-ink-muted transition-transform active:scale-90 motion-reduce:transition-none"
         >

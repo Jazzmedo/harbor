@@ -101,7 +101,7 @@ test("narrator voices exist only in the reader controller, not Reading settings"
   assert.doesNotMatch(settings, /narrationVoices/);
   assert.doesNotMatch(settings, /Narrator voice/);
   assert.match(reader.slice(0, settingsStart), /<VoicePicker/);
-  assert.match(settings, /Setting label="Saved audio"/);
+  assert.match(settings, /Setting label=\{t\("Saved audio"\)\}/);
 });
 
 test("Book Mode keeps the current pages visible while settings regenerate replacements", async () => {

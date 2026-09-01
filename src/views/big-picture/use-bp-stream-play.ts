@@ -7,7 +7,11 @@ import type { ScoredStream } from "@/lib/streams/types";
 import { useTogether } from "@/lib/together/provider";
 import { useView, type PlayEpisode, type PlayerSrc } from "@/lib/view";
 import { isLivePlaybackSrc } from "@/lib/player/live-src";
-import { humanError, streamIdentity } from "@/views/play-picker/picker-utils";
+import {
+  playError,
+  streamIdentity,
+  type PickerError,
+} from "@/views/play-picker/picker-utils";
 import { useAutoCandidates } from "@/views/play-picker/use-auto-candidates";
 import { useAutoFire } from "@/views/play-picker/use-auto-fire";
 import { usePickHandler } from "@/views/play-picker/use-pick-handler";
@@ -22,7 +26,7 @@ export type BpStreamPlay = {
   play: (s: ScoredStream) => void;
   openLocal: (src: PlayerSrc) => void;
   resolvingKey: string | null;
-  error: string | null;
+  error: PickerError | null;
   clearError: () => void;
   failed: (s: ScoredStream) => boolean;
   p2pConfirm: ScoredStream | null;
@@ -80,7 +84,7 @@ export function useBpStreamPlay(params: {
     });
 
   const [resolving, setResolving] = useState<ResolvingSelection | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<PickerError | null>(null);
   const [pendingKey, setPendingKey] = useState<string | null>(null);
   const [failedStreams, setFailedStreams] = useState<Set<ScoredStream>>(new Set());
   const [preselect, setPreselect] = useState<PlayerSrc | null>(null);
@@ -228,7 +232,7 @@ export function useBpStreamPlay(params: {
       abortResolve();
       setResolving(null);
       setAutoCancelled(true);
-      setError(humanError("timeout"));
+      setError(playError("timeout"));
     }, RESOLVE_TIMEOUT_MS);
     return () => window.clearTimeout(timer);
   }, [resolving, abortResolve]);

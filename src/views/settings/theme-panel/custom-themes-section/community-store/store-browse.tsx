@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { X } from "lucide-react";
+import { useT } from "@/lib/i18n";
 import type { StoreTheme } from "@/lib/theme-store";
 import { MOOD_RAILS, themeMoods, type Mood } from "./color-rank";
 import { MarketCard } from "./market/market-card";
@@ -32,6 +33,7 @@ export function StoreBrowse({
   onOpen: (t: StoreTheme) => void;
   onClearMood?: () => void;
 }) {
+  const t = useT();
   const [sort, setSort] = useState<SortId>("top");
   const q = query.trim().toLowerCase();
 
@@ -57,7 +59,7 @@ export function StoreBrowse({
                 : "bg-surface text-ink-muted ring-1 ring-edge-soft hover:text-ink hover:ring-edge"
             }`}
           >
-            {s.label}
+            {t(s.label)}
           </button>
         ))}
         {mood && (
@@ -66,18 +68,18 @@ export function StoreBrowse({
             onClick={onClearMood}
             className="inline-flex h-8 items-center gap-1.5 rounded-full bg-accent-soft px-3 text-[12.5px] font-semibold text-accent transition-opacity hover:opacity-85"
           >
-            {MOOD_RAILS.find((r) => r.mood === mood)?.title ?? mood}
+            {t(MOOD_RAILS.find((r) => r.mood === mood)?.title ?? mood)}
             <X size={12} strokeWidth={2.6} />
           </button>
         )}
         <span className="ms-auto tabular-nums text-[12.5px] text-ink-subtle">
-          {shown.length} {shown.length === 1 ? "theme" : "themes"}
+          {shown.length} {shown.length === 1 ? t("theme") : t("themes")}
         </span>
       </div>
 
       {shown.length === 0 ? (
         <p className="rounded-md bg-surface px-4 py-14 text-center text-[13px] text-ink-subtle ring-1 ring-edge-soft">
-          {q ? "No themes match your search." : "No community themes yet. Be the first to share one."}
+          {q ? t("No themes match your search.") : t("No community themes yet. Be the first to share one.")}
         </p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

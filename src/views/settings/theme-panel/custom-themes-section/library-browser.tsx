@@ -1,6 +1,7 @@
 import { ChevronLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { BETA_THEMES } from "@/lib/theme";
+import { useT } from "@/lib/i18n";
 import { BetaThemesCard, BetaThemesModal } from "./beta-themes-modal";
 import { clearUnseenDownloads, getUnseenDownloads, subscribeUnseen } from "@/lib/theme-store";
 import { CommunityStore } from "./community-store/community-store";
@@ -33,6 +34,7 @@ export function LibraryBrowser({
   initialTab?: "library" | "community" | "mine";
   initialStoreTab?: StoreTab;
 }) {
+  const t = useT();
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -61,8 +63,10 @@ export function LibraryBrowser({
   const libQ = libQuery.trim().toLowerCase();
   const libFiltering = libQ !== "" || libCat !== "all";
   const libShown = libAll.filter((e) => {
+    const blurb =
+      e.category === "Yours" || !e.theme.blurb ? (e.theme.blurb ?? "") : t(e.theme.blurb);
     if (libCat !== "all" && e.category !== libCat) return false;
-    if (libQ && !`${e.theme.name} ${e.theme.blurb ?? ""}`.toLowerCase().includes(libQ)) return false;
+    if (libQ && !`${e.theme.name} ${blurb}`.toLowerCase().includes(libQ)) return false;
     return true;
   });
   const libCounts: Record<string, number> = {
@@ -81,7 +85,7 @@ export function LibraryBrowser({
           className="group inline-flex items-center gap-1.5 text-[13px] font-semibold text-ink-subtle transition-colors hover:text-ink"
         >
           <ChevronLeft size={16} strokeWidth={2.4} className="dir-icon transition-transform group-hover:-translate-x-0.5 rtl:group-hover:translate-x-0.5" />
-          Your themes
+          {t("Your themes")}
         </button>
         <MarketSegmented
           items={[
@@ -123,7 +127,7 @@ export function LibraryBrowser({
               />
             ) : (
               <p className="rounded-md border border-dashed border-edge px-4 py-14 text-center text-[13px] text-ink-subtle">
-                No themes match your filter.
+                {t("No themes match your filter.")}
               </p>
             )
           ) : (
@@ -179,11 +183,12 @@ function BrowserSection({
   subtitle: string;
   children: React.ReactNode;
 }) {
+  const t = useT();
   return (
     <section className="flex flex-col gap-4">
       <div className="flex flex-col">
-        <h3 className="text-[17px] font-semibold tracking-tight text-ink">{title}</h3>
-        <p className="text-[13px] text-ink-subtle">{subtitle}</p>
+        <h3 className="text-[17px] font-semibold tracking-tight text-ink">{t(title)}</h3>
+        <p className="text-[13px] text-ink-subtle">{t(subtitle)}</p>
       </div>
       {children}
     </section>

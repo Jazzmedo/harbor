@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { AlertCircle, Check, Loader2, Lock, X } from "lucide-react";
 import { claimHandle } from "@/lib/account/handle";
-import { accountErrorMessage } from "@/lib/account/error-messages";
+import {
+  accountErrorMessage,
+  type AccountErrorMessage,
+} from "@/lib/account/error-messages";
 import type { Author } from "@/lib/theme-auth";
 import { inputClass } from "./fields";
 import { useHandleAvailability, type HandleStatus } from "./use-handle-availability";
@@ -22,7 +25,7 @@ export function HandleClaimCard({ author }: { author: Author }) {
   const t = useT();
   const [value, setValue] = useState("");
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<AccountErrorMessage | null>(null);
   const [pending, setPending] = useState<string | null>(null);
 
   const status = useHandleAvailability(value, value.length > 0);
@@ -111,7 +114,11 @@ export function HandleClaimCard({ author }: { author: Author }) {
           ? `${t("You can change your handle")} ${t(COOLDOWN_LABEL)}, ${t("so pick one you'll keep.")}`
           : `${t("You can change your handle")} ${t(COOLDOWN_LABEL)} ${t("after you claim it.")}`}
       </p>
-      {error && <p className="text-[12px] text-danger">{error}</p>}
+      {error && (
+        <p className="text-[12px] text-danger">
+          {error.kind === "built-in" ? t(error.key) : error.detail}
+        </p>
+      )}
 
       {pending && (
         <HandleChangeConfirm

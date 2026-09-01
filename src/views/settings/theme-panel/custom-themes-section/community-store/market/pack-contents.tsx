@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useT } from "@/lib/i18n";
 import type { StoreBundle } from "@/lib/bundle-store";
 import { labelForIcon } from "./bundle-labels";
 
@@ -49,6 +50,7 @@ export function PackContents({
   variant: "hero" | "detail";
   className?: string;
 }) {
+  const t = useT();
   const icons = bundle.icons;
   if (icons.length === 0) return null;
   const shown = variant === "hero" ? icons.slice(0, 5) : icons;
@@ -56,7 +58,7 @@ export function PackContents({
   return (
     <div className={`flex flex-col gap-2.5 ${className ?? ""}`}>
       <span className="text-[12.5px] font-semibold uppercase tracking-[0.12em] text-ink-subtle">
-        {icons.length} in this pack
+        {t("{count} in this pack", { count: icons.length })}
       </span>
       <div className={variant === "hero" ? "flex flex-wrap gap-2" : "grid grid-cols-2 gap-2 sm:grid-cols-3"}>
         {shown.map((ic) => (
@@ -64,7 +66,7 @@ export function PackContents({
         ))}
         {variant === "hero" && overflow > 0 && (
           <span className="inline-flex items-center rounded-md bg-elevated px-2.5 py-1.5 text-[12.5px] font-semibold text-ink-muted ring-1 ring-edge-soft">
-            +{overflow} more
+            {t("+{count} more", { count: overflow })}
           </span>
         )}
       </div>

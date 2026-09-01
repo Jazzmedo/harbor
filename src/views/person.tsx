@@ -8,6 +8,7 @@ import {
   type PersonCredit,
   type PersonDetail,
 } from "@/lib/providers/tmdb";
+import { tmdbDepartmentLabelKey } from "@/lib/providers/tmdb/tmdb-people";
 import { AwardDetailModal } from "@/components/award-detail-modal";
 import { awardSummary, type AwardType, useAwards } from "@/lib/providers/wikidata";
 import { mergeBundledPersonAwards } from "@/lib/awards-history";
@@ -53,6 +54,14 @@ export function PersonView({ personId }: { personId: number }) {
   const initialCached = tmdbPersonCached(personId);
   const [person, setPerson] = useState<PersonDetail | null>(initialCached ?? null);
   const [loading, setLoading] = useState(!initialCached);
+  const departmentKey = person?.knownForDepartment
+    ? tmdbDepartmentLabelKey(person.knownForDepartment)
+    : undefined;
+  const departmentLabel = person?.knownForDepartment
+    ? departmentKey
+      ? t(departmentKey)
+      : person.knownForDepartment
+    : null;
   const scrollRef = useRef<HTMLElement>(null);
   const personRank = rank(personId, person?.knownForDepartment ?? "Acting");
   const liveAwards = useAwards(person?.imdbId ?? undefined);
@@ -190,7 +199,7 @@ export function PersonView({ personId }: { personId: number }) {
             <div className="flex items-center gap-3">
               {person?.knownForDepartment && (
                 <span className="text-[12.5px] font-medium uppercase tracking-[0.22em] text-ink-subtle">
-                  {t(person.knownForDepartment)}
+                  {departmentLabel}
                 </span>
               )}
               {personRank && (
@@ -198,7 +207,7 @@ export function PersonView({ personId }: { personId: number }) {
                   type="button"
                   onClick={() => openTopRank((person?.knownForDepartment as TopRankDept) ?? "Acting")}
                   className="flex items-center gap-1 rounded-md border border-accent/30 bg-accent/10 px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.14em] text-accent transition-all hover:scale-105 hover:border-accent/60 hover:bg-accent/20"
-                  title={t("Open Top 100 {dept}", { dept: t(person?.knownForDepartment ?? "Actors") })}
+                  title={t("Open Top 100 {dept}", { dept: departmentLabel ?? t("Actors") })}
                 >
                   {t("Top {n}", { n: personRank })}
                 </button>

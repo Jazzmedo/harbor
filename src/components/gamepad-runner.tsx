@@ -7,6 +7,7 @@ import { useLiveGamepad } from "@/lib/gamepad/live";
 import { useGamepads } from "@/lib/gamepad/store";
 import { useGamepad } from "@/lib/gamepad/use-gamepad";
 import { useSettings } from "@/lib/settings";
+import { useT } from "@/lib/i18n";
 
 function hoverCss(rules: CSSRuleList): string {
   return Array.from(rules).map((rule) => {
@@ -205,6 +206,7 @@ const KEYS = {
 };
 
 function ControllerKeyboard({ input, size, onClose }: { input: TextField; size: number; onClose: () => void }) {
+  const t = useT();
   const [language, setLanguage] = useState<keyof typeof KEYS>("English");
   const [pressed, setPressed] = useState("");
   const flash = (key: string) => {
@@ -219,11 +221,11 @@ function ControllerKeyboard({ input, size, onClose }: { input: TextField; size: 
     <div className="flex gap-2">{"1234567890".split("").map((key) => <button key={key} onClick={() => tap(key)} className={`h-12 w-12 rounded-full bg-elevated text-lg font-semibold text-ink transition hover:bg-accent/20 hover:ring-4 hover:ring-accent/30 ${pressed === key ? "scale-75 bg-accent text-canvas" : ""}`}>{key}</button>)}</div>
     {KEYS[language].map((row) => <div key={row} className="flex gap-2">{[...row].map((key) => <button key={key} onClick={() => tap(key)} className={`h-12 w-12 rounded-full bg-elevated text-lg font-semibold text-ink transition hover:bg-accent/20 hover:ring-4 hover:ring-accent/30 ${pressed === key ? "scale-75 bg-accent text-canvas" : ""}`}>{key}</button>)}</div>)}
     <div className="flex gap-2">
-      <button onClick={() => { flash("Language"); setLanguage(language === "English" ? "العربية" : "English"); }} className={`h-12 px-6 rounded-xl bg-elevated font-semibold text-ink transition hover:bg-raised focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent/50 ${pressed === "Language" ? "scale-90 bg-accent text-canvas" : ""}`}>{language === "English" ? "العربية" : "English"}</button>
-      <button onClick={() => tap(" ")} className={`h-12 w-64 rounded-xl bg-elevated font-semibold text-ink transition hover:bg-raised focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent/50 ${pressed === " " ? "scale-90 bg-accent text-canvas" : ""}`}>Space</button>
-      <button onClick={() => tap("Backspace")} className={`h-12 px-6 rounded-xl bg-elevated font-semibold text-ink transition hover:bg-raised focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent/50 ${pressed === "Backspace" ? "scale-90 bg-accent text-canvas" : ""}`}>Backspace</button>
-      <button onClick={() => tap("Enter")} className={`h-12 px-6 rounded-xl bg-accent font-semibold text-canvas transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/50 ${pressed === "Enter" ? "scale-90 brightness-75" : ""}`}>Search</button>
-      <button onClick={onClose} className="h-12 px-6 rounded-xl bg-elevated font-semibold text-ink transition hover:bg-raised focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent/50 active:scale-90">Close</button>
+      <button onClick={() => { flash("Language"); setLanguage(language === "English" ? "العربية" : "English"); }} className={`h-12 px-6 rounded-xl bg-elevated font-semibold text-ink transition hover:bg-raised focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent/50 ${pressed === "Language" ? "scale-90 bg-accent text-canvas" : ""}`}>{language === "English" ? "العربية" : t("English")}</button>
+      <button onClick={() => tap(" ")} className={`h-12 w-64 rounded-xl bg-elevated font-semibold text-ink transition hover:bg-raised focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent/50 ${pressed === " " ? "scale-90 bg-accent text-canvas" : ""}`}>{t("Space")}</button>
+      <button onClick={() => tap("Backspace")} className={`h-12 px-6 rounded-xl bg-elevated font-semibold text-ink transition hover:bg-raised focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent/50 ${pressed === "Backspace" ? "scale-90 bg-accent text-canvas" : ""}`}>{t("Backspace")}</button>
+      <button onClick={() => tap("Enter")} className={`h-12 px-6 rounded-xl bg-accent font-semibold text-canvas transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/50 ${pressed === "Enter" ? "scale-90 brightness-75" : ""}`}>{t("Search")}</button>
+      <button onClick={onClose} className="h-12 px-6 rounded-xl bg-elevated font-semibold text-ink transition hover:bg-raised focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent/50 active:scale-90">{t("Close")}</button>
     </div>
   </div>;
 }

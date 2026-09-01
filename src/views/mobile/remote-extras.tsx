@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
 import { Check, Clock, Gauge } from "lucide-react";
+import { useT } from "@/lib/i18n";
 import { useMobileRemote } from "./mobile-remote";
 
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
@@ -96,6 +97,7 @@ export function useSheetDrag(onClose: () => void) {
 }
 
 export function KeyboardOverlay({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const t = useT();
   const { sendCommand, snapshot } = useMobileRemote();
   const [val, setVal] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -123,7 +125,7 @@ export function KeyboardOverlay({ open, onClose }: { open: boolean; onClose: () 
     >
       <style>{SHEET_EXIT_CSS}</style>
       <div className="flex items-center justify-between px-5 pb-3">
-        <span className="text-[13px] font-semibold text-ink-muted">Typing on your computer</span>
+        <span className="text-[13px] font-semibold text-ink-muted">{t("Typing on your computer")}</span>
         <button
           type="button"
           onClick={() => {
@@ -132,7 +134,7 @@ export function KeyboardOverlay({ open, onClose }: { open: boolean; onClose: () 
           }}
           className="flex h-9 items-center rounded-full bg-elevated/70 px-4 text-[13.5px] font-semibold text-ink"
         >
-          Done
+          {t("Done")}
         </button>
       </div>
       <input
@@ -147,7 +149,7 @@ export function KeyboardOverlay({ open, onClose }: { open: boolean; onClose: () 
           if (e.key === "Enter") submit();
         }}
         enterKeyHint="search"
-        placeholder={snapshot.textEntry?.placeholder ?? "Type to search…"}
+        placeholder={snapshot.textEntry?.placeholder ?? t("Type to search…")}
         className="w-full flex-1 bg-transparent px-5 font-display text-[clamp(1.6rem,7vw,2.4rem)] leading-tight tracking-tight text-ink placeholder:text-ink-subtle focus:outline-none"
       />
     </div>
@@ -155,6 +157,7 @@ export function KeyboardOverlay({ open, onClose }: { open: boolean; onClose: () 
 }
 
 export function SpeedSleepSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const t = useT();
   const { sendCommand } = useMobileRemote();
   const [speed, setSpeed] = useState(1);
   const [sleep, setSleep] = useState(0);
@@ -175,7 +178,7 @@ export function SpeedSleepSheet({ open, onClose }: { open: boolean; onClose: () 
         <section className="flex flex-col gap-3">
           <h3 className="flex items-center gap-2 text-[15px] font-semibold text-ink">
             <Gauge size={17} strokeWidth={2.2} className="text-ink-muted" />
-            Playback speed
+            {t("Playback speed")}
           </h3>
           <div className="flex flex-wrap gap-2">
             {SPEEDS.map((s) => (
@@ -195,7 +198,7 @@ export function SpeedSleepSheet({ open, onClose }: { open: boolean; onClose: () 
         <section className="flex flex-col gap-3">
           <h3 className="flex items-center gap-2 text-[15px] font-semibold text-ink">
             <Clock size={17} strokeWidth={2.2} className="text-ink-muted" />
-            Sleep timer
+            {t("Sleep timer")}
           </h3>
           <div className="flex flex-wrap gap-2">
             {SLEEPS.map((s) => (
@@ -207,7 +210,7 @@ export function SpeedSleepSheet({ open, onClose }: { open: boolean; onClose: () 
                   sendCommand({ action: "setSleep", minutes: s.minutes });
                 }}
               >
-                {s.label}
+                {t(s.label)}
               </Chip>
             ))}
           </div>

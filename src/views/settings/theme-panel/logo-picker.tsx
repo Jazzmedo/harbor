@@ -83,7 +83,7 @@ function LogoSlot({
         disabled={busy}
         className="shrink-0 rounded-full bg-ink px-4 py-2 text-[12.5px] font-semibold text-canvas transition-opacity hover:opacity-90 disabled:opacity-60"
       >
-        {busy ? "…" : value ? "Replace" : "Upload"}
+        {busy ? "…" : value ? t("Replace") : t("Upload")}
       </button>
       {value && !busy && (
         <button

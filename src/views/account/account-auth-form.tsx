@@ -8,7 +8,10 @@ import {
   signInWithDiscord,
   startDiscordSignup,
 } from "@/lib/account/discord-link";
-import { accountErrorMessage } from "@/lib/account/error-messages";
+import {
+  accountErrorMessage,
+  type AccountErrorMessage,
+} from "@/lib/account/error-messages";
 import { canDiscordAuth } from "@/lib/discord-auth";
 import { PasswordField, TextField } from "./fields";
 import { AccountRecoverForm } from "./account-recover-form";
@@ -54,7 +57,7 @@ export function AccountAuthForm({
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [discordBusy, setDiscordBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<AccountErrorMessage | null>(null);
   // Set once Discord confirms identity for a fresh signup, cleared once the
   // account is actually created. While set, the username/password fields
   // below finish the Discord signup instead of a plain password one -- see
@@ -230,7 +233,7 @@ export function AccountAuthForm({
                     mode === m.id ? "text-canvas" : "text-ink-muted hover:text-ink"
                   }`}
                 >
-                  {m.label}
+                  {t(m.label)}
                 </button>
               ))}
             </div>
@@ -249,7 +252,7 @@ export function AccountAuthForm({
               onChange={setUsername}
               placeholder={t("yourname")}
               maxLength={24}
-              hint={usernameHint}
+              hint={usernameHint ? t(usernameHint) : undefined}
               tone={usernameHint ? "danger" : "muted"}
               autoComplete="username"
             />
@@ -276,7 +279,7 @@ export function AccountAuthForm({
 
             {error && (
               <p className="rounded-md bg-danger/10 px-3.5 py-2.5 text-[12.5px] leading-snug text-danger">
-                {error}
+                {error.kind === "built-in" ? t(error.key) : error.detail}
               </p>
             )}
 
@@ -311,7 +314,7 @@ export function AccountAuthForm({
                 className="harbor-press-pop flex h-9 items-center justify-center gap-2 rounded-md bg-ink px-4 text-[12.5px] font-semibold text-canvas transition-opacity duration-150 hover:opacity-90 disabled:opacity-40"
               >
                 {busy && <Loader2 size={16} className="animate-spin" />}
-                {discordPending ? t("Finish creating my account") : active.action}
+                {discordPending ? t("Finish creating my account") : t(active.action)}
               </button>
             </div>
           </form>

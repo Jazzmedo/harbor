@@ -99,16 +99,20 @@ export function WebhooksPanel() {
     const setStatus = kind === "discord" ? setDiscordStatus : setTelegramStatus;
     if (!url) return;
     inFlightRef.current[kind] = true;
-    setStatus({ state: "busy", message: "Sending…" });
+    setStatus({ state: "busy", message: t("Sending…") });
+    const service = kind === "discord" ? "Discord" : "Telegram";
     const testPayload: WebhookPayload = {
-      text: `Harbor test message (${kind === "discord" ? "Discord" : "Telegram"}). If you can read this, your webhook is wired up.`,
+      text: t(
+        "Harbor test message ({service}). If you can read this, your webhook is wired up.",
+        { service },
+      ),
       items: [],
     };
     try {
       const res = await fireWebhook(kind, url, testPayload);
       setStatus({
         state: res.ok ? "ok" : "error",
-        message: res.ok ? "Sent. Check your channel." : res.error ?? "Failed",
+        message: res.ok ? t("Sent. Check your channel.") : res.error ?? t("Failed"),
       });
     } finally {
       inFlightRef.current[kind] = false;

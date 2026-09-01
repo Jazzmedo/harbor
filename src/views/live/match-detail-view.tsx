@@ -45,6 +45,7 @@ export function MatchDetailView({ game }: { game: SportsGame }) {
       <div className="relative shrink-0 pb-10 pt-24">
         <div className="absolute inset-x-0 top-0 h-full bg-gradient-to-b from-brand/10 via-brand/5 to-transparent opacity-80" />
         <button
+          aria-label={t("Back")}
           onClick={goBack}
           className="absolute start-6 top-24 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-elevated/80 text-ink shadow-lg ring-1 ring-edge-soft/50 transition-colors hover:bg-elevated hover:text-ink-muted md:top-20"
         >
@@ -231,9 +232,9 @@ function LineupsTab({ detail }: { detail: SportsMatchDetail }) {
                 {detail.home.logo && <img src={detail.home.logo} className="h-8 w-8 object-contain" alt="" />}
                 <span className="font-bold text-lg">{detail.home.name}</span>
               </div>
-              {detail.homeFormation && <span className="rounded-full bg-elevated px-3 py-1 text-xs font-bold text-ink-muted ring-1 ring-edge-soft/50">{t(detail.homeFormation)}</span>}
+              {detail.homeFormation && <span className="rounded-full bg-elevated px-3 py-1 text-xs font-bold text-ink-muted ring-1 ring-edge-soft/50">{detail.homeFormation}</span>}
             </div>
-            <TeamPitch roster={detail.homeRoster} formation={detail.homeFormation || ""} teamAbbr={detail.home.abbr || "HOME"} isHome={true} />
+            <TeamPitch roster={detail.homeRoster} formation={detail.homeFormation || ""} teamAbbr={detail.home.abbr || t("HOME")} isHome={true} />
           </div>
           <div className="flex flex-1 flex-col gap-4">
             <div className="flex items-center justify-between border-b border-edge-soft/50 pb-2 px-2">
@@ -241,9 +242,9 @@ function LineupsTab({ detail }: { detail: SportsMatchDetail }) {
                 {detail.away.logo && <img src={detail.away.logo} className="h-8 w-8 object-contain" alt="" />}
                 <span className="font-bold text-lg">{detail.away.name}</span>
               </div>
-              {detail.awayFormation && <span className="rounded-full bg-elevated px-3 py-1 text-xs font-bold text-ink-muted ring-1 ring-edge-soft/50">{t(detail.awayFormation)}</span>}
+              {detail.awayFormation && <span className="rounded-full bg-elevated px-3 py-1 text-xs font-bold text-ink-muted ring-1 ring-edge-soft/50">{detail.awayFormation}</span>}
             </div>
-            <TeamPitch roster={detail.awayRoster} formation={detail.awayFormation || ""} teamAbbr={detail.away.abbr || "AWAY"} isHome={false} />
+            <TeamPitch roster={detail.awayRoster} formation={detail.awayFormation || ""} teamAbbr={detail.away.abbr || t("AWAY")} isHome={false} />
           </div>
         </div>
       )}
@@ -353,7 +354,9 @@ function TeamPitch({ roster, formation, teamAbbr, isHome }: { roster: any[]; for
   );
 }
 
-function StatRow({ label, hVal, aVal }: { label: string; hVal: string; aVal: string }) {
+type ProfileStatLabel = "Height" | "Weight" | "Age" | "Reach" | "Stance";
+
+function StatRow({ label, hVal, aVal }: { label: ProfileStatLabel; hVal: string; aVal: string }) {
   const t = useT();
   const hNum = parseFloat((hVal || "0").replace(/[^0-9.-]/g, ""));
   const aNum = parseFloat((aVal || "0").replace(/[^0-9.-]/g, ""));
@@ -398,7 +401,7 @@ function MmaProfileTab({ detail }: { detail: SportsMatchDetail }) {
           <div className="font-bold text-lg mt-2">{detail.home.name}</div>
         </div>
         
-        <div className="shrink-0 flex items-center justify-center font-black text-ink-muted px-4 z-10 opacity-30 text-2xl">VS</div>
+        <div className="shrink-0 flex items-center justify-center font-black text-ink-muted px-4 z-10 opacity-30 text-2xl">{t("VS")}</div>
 
         <div className="flex-1 flex flex-col items-center z-10">
           <div className="h-64 sm:h-80 relative w-full flex justify-center">
@@ -416,7 +419,7 @@ function MmaProfileTab({ detail }: { detail: SportsMatchDetail }) {
         <StatRow label="Weight" hVal={hP.weight} aVal={aP.weight} />
         <StatRow label="Age" hVal={hP.age} aVal={aP.age} />
         <StatRow label="Reach" hVal={hP.reach} aVal={aP.reach} />
-        <StatRow label="Stance" hVal={t(hP.stance)} aVal={t(aP.stance)} />
+        <StatRow label="Stance" hVal={hP.stance} aVal={aP.stance} />
       </div>
     </div>
   );
@@ -437,7 +440,7 @@ function StatsTab({ detail }: { detail: SportsMatchDetail }) {
     return (
       <div className="flex items-center justify-between border-b border-edge-soft/50 py-3 text-sm last:border-0">
         <span className={`w-12 font-bold ${hIsGreater ? "text-green-500" : "text-ink"}`}>{hVal || "0"}</span>
-        <span className="text-ink-subtle">{t(label)}</span>
+        <span className="text-ink-subtle">{label === "Overall Record" ? t("Overall Record") : label}</span>
         <span className={`w-12 text-end font-bold ${aIsGreater ? "text-green-500" : "text-ink"}`}>{aVal || "0"}</span>
       </div>
     );

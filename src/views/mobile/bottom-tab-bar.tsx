@@ -2,6 +2,7 @@ import { Bookmark, Home, MonitorSmartphone, User } from "lucide-react";
 import { Search } from "@/components/icons/search-icon";
 import type { ComponentType } from "react";
 import { useProfiles } from "@/lib/profiles";
+import { useT } from "@/lib/i18n";
 import { useMobileRemote } from "./mobile-remote";
 import { useSheetLock } from "./mobile-sheet-lock";
 
@@ -44,6 +45,7 @@ export function BottomTabBar({
   active: MobileTab;
   onSelect: (tab: MobileTab) => void;
 }) {
+  const translate = useT();
   const { snapshot } = useMobileRemote();
   const { activeProfile } = useProfiles();
   const { sheetOpen } = useSheetLock();
@@ -66,7 +68,7 @@ export function BottomTabBar({
             <button
               key={t.id}
               type="button"
-              aria-label={t.label}
+              aria-label={translate(t.label)}
               aria-current={on ? "page" : undefined}
               onClick={() => onSelect(t.id)}
               className="flex flex-1 items-center justify-center"

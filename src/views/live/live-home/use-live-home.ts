@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useT } from "@/lib/i18n";
 import { computeTvgIdCounts, epgProgramsForChannel } from "@/lib/iptv/epg-resolver";
 import { findCurrent } from "@/lib/iptv/xmltv";
 import {
@@ -107,6 +108,7 @@ export function useLiveHome(params: {
   categoryRails: ChannelRail[];
   countries: Array<Country & { count: number }>;
 } {
+  const t = useT();
   const { channels, epg, nowMs, sourceId, favorites } = params;
   const prefs = useGroupPrefs(sourceId);
   const countryPrefs = useCountryPrefs(sourceId);
@@ -191,8 +193,10 @@ export function useLiveHome(params: {
 
     const rails: ChannelRail[] = [];
     const used = new Set<string>();
-    if (recentCh.length) rails.push({ key: "recent", title: "Continue watching", group: null, channels: recentCh });
-    if (favCh.length) rails.push({ key: "fav", title: "Your favorites", group: null, channels: favCh });
+    if (recentCh.length)
+      rails.push({ key: "recent", title: t("Continue watching"), group: null, channels: recentCh });
+    if (favCh.length)
+      rails.push({ key: "fav", title: t("Your favorites"), group: null, channels: favCh });
     for (const g of prefs.pinned) {
       if (used.has(g) || !byGroup.has(g)) continue;
       rails.push(railFor(g, byGroup.get(g) ?? []));
@@ -223,9 +227,15 @@ export function useLiveHome(params: {
         if (categoryRails.length >= MAX_RAILS) break;
       }
     } else {
-      for (const t of THEMES) {
-        const chs = themeCh[t.key];
-        if (chs.length >= 3) categoryRails.push({ key: `theme:${t.key}`, title: t.title, group: null, channels: chs.slice(0, 30) });
+      for (const theme of THEMES) {
+        const chs = themeCh[theme.key];
+        if (chs.length >= 3)
+          categoryRails.push({
+            key: `theme:${theme.key}`,
+            title: t(theme.title),
+            group: null,
+            channels: chs.slice(0, 30),
+          });
       }
       for (const g of topGroups) {
         if (categoryRails.length >= MAX_RAILS) break;
@@ -235,7 +245,7 @@ export function useLiveHome(params: {
     }
 
     return { spotlight, tiles, guide, rails, categoryRails };
-  }, [channels, epg, nowMs, sourceId, prefs, favorites.items, statsVersion, index, tvgCounts, channelsByCountry, countryPrefs.selected]);
+  }, [channels, epg, nowMs, sourceId, prefs, favorites.items, statsVersion, index, tvgCounts, channelsByCountry, countryPrefs.selected, t]);
 
   return { ...out, countries: countries.filter((c) => c.count >= MIN_COUNTRY) };
 }

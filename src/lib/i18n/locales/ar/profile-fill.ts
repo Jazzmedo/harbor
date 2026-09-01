@@ -216,8 +216,6 @@ const profileFill: Record<string, string> = {
   "Add background": "إضافة خلفية",
   "In a watch party": "في جلسة المشاهدة معاً",
   "{count} aboard": "{count} على المتن",
-  "Paused on ": "متوقّف عند ",
-  "Watching ": "يشاهد ",
   something: "شيء ما",
   Share: "مشاركة",
   "Share profile": "مشاركة الملف الشخصي",

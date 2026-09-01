@@ -46,8 +46,10 @@ export function PeopleHero({
   const ranked = harbor && person.score !== null;
   const bg = bandImage(person);
   const face = profilePhoto(person.profilePath, 342);
+  const departmentKey = DEPT_LABEL[person.department];
+  const departmentLabel = departmentKey ? t(departmentKey) : person.department;
   const meta = [
-    t(DEPT_LABEL[person.department] ?? person.department),
+    departmentLabel,
     harbor ? person.country ?? undefined : undefined,
     ranked && person.avgRating !== null ? t("{v} avg", { v: person.avgRating.toFixed(1) }) : undefined,
   ].filter(Boolean);

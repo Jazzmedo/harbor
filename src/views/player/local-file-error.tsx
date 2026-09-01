@@ -1,14 +1,17 @@
 import { ArrowLeft, FileX } from "lucide-react";
 import { useT } from "@/lib/i18n";
+import type { Html5ErrorSourceKey } from "@/lib/player/html5/error-map";
 
 export function LocalFileError({
   path,
-  errorMessage,
+  errorSourceKey,
+  errorDetail,
   onBack,
   onRetry,
 }: {
   path: string;
-  errorMessage: string | null;
+  errorSourceKey: Html5ErrorSourceKey;
+  errorDetail: string | null;
   onBack: () => void;
   onRetry: () => void;
 }) {
@@ -34,10 +37,17 @@ export function LocalFileError({
             {t(", then try again.")}
           </p>
         )}
-        {errorMessage && !looksLikeOneDrive && (
-          <p className="rounded-xl border border-white/12 bg-white/5 px-4 py-3 font-mono text-[11.5px] leading-relaxed text-white/65">
-            {errorMessage}
-          </p>
+        {!looksLikeOneDrive && (
+          <div className="flex flex-col gap-2">
+            <p className="rounded-xl border border-white/12 bg-white/5 px-4 py-3 text-[12.5px] leading-relaxed text-white/70">
+              {t(errorSourceKey)}
+            </p>
+            {errorDetail && (
+              <p className="break-words rounded-xl border border-white/12 bg-white/5 px-4 py-3 font-mono text-[11.5px] leading-relaxed text-white/65">
+                {errorDetail}
+              </p>
+            )}
+          </div>
         )}
         <div className="flex items-center gap-2.5 pt-2">
           <button

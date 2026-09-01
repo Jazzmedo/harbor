@@ -2,6 +2,7 @@ import { strToU8, zip, type Zippable } from "fflate";
 import { downloadDir as systemDownloadDir } from "@tauri-apps/api/path";
 import { exists, mkdir } from "@tauri-apps/plugin-fs";
 import type { EBook } from "./api";
+import { t } from "@/lib/i18n";
 import { enqueueManagedDownload } from "@/lib/download/downloads-store";
 import { safeFetch } from "@/lib/safe-fetch";
 import {
@@ -33,7 +34,7 @@ type EBookExportOptions = {
 type CoverAsset = { bytes: Uint8Array; mediaType: string; extension: string; dataUrl: string };
 
 function abortError(): DOMException {
-  return new DOMException("The eBook download was canceled.", "AbortError");
+  return new DOMException(t("The eBook download was canceled."), "AbortError");
 }
 
 function throwIfAborted(signal?: AbortSignal): void {
@@ -55,7 +56,7 @@ function fileName(value: string): string {
       .replace(/[<>:"/\\|?*\u0000-\u001f]/g, " ")
       .replace(/\s+/g, " ")
       .trim()
-      .slice(0, 120) || "Harbor eBook"
+      .slice(0, 120) || t("Harbor eBook")
   );
 }
 
@@ -84,13 +85,13 @@ async function loadBook(
   signal?: AbortSignal,
 ): Promise<{ chapters: EBookChapter[]; contents: EBookChapterContent[] }> {
   const route = sourceRouteForEBook(ebook);
-  if (!route) throw new Error("This eBook is not connected to an installed source.");
+  if (!route) throw new Error(t("This eBook is not connected to an installed source."));
   throwIfAborted(signal);
   onProgress?.({
     completed: 0,
     total: 0,
     percent: 1,
-    label: "Loading chapter list…",
+    label: t("Loading chapter list…"),
     downloadedBytes: 0,
     estimatedTotalBytes: 0,
     bytesPerSecond: 0,
@@ -100,12 +101,12 @@ async function loadBook(
   });
   const chapters = await sourceEBookChapters(route);
   throwIfAborted(signal);
-  if (!chapters.length) throw new Error("This source did not provide any chapters.");
+  if (!chapters.length) throw new Error(t("This source did not provide any chapters."));
   onProgress?.({
     completed: 0,
     total: chapters.length,
     percent: 3,
-    label: `${chapters.length} chapters found`,
+    label: t("{count} chapters found", { count: chapters.length }),
     downloadedBytes: 0,
     estimatedTotalBytes: 0,
     bytesPerSecond: 0,
@@ -188,8 +189,8 @@ async function makeEpub(
 <rootfiles><rootfile full-path="EPUB/package.opf" media-type="application/oebps-package+xml"/></rootfiles>
 </container>`),
     "EPUB/nav.xhtml": strToU8(`<?xml version="1.0" encoding="utf-8"?>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops"><head><title>Contents</title></head>
-<body><nav epub:type="toc"><h1>Contents</h1><ol>${nav}</ol></nav></body></html>`),
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops"><head><title>${xml(t("Contents"))}</title></head>
+<body><nav epub:type="toc"><h1>${xml(t("Contents"))}</h1><ol>${nav}</ol></nav></body></html>`),
     "EPUB/package.opf": strToU8(`<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="book-id">
 <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
@@ -228,7 +229,7 @@ async function saveBytes(
       destinationPath ??
       (await (await import("@tauri-apps/plugin-dialog")).save({
         defaultPath: name,
-        filters: [{ name: "EPUB eBook", extensions: ["epub"] }],
+        filters: [{ name: t("EPUB eBook"), extensions: ["epub"] }],
       }));
     if (!path) return false;
     await writeFile(path, bytes);
@@ -289,7 +290,7 @@ async function printPdf(
   const documentRef = iframe.contentDocument;
   if (!documentRef) {
     iframe.remove();
-    throw new Error("The PDF print view could not be created.");
+    throw new Error(t("The PDF print view could not be created."));
   }
   documentRef.open();
   documentRef.write(`<!doctype html><html><head><meta charset="utf-8"><title>${xml(ebook.title)}</title>
@@ -299,7 +300,7 @@ async function printPdf(
   const root = documentRef.getElementById("harbor-pdf-content");
   if (!root) {
     iframe.remove();
-    throw new Error("The PDF print content could not be created.");
+    throw new Error(t("The PDF print content could not be created."));
   }
   const totalBytes = contents.reduce(
     (total, content) => total + new TextEncoder().encode(JSON.stringify(content)).byteLength,
@@ -325,7 +326,7 @@ async function printPdf(
       completed,
       total: chapters.length,
       percent: 85 + Math.round((completed / chapters.length) * 14),
-      label: `Preparing PDF ${completed}/${chapters.length}`,
+      label: t("Preparing PDF {completed}/{total}", { completed, total: chapters.length }),
       downloadedBytes: totalBytes,
       estimatedTotalBytes: totalBytes,
       bytesPerSecond: 0,
@@ -365,7 +366,7 @@ export async function exportEBookForOffline(
       completed: chapters.length,
       total: chapters.length,
       percent: 100,
-      label: "PDF print view ready",
+      label: t("PDF print view ready"),
       downloadedBytes,
       estimatedTotalBytes: downloadedBytes,
       bytesPerSecond: 0,
@@ -378,7 +379,7 @@ export async function exportEBookForOffline(
     completed: chapters.length,
     total: chapters.length,
     percent: 88,
-    label: "Building EPUB",
+    label: t("Building EPUB"),
     downloadedBytes: contents.reduce(
       (total, content) => total + new TextEncoder().encode(JSON.stringify(content)).byteLength,
       0,
@@ -395,7 +396,7 @@ export async function exportEBookForOffline(
     completed: chapters.length,
     total: chapters.length,
     percent: 96,
-    label: "Saving EPUB",
+    label: t("Saving EPUB"),
     downloadedBytes: bytes.byteLength,
     estimatedTotalBytes: bytes.byteLength,
     bytesPerSecond: 0,
@@ -408,7 +409,7 @@ export async function exportEBookForOffline(
       completed: chapters.length,
       total: chapters.length,
       percent: 100,
-      label: "EPUB saved",
+      label: t("EPUB saved"),
       downloadedBytes: bytes.byteLength,
       estimatedTotalBytes: bytes.byteLength,
       bytesPerSecond: 0,
@@ -491,7 +492,7 @@ export async function enqueueEBookExport(
           }),
         { signal, destinationPath: format === "epub" ? path : undefined },
       );
-      if (!saved) throw new Error("The eBook export was canceled.");
+      if (!saved) throw new Error(t("The eBook export was canceled."));
     },
   });
 }

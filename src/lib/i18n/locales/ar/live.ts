@@ -43,7 +43,7 @@ const live: Record<string, string> = {
   "No favorites yet. Star a channel to pin it here.":
     "لا توجد مفضّلة بعد. ضع نجمة على قناة لتثبيتها هنا.",
   "Search {n} channels": "البحث في {n} قناة",
-  "Search {n} favorite": "البحث في مفضّلة واحدة",
+  "Search {n} favorite": "البحث في {n} مفضّلة",
   "Search {n} favorites": "البحث في {n} مفضّلة",
 
   Rec: "تسجيل",

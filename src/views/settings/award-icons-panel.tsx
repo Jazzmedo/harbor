@@ -21,6 +21,13 @@ const GHOST_BTN =
   "inline-flex h-10 items-center gap-2 rounded-md bg-raised px-4 text-[13px] font-medium text-ink-muted transition-colors hover:text-ink disabled:opacity-40";
 
 const PICK_EXT = ["png", "webp", "jpg", "jpeg", "svg"];
+type AwardError =
+  | { kind: "remote"; message: string }
+  | { kind: "install-failed" }
+  | { kind: "import-failed" };
+
+type ImportSummary = { matched: number; skipped: number };
+
 
 function mimeFor(name: string): string {
   const ext = (name.split(".").pop() || "").toLowerCase();
@@ -93,7 +100,7 @@ export function AwardIconsPanel() {
   const { packs, custom } = useAwardPacks();
   const [url, setUrl] = useState("");
   const [busy, setBusy] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
+  const [err, setErr] = useState<AwardError | null>(null);
   const [showHelp, setShowHelp] = useState(false);
   const [showInstall, setShowInstall] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
@@ -105,18 +112,31 @@ export function AwardIconsPanel() {
     window.setTimeout(() => setCopied((c) => (c === key ? null : c)), 1200);
   };
 
-  const [zipMsg, setZipMsg] = useState<string | null>(null);
+  const [importSummary, setImportSummary] = useState<ImportSummary | null>(null);
+  const errorMessage =
+    err?.kind === "remote"
+      ? err.message
+      : err?.kind === "install-failed"
+        ? t("Install failed")
+        : err?.kind === "import-failed"
+          ? t("Import failed")
+          : null;
+  const importMessage = importSummary
+    ? `${t("Imported")} ${importSummary.matched}${
+        importSummary.skipped ? ` · ${t("skipped")} ${importSummary.skipped}` : ""
+      }`
+    : null;
 
   const install = async () => {
     if (!url.trim()) return;
     setBusy(true);
     setErr(null);
-    setZipMsg(null);
+    setImportSummary(null);
     try {
       await installPackFromUrl(url.trim());
       setUrl("");
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "Install failed");
+      setErr(e instanceof Error ? { kind: "remote", message: e.message } : { kind: "install-failed" });
     } finally {
       setBusy(false);
     }
@@ -131,14 +151,12 @@ export function AwardIconsPanel() {
       if (!file) return;
       setBusy(true);
       setErr(null);
-      setZipMsg(null);
+      setImportSummary(null);
       try {
         const r = await installPackFromZip(file);
-        setZipMsg(
-          `${t("Imported")} ${r.matched}${r.unmatched.length ? ` · ${t("skipped")} ${r.unmatched.length}` : ""}`,
-        );
+        setImportSummary({ matched: r.matched, skipped: r.unmatched.length });
       } catch (e) {
-        setErr(e instanceof Error ? e.message : "Import failed");
+        setErr(e instanceof Error ? { kind: "remote", message: e.message } : { kind: "import-failed" });
       } finally {
         setBusy(false);
       }
@@ -156,14 +174,12 @@ export function AwardIconsPanel() {
       if (files.length === 0) return;
       setBusy(true);
       setErr(null);
-      setZipMsg(null);
+      setImportSummary(null);
       try {
         const r = await installPackFromFiles(files);
-        setZipMsg(
-          `${t("Imported")} ${r.matched}${r.unmatched.length ? ` · ${t("skipped")} ${r.unmatched.length}` : ""}`,
-        );
+        setImportSummary({ matched: r.matched, skipped: r.unmatched.length });
       } catch (e) {
-        setErr(e instanceof Error ? e.message : "Import failed");
+        setErr(e instanceof Error ? { kind: "remote", message: e.message } : { kind: "import-failed" });
       } finally {
         setBusy(false);
       }
@@ -183,7 +199,7 @@ export function AwardIconsPanel() {
           icon={<Download size={16} strokeWidth={2.2} />}
           label={t("Install a pack")}
           desc={t("From a hosted link, your own images, or a .zip.")}
-          warn={err ?? undefined}
+          warn={errorMessage ?? undefined}
         >
           <ModalButton onClick={() => setShowInstall(true)}>{t("Install")}</ModalButton>
         </SettingRow>
@@ -348,8 +364,8 @@ export function AwardIconsPanel() {
           </span>
         </div>
 
-        {zipMsg && <p className="px-1 text-[12.5px] text-ink-muted">{zipMsg}</p>}
-        {err && <p className="px-1 text-[12.5px] text-danger">{err}</p>}
+        {importMessage && <p className="px-1 text-[12.5px] text-ink-muted">{importMessage}</p>}
+        {errorMessage && <p className="px-1 text-[12.5px] text-danger">{errorMessage}</p>}
       </SettingsModal>
 
       <SettingsModal

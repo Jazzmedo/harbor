@@ -1,4 +1,5 @@
 import { Pencil } from "lucide-react";
+import { useT } from "@/lib/i18n";
 import { PickCard, PickGrid } from "./controls/pick-grid";
 
 const CARD_STYLES = [
@@ -27,6 +28,7 @@ export function StylePicker({
   onChange: (v: string) => void;
   onEditCustom?: () => void;
 }) {
+  const t = useT();
   const list = kind === "card" ? CARD_STYLES : BUTTON_STYLES;
   return (
     <PickGrid cols={2}>
@@ -40,7 +42,7 @@ export function StylePicker({
               onChange(s.id);
               if (editable) onEditCustom?.();
             }}
-            label={s.name}
+            label={t(s.name)}
             badgeIcon={editable ? <Pencil size={12} strokeWidth={2.4} /> : undefined}
           >
             <div className="px-3 pt-3">
@@ -54,6 +56,7 @@ export function StylePicker({
 }
 
 function Swatch({ kind, variant }: { kind: "card" | "button"; variant: string }) {
+  const t = useT();
   if (variant === "custom") {
     return (
       <div className="flex aspect-[5/3] w-full items-center justify-center rounded-md border-2 border-dashed border-edge">
@@ -107,7 +110,7 @@ function Swatch({ kind, variant }: { kind: "card" | "button"; variant: string })
             boxShadow: "inset 0 1px 0 rgba(255,255,255,0.5), 0 6px 18px -6px rgba(0,0,0,0.45)",
           }}
         >
-          Button
+          {t("Button")}
         </div>
       </div>
     );
@@ -123,7 +126,7 @@ function Swatch({ kind, variant }: { kind: "card" | "button"; variant: string })
             boxShadow: "inset 0 0 0 1px rgba(15,15,18,0.16), 0 2px 6px -2px rgba(15,15,18,0.10)",
           }}
         >
-          Button
+          {t("Button")}
         </div>
       </div>
     );
@@ -134,7 +137,7 @@ function Swatch({ kind, variant }: { kind: "card" | "button"; variant: string })
         className="rounded-full px-4 py-2 text-[12.5px] font-semibold text-white"
         style={{ background: "var(--color-accent)" }}
       >
-        Button
+        {t("Button")}
       </div>
     </div>
   );

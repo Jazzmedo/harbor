@@ -63,7 +63,7 @@ const used: Record<string, string> = {
   "Frequent Collaborators": "Colaboradores Frequentes",
   "Friend requests": "Solicitações de amizade",
   "From the region": "Da região",
-  "Genres are only recorded for files scanned after this feature was added — re-add a folder to pick them up.": "Os gêneros só são registrados para arquivos escaneados depois que este recurso foi adicionado — adicione a pasta novamente para detectá-los.",
+  "Genres are only recorded for files scanned after this feature was added — re-add a folder to pick them up.": "Os gêneros só são registrados em arquivos verificados depois que este recurso foi adicionado. Adicione a pasta novamente para detectá-los.",
   "Gently magnify nearby posters as you move across a poster row.": "Amplia suavemente os pôsteres próximos conforme você percorre uma linha de pôsteres.",
   "German Cinema": "Cinema Alemão",
   "German Films": "Filmes Alemães",

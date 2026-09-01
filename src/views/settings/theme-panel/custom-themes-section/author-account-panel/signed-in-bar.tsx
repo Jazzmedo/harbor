@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Check, ImagePlus, KeyRound, Loader2, LogOut, RefreshCw, Trash2 } from "lucide-react";
+import { useT } from "@/lib/i18n";
 import { changeAuthorPassword, logoutAuthor, type Author } from "@/lib/theme-auth";
 import { removeAvatar as removeEcosystemAvatar, uploadAvatar } from "@/lib/social/avatar";
 import { markAvatarSynced } from "@/lib/account/avatar-sync";
@@ -21,6 +22,7 @@ function fmtNum(n: number): string {
 }
 
 export function SignedInBar({ author, stats }: { author: Author; stats?: AuthorStats }) {
+  const t = useT();
   const [signingOut, setSigningOut] = useState(false);
   const [pwOpen, setPwOpen] = useState(false);
 
@@ -49,7 +51,7 @@ export function SignedInBar({ author, stats }: { author: Author; stats?: AuthorS
             )}
           </div>
           <span className="text-[12.5px] text-ink-subtle">
-            Theme author. Your published themes are tied to this account.
+            {t("Theme author. Your published themes are tied to this account.")}
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -62,14 +64,14 @@ export function SignedInBar({ author, stats }: { author: Author; stats?: AuthorS
                 : "text-ink-muted ring-edge-soft hover:text-ink hover:ring-edge"
             }`}
           >
-            <KeyRound size={14} strokeWidth={2.2} /> Change password
+            <KeyRound size={14} strokeWidth={2.2} /> {t("Change password")}
           </button>
           <button
             onClick={signOut}
             disabled={signingOut}
             className="flex h-9 items-center gap-1.5 rounded-md bg-canvas px-3.5 text-[12.5px] font-semibold text-ink-muted transition-colors hover:text-danger hover:ring-danger disabled:opacity-50"
           >
-            {signingOut ? <Loader2 size={14} className="animate-spin" /> : <LogOut size={14} />} Sign out
+            {signingOut ? <Loader2 size={14} className="animate-spin" /> : <LogOut size={14} />} {t("Sign out")}
           </button>
         </div>
       </div>
@@ -86,6 +88,7 @@ export function SignedInBar({ author, stats }: { author: Author; stats?: AuthorS
 }
 
 function AvatarButton({ author }: { author: Author }) {
+  const t = useT();
   const { activeProfile, updateProfile } = useProfiles();
   const { update: updateSettings } = useSettings();
   const [busy, setBusy] = useState<"set" | "remove" | null>(null);
@@ -118,7 +121,7 @@ function AvatarButton({ author }: { author: Author }) {
     }
   };
 
-  const hint = !profileAvatar ? "Set a Harbor profile picture first" : undefined;
+  const hint = !profileAvatar ? t("Set a Harbor profile picture first") : undefined;
 
   if (author.avatar) {
     return (
@@ -126,16 +129,16 @@ function AvatarButton({ author }: { author: Author }) {
         <button
           onClick={use}
           disabled={busy != null || !profileAvatar}
-          title={hint ?? "Re-sync from your Harbor profile picture"}
+          title={hint ?? t("Re-sync from your Harbor profile picture")}
           className="flex h-9 items-center gap-1.5 rounded-md bg-canvas px-3.5 text-[12.5px] font-semibold text-ink-muted transition-colors hover:text-ink hover:ring-edge disabled:opacity-50"
         >
-          {busy === "set" ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} strokeWidth={2.2} />} Update photo
+          {busy === "set" ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} strokeWidth={2.2} />} {t("Update photo")}
         </button>
         <button
           onClick={remove}
           disabled={busy != null}
-          aria-label="Remove community photo"
-          title="Remove your community photo"
+          aria-label={t("Remove community photo")}
+          title={t("Remove your community photo")}
           className="flex h-9 w-9 items-center justify-center rounded-md bg-canvas text-ink-muted transition-colors hover:text-danger hover:ring-danger disabled:opacity-50"
         >
           {busy === "remove" ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} strokeWidth={2.2} />}
@@ -147,15 +150,16 @@ function AvatarButton({ author }: { author: Author }) {
     <button
       onClick={use}
       disabled={busy != null || !profileAvatar}
-      title={hint ?? "Show your Harbor profile picture on the community"}
+      title={hint ?? t("Show your Harbor profile picture on the community")}
       className="flex h-9 items-center gap-1.5 rounded-md bg-canvas px-3.5 text-[12.5px] font-semibold text-ink-muted transition-colors hover:text-ink hover:ring-edge disabled:opacity-50"
     >
-      {busy === "set" ? <Loader2 size={14} className="animate-spin" /> : <ImagePlus size={14} strokeWidth={2.2} />} Use my photo
+      {busy === "set" ? <Loader2 size={14} className="animate-spin" /> : <ImagePlus size={14} strokeWidth={2.2} />} {t("Use my photo")}
     </button>
   );
 }
 
 function StatsStrip({ stats }: { stats: AuthorStats }) {
+  const t = useT();
   const cells = [
     { label: "Published", value: String(stats.published) },
     { label: "Downloads", value: fmtNum(stats.downloads) },
@@ -170,7 +174,7 @@ function StatsStrip({ stats }: { stats: AuthorStats }) {
             {c.value}
           </span>
           <span className="text-[10.5px] font-semibold uppercase tracking-[0.16em] text-ink-subtle">
-            {c.label}
+            {t(c.label)}
           </span>
         </div>
       ))}
@@ -179,6 +183,7 @@ function StatsStrip({ stats }: { stats: AuthorStats }) {
 }
 
 function ChangePassword({ onDone }: { onDone: () => void }) {
+  const t = useT();
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -206,13 +211,13 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
   return (
     <form onSubmit={submit} className="flex flex-col gap-3">
       <div className="grid gap-3 sm:grid-cols-2">
-        <TextField label="Current password" type="password" value={oldPassword} onChange={setOldPassword} maxLength={200} />
+        <TextField label={t("Current password")} type="password" value={oldPassword} onChange={setOldPassword} maxLength={200} />
         <TextField
-          label="New password"
+          label={t("New password")}
           type="password"
           value={newPassword}
           onChange={setNewPassword}
-          placeholder="At least 8 characters"
+          placeholder={t("At least 8 characters")}
           maxLength={200}
         />
       </div>
@@ -226,14 +231,14 @@ function ChangePassword({ onDone }: { onDone: () => void }) {
           }`}
         >
           {busy ? <Loader2 size={14} className="animate-spin" /> : done ? <Check size={14} className="harbor-pop" /> : null}
-          {done ? "Password updated" : "Update password"}
+          {done ? t("Password updated") : t("Update password")}
         </button>
         <button
           type="button"
           onClick={onDone}
           className="h-10 rounded-[8px] px-3 text-[13px] font-medium text-ink-muted transition-colors hover:text-ink"
         >
-          Cancel
+          {t("Cancel")}
         </button>
       </div>
     </form>

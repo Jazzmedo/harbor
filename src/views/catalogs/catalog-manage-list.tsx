@@ -1,17 +1,9 @@
 import { useMemo, type ReactNode } from "react";
 import { ChevronDown, ChevronUp, Eye, EyeOff, Home, Pin, PinOff } from "lucide-react";
-import type { BrowseCatalog } from "@/lib/catalog-browse";
+import { catalogTypeLabelKey, type BrowseCatalog } from "@/lib/catalog-browse";
 import { togglePinnedCatalog, useIsPinned } from "@/lib/pinned-catalogs";
 import { useT } from "@/lib/i18n";
 import type { AddonGroup } from "./use-catalog-list";
-
-const TYPE_LABELS: Record<string, string> = {
-  movie: "Movies",
-  series: "Series",
-  anime: "Anime",
-  tv: "TV",
-  channel: "Channels",
-};
 
 export function CatalogManageList({
   filtered,
@@ -119,6 +111,7 @@ function ManageRow({
 }) {
   const t = useT();
   const pinnedHome = useIsPinned(catalog.key);
+  const typeLabelKey = catalogTypeLabelKey(catalog.type);
   const toggleHome = () =>
     togglePinnedCatalog({
       id: catalog.key,
@@ -142,7 +135,7 @@ function ManageRow({
       <div className="min-w-0 flex-1">
         <div className="truncate text-[14px] font-medium text-ink">{catalog.name}</div>
         <div className="truncate text-[12px] text-ink-subtle">
-          {catalog.addonName} · {t(TYPE_LABELS[catalog.type] ?? catalog.type)}
+          {catalog.addonName} · {typeLabelKey ? t(typeLabelKey) : catalog.type}
         </div>
       </div>
 

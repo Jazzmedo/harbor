@@ -2,7 +2,10 @@ import { type ReactNode, useState } from "react";
 import { Check, ExternalLink, Loader2 } from "lucide-react";
 import stremioLogo from "@/assets/stremio.png";
 import { verifyWithCurrentStremio, verifyWithStremioBrowser } from "@/lib/account/stremio-link";
-import { accountErrorMessage } from "@/lib/account/error-messages";
+import {
+  accountErrorMessage,
+  type AccountErrorMessage,
+} from "@/lib/account/error-messages";
 import { useAuth } from "@/lib/auth";
 import { canStremioWebAuth } from "@/lib/stremio-auth";
 import type { Author } from "@/lib/theme-auth";
@@ -14,7 +17,7 @@ export function StremioVerifyCard({ author }: { author: Author }) {
   const t = useT();
   const { authKey, user } = useAuth();
   const [busy, setBusy] = useState<Busy>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<AccountErrorMessage | null>(null);
 
   if (author.verified) {
     return (
@@ -98,7 +101,11 @@ export function StremioVerifyCard({ author }: { author: Author }) {
         </p>
       )}
 
-      {error && <p className="text-[12px] text-danger">{error}</p>}
+      {error && (
+        <p className="text-[12px] text-danger">
+          {error.kind === "built-in" ? t(error.key) : error.detail}
+        </p>
+      )}
     </div>
   );
 }

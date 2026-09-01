@@ -4,7 +4,23 @@ import { pathToFileURL } from "node:url";
 
 const LOCALES_DIR = resolve("src/lib/i18n/locales");
 const SOURCE_LANG = "en";
-const PLURAL_LANGS = new Set(["ru"]);
+const PLURAL_LANGS = {
+  ar: true,
+  de: true,
+  es: true,
+  fr: true,
+  hi: true,
+  id: true,
+  it: true,
+  ja: true,
+  ko: true,
+  pl: true,
+  pt: true,
+  ru: true,
+  tr: true,
+  vi: true,
+  zh: true,
+};
 const VARIANT_SUFFIX = /#(?:one|few|many)$/;
 const DOT_KEY = /^[a-z][A-Za-z0-9]*(?:\.[A-Za-z0-9]+)+$/;
 const PLACEHOLDER = /\{([A-Za-z][A-Za-z0-9_]*)\}/g;
@@ -216,7 +232,7 @@ async function loadLanguage(lang) {
 
 async function discoverLanguages() {
   const names = (await readdir(LOCALES_DIR, { withFileTypes: true }))
-    .filter((e) => e.isFile() && e.name.endsWith(".ts"))
+    .filter((e) => e.isFile() && e.name.endsWith(".ts") && e.name !== "ui-fallback.ts")
     .map((e) => e.name.slice(0, -3));
   return names.sort((a, b) => (a === SOURCE_LANG ? -1 : b === SOURCE_LANG ? 1 : a.localeCompare(b)));
 }
@@ -262,7 +278,7 @@ async function collect() {
       }
       if (lang === SOURCE_LANG) continue;
       const base = key.replace(VARIANT_SUFFIX, "");
-      if (VARIANT_SUFFIX.test(key) && !PLURAL_LANGS.has(lang)) {
+      if (VARIANT_SUFFIX.test(key) && !(lang in PLURAL_LANGS)) {
         defects.push(`${where}: plural variant key in a language with no plural rule: ${JSON.stringify(key)}`);
         continue;
       }

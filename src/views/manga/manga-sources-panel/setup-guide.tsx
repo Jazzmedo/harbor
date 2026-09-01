@@ -6,40 +6,48 @@ import { useT } from "@/lib/i18n";
 
 const SUWAYOMI_RELEASES = "https://github.com/Suwayomi/Suwayomi-Server/releases";
 
-const CHEAT_SHEET = `# Getting manga sources into Harbor
+type Translate = (key: string, vars?: Record<string, string | number>) => string;
 
-Harbor ships no manga and no scrapers. It is a reader. You bring the sources, and
-what those sources contain belongs to whoever runs them, not to Harbor. There are
-two ways to add sources.
+function buildCheatSheet(t: Translate): string {
+  return `# ${t("Getting manga sources into Harbor")}
 
-## 1. Everything else, through your own server (Suwayomi)
-This is how you get hundreds of community sources.
+${t(
+  "Harbor ships no manga and no scrapers. It is a reader. You bring the sources, and what those sources contain belongs to whoever runs them, not to Harbor. There are two ways to add sources.",
+)}
 
-  1. Download and run Suwayomi Server:
+## 1. ${t("Everything else, through your own server (Suwayomi)")}
+${t("This is how you get hundreds of community sources.")}
+
+  1. ${t("Download and run Suwayomi Server:")}
      ${SUWAYOMI_RELEASES}
-     It serves a web UI at http://localhost:4567
+     ${t("It serves a web UI at {url}", { url: "http://localhost:4567" })}
 
-  2. Open http://localhost:4567 in a browser. Go to the Extensions / Browse area,
-     add a community source repository, then install the sources you want
-     (hundreds are available). Suwayomi uses the same extension repos the
-     Mihon / Tachiyomi ecosystem does.
+  2. ${t(
+    "Open {url} in a browser. Go to the Extensions / Browse area, add a community source repository, then install the sources you want (hundreds are available). Suwayomi uses the same extension repos the Mihon / Tachiyomi ecosystem does.",
+    { url: "http://localhost:4567" },
+  )}
 
-  3. Back in Harbor: Manga > Set up a source > Your server, and paste your server
-     address (for example http://localhost:4567, or your LAN IP if it runs on
-     another machine, e.g. http://192.168.1.10:4567).
+  3. ${t(
+    "Back in Harbor: Manga > Set up a source > Your server, and paste your server address (for example {localUrl}, or your LAN IP if it runs on another machine, e.g. {lanUrl}).",
+    { localUrl: "http://localhost:4567", lanUrl: "http://192.168.1.10:4567" },
+  )}
 
-  Every source you enable in Suwayomi then shows up in Harbor. Suwayomi keeps its
-  extensions updated when a site changes, so they keep working.
+  ${t(
+    "Every source you enable in Suwayomi then shows up in Harbor. Suwayomi keeps its extensions updated when a site changes, so they keep working.",
+  )}
 
-## 2. A local folder
-Manga > Set up a source > Local folder, and choose a folder of manga you already
-own (CBZ files or folders of images).
+## 2. ${t("A local folder")}
+${t(
+  "Manga > Set up a source > Local folder, and choose a folder of manga you already own (CBZ files or folders of images).",
+)}
 
-## Advanced: build a plugin
-Harbor also has an experimental plugin runtime. If you want to write a source
-plugin, see docs/manga-plugins.md in the Harbor repository. Only install plugins
-from repositories you trust.
+## ${t("Advanced: build a plugin")}
+${t(
+  "Harbor also has an experimental plugin runtime. If you want to write a source plugin, see {path} in the Harbor repository. Only install plugins from repositories you trust.",
+  { path: "docs/manga-plugins.md" },
+)}
 `;
+}
 
 function StepList() {
   const t = useT();
@@ -96,9 +104,10 @@ export function SetupGuide() {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  const cheatSheet = buildCheatSheet(t);
   const download = () => {
     try {
-      const blob = new Blob([CHEAT_SHEET], { type: "text/markdown" });
+      const blob = new Blob([cheatSheet], { type: "text/markdown" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -108,12 +117,12 @@ export function SetupGuide() {
       a.remove();
       window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch {
-      void navigator.clipboard?.writeText(CHEAT_SHEET);
+      void navigator.clipboard?.writeText(cheatSheet);
     }
   };
 
   const copy = () => {
-    void navigator.clipboard?.writeText(CHEAT_SHEET);
+    void navigator.clipboard?.writeText(cheatSheet);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1600);
   };

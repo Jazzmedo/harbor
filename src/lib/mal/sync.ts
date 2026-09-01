@@ -3,11 +3,13 @@ import { malRequest, MalApiError } from "./client";
 import { resolveMalMediaId } from "./mutations";
 import { isAuthenticated } from "./session";
 
+export type SyncError = "update-not-confirmed" | "unreachable";
+
 export type SyncEvent =
   | { kind: "syncing"; title: string; episode: number }
   | { kind: "ok"; title: string; episode: number }
   | { kind: "watching"; title: string }
-  | { kind: "error"; title: string; message: string };
+  | { kind: "error"; title: string; error: SyncError };
 
 const listeners = new Set<(e: SyncEvent) => void>();
 let last: SyncEvent | null = null;
@@ -155,11 +157,11 @@ export async function syncMalProgress(
     } else {
       sent[harborId] = Math.max(sent[harborId] ?? 0, target);
       saveSent(sent);
-      emit({ kind: "error", title, message: "MAL did not confirm the update." });
+      emit({ kind: "error", title, error: "update-not-confirmed" });
     }
   } catch (e) {
     if (e instanceof MalApiError && e.status === 401) return;
-    emit({ kind: "error", title, message: "Couldn't reach MyAnimeList." });
+    emit({ kind: "error", title, error: "unreachable" });
   } finally {
     inflight.delete(flightKey);
   }

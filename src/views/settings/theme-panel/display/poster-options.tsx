@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useT } from "@/lib/i18n";
 
 export const POSTER_RADII = [
   { value: "sharp", label: "Sharp", px: 0 },
@@ -23,6 +24,7 @@ export function PxField({
   max: number;
   onCommit: (v: number) => void;
 }) {
+  const t = useT();
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(String(value));
   useEffect(() => {
@@ -55,7 +57,7 @@ export function PxField({
     <button
       type="button"
       onClick={() => setEditing(true)}
-      title="Click to edit"
+      title={t("Click to edit")}
       className="h-8 w-[74px] rounded-md bg-elevated text-[13px] font-semibold tabular-nums text-ink-muted transition-colors hover:bg-raised hover:text-ink"
     >
       {value}px

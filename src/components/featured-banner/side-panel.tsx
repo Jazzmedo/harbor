@@ -6,6 +6,7 @@ import { tmdbMovieImages } from "@/lib/providers/tmdb";
 import { useSettings } from "@/lib/settings";
 import { useLocalizedOverview } from "@/lib/use-localized-overview";
 import { useLiveImdbRating } from "@/lib/live-imdb";
+import { useT } from "@/lib/i18n";
 import { ImdbIcon } from "../icons/imdb-icon";
 import type { LightboxState } from "./types";
 
@@ -20,6 +21,7 @@ export function SidePanel({
   total: number;
   onOpenLightbox: (state: LightboxState) => void;
 }) {
+  const t = useT();
   const { settings } = useSettings();
   const [stills, setStills] = useState<string[]>([]);
   const description = useLocalizedOverview(meta);
@@ -80,6 +82,7 @@ export function SidePanel({
             key={`${meta.id}-${i}`}
             src={src}
             alt={meta.name}
+            expandLabel={t("Expand {title} image", { title: meta.name })}
             onClick={lightboxImages.length > 0 ? () => openAt(src) : undefined}
           />
         ))}
@@ -97,7 +100,7 @@ export function SidePanel({
             <Star className="h-[12px] w-[12px] text-amber-400" fill="currentColor" strokeWidth={0} />
           )}
           <span>{live.value}</span>
-          <span className="text-ink-subtle">· Top Rated</span>
+          <span className="text-ink-subtle">· {t("Top Rated")}</span>
         </div>
       )}
     </aside>
@@ -108,10 +111,12 @@ function Still({
   src,
   alt,
   onClick,
+  expandLabel,
 }: {
   src: string | undefined;
   alt: string;
   onClick?: () => void;
+  expandLabel: string;
 }) {
   if (!src) {
     return <div className="aspect-[16/9] rounded-md bg-elevated/45" />;
@@ -132,7 +137,7 @@ function Still({
     <button
       type="button"
       onClick={onClick}
-      aria-label={`Expand ${alt} image`}
+      aria-label={expandLabel}
       className="group/still relative aspect-[16/9] overflow-hidden rounded-md border border-edge-soft transition-colors duration-200 hover:border-ink"
     >
       <img

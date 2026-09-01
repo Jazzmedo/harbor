@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { ArrowDownToLine, Star } from "lucide-react";
+import { useT } from "@/lib/i18n";
 import type { StoreTheme } from "@/lib/theme-store";
 import type { StoreBundle } from "@/lib/bundle-store";
 import { FeaturedBadge } from "@/views/profile/profile-bits";
@@ -34,6 +35,7 @@ export function MarketHero({
   onOpen: (item: StoreTheme | StoreBundle) => void;
   onGet: () => Promise<void>;
 }) {
+  const t = useT();
   const { state, run } = useAcquireState(onGet);
 
   let payload: ReactNode;
@@ -51,8 +53,8 @@ export function MarketHero({
       <div className="order-2 flex flex-col justify-center gap-5 p-8 sm:p-10 md:order-1">
         <div className="flex flex-wrap items-center gap-2">
           <FeaturedBadge />
-          <KindChip text={label} />
-          {tag && tag !== label && <KindChip text={tag} />}
+          <KindChip text={t(label)} />
+          {tag && tag !== label && <KindChip text={t(tag)} />}
         </div>
         <h2
           className="font-display font-medium leading-[1.03] tracking-tight text-ink"
@@ -70,9 +72,9 @@ export function MarketHero({
           )}
           <span className="inline-flex items-center gap-1.5 tabular-nums">
             <ArrowDownToLine size={14} strokeWidth={2.2} />
-            {fmtCount(item.downloads)} downloads
+            {t("{count} downloads", { count: fmtCount(item.downloads) })}
           </span>
-          <span>by {item.author || "Anonymous"}</span>
+          <span>{t("by {author}", { author: item.author || t("Anonymous") })}</span>
         </div>
         <div className="max-w-[34rem]">{payload}</div>
         <div className="mt-1 flex flex-wrap items-center gap-3">
@@ -81,9 +83,9 @@ export function MarketHero({
             size="lg"
             state={state}
             onClick={() => run()}
-            label={kind === "theme" ? "Get theme" : "Install"}
+            label={kind === "theme" ? t("Get theme") : t("Install")}
           />
-          <MarketCta variant="ghost" size="lg" onClick={() => onOpen(item)} label="View details" />
+          <MarketCta variant="ghost" size="lg" onClick={() => onOpen(item)} label={t("View details")} />
         </div>
       </div>
       <div className="relative order-1 min-h-[220px] overflow-hidden md:order-2 md:min-h-full">{art}</div>

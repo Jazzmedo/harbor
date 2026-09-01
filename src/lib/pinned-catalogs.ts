@@ -13,6 +13,39 @@ export type PinnedCatalog = {
   params: Record<string, string>;
 };
 
+export type PinnedBuiltinTitle = {
+  key: string;
+  valueKey?: string;
+};
+
+const LIST_RAIL_TITLE_KEYS: Readonly<Record<string, string>> = {
+  watching: "Watching",
+  planning: "Plan to Watch",
+  completed: "Completed",
+  onhold: "On Hold",
+  paused: "On Hold",
+  dropped: "Dropped",
+};
+
+export function pinnedBuiltinTitle(
+  source: PinnedSource,
+  railKey: string | undefined,
+): PinnedBuiltinTitle | null {
+  if (!railKey) return null;
+  if (source === "anilist") {
+    if (railKey === "trending") return { key: "Trending on AniList" };
+    if (railKey === "top100") return { key: "Top 100 on AniList" };
+    if (railKey === "recommended") return { key: "Recommended for you" };
+    const valueKey = LIST_RAIL_TITLE_KEYS[railKey];
+    return valueKey ? { key: "Your AniList: {name}", valueKey } : null;
+  }
+  if (source === "mal") {
+    const valueKey = LIST_RAIL_TITLE_KEYS[railKey];
+    return valueKey ? { key: "Your MAL: {name}", valueKey } : null;
+  }
+  return null;
+}
+
 let cache: PinnedCatalog[] = load();
 
 function load(): PinnedCatalog[] {

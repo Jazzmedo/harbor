@@ -1,3 +1,5 @@
+import { t } from "@/lib/i18n";
+
 const PNG_MAGIC = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
 const MAX_BYTES = 150 * 1024;
 const MAX_DIM = 384;
@@ -132,10 +134,10 @@ export async function cleanPng(file: File): Promise<CleanPngResult> {
             icon: { file: opt.file, preview: previewFrom(img), width: opt.width, height: opt.height, optimized: true, flattened: true },
           };
       }
-      return { ok: false, error: "could not be optimized" };
+      return { ok: false, error: t("could not be optimized") };
     }
 
-    if (!img || !img.naturalWidth || !img.naturalHeight) return { ok: false, error: "is not an image we can read" };
+    if (!img || !img.naturalWidth || !img.naturalHeight) return { ok: false, error: t("is not an image we can read") };
 
     const preview = previewFrom(img);
     const isPng = !!head && hasPngMagic(head);
@@ -145,7 +147,7 @@ export async function cleanPng(file: File): Promise<CleanPngResult> {
       return { ok: true, icon: { file, preview, width: img.naturalWidth, height: img.naturalHeight, optimized: false } };
     }
     const opt = await optimize(img, file.name);
-    if (!opt) return { ok: false, error: "could not be optimized" };
+    if (!opt) return { ok: false, error: t("could not be optimized") };
     return { ok: true, icon: { file: opt.file, preview, width: opt.width, height: opt.height, optimized: true } };
   } finally {
     URL.revokeObjectURL(url);

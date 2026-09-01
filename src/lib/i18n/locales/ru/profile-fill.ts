@@ -219,8 +219,6 @@ const profileFill: Record<string, string> = {
   "Add background": "Добавить фон",
   "In a watch party": "На совместном просмотре",
   "{count} aboard": "{count} на борту",
-  "Paused on ": "На паузе ",
-  "Watching ": "Смотрит ",
   something: "что-то",
   Share: "Поделиться",
   "Share profile": "Поделиться профилем",

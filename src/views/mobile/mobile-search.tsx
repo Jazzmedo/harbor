@@ -11,6 +11,7 @@ import { providerTabFor } from "@/lib/ai-models";
 import { useSearch } from "@/lib/search-context";
 import { useSettings } from "@/lib/settings";
 import { useAuth } from "@/lib/auth";
+import { useT } from "@/lib/i18n";
 import { tmdbCollection, tmdbDiscover, tmdbTrending } from "@/lib/providers/tmdb";
 import { topMovies, topSeries } from "@/lib/cinemeta";
 import { rpdbPoster } from "@/lib/providers/rpdb";
@@ -78,6 +79,7 @@ function interleave(a: Meta[], b: Meta[]): Meta[] {
 type Catalog = { title: string; metas: Meta[] | null; empty?: string };
 
 export function MobileSearch() {
+  const t = useT();
   const { settings, update } = useSettings();
   const { authKey } = useAuth();
   const { query, results, status, recent, setQuery, clear, recordRecent, removeRecent } = useSearch();
@@ -109,11 +111,11 @@ export function MobileSearch() {
   const openGenre = (c: (typeof CATEGORIES)[number]) => {
     setCatalog(null);
     setCollections(false);
-    setGenreView(c);
+    setGenreView({ ...c, label: t(c.label) });
   };
 
   const openExplore = (e: (typeof EXPLORE)[number]) =>
-    openCatalog(e.label, async () => {
+    openCatalog(t(e.label), async () => {
       if (key) {
         if (e.kind === "trending") {
           const [m, t] = await Promise.all([tmdbTrending(key, "movie", "week"), tmdbTrending(key, "tv", "week")]);
@@ -247,6 +249,7 @@ function SearchBar({
   onClear: () => void;
 }) {
   const ref = useRef<HTMLInputElement>(null);
+  const t = useT();
   const [focused, setFocused] = useState(false);
   return (
     <div
@@ -276,13 +279,13 @@ function SearchBar({
         inputMode="search"
         autoComplete="off"
         spellCheck={false}
-        placeholder="Actor, title, genre"
+        placeholder={t("Actor, title, genre")}
         className="min-w-0 flex-1 bg-transparent text-[16px] font-medium text-canvas placeholder:text-canvas/45 focus:outline-none"
       />
       {value && (
         <button
           type="button"
-          aria-label="Clear"
+          aria-label={t("Clear")}
           onClick={(e) => {
             e.stopPropagation();
             onClear();
@@ -314,11 +317,12 @@ function Landing({
   onAwards: () => void;
   onCollections: () => void;
 }) {
+  const t = useT();
   return (
     <div className="flex flex-col gap-9">
       {recent.length > 0 && (
         <section className="flex flex-col gap-3.5">
-          <SectionTitle>Recent</SectionTitle>
+          <SectionTitle>{t("Recent")}</SectionTitle>
           <div className="flex flex-wrap gap-2">
             {recent.map((r) => (
               <span
@@ -330,7 +334,7 @@ function Landing({
                 </button>
                 <button
                   type="button"
-                  aria-label={`Remove ${r}`}
+                  aria-label={t("Remove {query}", { query: r })}
                   onClick={() => onRemoveRecent(r)}
                   className="grid h-5 w-5 place-items-center rounded-full text-ink-subtle transition-colors active:text-ink motion-reduce:transition-none"
                 >
@@ -348,7 +352,7 @@ function Landing({
       </section>
 
       <section className="flex flex-col gap-3.5">
-        <SectionTitle>More to explore</SectionTitle>
+        <SectionTitle>{t("More to explore")}</SectionTitle>
         <div className="overflow-hidden rounded-[18px] bg-surface ring-1 ring-edge-soft">
           {EXPLORE.map((e, i) => (
             <button
@@ -367,8 +371,8 @@ function Landing({
                 className="h-8 w-8 shrink-0 object-contain mix-blend-screen"
               />
               <span className="flex min-w-0 flex-1 flex-col">
-                <span className="text-[15.5px] font-semibold text-ink">{e.label}</span>
-                <span className="text-[12.5px] text-ink-subtle">{e.caption}</span>
+                <span className="text-[15.5px] font-semibold text-ink">{t(e.label)}</span>
+                <span className="text-[12.5px] text-ink-subtle">{t(e.caption)}</span>
               </span>
               <ChevronRight size={19} strokeWidth={2.2} className="shrink-0 text-ink-subtle" />
             </button>
@@ -377,7 +381,7 @@ function Landing({
       </section>
 
       <section className="flex flex-col gap-3.5">
-        <SectionTitle>Genres</SectionTitle>
+        <SectionTitle>{t("Genres")}</SectionTitle>
         <div className="grid grid-cols-2 gap-3">
           {CATEGORIES.map((c) => (
             <GenreTile key={c.label} category={c} onOpen={() => onGenre(c)} />
@@ -434,11 +438,12 @@ function AwardMarkCycle() {
 }
 
 function AwardsCard({ onClick }: { onClick: () => void }) {
+  const t = useT();
   return (
     <FeatureCardShell
       onClick={onClick}
-      title="Awards"
-      caption="Oscar, SAG, BAFTA winners"
+      title={t("Awards")}
+      caption={t("Oscar, SAG, BAFTA winners")}
       wash="from-[oklch(0.83_0.10_85_/_0.14)]"
       art={
         <span className="drop-shadow-[0_2px_10px_rgba(0,0,0,0.25)]" style={{ color: "oklch(0.83 0.10 85)" }}>
@@ -496,6 +501,7 @@ const COLL_CSS = `
 `;
 
 function CollectionsCard({ onClick }: { onClick: () => void }) {
+  const t = useT();
   const { settings } = useSettings();
   const slides = useCollectionSlides(settings.tmdbKey);
   const [reduced] = useState(prefersReducedMotion);
@@ -511,8 +517,8 @@ function CollectionsCard({ onClick }: { onClick: () => void }) {
       <style>{COLL_CSS}</style>
       <FeatureCardShell
         onClick={onClick}
-        title="Collections"
-        caption="Curated sets and sagas"
+        title={t("Collections")}
+        caption={t("Curated sets and sagas")}
         wash={active ? "from-transparent" : "from-accent/12"}
         backdrop={active?.backdrop ? <CollectionBackdrop src={active.backdrop} slideKey={idx} /> : undefined}
         art={active ? <CollectionArt posters={active.posters} slideKey={idx} /> : <CollectionStack />}
@@ -578,6 +584,7 @@ const GENRE_PALETTE: Record<string, { from: string; to: string; ink: string }> =
 };
 
 function GenreTile({ category, onOpen }: { category: (typeof CATEGORIES)[number]; onOpen: () => void }) {
+  const t = useT();
   const { settings } = useSettings();
   const [art, setArt] = useState<Meta[]>([]);
   const palette = GENRE_PALETTE[category.genre] ?? GENRE_PALETTE.Action;
@@ -614,7 +621,7 @@ function GenreTile({ category, onOpen }: { category: (typeof CATEGORIES)[number]
       <span aria-hidden className="absolute inset-x-0 bottom-0 h-1/2" style={{ background: `linear-gradient(to bottom, transparent, ${palette.to})` }} />
       <span className="absolute inset-x-3.5 bottom-3 flex items-end justify-between">
         <span className="font-display text-[17px] font-medium leading-tight tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)]" style={{ color: palette.ink }}>
-          {category.label}
+          {t(category.label)}
         </span>
         <ChevronRight size={16} strokeWidth={2.4} className="shrink-0" style={{ color: palette.ink }} />
       </span>
@@ -649,9 +656,10 @@ function Results({
   metas: Meta[];
   onOpenDetail: (m: Meta) => void;
 }) {
+  const t = useT();
   if (metas.length === 0) {
     if (status === "loading" || status === "typing") return <LoaderBlock />;
-    return <EmptyState Icon={SearchIcon} text="No matches yet. Try another title." />;
+    return <EmptyState Icon={SearchIcon} text={t("No matches yet. Try another title.")} />;
   }
   return <Grid metas={metas} onOpenDetail={onOpenDetail} />;
 }
@@ -665,6 +673,7 @@ function CatalogView({
   onBack: () => void;
   onOpenDetail: (m: Meta) => void;
 }) {
+  const t = useT();
   return (
     <div className="flex flex-col gap-5">
       <BackBar title={catalog.title} onBack={onBack} />
@@ -672,7 +681,7 @@ function CatalogView({
         {catalog.metas === null ? (
           <LoaderBlock />
         ) : catalog.metas.length === 0 ? (
-          <EmptyState Icon={Trophy} text={catalog.empty ?? "Nothing to show here right now."} />
+          <EmptyState Icon={Trophy} text={catalog.empty ?? t("Nothing to show here right now.")} />
         ) : (
           <Grid metas={catalog.metas} onOpenDetail={onOpenDetail} />
         )}
@@ -690,6 +699,7 @@ function CollectionsBrowser({
   onBack: () => void;
   onOpenDetail: (m: Meta) => void;
 }) {
+  const t = useT();
   const [list, setList] = useState<Meta[] | null>(null);
   const [active, setActive] = useState<Meta | null>(null);
   const [members, setMembers] = useState<Meta[] | null>(null);
@@ -748,7 +758,7 @@ function CollectionsBrowser({
           {members === null ? (
             <LoaderBlock />
           ) : members.length === 0 ? (
-            <EmptyState Icon={Layers} text="This collection has no titles to show yet." />
+            <EmptyState Icon={Layers} text={t("This collection has no titles to show yet.")} />
           ) : (
             <Grid metas={members} onOpenDetail={onOpenDetail} />
           )}
@@ -759,12 +769,12 @@ function CollectionsBrowser({
 
   return (
     <div className="flex flex-col gap-5">
-      <BackBar title="Collections" onBack={onBack} />
+      <BackBar title={t("Collections")} onBack={onBack} />
       <div key={`list:${list === null ? "loading" : "loaded"}`} className="ms-view-in">
         {list === null ? (
           <LoaderBlock />
         ) : list.length === 0 ? (
-          <EmptyState Icon={Layers} text="No collections yet. Add a collections addon to browse curated sets." />
+          <EmptyState Icon={Layers} text={t("No collections yet. Add a collections addon to browse curated sets.")} />
         ) : (
           <div className="grid grid-cols-3 gap-x-3 gap-y-4">
             {list.map((m) => (

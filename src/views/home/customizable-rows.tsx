@@ -16,6 +16,59 @@ import { RowControls } from "./row-controls";
 import { watchTitleKey, type WatchedSet } from "@/lib/playback-history";
 import { useSettings } from "@/lib/settings";
 
+type Translate = (key: string, vars?: Record<string, string | number>) => string;
+
+const BUILT_IN_HOME_ROW_TITLES: Readonly<Record<string, string>> = {
+  "tmdb-trending-movies": "Trending This Week",
+  "tmdb-now-playing": "In Theaters Now",
+  "tmdb-popular-movies": "Popular Movies",
+  "tmdb-trending-tv": "Trending Series",
+  "tmdb-on-the-air": "On The Air",
+  "tmdb-popular-tv": "Popular Series",
+  "tmdb-top-rated-tv": "Top Rated Series",
+  "tmdb-top-rated-movies": "Top Rated Movies",
+  "cm-top-movies": "Top 10 on Stremio",
+  "cm-popular": "Popular Movies",
+  "cm-drama": "Top 10 Drama",
+  "cm-trending-tv": "Trending Series",
+  "cm-comedy": "Top 10 Comedy",
+  "cm-action": "Action Hits",
+  "cm-scifi": "Sci-Fi & Fantasy",
+  "cm-thriller": "Thrillers",
+  "cm-animation": "Animated Movies",
+  "cm-horror": "Horror",
+  "cm-romance": "Romance",
+  "cm-adventure": "Adventure",
+  "cm-documentary": "Documentaries",
+  "cm-mystery": "Mystery",
+  "cm-fantasy": "Fantasy",
+  "cm-drama-tv": "Drama Series",
+  "cm-comedy-tv": "Comedy Series",
+  "cm-crime-tv": "Crime Series",
+  "anime-airing": "Trending Anime",
+  "anime-new": "New Anime Releases",
+  "anime-popular": "Popular Anime",
+  "anime-upcoming": "Upcoming Anime",
+  "harbor-favorites": "Favorites",
+  "harbor-watchlist": "My Watchlist",
+  "trakt-watchlist": "Your Trakt Watchlist",
+  "trakt-upcoming": "Up Next on Trakt",
+  "trakt-recs-movies": "Trakt Recommends: Movies",
+  "trakt-recs-shows": "Trakt Recommends: Series",
+  "simkl-watching-shows": "Watching TV Shows on Simkl",
+  "simkl-watching-anime": "Watching Anime on Simkl",
+  "simkl-plantowatch-movies": "Plan to Watch Movies on Simkl",
+  "simkl-plantowatch-shows": "Plan to Watch TV Shows on Simkl",
+  "simkl-plantowatch-anime": "Plan to Watch Anime on Simkl",
+  "simkl-upcoming": "Up Next on Simkl",
+  "simkl-trending": "Simkl Trending Today",
+};
+
+function displayRowTitle(row: HomeRow, renamed: boolean, t: Translate): string {
+  if (renamed) return row.name;
+  return BUILT_IN_HOME_ROW_TITLES[row.key] === row.name ? t(row.name) : row.name;
+}
+
 function metaTitleKey(meta: { id?: string }): string | null {
   const id = meta.id;
   if (!id) return null;
@@ -37,7 +90,7 @@ function isUnreleased(m: { releaseDate?: string; releaseInfo?: string }): boolea
   return false;
 }
 
-function RowTitle({ row }: { row: HomeRow }) {
+function RowTitle({ row, title }: { row: HomeRow; title: string }) {
   const t = useT();
   const { openGrid } = useView();
   const lb = useLetterboxd();
@@ -61,15 +114,15 @@ function RowTitle({ row }: { row: HomeRow }) {
     />
   ) : null;
 
-  if (!row.fetcher) return <>{t(row.name)}{badge}{menu}</>;
+  if (!row.fetcher) return <>{title}{badge}{menu}</>;
   return (
     <button
       onClick={() =>
-        openGrid({ title: t(row.name), fetcher: row.fetcher!, initial: row.metas })
+        openGrid({ title, fetcher: row.fetcher!, initial: row.metas })
       }
       className="group/see inline-flex items-center gap-1.5 text-ink transition-colors hover:text-ink-muted"
     >
-      {t(row.name)}
+      {title}
       {badge}
       <span className="inline-flex items-center gap-0.5 text-[12px] font-medium text-ink-subtle opacity-0 transition-opacity duration-200 group-hover/see:opacity-100">
         {t("See all")}
@@ -172,14 +225,14 @@ export function CustomizableRows({
         if (
           (hideWatched || hideUnreleased || (homeLanguages && homeLanguages.length > 0)) &&
           metas.length === 0 &&
-          !editMode &&
           !row.sourceRow
         )
           return null;
         const idx = orderKeys.indexOf(row.key);
+        const title = displayRowTitle(row, row.key in customization.renamed, t);
         const eager = rowIndex < 2;
         const viewAll = row.fetcher
-          ? () => openGrid({ title: t(row.name), fetcher: row.fetcher!, initial: row.metas })
+          ? () => openGrid({ title, fetcher: row.fetcher!, initial: row.metas })
           : undefined;
         const ranked =
           (customization.numerals ?? []).includes(row.key) && metas.length >= 10;
@@ -189,7 +242,7 @@ export function CustomizableRows({
         } else if (ranked) {
           rowEl = (
             <Row
-              title={<RowTitle row={row} />}
+              title={<RowTitle row={row} title={title} />}
               titleExtra={<RowTitleExtra row={row} />}
               min={180}
               shape="rank"
@@ -205,7 +258,7 @@ export function CustomizableRows({
           rowEl = (
             <Row
               {...posterRow}
-              title={<RowTitle row={row} />}
+              title={<RowTitle row={row} title={title} />}
               titleExtra={<RowTitleExtra row={row} />}
               scrollKey={`home:${row.key}`}
               onEndReached={row.hasMore ? () => onLoadMore(row.key) : undefined}
@@ -224,7 +277,7 @@ export function CustomizableRows({
           >
             {editMode && (
               <RowControls
-                name={row.name}
+                name={title}
                 hidden={hidden}
                 canMoveUp={idx > 0}
                 canMoveDown={idx >= 0 && idx < orderKeys.length - 1}

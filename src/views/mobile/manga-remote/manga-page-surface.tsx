@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useT } from "@/lib/i18n";
 import { useMangaGestures, type MangaGestureInput } from "./use-manga-gestures";
 
 type Props = {
@@ -10,6 +11,7 @@ type Props = {
 };
 
 export function MangaPageSurface({ chapterLabel, displayPage, pageCount, spreadLabel, gestures }: Props) {
+  const t = useT();
   const { surfaceRef, visual, handlers } = useMangaGestures(gestures);
   const total = Math.max(1, pageCount);
   const bigLabel = spreadLabel || String(Math.min(displayPage + 1, total));
@@ -30,7 +32,9 @@ export function MangaPageSurface({ chapterLabel, displayPage, pageCount, spreadL
           <span className={`font-display leading-none tabular-nums text-ink ${spreadLabel ? "text-[52px]" : "text-[72px]"}`}>
             {bigLabel}
           </span>
-          <span className="text-[13px] tabular-nums text-ink-subtle">of {total}</span>
+          <span className="text-[13px] tabular-nums text-ink-subtle">
+            {t("of {total}", { total })}
+          </span>
           <span className="absolute inset-x-4 bottom-4 h-px bg-edge-soft/50" />
         </div>
       </div>
@@ -46,7 +50,7 @@ export function MangaPageSurface({ chapterLabel, displayPage, pageCount, spreadL
       {(atStart || atEnd) && (
         <div className="pointer-events-none absolute inset-x-0 bottom-6 flex justify-center">
           <span className="rounded-full bg-surface/90 px-4 py-1.5 text-[12.5px] font-medium text-ink-muted backdrop-blur">
-            {atStart ? "Start of manga" : "End of manga"}
+            {atStart ? t("Start of manga") : t("End of manga")}
           </span>
         </div>
       )}

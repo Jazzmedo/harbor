@@ -19,17 +19,19 @@ import { useView } from "@/lib/view";
 import { useSettings } from "@/lib/settings";
 import { openUrl } from "@/lib/window";
 
-function timeAgo(dateStr: string): string {
+type Translate = (key: string, vars?: Record<string, string | number>) => string;
+
+function timeAgo(dateStr: string, t: Translate): string {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 1) return t("just now");
+  if (mins < 60) return t("{n}m ago", { n: mins });
   const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return t("{n}h ago", { n: hours });
   const days = Math.floor(hours / 24);
-  if (days < 30) return `${days}d ago`;
+  if (days < 30) return t("{n}d ago", { n: days });
   const months = Math.floor(days / 30);
-  return `${months}mo ago`;
+  return t("{n}mo ago", { n: months });
 }
 
 function UserAvatar({ username, size = "sm" }: { username?: string | null; size?: "sm" | "md" }) {
@@ -196,7 +198,7 @@ function CommentCard({
           <span className="text-[13px] font-semibold text-ink">
             {comment.user.name ?? comment.user.username}
           </span>
-          <span className="text-[11px] text-ink-muted">{timeAgo(comment.createdAt)}</span>
+          <span className="text-[11px] text-ink-muted">{timeAgo(comment.createdAt, t)}</span>
           {comment.userRating != null && (
             <span className="ms-auto">
               <StarRow value={comment.userRating} interactive={false} />
@@ -299,7 +301,7 @@ function CommentCard({
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
                     <span className="text-[11px] font-semibold text-ink">{r.user.name ?? r.user.username}</span>
-                    <span className="text-[10px] text-ink-muted">{timeAgo(r.createdAt)}</span>
+                    <span className="text-[10px] text-ink-muted">{timeAgo(r.createdAt, t)}</span>
                   </div>
                   {r.spoiler ? (
                     <SpoilerLabel comment={r} />
@@ -319,6 +321,13 @@ function CommentCard({
 }
 
 const SORTS = ["likes", "newest", "oldest"] as const;
+type Sort = (typeof SORTS)[number];
+
+const SORT_LABEL: Record<Sort, string> = {
+  likes: "Likes",
+  newest: "Newest",
+  oldest: "Oldest",
+};
 
 const COMMENTS_PAGE_SIZE = 20;
 
@@ -329,7 +338,7 @@ export function TraktComments({ resolution }: { resolution: IdResolution | null 
   const [hasMore, setHasMore] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [sort, setSort] = useState<string>("likes");
+  const [sort, setSort] = useState<Sort>("likes");
   const [showSort, setShowSort] = useState(false);
   const [myComments, setMyComments] = useState(false);
   const [posting, setPosting] = useState(false);
@@ -487,14 +496,17 @@ export function TraktComments({ resolution }: { resolution: IdResolution | null 
           if (!msg) msg = parsed.error_description ?? parsed.error ?? `HTTP ${e.status}`;
           setPostError(msg.replace(/^\w+\s*-\s*/, ""));
         } catch {
-          setPostError(`HTTP ${e.status}: ${e.body.slice(0, 100) || "(empty body)"}`);
+          const body = e.body.slice(0, 100) || t("(empty body)");
+          setPostError(t("HTTP {status}: {body}", { status: e.status, body }));
         }
       } else {
-        setPostError(e instanceof TypeError ? "Network error" : "Failed to post comment");
+        setPostError(
+          e instanceof TypeError ? t("Network error") : t("Failed to post comment"),
+        );
       }
     }
     setPosting(false);
-  }, [target, text, posting, commentsCacheKey, spoiler]);
+  }, [target, text, posting, commentsCacheKey, spoiler, t]);
 
   const handleDelete = useCallback((id: number) => {
     setComments((prev) => prev.filter((c) => c.id !== id));
@@ -542,7 +554,7 @@ export function TraktComments({ resolution }: { resolution: IdResolution | null 
                 onClick={() => setShowSort(!showSort)}
                 className="flex items-center gap-1 rounded-lg bg-white/[0.06] px-3 py-1.5 text-[12px] font-medium text-ink-muted transition-colors hover:bg-white/[0.10] hover:text-ink"
               >
-                {t(sort.charAt(0).toUpperCase() + sort.slice(1))}
+                {t(SORT_LABEL[sort])}
                 <ChevronDown size={12} />
               </button>
               {showSort && (
@@ -555,7 +567,7 @@ export function TraktComments({ resolution }: { resolution: IdResolution | null 
                         s === sort ? "font-semibold text-ink" : "text-ink-muted"
                       }`}
                     >
-                      {t(s.charAt(0).toUpperCase() + s.slice(1))}
+                      {t(SORT_LABEL[s])}
                     </button>
                   ))}
                 </div>

@@ -205,7 +205,7 @@ const addons: Record<string, string> = {
   "Harbor double-checks with Stremio after saving, so a half-written order can't slip through.":
     "يتحقّق Harbor مرتين مع Stremio بعد الحفظ، حتى لا يتسلّل ترتيب مكتوب جزئيًا.",
 
-  "{n} addon": "إضافة واحدة",
+  "{n} addon": "{n} إضافة",
   "{n} addons": "{n} إضافة",
   "Drag to reorder": "اسحب لإعادة الترتيب",
   "Move to top": "نقل إلى الأعلى",

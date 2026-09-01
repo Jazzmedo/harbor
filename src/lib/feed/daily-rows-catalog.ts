@@ -39,6 +39,21 @@ function langPicks(affinity: Affinity, base: number, n: number) {
   );
 }
 
+const COUNTRY_ADJECTIVES: Record<string, string> = {
+  fr: "French",
+  ja: "Japanese",
+  ko: "Korean",
+  es: "Spanish-Language",
+  it: "Italian",
+  de: "German",
+  sv: "Swedish",
+  da: "Danish",
+  zh: "Chinese",
+  hi: "Indian",
+  pt: "Portuguese-Language",
+  ru: "Russian",
+};
+
 const PARAMETERIZED: CatalogEntry[] = [
   {
     id: "top_genre",
@@ -56,7 +71,7 @@ const PARAMETERIZED: CatalogEntry[] = [
           });
           return {
             key: `top_genre:${name}`,
-            title: `Top Rated ${name}`,
+            title: t("Top Rated {genre}", { genre: t(name) }),
             mediaType: "movie",
             endpoint: "discover",
             floorPrimary,
@@ -83,7 +98,7 @@ const PARAMETERIZED: CatalogEntry[] = [
           });
           return {
             key: `fresh_genre:${name}`,
-            title: `New in ${name}`,
+            title: t("New in {genre}", { genre: t(name) }),
             mediaType: "movie",
             endpoint: "discover",
             floorPrimary,
@@ -113,7 +128,10 @@ const PARAMETERIZED: CatalogEntry[] = [
         };
         out.push({
           key: `genre_blend:${names[i]}_${names[i + 1]}`,
-          title: `${names[i]} + ${names[i + 1]}`,
+          title: t("{genreA} + {genreB}", {
+            genreA: t(names[i]),
+            genreB: t(names[i + 1]),
+          }),
           mediaType: "movie",
           endpoint: "discover",
           floorPrimary,
@@ -140,8 +158,8 @@ const PARAMETERIZED: CatalogEntry[] = [
         };
         return {
           key: `hidden_gem_decade:${d.label}`,
-          title: `Hidden Gems from the ${d.label}`,
-          kicker: `Quietly great, ${d.label}`,
+          title: t("Hidden Gems from the {decade}", { decade: d.label }),
+          kicker: t("Quietly great, {decade}", { decade: d.label }),
           mediaType: "movie",
           endpoint: "discover",
           floorPrimary,
@@ -164,7 +182,7 @@ const PARAMETERIZED: CatalogEntry[] = [
         };
         return {
           key: `best_decade:${d.label}`,
-          title: `Best of the ${d.label}`,
+          title: t("Best of the {decade}", { decade: d.label }),
           mediaType: "movie",
           endpoint: "discover",
           floorPrimary,
@@ -204,6 +222,8 @@ const PARAMETERIZED: CatalogEntry[] = [
         .map((l): ExpandedRow | null => {
           const iso = LANG_TO_COUNTRY[l.code];
           if (!iso) return null;
+          const country = COUNTRY_ADJECTIVES[l.code];
+          if (!country) return null;
           const floorPrimary: Record<string, string> = {
             with_origin_country: iso,
             "vote_average.gte": "7.0",
@@ -212,7 +232,7 @@ const PARAMETERIZED: CatalogEntry[] = [
           };
           return {
             key: `country:${iso}`,
-            title: t(`${l.label.replace(/ Cinema$/, "")} Films`),
+            title: t("{country} Films", { country: t(country) }),
             kicker: t("From the region"),
             mediaType: "movie",
             endpoint: "discover",
@@ -240,7 +260,7 @@ const PARAMETERIZED: CatalogEntry[] = [
         };
         return {
           key: `runtime_short:${name}`,
-          title: `A Short Tonight: ${name} Under 90`,
+          title: t("A Short Tonight: {genre} Under 90", { genre: t(name) }),
           mediaType: "movie",
           endpoint: "discover",
           floorPrimary,
@@ -280,8 +300,10 @@ const PARAMETERIZED: CatalogEntry[] = [
             };
         out.push({
           key: `tv_genre:${isFresh ? "new" : "top"}:${name}`,
-          title: isFresh ? `New ${name} Series` : `Top Rated ${name} Series`,
-          kicker: isFresh ? "Fresh on TV" : "Critically acclaimed TV",
+          title: isFresh
+            ? t("New {genre} Series", { genre: t(name) })
+            : t("Top Rated {genre} Series", { genre: t(name) }),
+          kicker: isFresh ? t("Fresh on TV") : t("Critically acclaimed TV"),
           mediaType: "tv",
           endpoint: "discover",
           floorPrimary,
@@ -316,7 +338,7 @@ const PARAMETERIZED: CatalogEntry[] = [
       return [
         {
           key: `provider:${svc}`,
-          title: `On ${service.name}, picked for you`,
+          title: t("On {service}, picked for you", { service: service.name }),
           mediaType: "movie",
           endpoint: "discover",
           floorPrimary,

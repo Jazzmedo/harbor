@@ -13,14 +13,20 @@ import {
   parseBackup,
   type Backup,
   type BackupSectionKey,
+  type BackupValidationError,
 } from "@/lib/backup";
 import { useT } from "@/lib/i18n";
+
+type BackupRowError =
+  | BackupValidationError
+  | "Could not build the backup file."
+  | "Could not read that file.";
 
 export function BackupRow() {
   const t = useT();
   const fileRef = useRef<HTMLInputElement>(null);
   const [exported, setExported] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<BackupRowError | null>(null);
   const [pending, setPending] = useState<Backup | null>(null);
   const [applying, setApplying] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -117,7 +123,7 @@ export function BackupRow() {
         </button>
       </div>
 
-      {error && <p className="px-1 text-[12.5px] text-danger">{error}</p>}
+      {error && <p className="px-1 text-[12.5px] text-danger">{t(error)}</p>}
 
       {pickerOpen && <ExportPicker onExport={doExport} onCancel={() => setPickerOpen(false)} />}
 

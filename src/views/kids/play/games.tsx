@@ -1,5 +1,6 @@
 import { Expand, Gamepad2, Loader2, Minimize, RotateCcw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useT } from "@/lib/i18n";
 
 type Category = "Action" | "Puzzle" | "Learning" | "Sports & Racing" | "Build & Cook" | "Clickers";
 
@@ -80,6 +81,7 @@ export function GameArcade({
   exitSignal: number;
   onPlayingChange: (playing: boolean) => void;
 }) {
+  const t = useT();
   const [playing, setPlaying] = useState<Game | null>(null);
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("All");
 
@@ -107,7 +109,7 @@ export function GameArcade({
               f === filter ? "bg-[#ffd166] text-[#4a3200]" : "bg-white/20 text-white hover:bg-white/30"
             }`}
           >
-            {f}
+            {t(f)}
           </button>
         ))}
       </div>
@@ -139,7 +141,7 @@ export function GameArcade({
                 <span className="truncate font-display text-[17px] font-medium leading-tight text-[#123a52]">
                   {g.name}
                 </span>
-                <span className="truncate text-[12.5px] font-semibold text-[#3c6a84]">{g.blurb}</span>
+                <span className="truncate text-[12.5px] font-semibold text-[#3c6a84]">{t(g.blurb)}</span>
               </span>
             </button>
           ))}
@@ -150,6 +152,7 @@ export function GameArcade({
 }
 
 function GamePlayer({ game, onBack }: { game: Game; onBack: () => void }) {
+  const t = useT();
   const areaRef = useRef<HTMLDivElement>(null);
   const frameHostRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLIFrameElement>(null);
@@ -222,13 +225,13 @@ function GamePlayer({ game, onBack }: { game: Game; onBack: () => void }) {
           {game.name}
         </span>
         <span className="shrink-0 rounded-full bg-white/20 px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-white/85">
-          on Scratch
+          {t("on Scratch")}
         </span>
         <div className="ms-auto flex shrink-0 items-center gap-2">
           <button
             type="button"
             onClick={restart}
-            title="Restart game"
+            title={t("Restart game")}
             className="flex h-12 w-12 items-center justify-center rounded-full border-4 border-white/40 bg-white/90 text-[#123a52] transition-transform duration-150 hover:scale-[1.06] active:scale-95"
           >
             <RotateCcw size={18} strokeWidth={2.6} />
@@ -236,7 +239,7 @@ function GamePlayer({ game, onBack }: { game: Game; onBack: () => void }) {
           <button
             type="button"
             onClick={toggleFullscreen}
-            title={fullscreen ? "Exit full screen" : "Full screen"}
+            title={fullscreen ? t("Exit full screen") : t("Full screen")}
             className="flex h-12 w-12 items-center justify-center rounded-full border-4 border-white/40 bg-white/90 text-[#123a52] transition-transform duration-150 hover:scale-[1.06] active:scale-95"
           >
             {fullscreen ? <Minimize size={18} strokeWidth={2.6} /> : <Expand size={18} strokeWidth={2.6} />}
@@ -273,14 +276,16 @@ function GamePlayer({ game, onBack }: { game: Game; onBack: () => void }) {
           {state === "loading" && (
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3 bg-[#04121e]/85">
               <Loader2 size={34} className="animate-spin text-white/80" />
-              <span className="text-[15px] font-bold text-white/75">Loading {game.name}...</span>
+              <span className="text-[15px] font-bold text-white/75">
+                {t("Loading {name}...", { name: game.name })}
+              </span>
             </div>
           )}
           {state === "failed" && (
             <div className="flex flex-col items-center gap-4 px-8 py-10 text-center">
               <img src="/kids/doodles/liloctored.png" alt="" draggable={false} className="h-20 w-auto" />
               <p className="font-display text-[22px] font-medium text-white">
-                This game couldn't load right now.
+                {t("This game couldn't load right now.")}
               </p>
               <div className="flex items-center gap-3">
                 <button
@@ -289,14 +294,14 @@ function GamePlayer({ game, onBack }: { game: Game; onBack: () => void }) {
                   className="flex h-12 items-center gap-2 rounded-full bg-[#ffd166] px-6 text-[15px] font-bold text-[#4a3200] transition-transform duration-150 hover:scale-[1.04] active:scale-95"
                 >
                   <RotateCcw size={16} strokeWidth={2.6} />
-                  Try again
+                  {t("Try again")}
                 </button>
                 <button
                   type="button"
                   onClick={onBack}
                   className="flex h-12 items-center rounded-full border-4 border-white/40 bg-white/90 px-5 text-[14px] font-bold text-[#123a52] transition-transform duration-150 hover:scale-[1.04] active:scale-95"
                 >
-                  Pick another
+                  {t("Pick another")}
                 </button>
               </div>
             </div>

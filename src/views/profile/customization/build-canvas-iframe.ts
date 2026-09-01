@@ -1,3 +1,4 @@
+import { t } from "@/lib/i18n";
 import { CANVAS_DEFAULT, CANVAS_MAX, CANVAS_MIN, MARKUP_CAP } from "./customization-types";
 
 const STRIP_RE = /<script|<\/script|javascript:|<iframe|<object|<embed/gi;
@@ -38,8 +39,9 @@ export function buildCanvasDoc(html: string, css: string): string {
 export function buildCanvasIframe(html: string, css: string, height?: number): string {
   const doc = buildCanvasDoc(html, css).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
   const h = clampHeight(height);
+  const title = t("Custom profile").replace(/&/g, "&amp;").replace(/"/g, "&quot;");
   return (
-    '<iframe class="pw-canvas" title="Custom profile" sandbox="" referrerpolicy="no-referrer" loading="lazy" ' +
+    `<iframe class="pw-canvas" title="${title}" sandbox="" referrerpolicy="no-referrer" loading="lazy" ` +
     `style="width:100%;height:${h}px;border:0;border-radius:14px;display:block;background:transparent" ` +
     `srcdoc="${doc}"></iframe>`
   );

@@ -3,6 +3,7 @@ import { ChevronDown, Monitor, Volume2, VolumeX } from "lucide-react";
 import type { RemoteNavKey, RemoteSnapshot } from "@/lib/remote/protocol";
 import { SERVICES } from "@/lib/providers/streaming";
 import type { StreamingService } from "@/lib/settings";
+import { useT } from "@/lib/i18n";
 import { useMobileRemote } from "./mobile-remote";
 import { useRegisterSheet } from "./mobile-sheet-lock";
 import { MobileServices } from "./mobile-services";
@@ -44,6 +45,7 @@ const CHEVRONS: Array<{ dir: Dir; rotate: number; pos: string; nudge: string }> 
 ];
 
 export function DpadRemote() {
+  const t = useT();
   const { sendCommand, snapshot, connected } = useMobileRemote();
   const nav = (key: RemoteNavKey) => sendCommand({ action: "nav", key });
   const playing = snapshot.playing && !snapshot.idle;
@@ -161,7 +163,7 @@ export function DpadRemote() {
       >
         <Monitor size={15} strokeWidth={2.2} className={connected ? "text-ink" : "text-ink-subtle"} />
         <span className="text-ink">
-          {connected ? snapshot.target.label || "Your computer" : "Connecting…"}
+          {connected ? snapshot.target.label || t("Your computer") : t("Connecting...")}
         </span>
         <ChevronDown size={15} strokeWidth={2.4} className="text-ink-subtle" />
       </button>
@@ -172,7 +174,7 @@ export function DpadRemote() {
             <button
               key={dir}
               type="button"
-              aria-label={dir}
+              aria-label={t(dir === "up" ? "Up" : dir === "right" ? "Right" : dir === "down" ? "Down" : "Left")}
               onPointerDown={(e) => {
                 e.preventDefault();
                 startPress(dir);
@@ -231,7 +233,7 @@ export function DpadRemote() {
 
         <button
           type="button"
-          aria-label="Select"
+          aria-label={t("Select")}
           onPointerDown={(e) => {
             e.preventDefault();
             setOkDown(true);
@@ -247,19 +249,19 @@ export function DpadRemote() {
             textShadow: "0 -1px 1px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.07)",
           }}
         >
-          OK
+          {t("OK")}
         </button>
       </div>
 
       <div className="flex w-full max-w-[352px] items-center justify-between px-2">
-        <Util label="Speed & sleep" onPress={() => setSpeedOpen(true)}>
+        <Util label={t("Speed & sleep")} onPress={() => setSpeedOpen(true)}>
           <RemoteIcon name="sleep_timer" size={24} />
         </Util>
-        <Util label="Keyboard" onPress={() => setKbOpen(true)}>
+        <Util label={t("Keyboard")} onPress={() => setKbOpen(true)}>
           <RemoteIcon name="keyboard" size={24} />
         </Util>
         <Util
-          label="Voice"
+          label={t("Voice")}
           accent
           onPress={() => {
             if (getSpeechRecognition()) setVoiceOpen(true);
@@ -268,10 +270,10 @@ export function DpadRemote() {
         >
           <RemoteIcon name="microphone" size={26} />
         </Util>
-        <Util label="Apps" onPress={() => setServices({ open: true })}>
+        <Util label={t("Apps")} onPress={() => setServices({ open: true })}>
           <RemoteIcon name="apps_grid" size={24} />
         </Util>
-        <Util label="More" onPress={() => {}}>
+        <Util label={t("More")} onPress={() => {}}>
           <RemoteIcon name="more" size={24} />
         </Util>
       </div>
@@ -284,24 +286,24 @@ export function DpadRemote() {
       >
         <Pane>
           <div className="flex w-full justify-around">
-            <Circle label="Back" onPress={() => (watching ? setConfirm("back") : nav("back"))}>
+            <Circle label={t("Back")} onPress={() => (watching ? setConfirm("back") : nav("back"))}>
               <RemoteIcon name="back" size={26} />
             </Circle>
-            <Circle label="Home" onPress={() => (watching ? setConfirm("home") : sendCommand({ action: "goView", view: "home" }))}>
+            <Circle label={t("Home")} onPress={() => (watching ? setConfirm("home") : sendCommand({ action: "goView", view: "home" }))}>
               <RemoteIcon name="home" size={26} />
             </Circle>
-            <Circle label="Menu" onPress={() => sendCommand({ action: "openSearch" })}>
+            <Circle label={t("Menu")} onPress={() => sendCommand({ action: "openSearch" })}>
               <RemoteIcon name="menu" size={26} />
             </Circle>
           </div>
           <div className="flex w-full items-center justify-around">
-            <Circle label="Rewind" onPress={() => sendCommand({ action: "seek", positionSec: Math.max(0, snapshot.positionSec - 10) })}>
+            <Circle label={t("Rewind")} onPress={() => sendCommand({ action: "seek", positionSec: Math.max(0, snapshot.positionSec - 10) })}>
               <RemoteIcon name="previous" size={26} />
             </Circle>
-            <Circle label={playing ? "Pause" : "Play"} big onPress={() => sendCommand({ action: playing ? "pause" : "play" })}>
+            <Circle label={playing ? t("Pause") : t("Play")} big onPress={() => sendCommand({ action: playing ? "pause" : "play" })}>
               {playing ? <RemoteIcon name="pause" size={32} /> : <RemoteIcon name="play" size={32} />}
             </Circle>
-            <Circle label="Forward" onPress={() => sendCommand({ action: "seek", positionSec: snapshot.positionSec + 10 })}>
+            <Circle label={t("Forward")} onPress={() => sendCommand({ action: "seek", positionSec: snapshot.positionSec + 10 })}>
               <RemoteIcon name="previous" size={26} flip />
             </Circle>
           </div>
@@ -309,18 +311,18 @@ export function DpadRemote() {
 
         <Pane>
           <div className="flex w-full justify-around">
-            <Circle label="Volume down" onPress={() => sendCommand({ action: "setVolume", volume: Math.max(0, (snapshot.volume ?? 1) - 0.1) })}>
+            <Circle label={t("Volume down")} onPress={() => sendCommand({ action: "setVolume", volume: Math.max(0, (snapshot.volume ?? 1) - 0.1) })}>
               <VolumeX size={26} strokeWidth={2.2} />
             </Circle>
-            <Circle label="Mute" onPress={() => sendCommand({ action: "setMuted", muted: !snapshot.muted })}>
+            <Circle label={t("Mute")} onPress={() => sendCommand({ action: "setMuted", muted: !snapshot.muted })}>
               {snapshot.muted ? <VolumeX size={26} strokeWidth={2.2} /> : <Volume2 size={26} strokeWidth={2.2} />}
             </Circle>
-            <Circle label="Volume up" onPress={() => sendCommand({ action: "setVolume", volume: Math.min(1, (snapshot.volume ?? 1) + 0.1) })}>
+            <Circle label={t("Volume up")} onPress={() => sendCommand({ action: "setVolume", volume: Math.min(1, (snapshot.volume ?? 1) + 0.1) })}>
               <Volume2 size={26} strokeWidth={2.2} />
             </Circle>
           </div>
           <div className="flex w-full justify-around">
-            <Circle label="Subtitles" onPress={() => sendCommand({ action: "toggleSubtitles" })}>
+            <Circle label={t("Subtitles")} onPress={() => sendCommand({ action: "toggleSubtitles" })}>
               <RemoteIcon name="captions" size={26} />
             </Circle>
           </div>
@@ -449,14 +451,15 @@ function ConfirmLeave({
   onCancel: () => void;
   onConfirm: () => void;
 }) {
+  const t = useT();
   const remainingMin =
     snapshot.durationSec > 0
       ? Math.max(0, Math.round((snapshot.durationSec - snapshot.positionSec) / 60))
       : null;
   const ep = snapshot.episode;
   const meta = [
-    ep ? `S${ep.season} E${ep.episode}` : null,
-    remainingMin && remainingMin > 0 ? `${remainingMin} min left` : null,
+    ep ? t("S{season} E{episode}", { season: ep.season, episode: ep.episode }) : null,
+    remainingMin && remainingMin > 0 ? t("{count} min left", { count: remainingMin }) : null,
   ]
     .filter(Boolean)
     .join(" · ");
@@ -479,7 +482,7 @@ function ConfirmLeave({
       >
         <div className="mx-auto h-1 w-10 rounded-full bg-ink/20" />
         <h3 className="text-center text-[18px] font-semibold tracking-tight text-ink">
-          {"Leave what you're watching?"}
+          {t("Leave what you're watching?")}
         </h3>
         {hasCard && (
           <div className="flex items-center gap-3 rounded-2xl bg-raised/40 p-2.5">
@@ -506,7 +509,7 @@ function ConfirmLeave({
               reduced ? "" : "active:scale-[0.97]"
             }`}
           >
-            Keep watching
+            {t("Keep watching")}
           </button>
           <button
             type="button"
@@ -515,7 +518,7 @@ function ConfirmLeave({
               reduced ? "" : "active:scale-[0.97]"
             }`}
           >
-            Leave
+            {t("Leave")}
           </button>
         </div>
       </div>

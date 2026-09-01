@@ -98,7 +98,10 @@ export function RecoveryKeyInput({
               autoComplete="off"
               spellCheck={false}
               maxLength={LEN}
-              aria-label={`Recovery key block ${i + 1} of ${GROUPS}`}
+              aria-label={t("Recovery key block {current} of {total}", {
+                current: i + 1,
+                total: GROUPS,
+              })}
               placeholder="•••••"
               className="h-11 w-full min-w-0 rounded-md border border-edge-soft bg-elevated/40 text-center font-mono text-[15px] uppercase tracking-[0.16em] text-ink transition-colors placeholder:text-ink-subtle/40 focus:border-edge focus:outline-none"
             />

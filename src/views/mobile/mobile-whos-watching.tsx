@@ -1,6 +1,7 @@
 import { Check, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { RemoteProfile } from "@/lib/remote/protocol";
+import { useT } from "@/lib/i18n";
 import { useMobileRemote } from "./mobile-remote";
 
 type TileState = "idle" | "chosen" | "dimmed";
@@ -29,6 +30,7 @@ const SWITCH_CSS = `
 `;
 
 export function MobileWhosWatching({ onClose }: { onClose: () => void }) {
+  const t = useT();
   const { snapshot, sendCommand } = useMobileRemote();
   const profiles = snapshot.profiles;
   const activeId = snapshot.profile?.id ?? null;
@@ -58,7 +60,7 @@ export function MobileWhosWatching({ onClose }: { onClose: () => void }) {
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Who's watching"
+      aria-label={t("Who's watching")}
       className={`fixed inset-0 z-[70] flex flex-col overflow-hidden bg-canvas ${
         exiting ? "harbor-switch-out pointer-events-none" : "animate-fade-in"
       }`}
@@ -81,7 +83,7 @@ export function MobileWhosWatching({ onClose }: { onClose: () => void }) {
         <button
           type="button"
           onClick={onClose}
-          aria-label="Close"
+          aria-label={t("Close")}
           className="flex h-10 w-10 touch-manipulation items-center justify-center rounded-full bg-elevated/60 text-ink-muted ring-1 ring-edge-soft backdrop-blur transition-transform duration-150 active:scale-[0.94] active:bg-raised"
         >
           <X size={18} strokeWidth={2.4} />
@@ -92,10 +94,10 @@ export function MobileWhosWatching({ onClose }: { onClose: () => void }) {
         <div className="my-auto flex w-full flex-col items-center py-8">
           <div className={`mb-9 flex flex-col items-center gap-1.5 ${reduced ? "" : "harbor-step"}`}>
             <h1 className="font-display text-[26px] font-medium tracking-tight text-ink">
-              Who's watching?
+              {t("Who's watching?")}
             </h1>
             <p className="text-[13.5px] text-ink-muted">
-              {profiles.length ? "Tap a profile to switch" : "Connect to your computer to switch"}
+              {profiles.length ? t("Tap a profile to switch") : t("Connect to your computer to switch")}
             </p>
           </div>
 
@@ -137,6 +139,7 @@ function ProfileTile({
   delay: number;
   onSelect: () => void;
 }) {
+  const t = useT();
   const stateClass =
     state === "chosen"
       ? "z-10 scale-[1.05]"
@@ -151,7 +154,7 @@ function ProfileTile({
     <button
       type="button"
       onClick={onSelect}
-      aria-label={`Switch to ${profile.name}`}
+      aria-label={t("Switch to {name}", { name: profile.name })}
       className={`group flex w-[clamp(94px,27vw,116px)] touch-manipulation flex-col items-center gap-3 outline-none transition-[transform,opacity] duration-[420ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${stateClass}`}
       style={state === "idle" && !reduced ? { animationDelay: `${delay}ms` } : undefined}
     >

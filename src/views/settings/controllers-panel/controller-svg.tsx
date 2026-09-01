@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useMemo, useRef } from "react";
 import type { GpButton } from "@/lib/gamepad/protocol";
 import { liveAxes, subscribeLive, useLiveButtons } from "@/lib/gamepad/live";
+import { useT } from "@/lib/i18n";
 import { DUALSENSE_ART, XBOX_ART, type PadArt, type PadPart } from "./pad-art";
 import { detectLayout, type Layout } from "./controller-shape";
 import { useLatchedButtons } from "./use-latched-buttons";
@@ -132,6 +133,7 @@ function buildSequence(art: PadArt): Slot[] {
 }
 
 export function ControllerSvg({ layout, compact }: { layout: Layout; compact?: boolean }) {
+  const t = useT();
   const art = ART[layout];
   const live = useLiveButtons();
   const buttons = useLatchedButtons(live, LATCH_MS);
@@ -234,7 +236,7 @@ export function ControllerSvg({ layout, compact }: { layout: Layout; compact?: b
       viewBox={`${bx} ${by - band} ${bw} ${bh + band}`}
       className="w-full text-ink"
       role="img"
-      aria-label="Controller preview"
+      aria-label={t("Controller preview")}
     >
       <defs>
         {layout === "ps" && (

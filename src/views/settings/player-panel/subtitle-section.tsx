@@ -402,14 +402,29 @@ const PRESET_FONTS: Array<{ id: "inter" | "system" | "rounded" | "serif" | "arab
 
 const FONT_ACCEPT = ".ttf,.otf,.woff,.woff2,font/ttf,font/otf,font/woff,font/woff2,application/x-font-ttf,application/x-font-otf,application/font-woff,application/font-woff2";
 const MAX_FONT_BYTES = 4 * 1024 * 1024;
+type FontImportError =
+  | { kind: "too-large"; sizeMb: string }
+  | { kind: "unsupported"; extension: string }
+  | { kind: "save-failed" };
+
 
 function FontPicker() {
   const { settings, update } = useSettings();
   const t = useT();
   const fileRef = useRef<HTMLInputElement>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<FontImportError | null>(null);
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const customFonts = settings.customFonts ?? [];
+  const errorMessage =
+    error?.kind === "too-large"
+      ? t("That font is {size} MB. Max is 4 MB.", { size: error.sizeMb })
+      : error?.kind === "unsupported"
+        ? t('Unsupported font type ".{extension}". Use TTF, OTF, WOFF, or WOFF2.', {
+            extension: error.extension,
+          })
+        : error?.kind === "save-failed"
+          ? t("Couldn't save that font. It may be invalid, or storage is full.")
+          : null;
 
   useEffect(() => {
     if (!error) return;
@@ -420,7 +435,7 @@ function FontPicker() {
   const onFile = async (file: File) => {
     setError(null);
     if (file.size > MAX_FONT_BYTES) {
-      setError(`That font is ${(file.size / (1024 * 1024)).toFixed(1)} MB. Max is 4 MB.`);
+      setError({ kind: "too-large", sizeMb: (file.size / (1024 * 1024)).toFixed(1) });
       return;
     }
     const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
@@ -431,7 +446,7 @@ function FontPicker() {
       woff2: "woff2",
     };
     if (!formatMap[ext]) {
-      setError(`Unsupported font type ".${ext}". Use TTF, OTF, WOFF, or WOFF2.`);
+      setError({ kind: "unsupported", extension: ext });
       return;
     }
     try {
@@ -456,7 +471,7 @@ function FontPicker() {
       update({ customFonts: next, subFontFamily: `custom:${id}` });
     } catch (e) {
       console.warn("[fonts] read failed", e);
-      setError("Couldn't save that font. It may be invalid, or storage is full.");
+      setError({ kind: "save-failed" });
     }
   };
 
@@ -524,7 +539,7 @@ function FontPicker() {
                 title={broken ? t("This font did not load. Remove it and upload it again.") : undefined}
                 className={`flex h-11 w-full items-center justify-center rounded-md border px-2 text-[13px] font-semibold transition-colors ${
                   broken
-                    ? "border-danger bg-danger/15 text-danger"
+                    ? "border-danger/40 bg-danger/10 text-danger"
                     : sel
                       ? "border-ink bg-elevated text-ink"
                       : "border-edge-soft bg-canvas text-ink-muted hover:border-edge hover:text-ink"
@@ -569,9 +584,9 @@ function FontPicker() {
           e.target.value = "";
         }}
       />
-      {error && (
+      {errorMessage && (
         <p className="rounded-md bg-danger/15 px-2.5 py-2 text-[11.5px] leading-snug text-danger ring-1 ring-danger">
-          {error}
+          {errorMessage}
         </p>
       )}
       {confirmFont && (

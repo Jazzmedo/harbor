@@ -1,6 +1,6 @@
 import { Check, ChevronDown } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useT } from "@/lib/i18n";
+import { t, useUiLanguage } from "@/lib/i18n";
 import { regionFlagSrc } from "@/lib/region-flags";
 
 const REGIONS: Array<{ code: string; label: string }> = [
@@ -78,10 +78,11 @@ export function RegionPicker({
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const t = useT();
+  const language = useUiLanguage();
   const wrapRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const current = REGIONS.find((r) => r.code === value) ?? { code: value, label: value };
+  const current = REGIONS.find((r) => r.code === value);
+  const currentCode = current?.code ?? value;
 
   useEffect(() => {
     if (!open) return;
@@ -109,12 +110,17 @@ export function RegionPicker({
   }, [open]);
 
   const filtered: Array<{ code: string; label: string }> = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = query.trim().toLocaleLowerCase();
     if (!q) return REGIONS;
-    return REGIONS.filter(
-      (r) => r.label.toLowerCase().includes(q) || r.code.toLowerCase().includes(q),
-    );
-  }, [query]);
+    return REGIONS.filter((region) => {
+      const localizedLabel = t(region.label).toLocaleLowerCase();
+      return (
+        localizedLabel.includes(q) ||
+        region.label.toLocaleLowerCase().includes(q) ||
+        region.code.toLocaleLowerCase().includes(q)
+      );
+    });
+  }, [language, query]);
 
   return (
     <div ref={wrapRef} className="relative">
@@ -125,12 +131,14 @@ export function RegionPicker({
           open ? "bg-elevated" : "bg-surface hover:bg-elevated"
         }`}
       >
-        <FlagChip code={current.code} size={36} />
+        <FlagChip code={currentCode} size={36} />
         <span className="flex min-w-0 flex-1 flex-col">
           <span className="text-[10.5px] font-semibold uppercase tracking-[0.18em] text-ink-subtle">
             {t("Region")}
           </span>
-          <span className="truncate text-[15px] font-medium text-ink">{current.label}</span>
+          <span className="truncate text-[15px] font-medium text-ink">
+            {current ? t(current.label) : value}
+          </span>
         </span>
         <ChevronDown
           size={16}
@@ -171,7 +179,7 @@ export function RegionPicker({
               <div className="px-4 py-6 text-center text-[13px] text-ink-subtle">{t("No matches")}</div>
             ) : (
               filtered.map((r) => {
-                const selected = r.code === current.code;
+                const selected = r.code === currentCode;
                 return (
                   <button
                     key={r.code}
@@ -184,7 +192,9 @@ export function RegionPicker({
                     }`}
                   >
                     <FlagChip code={r.code} size={30} />
-                    <span className="flex-1 truncate text-[13.5px] font-medium">{r.label}</span>
+                    <span className="flex-1 truncate text-[13.5px] font-medium">
+                      {t(r.label)}
+                    </span>
                     <span className="shrink-0 font-mono text-[10.5px] tracking-wider text-ink-subtle">
                       {r.code}
                     </span>

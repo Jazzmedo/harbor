@@ -178,8 +178,8 @@ export function AiSearchSection() {
         desc={
           <>
             {t("Augments AI picks with current web results before asking the model. Powered by")}{" "}
-            <ExtLink href="https://jina.ai/reader">Jina Reader</ExtLink>
-            {t(". Works without a key at low volume; add a key for higher quotas.")}
+            <ExtLink href="https://jina.ai/reader">Jina Reader</ExtLink>.{" "}
+            {t("Works without a key at low volume; add a key for higher quotas.")}
           </>
         }
       />
@@ -199,7 +199,8 @@ export function AiSearchSection() {
         saved={false}
         help={
           <>
-            Get a key at <ExtLink href="https://jina.ai/reader">jina.ai/reader</ExtLink>{" "}
+            {t("Get a key at")}{" "}
+            <ExtLink href="https://jina.ai/reader">jina.ai/reader</ExtLink>{" "}
             {t("for higher rate limits; leave blank for the free anonymous tier.")}
           </>
         }

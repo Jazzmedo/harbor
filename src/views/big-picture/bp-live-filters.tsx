@@ -7,6 +7,7 @@ import { useBpT } from "./bp-i18n";
 export type BpLiveFilterItem = {
   key: string;
   label: string;
+  translateLabel?: boolean;
   count: number;
   star?: boolean;
   flagCode?: string;
@@ -82,7 +83,9 @@ export function BpLiveFilters({
                   />
                 )}
                 {item.flagCode && <FilterFlag code={item.flagCode} />}
-                <span className="max-w-[clamp(160px,24vw,380px)] truncate">{t(item.label)}</span>
+                <span className="max-w-[clamp(160px,24vw,380px)] truncate">
+                  {item.translateLabel ? t(item.label) : item.label}
+                </span>
                 {showCount && (
                   <span className="text-[clamp(11px,1.45vh,16px)] font-bold tabular-nums opacity-55">
                     {item.count.toLocaleString()}

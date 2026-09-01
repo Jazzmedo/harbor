@@ -55,7 +55,7 @@ const used: Record<string, string> = {
   "Frequent Collaborators": "Часто работает с",
   "Friend requests": "Запросы в друзья",
   "From the region": "Из региона",
-  "Genres are only recorded for files scanned after this feature was added — re-add a folder to pick them up.": "Жанры записываются только для файлов, просканированных после появления этой функции — добавьте папку заново, чтобы их подтянуть.",
+  "Genres are only recorded for files scanned after this feature was added — re-add a folder to pick them up.": "Жанры записываются только для файлов, просканированных после появления этой функции – добавьте папку заново, чтобы их подтянуть.",
   "Gently magnify nearby posters as you move across a poster row.": "Плавно увеличивать соседние постеры при движении по ряду.",
   "German Cinema": "Немецкое кино",
   "German Films": "Немецкие фильмы",

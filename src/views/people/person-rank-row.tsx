@@ -51,7 +51,8 @@ export function PersonRankRow({
     if (expanded) setEverOpened(true);
   }, [expanded]);
 
-  const dept = t(DEPT_LABEL[person.department] ?? person.department);
+  const departmentKey = DEPT_LABEL[person.department];
+  const dept = departmentKey ? t(departmentKey) : person.department;
   const photo = profilePhoto(person.profilePath, tier === "featured" ? 342 : 185);
 
   const frame =

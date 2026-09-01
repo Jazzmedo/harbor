@@ -28,6 +28,7 @@ import {
 } from "@/lib/ebook/offline-export";
 import { sourceEBookChapters, sourceEBookDetail } from "@/lib/ebook/providers";
 import { loadEBookResume } from "@/lib/ebook/reader-state";
+import { useT } from "@/lib/i18n";
 import { getEBookTracking, saveEBookTracking } from "@/lib/ebook/tracking";
 import { useView } from "@/lib/view";
 
@@ -70,17 +71,12 @@ function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), Math.max(min, max));
 }
 
-function sourceName(ebook: EBook): string {
+function sourceName(ebook: EBook): string | null {
   return (
     ebook.providerName ??
     ebook.books?.find((book) => book.source === "source")?.providerName ??
-    "Book metadata"
+    null
   );
-}
-
-function totalLabel(value: number | undefined, unit: "volume" | "chapter"): string {
-  if (!value) return `${unit === "volume" ? "Volumes" : "Chapters"} not reported`;
-  return `${value} ${unit}${value === 1 ? "" : "s"}`;
 }
 
 export function EBookWheelMenu({
@@ -97,10 +93,18 @@ export function EBookWheelMenu({
   onStartReading: (ebook: EBook) => void;
 }) {
   const { ebook } = target;
+  const t = useT();
   const { setView } = useView();
   const [mode, setMode] = useState<WheelMode>("wheel");
   const [onShelf, setOnShelf] = useState(() => ebookInLibrary(ebook.id));
   const [readLater, setReadLater] = useState(() => eBookIsReadLater(ebook.id));
+  const totalLabel = (value: number | undefined, unit: "volume" | "chapter"): string => {
+    if (!value) return unit === "volume" ? t("Volumes not reported") : t("Chapters not reported");
+    if (unit === "volume") {
+      return value === 1 ? t("{count} volume", { count: value }) : t("{count} volumes", { count: value });
+    }
+    return value === 1 ? t("{count} chapter", { count: value }) : t("{count} chapters", { count: value });
+  };
   const [completed, setCompleted] = useState(() => getEBookTracking(ebook.id).status === "COMPLETED");
   const [detailBook, setDetailBook] = useState<EBook>(ebook);
   const [stats, setStats] = useState<{ volumes: number; chapters: number } | null>(null);
@@ -175,9 +179,9 @@ export function EBookWheelMenu({
         progress: next ? (ebook.chapters ?? getEBookTracking(ebook.id).progress) : 0,
         progressVolumes: next ? (ebook.volumes ?? getEBookTracking(ebook.id).progressVolumes) : 0,
       });
-      emitListToast(next ? "Marked as read" : "Marked as unread");
+      emitListToast(next ? t("Marked as read") : t("Marked as unread"));
     } catch {
-      emitListToast("Saved locally; AniList sync is pending");
+      emitListToast(t("Saved locally; AniList sync is pending"));
     }
     onClose();
   };
@@ -187,11 +191,11 @@ export function EBookWheelMenu({
     setExporting(format);
     try {
       await enqueueEBookExport(ebook, format);
-      emitListToast(`${format.toUpperCase()} added to Downloads`);
+      emitListToast(t("{format} added to Downloads", { format: format.toUpperCase() }));
       onClose();
       setView("downloads");
     } catch (error) {
-      emitListToast(error instanceof Error ? error.message : "This eBook could not be exported");
+      emitListToast(error instanceof Error ? error.message : t("This eBook could not be exported"));
     } finally {
       setExporting(null);
     }
@@ -201,61 +205,61 @@ export function EBookWheelMenu({
     () => [
       {
         id: "read",
-        label: resume ? "Continue Reading" : "Start Reading",
+        label: resume ? t("Continue Reading") : t("Start Reading"),
         Icon: Play,
         onClick: () => {
           onStartReading(ebook);
           onClose();
         },
       },
-      { id: "details", label: "Book Details", Icon: Info, onClick: () => setMode("details") },
-      { id: "download", label: "Download", Icon: Download, onClick: () => setMode("download") },
+      { id: "details", label: t("Book Details"), Icon: Info, onClick: () => setMode("details") },
+      { id: "download", label: t("Download"), Icon: Download, onClick: () => setMode("download") },
       {
         id: "shelf",
-        label: onShelf ? "On Shelf" : "Add to Shelf",
+        label: onShelf ? t("On Shelf") : t("Add to Shelf"),
         Icon: ShelfBooksIcon,
         active: onShelf,
         onClick: () => {
           const next = toggleEBookLibrary(ebook);
           setOnShelf(next);
-          emitListToast(next ? "Added to Shelf" : "Removed from Shelf");
+          emitListToast(next ? t("Added to Shelf") : t("Removed from Shelf"));
           onClose();
         },
       },
       {
         id: "bookmark",
-        label: readLater ? "Bookmarked" : "Bookmark",
+        label: readLater ? t("Bookmarked") : t("Bookmark"),
         Icon: Bookmark,
         active: readLater,
         onClick: () => {
           const next = toggleEBookReadLater(ebook);
           setReadLater(next);
-          emitListToast(next ? "Bookmarked to read later" : "Bookmark removed");
+          emitListToast(next ? t("Bookmarked to read later") : t("Bookmark removed"));
           onClose();
         },
       },
       {
         id: "watched",
-        label: completed ? "Marked as read" : "Mark as Read",
+        label: completed ? t("Marked as read") : t("Mark as Read"),
         Icon: completed ? Check : Eye,
         active: completed,
         onClick: () => void markCompleted(),
       },
     ],
-    [completed, ebook, onClose, onShelf, onStartReading, readLater, resume],
+    [completed, ebook, onClose, onShelf, onStartReading, readLater, resume, t],
   );
 
   const node = (
     <div className="fixed inset-0 z-[220]" onContextMenu={(event) => event.preventDefault()}>
       <button
         type="button"
-        aria-label="Close eBook menu"
+        aria-label={t("Close eBook menu")}
         className="absolute inset-0 cursor-default bg-canvas/55 backdrop-blur-[3px] animate-in fade-in duration-150"
         onMouseDown={onClose}
       />
       <div
         role="menu"
-        aria-label={`${ebook.title} actions`}
+        aria-label={t("{title} actions", { title: ebook.title })}
         className="fixed h-[360px] w-[360px] -translate-x-1/2 -translate-y-1/2 animate-in zoom-in-95 fade-in duration-200 motion-reduce:animate-none"
         style={{ left: centerX, top: centerY }}
       >
@@ -305,7 +309,7 @@ export function EBookWheelMenu({
           <div className="relative flex max-w-[118px] flex-col items-center gap-1 text-center">
             <BookOpen size={22} className="mb-1 text-accent" />
             <span className="line-clamp-2 text-[12px] font-bold leading-tight text-ink">{ebook.title}</span>
-            <span className="text-[9.5px] uppercase tracking-[0.13em] text-ink-subtle">eBook actions</span>
+            <span className="text-[9.5px] uppercase tracking-[0.13em] text-ink-subtle">{t("eBook actions")}</span>
           </div>
         </div>
 
@@ -316,18 +320,18 @@ export function EBookWheelMenu({
                 type="button"
                 onClick={() => setMode("wheel")}
                 className="grid h-9 w-9 place-items-center rounded-full text-ink-muted transition-colors hover:bg-raised hover:text-ink"
-                aria-label="Back to eBook actions"
+                aria-label={t("Back to eBook actions")}
               >
                 <ChevronLeft size={19} />
               </button>
               <span className="text-[12px] font-semibold uppercase tracking-[0.13em] text-ink-subtle">
-                {mode === "details" ? "Book Details" : "Offline Reading"}
+                {mode === "details" ? t("Book Details") : t("Offline Reading")}
               </span>
               <button
                 type="button"
                 onClick={onClose}
                 className="grid h-9 w-9 place-items-center rounded-full text-ink-muted transition-colors hover:bg-raised hover:text-ink"
-                aria-label="Close"
+                aria-label={t("Close")}
               >
                 <X size={18} />
               </button>
@@ -344,15 +348,15 @@ export function EBookWheelMenu({
                   </div>
                   <div className="min-w-0 py-1">
                     <h3 className="line-clamp-2 text-[17px] font-semibold leading-tight text-ink">{detailBook.title}</h3>
-                    <p className="mt-1 truncate text-[12px] text-ink-muted">{detailBook.authors.join(", ") || "Unknown author"}</p>
-                    <p className="mt-3 text-[11px] text-ink-subtle">From {sourceName(detailBook)}</p>
+                    <p className="mt-1 truncate text-[12px] text-ink-muted">{detailBook.authors.join(", ") || t("Unknown author")}</p>
+                    <p className="mt-3 text-[11px] text-ink-subtle">{t("From {source}", { source: sourceName(detailBook) ?? t("Book metadata") })}</p>
                     <div className="mt-2 flex items-center gap-2 text-[11.5px] font-medium text-ink-muted">
                       {statsLoading ? <Loader2 size={14} className="animate-spin" /> : <><span>{totalLabel(stats?.volumes || ebook.volumes, "volume")}</span><span className="text-edge-strong">•</span><span>{totalLabel(stats?.chapters || ebook.chapters, "chapter")}</span></>}
                     </div>
                   </div>
                 </div>
                 <p className="line-clamp-4 text-[12.5px] leading-relaxed text-ink-muted">
-                  {detailBook.description || "No story summary is available for this eBook."}
+                  {detailBook.description || t("No story summary is available for this eBook.")}
                 </p>
                 <div className="mt-4 flex flex-wrap gap-1.5">
                   {detailBook.genres.slice(0, 5).map((genre) => (
@@ -364,13 +368,13 @@ export function EBookWheelMenu({
                   onClick={() => { onOpenDetails(ebook); onClose(); }}
                   className="mt-5 flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-accent text-[13px] font-bold text-canvas transition-transform hover:scale-[1.01] active:scale-[0.98]"
                 >
-                  <Info size={17} /> Open full details
+                  <Info size={17} /> {t("Open full details")}
                 </button>
               </div>
             ) : (
               <div className="p-5">
                 <p className="mb-4 text-[12.5px] leading-relaxed text-ink-muted">
-                  Save every available chapter from {sourceName(ebook)} for offline reading.
+                  {t("Save every available chapter from {source} for offline reading.", { source: sourceName(ebook) ?? t("Book metadata") })}
                 </p>
                 <div className="grid grid-cols-2 gap-3">
                   <button
@@ -381,7 +385,7 @@ export function EBookWheelMenu({
                   >
                     {exporting === "epub" ? <Loader2 size={23} className="animate-spin text-accent" /> : <BookOpen size={23} className="text-accent" />}
                     <span className="text-[13px] font-semibold">EPUB</span>
-                    <span className="text-[10.5px] text-ink-subtle">Reflowable eBook</span>
+                    <span className="text-[10.5px] text-ink-subtle">{t("Reflowable eBook")}</span>
                   </button>
                   <button
                     type="button"
@@ -391,11 +395,11 @@ export function EBookWheelMenu({
                   >
                     {exporting === "pdf" ? <Loader2 size={23} className="animate-spin text-accent" /> : <FileText size={23} className="text-accent" />}
                     <span className="text-[13px] font-semibold">PDF</span>
-                    <span className="text-[10.5px] text-ink-subtle">Print or save</span>
+                    <span className="text-[10.5px] text-ink-subtle">{t("Print or save")}</span>
                   </button>
                 </div>
                 <p className="mt-4 text-center text-[11px] text-ink-subtle">
-                  Progress, speed, remaining time, and cancellation are managed on Downloads.
+                  {t("Progress, speed, remaining time, and cancellation are managed on Downloads.")}
                 </p>
               </div>
             )}

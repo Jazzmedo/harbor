@@ -389,7 +389,9 @@ async function detectFailedUpdate(): Promise<boolean> {
     status: "error",
     installFailed: true,
     version: pending.version,
-    error: `Harbor ${pending.version} downloaded but did not install on its own.`,
+    error: t("Harbor {version} downloaded but did not install on its own.", {
+      version: pending.version,
+    }),
     panelOpen: true,
   });
   return true;

@@ -594,7 +594,7 @@ export function AgeGateModal({
                   <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-elevated text-[12px] font-bold text-ink-muted">
                     {qi + 1}
                   </span>
-                  <p className="text-[14.5px] font-medium leading-relaxed text-ink">{q.q}</p>
+                  <p className="text-[14.5px] font-medium leading-relaxed text-ink">{t(q.q)}</p>
                 </div>
                 <div className="ms-9 flex flex-col gap-1.5">
                   {q.options.map((opt, oi) => {
@@ -626,7 +626,7 @@ export function AgeGateModal({
                         >
                           {picked && <span className="h-1.5 w-1.5 rounded-full bg-canvas" />}
                         </span>
-                        {opt}
+                        {t(opt)}
                       </button>
                     );
                   })}

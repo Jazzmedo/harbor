@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Check, Pin, Puzzle, SlidersHorizontal, X } from "lucide-react";
 import { Search } from "@/components/icons/search-icon";
 import { useAuth } from "@/lib/auth";
-import { listBrowseCatalogs, type BrowseCatalog } from "@/lib/catalog-browse";
+import { catalogTypeLabelKey, listBrowseCatalogs, type BrowseCatalog } from "@/lib/catalog-browse";
 import { useView } from "@/lib/view";
 import { useT } from "@/lib/i18n";
 import { useSettings } from "@/lib/settings";
@@ -11,14 +11,6 @@ import { CatalogManageList } from "./catalogs/catalog-manage-list";
 import { AddonFilterSelect } from "./catalogs/addon-filter-select";
 import { useCatalogList } from "./catalogs/use-catalog-list";
 import { useContentDrag } from "@/lib/window-drag";
-
-const TYPE_LABELS: Record<string, string> = {
-  movie: "Movies",
-  series: "Series",
-  anime: "Anime",
-  tv: "TV",
-  channel: "Channels",
-};
 
 export function Catalogs({ active = true }: { active?: boolean }) {
   const t = useT();
@@ -130,14 +122,17 @@ export function Catalogs({ active = true }: { active?: boolean }) {
                 </div>
                 <div className="flex flex-wrap items-center gap-1.5">
                   <Chip label={t("All")} active={typeFilter === "all"} onClick={() => setTypeFilter("all")} />
-                  {types.map((ty) => (
-                    <Chip
-                      key={ty}
-                      label={t(TYPE_LABELS[ty] ?? ty)}
-                      active={typeFilter === ty}
-                      onClick={() => setTypeFilter(ty)}
-                    />
-                  ))}
+                  {types.map((ty) => {
+                    const labelKey = catalogTypeLabelKey(ty);
+                    return (
+                      <Chip
+                        key={ty}
+                        label={labelKey ? t(labelKey) : ty}
+                        active={typeFilter === ty}
+                        onClick={() => setTypeFilter(ty)}
+                      />
+                    );
+                  })}
                 </div>
                 {addons.length > 1 && (
                   <AddonFilterSelect addons={addons} value={addonFilter} onChange={setAddonFilter} />

@@ -1,4 +1,4 @@
-import { getUiLanguage } from "@/lib/i18n";
+import { getUiLanguage, LANGUAGES, type UiLanguage } from "@/lib/i18n";
 import { safeFetchStream } from "@/lib/safe-fetch";
 import { setItemWithRecovery } from "@/lib/storage-recovery";
 import {
@@ -15,10 +15,12 @@ export type EBookTranslationSettings = {
   enabled: boolean;
   apiKey: string;
   model: string;
-  targetLanguage: "en" | "ar" | "pt" | "ru";
+  targetLanguage: UiLanguage;
 };
 
-const languageName = { en: "English", ar: "Arabic", pt: "Portuguese", ru: "Russian" };
+const languageName = Object.fromEntries(
+  LANGUAGES.map(({ code, label }) => [code, label]),
+) as Record<UiLanguage, string>;
 export type EBookTranslation = { title: string; text: string };
 const pending = new Map<string, Promise<EBookTranslation>>();
 let legacyMigrationScheduled = false;
@@ -103,13 +105,14 @@ export function loadEBookTranslationSettings(): EBookTranslationSettings {
     const stored = JSON.parse(
       localStorage.getItem(STORAGE_KEY) ?? "{}",
     ) as Partial<EBookTranslationSettings>;
+    const targetLanguage = LANGUAGES.some(({ code }) => code === stored.targetLanguage)
+      ? (stored.targetLanguage as UiLanguage)
+      : defaults.targetLanguage;
     return {
       enabled: stored.enabled === true,
       apiKey: typeof stored.apiKey === "string" ? stored.apiKey : defaults.apiKey,
       model: typeof stored.model === "string" ? stored.model : defaults.model,
-      targetLanguage: ["en", "ar", "pt", "ru"].includes(stored.targetLanguage ?? "")
-        ? stored.targetLanguage!
-        : defaults.targetLanguage,
+      targetLanguage,
     };
   } catch {
     return defaults;

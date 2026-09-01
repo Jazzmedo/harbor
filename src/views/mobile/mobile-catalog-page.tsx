@@ -3,6 +3,7 @@ import { Star } from "lucide-react";
 import type { Meta } from "@/lib/cinemeta";
 import { Poster, usePosterChain } from "@/components/poster";
 import { useSettings } from "@/lib/settings";
+import { useT } from "@/lib/i18n";
 
 export const TMDB_PAGE_SIZE = 20;
 export const MAX_PAGE = 12;
@@ -112,6 +113,7 @@ export function MobileCatalogGrid({
 }
 
 function GridPoster({ meta, onOpen }: { meta: Meta; onOpen: (m: Meta) => void }) {
+  const t = useT();
   const { settings } = useSettings();
   const { src, onError } = usePosterChain(
     settings.rpdbKey,
@@ -123,6 +125,7 @@ function GridPoster({ meta, onOpen }: { meta: Meta; onOpen: (m: Meta) => void })
     <button
       type="button"
       onClick={() => onOpen(meta)}
+      aria-label={t("View {title}", { title: meta.name })}
       className="text-start transition-transform duration-150 active:scale-[0.96]"
     >
       <Poster src={src} onError={onError} seed={meta.id} ratio="portrait" lazy className="rounded-lg">
@@ -190,12 +193,13 @@ function GridSkeleton() {
 }
 
 function ErrorState({ onRetry }: { onRetry: () => void }) {
+  const t = useT();
   return (
     <div className="flex min-h-[42vh] flex-col items-center justify-center gap-4 px-8 text-center">
       <div className="flex flex-col gap-1.5">
-        <h2 className="font-display text-[19px] font-medium text-ink">Couldn't load this catalog</h2>
+        <h2 className="font-display text-[19px] font-medium text-ink">{t("Couldn't load this catalog")}</h2>
         <p className="max-w-xs text-[13.5px] leading-relaxed text-ink-muted">
-          Harbor couldn't reach the catalog servers. Check your connection and try again.
+          {t("Harbor couldn't reach the catalog servers. Check your connection and try again.")}
         </p>
       </div>
       <button
@@ -203,7 +207,7 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
         onClick={onRetry}
         className="flex h-11 items-center rounded-full bg-ink px-6 text-[14px] font-semibold text-canvas transition-transform active:scale-95"
       >
-        Try again
+        {t("Try again")}
       </button>
     </div>
   );

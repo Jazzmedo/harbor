@@ -82,7 +82,7 @@ export function GridView({ grid }: { grid: GridSpec }) {
             <p className="font-display text-[24px] font-bold text-[#0e3a43]">{t("Nothing here yet!")}</p>
           </div>
         ) : (
-          <p className="py-20 text-center text-[14px] text-ink-subtle">Nothing here yet.</p>
+          <p className="py-20 text-center text-[14px] text-ink-subtle">{t("Nothing here yet.")}</p>
         ))}
     </>
   );
@@ -128,7 +128,7 @@ export function GridView({ grid }: { grid: GridSpec }) {
             {!layoutHasGlobalBack() && (
               <button
                 onClick={goBack}
-                aria-label="Back"
+                aria-label={t("Back")}
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-elevated text-ink-muted transition-colors hover:text-ink"
               >
                 <ArrowLeft size={18} strokeWidth={2.2} />
@@ -137,7 +137,9 @@ export function GridView({ grid }: { grid: GridSpec }) {
             <h1 className="font-display text-[30px] font-medium leading-none tracking-tight text-ink">
               {grid.title}
             </h1>
-            <span className="text-[14px] text-ink-subtle">{metas.length} titles</span>
+            <span className="text-[14px] text-ink-subtle">
+              {metas.length} {metas.length === 1 ? t("title") : t("titles")}
+            </span>
           </div>
           {body}
         </div>

@@ -49,7 +49,7 @@ export function HandleChangeConfirm({
       >
         <div className="flex items-start gap-4 px-6 pt-6">
           <div className="flex min-w-0 flex-1 flex-col gap-1">
-            <h2 className="text-[17px] font-semibold tracking-tight text-ink">Change your handle?</h2>
+            <h2 className="text-[17px] font-semibold tracking-tight text-ink">{t("Change your handle?")}</h2>
           </div>
           <button
             type="button"

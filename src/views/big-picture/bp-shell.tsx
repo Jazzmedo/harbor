@@ -9,6 +9,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import type { Meta } from "@/lib/cinemeta";
+import { useT } from "@/lib/i18n";
 import { isAnimeRow } from "@/views/anime";
 import type { HomeRow } from "@/views/home/home-types";
 import { SFX } from "@/lib/sfx";
@@ -124,6 +125,7 @@ type BpSourcesTarget = {
 };
 
 export function BigPictureShell() {
+  const t = useT();
   const { active, stack } = useBigPicture();
   const { picker, player } = useView();
   const route = stack[stack.length - 1] ?? { kind: "home" as const };
@@ -414,7 +416,7 @@ export function BigPictureShell() {
              measured. */
           data-bp-tv={isAndroidTv() ? "" : undefined}
           role="application"
-          aria-label="Big Picture"
+          aria-label={t("Big Picture")}
           aria-hidden={playing || undefined}
           className="fixed inset-0 z-[900] overflow-hidden bg-[var(--bp-void)] text-ink [animation:bp-enter_var(--bp-dur-slow)_var(--bp-ease)_both] motion-reduce:[animation:none]"
           style={rootStyle}

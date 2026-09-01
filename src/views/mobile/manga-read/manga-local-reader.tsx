@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useT } from "@/lib/i18n";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { useMobileRemote } from "../mobile-remote";
 import { ReaderTopbar } from "./reader-topbar";
@@ -12,6 +13,7 @@ import { loadLocalMode, mapDesktopMode, saveLocalMode, type LocalMode } from "./
 export function MangaLocalReader({ onExit }: { onExit: () => void }) {
   const { snapshot, sendCommand } = useMobileRemote();
   const reduce = useReducedMotion();
+  const t = useT();
   const m = snapshot.manga;
 
   const [mode, setMode] = useState<LocalMode>(() => loadLocalMode(mapDesktopMode(m?.mode ?? "long")));
@@ -109,7 +111,7 @@ export function MangaLocalReader({ onExit }: { onExit: () => void }) {
           <div className="grid h-full w-full place-items-center">
             <div className="flex flex-col items-center gap-3 text-ink-subtle">
               <span className="h-8 w-8 rounded-full border-2 border-edge-soft border-t-accent animate-spin motion-reduce:animate-none" />
-              <span className="text-[13px] font-medium">Loading chapter</span>
+              <span className="text-[13px] font-medium">{t("Loading chapter")}</span>
             </div>
           </div>
         ) : mode === "strip" ? (

@@ -120,7 +120,7 @@ export function CriticsPick({ meta }: { meta: Meta }) {
   const activeReview: CriticReview | null = reviews[reviewIdx] ?? null;
   const quote = activeReview
     ? excerptReview(activeReview.content)
-    : tagline || (overview ? overview.split(/(?<=[.!?])\s+/)[0] : "A standout this week.");
+    : tagline || (overview ? overview.split(/(?<=[.!?])\s+/)[0] : t("A standout this week."));
   const canOpenOverview = !!(overview || activeReview);
   const openOverview = () => canOpenOverview && setOverviewOpen(true);
 
@@ -210,16 +210,17 @@ export function CriticsPick({ meta }: { meta: Meta }) {
     <section className="flex flex-col gap-5">
       <div className="flex items-baseline justify-between">
         <h2 className="font-display text-[28px] font-medium leading-tight tracking-tight text-ink">
-          Critics' Pick
+          {t("Critics' Pick")}
         </h2>
         <span className="text-[12px] uppercase tracking-[0.22em] text-ink-subtle">
-          Loved by reviewers today
+          {t("Loved by reviewers today")}
         </span>
       </div>
       <div className="grid grid-cols-[minmax(0,1fr)_360px] items-stretch gap-4">
         <button
           type="button"
           onClick={() => openMeta({ ...meta, logo: logo ?? meta.logo })}
+          aria-label={t("Open {name}", { name: meta.name })}
           className="group relative min-h-[520px] overflow-hidden rounded-2xl border border-edge-soft bg-canvas text-start transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0.24,1)] hover:-translate-y-1"
           style={{ isolation: "isolate" }}
         >
@@ -494,7 +495,7 @@ export function CriticsPick({ meta }: { meta: Meta }) {
               }}
               className="rounded-full bg-ink px-6 py-2 text-[13px] font-semibold text-canvas transition-colors duration-200 hover:bg-ink/90"
             >
-              Play
+              {t("Play")}
             </button>
           </div>
         </aside>

@@ -57,7 +57,7 @@ const discover: Record<string, string> = {
   "Every saga in one place. Search anything: if it exists, it's here.":
     "كل سلسلة في مكان واحد. ابحث عن أي شيء: إن كان موجودًا، فهو هنا.",
   "Search every collection on TMDB...": "ابحث في كل مجموعة على TMDB...",
-  "{label} · {n} collection": "{label} · مجموعة واحدة",
+  "{label} · {n} collection": "{label} · {n} مجموعة",
   "{label} · {n} collections": "{label} · {n} مجموعات",
   "More {category}": "المزيد من {category}",
   "That's every {category} collection we could find.":

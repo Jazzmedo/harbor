@@ -1,4 +1,5 @@
 import type { StoreTheme } from "@/lib/theme-store";
+import { useT } from "@/lib/i18n";
 import type { Mood } from "../color-rank";
 import type { MoodRail } from "../use-store-themes";
 
@@ -48,13 +49,14 @@ export function StoreCategoryChips({
   active?: Mood | null;
   onPick: (mood: Mood) => void;
 }) {
+  const t = useT();
   if (rails.length === 0) return null;
   return (
     <div className="no-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
       {rails.map((r) => (
         <TasteChip
           key={r.mood}
-          label={r.title}
+          label={t(r.title)}
           lead={r.items[0]}
           active={active === r.mood}
           onClick={() => onPick(r.mood)}

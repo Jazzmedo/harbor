@@ -4,6 +4,7 @@ import { AWARD_CATALOG } from "@/lib/awards-catalog";
 import { pushBigPicture } from "@/lib/big-picture";
 import type { Meta } from "@/lib/cinemeta";
 import { IMG } from "@/lib/providers/tmdb/tmdb-client";
+import { tmdbDepartmentLabelKey } from "@/lib/providers/tmdb/tmdb-people";
 import { SFX } from "@/lib/sfx";
 import {
   MIN_VOTES_MOVIE,
@@ -138,6 +139,14 @@ export function BpPerson({
     setMinRating,
   } = useBpPerson(personId);
   const [expanded, setExpanded] = useState(false);
+  const departmentKey = person?.knownForDepartment
+    ? tmdbDepartmentLabelKey(person.knownForDepartment)
+    : undefined;
+  const departmentLabel = person?.knownForDepartment
+    ? departmentKey
+      ? t(departmentKey)
+      : person.knownForDepartment
+    : null;
   const topRatings = useCreditImdbRatings(topRated);
 
   const sectionTitle = (id: BpFilmSectionId, n: number): string => {
@@ -311,7 +320,7 @@ export function BpPerson({
               <div className="flex flex-wrap items-center gap-[clamp(7px,0.7vw,14px)]">
                 {person?.knownForDepartment && (
                   <span data-bp-eyebrow className="text-[clamp(11px,1.5vh,17px)] font-semibold uppercase tracking-[0.16em] text-ink-subtle">
-                    {t(person.knownForDepartment)}
+                    {departmentLabel}
                   </span>
                 )}
                 {/* A rank is neither actionable nor live, so it stays unsaturated

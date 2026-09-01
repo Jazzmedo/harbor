@@ -163,7 +163,7 @@ export function EditorOverlay({
   const mid = chromeW > 0 && chromeW < 1300;
   const compact = chromeW > 0 && chromeW < 1000;
   const tight = chromeW > 0 && chromeW < 600;
-  const sizeLabel = tight ? "Tight" : compact ? "Compact" : mid ? "Mid" : "Wide";
+  const sizeLabel = tight ? t("Tight") : compact ? t("Compact") : mid ? t("Mid") : t("Wide");
 
   const controlVariants = useMemo(
     () => Object.fromEntries(config.controls.map((c) => [c.id, c.variant ?? "auto"])),
@@ -397,7 +397,7 @@ function HiddenTray({
               onUnhide(c.id);
               onSelect(c.id);
             }}
-            title={t("Show {label}", { label: CONTROL_META[c.id]?.label ?? c.id })}
+            title={t("Show {label}", { label: t(CONTROL_META[c.id]?.label ?? c.id) })}
             className="flex shrink-0 items-center gap-1.5 rounded-md bg-white/8 py-1.5 ps-2.5 pe-3 text-[12px] font-medium text-white/65 transition-colors hover:bg-white/15 hover:text-white"
           >
             <Plus size={12} strokeWidth={2.6} />

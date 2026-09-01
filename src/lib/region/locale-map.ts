@@ -1,5 +1,7 @@
+import { LANGUAGES, type UiLanguage } from "@/lib/i18n/languages";
+
 export type LocaleProfile = {
-  uiLanguage: "en" | "ar" | "es" | "pt" | "ru";
+  uiLanguage: UiLanguage;
   tmdbLanguage: string;
   contentLanguage: string;
   subtitleLanguage: string;
@@ -21,6 +23,23 @@ const LATAM_REGIONS = new Set([
 const RUSSOPHONE_REGIONS = new Set(["RU", "BY", "KZ", "KG", "TJ"]);
 
 const LUSOPHONE_REGIONS = new Set(["BR", "PT"]);
+const REGIONAL_DEFAULTS: Record<
+  string,
+  { uiLanguage: UiLanguage; tmdbLanguage: string; language: string }
+> = {
+  AT: { uiLanguage: "de", tmdbLanguage: "de-AT", language: "German" },
+  CN: { uiLanguage: "zh", tmdbLanguage: "zh-CN", language: "Chinese" },
+  DE: { uiLanguage: "de", tmdbLanguage: "de-DE", language: "German" },
+  FR: { uiLanguage: "fr", tmdbLanguage: "fr-FR", language: "French" },
+  ID: { uiLanguage: "id", tmdbLanguage: "id-ID", language: "Indonesian" },
+  IN: { uiLanguage: "hi", tmdbLanguage: "hi-IN", language: "Hindi" },
+  IT: { uiLanguage: "it", tmdbLanguage: "it-IT", language: "Italian" },
+  JP: { uiLanguage: "ja", tmdbLanguage: "ja-JP", language: "Japanese" },
+  KR: { uiLanguage: "ko", tmdbLanguage: "ko-KR", language: "Korean" },
+  PL: { uiLanguage: "pl", tmdbLanguage: "pl-PL", language: "Polish" },
+  TR: { uiLanguage: "tr", tmdbLanguage: "tr-TR", language: "Turkish" },
+  VN: { uiLanguage: "vi", tmdbLanguage: "vi-VN", language: "Vietnamese" },
+};
 
 const EN: LocaleProfile = {
   uiLanguage: "en",
@@ -89,6 +108,17 @@ export function localeForRegion(region: string): LocaleProfile {
       greetingKey: null,
     };
   }
+  const regional = REGIONAL_DEFAULTS[r];
+  if (regional) {
+    return {
+      ...regional,
+      contentLanguage: regional.uiLanguage,
+      subtitleLanguage: regional.language,
+      audioLanguage: regional.language,
+      rtl: false,
+      greetingKey: null,
+    };
+  }
   return EN;
 }
 
@@ -97,9 +127,8 @@ export function isLocalizedRegion(region: string): boolean {
 }
 
 export function localeLabel(profile: LocaleProfile): string {
-  if (profile.uiLanguage === "ar") return "العربية (Arabic)";
-  if (profile.uiLanguage === "es") return "Español (Spanish)";
-  if (profile.uiLanguage === "pt") return "Português (Portuguese)";
-  if (profile.uiLanguage === "ru") return "Русский (Russian)";
-  return "English";
+  const language = LANGUAGES.find(({ code }) => code === profile.uiLanguage);
+  if (!language || language.code === "en") return "English";
+  if (language.code === "zh") return "简体中文 (Simplified Chinese)";
+  return `${language.nativeLabel} (${language.label})`;
 }

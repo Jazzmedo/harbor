@@ -1,4 +1,5 @@
 import type { EBookChapter, EBookChapterContent } from "@/lib/ebook/providers";
+import { useT } from "@/lib/i18n";
 import { useProfiles } from "@/lib/profiles";
 import { HarborReader, type EBookReaderVolume } from "./harbor-reader";
 
@@ -23,6 +24,7 @@ export function EBookReader({
   onSelectChapter: (chapter: EBookChapter) => void;
   onClose: () => void;
 }) {
+  const t = useT();
   const { activeId } = useProfiles();
   const profile = activeId ?? "default";
   const direction = textDirection(content?.text ?? "");
@@ -31,10 +33,10 @@ export function EBookReader({
     return (
       <div className="fixed inset-0 z-[90] grid place-items-center bg-[#0b0b0d] text-ink">
         <div className="text-center">
-          <p className={error ? "text-red-400" : "text-ink-muted"}>{error ?? "Loading chapter…"}</p>
+          <p className={error ? "text-red-400" : "text-ink-muted"}>{error ?? t("Loading chapter…")}</p>
           {error && (
             <button type="button" onClick={onClose} className="mt-4 rounded-xl bg-raised px-4 py-2 text-sm">
-              Close reader
+              {t("Close reader")}
             </button>
           )}
         </div>

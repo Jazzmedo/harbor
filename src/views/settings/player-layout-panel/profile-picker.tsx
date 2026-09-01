@@ -12,6 +12,7 @@ import {
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { createPortal } from "react-dom";
 import type { LayoutProfile } from "@/lib/player-chrome-profiles";
+import { useT } from "@/lib/i18n";
 
 type Dialog =
   | { kind: "input"; title: string; placeholder: string; initial: string; confirmLabel: string; onConfirm: (value: string) => void }
@@ -40,6 +41,7 @@ export function ProfilePicker({
   onImport,
   onResetToDefaults,
 }: Props) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [dialog, setDialog] = useState<Dialog | null>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -62,7 +64,7 @@ export function ProfilePicker({
   }, [open]);
 
   const active = profiles.find((p) => p.id === activeProfileId) ?? null;
-  const label = active?.name ?? "No profile";
+  const label = active?.name ?? t("No profile");
 
   const handleImport = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -72,7 +74,7 @@ export function ProfilePicker({
     reader.onload = () => {
       if (typeof reader.result === "string") onImport(reader.result);
     };
-    reader.onerror = () => window.alert("Could not read the file.");
+    reader.onerror = () => window.alert(t("Could not read the file."));
     reader.readAsText(file);
   };
 
@@ -80,10 +82,10 @@ export function ProfilePicker({
     setOpen(false);
     setDialog({
       kind: "input",
-      title: "Save layout profile",
-      placeholder: "Profile name",
+      title: t("Save layout profile"),
+      placeholder: t("Profile name"),
       initial: "",
-      confirmLabel: "Save",
+      confirmLabel: t("Save"),
       onConfirm: (name) => onSaveAsNew(name),
     });
   };
@@ -93,10 +95,10 @@ export function ProfilePicker({
     setOpen(false);
     setDialog({
       kind: "input",
-      title: "Rename profile",
-      placeholder: "Profile name",
+      title: t("Rename profile"),
+      placeholder: t("Profile name"),
       initial: active.name,
-      confirmLabel: "Rename",
+      confirmLabel: t("Rename"),
       onConfirm: (name) => onRename(name),
     });
   };
@@ -106,9 +108,9 @@ export function ProfilePicker({
     setOpen(false);
     setDialog({
       kind: "confirm",
-      title: "Delete profile",
-      message: `Delete "${active.name}"? This can't be undone.`,
-      confirmLabel: "Delete",
+      title: t("Delete profile"),
+      message: t("Delete \"{name}\"? This can't be undone.", { name: active.name }),
+      confirmLabel: t("Delete"),
       danger: true,
       onConfirm: onDelete,
     });
@@ -118,9 +120,9 @@ export function ProfilePicker({
     setOpen(false);
     setDialog({
       kind: "confirm",
-      title: "Reset to defaults",
-      message: "Reset this profile to factory defaults? Your tweaks on it will be lost.",
-      confirmLabel: "Reset",
+      title: t("Reset to defaults"),
+      message: t("Reset this profile to factory defaults? Your tweaks on it will be lost."),
+      confirmLabel: t("Reset"),
       onConfirm: onResetToDefaults,
     });
   };
@@ -148,11 +150,11 @@ export function ProfilePicker({
       {open && (
         <div className="absolute end-0 top-[calc(100%+8px)] z-40 w-[280px] overflow-hidden rounded-md border border-white/12 bg-black/95 harbor-float backdrop-blur-2xl">
           <div className="px-4 pt-3 pb-1 text-[10.5px] font-semibold uppercase tracking-[0.16em] text-white/45">
-            Profiles
+            {t("Profiles")}
           </div>
           <ul className="max-h-[280px] overflow-y-auto px-1.5">
             {profiles.length === 0 ? (
-              <li className="px-3 py-2 text-[12.5px] text-white/50">No saved profiles yet.</li>
+              <li className="px-3 py-2 text-[12.5px] text-white/50">{t("No saved profiles yet.")}</li>
             ) : (
               profiles.map((p) => {
                 const isActive = p.id === activeProfileId;
@@ -182,16 +184,16 @@ export function ProfilePicker({
           <div className="my-1 h-px bg-white/8" />
 
           <div className="px-1.5 py-1">
-            <MenuItem icon={<Plus size={14} strokeWidth={2.3} />} label="Save as new profile..." onClick={askSaveAsNew} />
+            <MenuItem icon={<Plus size={14} strokeWidth={2.3} />} label={t("Save as new profile...")} onClick={askSaveAsNew} />
             <MenuItem
               icon={<Pencil size={14} strokeWidth={2.3} />}
-              label="Rename current"
+              label={t("Rename current")}
               disabled={!active}
               onClick={askRename}
             />
             <MenuItem
               icon={<Trash2 size={14} strokeWidth={2.3} />}
-              label="Delete current"
+              label={t("Delete current")}
               disabled={!active}
               danger
               onClick={askDelete}
@@ -203,7 +205,7 @@ export function ProfilePicker({
           <div className="px-1.5 pb-2 pt-1">
             <MenuItem
               icon={<Download size={14} strokeWidth={2.3} />}
-              label="Export as file"
+              label={t("Export as file")}
               disabled={!active}
               onClick={() => {
                 onExport();
@@ -212,7 +214,7 @@ export function ProfilePicker({
             />
             <MenuItem
               icon={<Upload size={14} strokeWidth={2.3} />}
-              label="Import from file..."
+              label={t("Import from file...")}
               onClick={() => {
                 fileRef.current?.click();
                 setOpen(false);
@@ -220,7 +222,7 @@ export function ProfilePicker({
             />
             <MenuItem
               icon={<RotateCcw size={14} strokeWidth={2.3} />}
-              label="Reset to defaults"
+              label={t("Reset to defaults")}
               onClick={askReset}
             />
           </div>
@@ -233,6 +235,7 @@ export function ProfilePicker({
 }
 
 function LayoutDialog({ dialog, onClose }: { dialog: Dialog; onClose: () => void }) {
+  const t = useT();
   const [value, setValue] = useState(dialog.kind === "input" ? dialog.initial : "");
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -280,7 +283,7 @@ function LayoutDialog({ dialog, onClose }: { dialog: Dialog; onClose: () => void
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close"
+            aria-label={t("Close")}
             className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-ink-subtle transition-colors hover:bg-elevated hover:text-ink"
           >
             <X size={16} />
@@ -311,7 +314,7 @@ function LayoutDialog({ dialog, onClose }: { dialog: Dialog; onClose: () => void
             onClick={onClose}
             className="harbor-press-pop h-9 rounded-md bg-elevated px-4 text-[12.5px] font-semibold text-ink-muted transition-colors hover:text-ink"
           >
-            Cancel
+            {t("Cancel")}
           </button>
           <button
             type="button"

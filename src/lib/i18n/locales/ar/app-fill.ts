@@ -216,7 +216,7 @@ const appFill: Record<string, string> = {
     "اختر صورة واحدة أو عدة صور. تُجمَع في مجموعة Uploads داخل مكتبتك. تعمل جميع صيغ PNG وJPG وWebP وGIF.",
   "Import a folder, keep your sets": "استورد مجلدًا واحتفظ بمجموعاتك",
   "Label the subfolders inside the folder you pick, and each one becomes its own set (like Heroes or Cats). Loose images in the folder go to Uploads.":
-    "سمِّ المجلدات الفرعية داخل المجلد الذي تختاره، فيصبح كل منها مجموعة مستقلة (مثل الأبطال أو القطط). أما الصور المتناثرة في المجلد فتذهب إلى Uploads.",
+    "سمِّ المجلدات الفرعية داخل المجلد الذي تختاره، فيصبح كل منها مجموعة مستقلة (مثل الأبطال أو القطط). أما الصور غير الموجودة في مجلدات فرعية فتذهب إلى «المرفوعات».",
   "Square looks best": "الشكل المربع هو الأفضل",
   "Avatars display as squares, so square images fill the tile cleanly. Others are center-cropped.":
     "تظهر الصور الرمزية على هيئة مربعات، لذا تملأ الصور المربعة الخانة بالكامل. أما الصور الأخرى فتُقتَص من المنتصف.",
@@ -230,7 +230,7 @@ const appFill: Record<string, string> = {
   "Drop images to add them": "أفلِت الصور لإضافتها",
   "Import folder": "استيراد مجلد",
   "How packs work": "كيف تعمل الحزم",
-  Uploads: "Uploads",
+  Uploads: "المرفوعات",
   Beta: "بيتا",
   "Open manga": "فتح المانجا",
   "Undo All": "التراجع عن الكل",
@@ -733,7 +733,7 @@ const appFill: Record<string, string> = {
   "Avg ★ {rating}": "المتوسط ★ {rating}",
   "You ★ {rating}": "أنت ★ {rating}",
   "Not rated": "غير مُقيَّم",
-  "★ {rating} — Change": "★ {rating} — تغيير",
+  "★ {rating} — Change": "★ {rating}، تغيير",
   "★ Rate": "★ تقييم",
   "✓ Watched": "✓ مُشاهَد",
   "○ Mark watched": "○ تحديد كمُشاهَد",
@@ -975,9 +975,9 @@ const appFill: Record<string, string> = {
   Folders: "المجلدات",
   Select: "تحديد",
   "1 title needs review — help us identify it.":
-    "عنوان واحد يحتاج إلى مراجعة — ساعدنا في التعرّف عليه.",
+    "عنوان واحد يحتاج إلى مراجعة، ساعدنا في التعرّف عليه.",
   "{n} titles need review — help us identify them.":
-    "{n} عنوانًا تحتاج إلى مراجعة — ساعدنا في التعرّف عليها.",
+    "{n} عنوانًا تحتاج إلى مراجعة، ساعدنا في التعرّف عليها.",
   Review: "مراجعة",
   Scanning: "جارٍ الفحص",
   "Remove from MyAnimeList": "إزالة من MyAnimeList",
@@ -1297,7 +1297,6 @@ const appFill: Record<string, string> = {
   "Linked to a real Stremio account.": "مرتبط بحساب Stremio حقيقي.",
   "Verified": "موثّق",
   "Verify ownership": "التحقق من الملكية",
-  "Confirm you own this Stremio account ({{email}}).": "أكد أنك تملك حساب Stremio هذا ({{email}}).",
   "Confirm you own your Stremio account.": "أكد أنك تملك حساب Stremio الخاص بك.",
   "Prove you own a real Stremio account.": "أثبت أنك تملك حساب Stremio حقيقيًا.",
   "Verifying...": "جارٍ التحقق...",

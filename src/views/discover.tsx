@@ -127,7 +127,16 @@ export function Discover({ active = true }: { active?: boolean }) {
 
   const dailyRows = useMemo(
     () => selectDailyRows(settings.tmdbKey, getStore().affinity, settings, ROW_COUNT),
-    [settings.tmdbKey, settings.region, settings.streaming, tasteVersion],
+    [
+      settings.tmdbKey,
+      settings.region,
+      settings.streaming,
+      settings.preferredLanguages,
+      settings.tmdbLanguage,
+      settings.feedLocaleBias,
+      settings.uiLanguage,
+      tasteVersion,
+    ],
   );
   const rowSig = useMemo(() => dailyRows.map((r) => r.id).join("|"), [dailyRows]);
 
@@ -509,7 +518,7 @@ export function Discover({ active = true }: { active?: boolean }) {
                 return (
                   <div key={item.key}>
                     <RowControls
-                      name={t(item.title)}
+                      name={item.key in pageRows.custom.renamed ? item.title : t(item.title)}
                       hidden={hidden}
                       canMoveUp={idx > 0}
                       canMoveDown={idx >= 0 && idx < orderKeys.length - 1}
@@ -527,7 +536,7 @@ export function Discover({ active = true }: { active?: boolean }) {
                         deduped={dedupedShown}
                         loadMore={loadMore}
                         ensureLoaded={ensureLoaded}
-                        titleOverride={item.title}
+                        titleOverride={item.key in pageRows.custom.renamed ? item.title : undefined}
                       />
                     )}
                   </div>
@@ -542,7 +551,7 @@ export function Discover({ active = true }: { active?: boolean }) {
                       deduped={dedupedShown}
                       loadMore={loadMore}
                       ensureLoaded={ensureLoaded}
-                      titleOverride={item.title}
+                      titleOverride={item.key in pageRows.custom.renamed ? item.title : undefined}
                     />
                   </LazyMount>
 

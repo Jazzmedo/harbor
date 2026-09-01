@@ -1,4 +1,5 @@
 import { URL_RE, safeImageUrl, safeLinkUrl } from "./safe-url";
+import { t } from "@/lib/i18n";
 
 export const MAX_COMMENT_LEN = 2000;
 
@@ -75,10 +76,10 @@ export type CleanResult = { ok: true; text: string } | { ok: false; reason: stri
 
 export function cleanCommentText(raw: string): CleanResult {
   const normalized = raw.replace(/\r\n/g, "\n").replace(ZERO_WIDTH, "").trim();
-  if (!normalized) return { ok: false, reason: "Write something first." };
+  if (!normalized) return { ok: false, reason: t("Write something first.") };
   const capped = normalized.slice(0, MAX_COMMENT_LEN);
-  if (hasSlur(capped)) return { ok: false, reason: "This comment can't be posted." };
+  if (hasSlur(capped)) return { ok: false, reason: t("This comment can't be posted.") };
   const scrubbed = stripUnsafeUrls(capped);
-  if (!scrubbed.trim()) return { ok: false, reason: "Nothing left to post after removing links." };
+  if (!scrubbed.trim()) return { ok: false, reason: t("Nothing left to post after removing links.") };
   return { ok: true, text: scrubbed };
 }

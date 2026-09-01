@@ -66,7 +66,7 @@ const together: Record<string, string> = {
   "Show cursors": "Показывать курсоры",
   "Leave room": "Покинуть комнату",
   "Watch Together needs a relay.": "Для совместного просмотра нужен ретранслятор.",
-  "A relay is a tiny Cloudflare Worker that passes play/pause/seek messages between you and your friends. No video data ever touches it. Deploy your own in one click (free tier is plenty), or paste a friend's invite link to use theirs.": "Ретранслятор — это крошечный Cloudflare Worker, который передаёт команды воспроизведения, паузы и перемотки между вами и друзьями. Видеоданные через него никогда не проходят. Разверните свой в один клик (бесплатного тарифа хватит с запасом) или вставьте ссылку-приглашение друга, чтобы использовать его ретранслятор.",
+  "A relay is a tiny Cloudflare Worker that passes play/pause/seek messages between you and your friends. No video data ever touches it. Deploy your own in one click (free tier is plenty), or paste a friend's invite link to use theirs.": "Ретранслятор – это крошечный Cloudflare Worker, который передаёт команды воспроизведения, паузы и перемотки между вами и друзьями. Видеоданные через него никогда не проходят. Разверните свой в один клик (бесплатного тарифа хватит с запасом) или вставьте ссылку-приглашение друга, чтобы использовать его ретранслятор.",
   "Watch Together": "Совместный просмотр",
 };
 

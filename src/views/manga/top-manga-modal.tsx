@@ -21,6 +21,7 @@ function CollectionSwitch({
   active: string;
   onSelect: (id: string) => void;
 }) {
+  const t = useT();
   const barRef = useRef<HTMLDivElement>(null);
   const btnRefs = useRef(new Map<string, HTMLButtonElement>());
   const [line, setLine] = useState<{ left: number; width: number }>({ left: 0, width: 0 });
@@ -53,7 +54,7 @@ function CollectionSwitch({
               }`}
             >
               {c.award && <Award size={14} strokeWidth={2} className="text-ink-subtle" />}
-              {c.name}
+              {t(c.name)}
             </button>
           );
         })}
@@ -140,7 +141,9 @@ export function TopMangaModal({
         {t("Top Manga")}
       </h2>
       <p className="mt-1 flex items-center gap-1.5 text-[12.5px] text-ink-muted">
-        <span className="truncate">{collection.subtitle ?? collection.name}</span>
+        <span className="truncate">
+          {t(collection.subtitle ?? collection.name)}
+        </span>
         <span className="ms-1 inline-flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden rounded-full bg-canvas ring-1 ring-edge-soft">
           {iconOk ? (
             <img

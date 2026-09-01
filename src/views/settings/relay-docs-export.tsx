@@ -28,21 +28,22 @@ export function DownloadMenu({
     setOpen(false);
     const root = docsRef.current;
     if (!root) return;
+    const documentTitle = t("Harbor Relay Documentation");
     if (kind === "pdf") {
-      printDocs(root);
+      printDocs(root, documentTitle);
       return;
     }
     const isTxt = kind === "txt";
     const content = isTxt
-      ? buildTxt(root)
-      : JSON.stringify(buildJson(root), null, 2);
+      ? buildTxt(root, documentTitle)
+      : JSON.stringify(buildJson(root, documentTitle), null, 2);
     setBusy(true);
     try {
       const { path } = await saveTextFileWithPath(
         isTxt ? "harbor-relay-docs.txt" : "harbor-relay-docs.json",
         content,
         [isTxt ? "txt" : "json"],
-        "Harbor Relay docs",
+        t("Harbor Relay docs"),
       );
       if (path) onSaved(path);
     } finally {
@@ -175,7 +176,7 @@ const PRINT_CSS = `
   @page { margin: 14mm; }
 `;
 
-function printDocs(root: HTMLElement) {
+function printDocs(root: HTMLElement, title: string) {
   const iframe = document.createElement("iframe");
   iframe.setAttribute("aria-hidden", "true");
   iframe.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0;opacity:0;";
@@ -187,8 +188,9 @@ function printDocs(root: HTMLElement) {
   }
   doc.open();
   doc.write(
-    `<!doctype html><html><head><meta charset="utf-8"><title>Harbor Relay Documentation</title><style>${PRINT_CSS}</style></head><body><main>${root.innerHTML}</main></body></html>`,
+    `<!doctype html><html><head><meta charset="utf-8"><title></title><style>${PRINT_CSS}</style></head><body><main>${root.innerHTML}</main></body></html>`,
   );
+  doc.title = title;
   doc.close();
   const win = iframe.contentWindow;
   let done = false;
@@ -205,7 +207,7 @@ function printDocs(root: HTMLElement) {
   }, 180);
 }
 
-function buildTxt(root: HTMLElement): string {
+function buildTxt(root: HTMLElement, title: string): string {
   const lines: string[] = [];
   root.querySelectorAll("h2, h3, p, li, pre").forEach((el) => {
     const tag = el.tagName.toLowerCase();
@@ -225,10 +227,10 @@ function buildTxt(root: HTMLElement): string {
       lines.push(text);
     }
   });
-  return `Harbor Relay Documentation\n${"=".repeat(28)}\n${lines.join("\n").trim()}\n`;
+  return `${title}\n${"=".repeat(Math.min(title.length, 60))}\n${lines.join("\n").trim()}\n`;
 }
 
-function buildJson(root: HTMLElement) {
+function buildJson(root: HTMLElement, title: string) {
   const sections: Array<{ heading: string; blocks: Array<unknown> }> = [];
   let current: { heading: string; blocks: Array<unknown> } | null = null;
   const ensureSection = (heading: string) => {
@@ -256,7 +258,7 @@ function buildJson(root: HTMLElement) {
     });
   });
   return {
-    title: "Harbor Relay Documentation",
+    title,
     generatedAt: new Date().toISOString(),
     sections,
   };

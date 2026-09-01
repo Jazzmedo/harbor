@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { CodeEditor } from "@/components/code-editor";
 import { topMovies, type Meta } from "@/lib/cinemeta";
+import { useT } from "@/lib/i18n";
 
 const STARTER = `/* Custom cards: .your-card targets each poster. */
 .your-card {
@@ -42,6 +43,7 @@ export function CardCssPopout({
   onChange: (patch: { css: string }) => void;
   onClose: () => void;
 }) {
+  const t = useT();
   const [picks, setPicks] = useState(FALLBACK);
 
   useEffect(() => {
@@ -85,17 +87,17 @@ export function CardCssPopout({
         <header className="flex shrink-0 items-start gap-4 px-6 pb-5 pt-6">
           <div className="flex min-w-0 flex-1 flex-col gap-1">
             <span className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-ink-subtle">
-              Custom cards
+              {t("Custom cards")}
             </span>
             <h2 className="truncate text-[17px] font-semibold tracking-tight text-ink">
-              Write CSS, watch real posters react
+              {t("Write CSS, watch real posters react")}
             </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            aria-label="Done"
-            title="Done"
+            aria-label={t("Done")}
+            title={t("Done")}
             className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-ink-subtle transition-colors hover:bg-elevated hover:text-ink"
           >
             <X size={16} />
@@ -112,7 +114,7 @@ export function CardCssPopout({
                 className="harbor-press-pop ms-auto flex h-8 items-center gap-1.5 rounded-md bg-elevated px-2.5 text-[12.5px] font-semibold text-ink-muted transition-colors hover:text-ink"
               >
                 <Sparkles size={14} strokeWidth={2.2} />
-                Insert starter
+                {t("Insert starter")}
               </button>
             </div>
             <div className="relative min-h-0 flex-1">
@@ -126,8 +128,9 @@ export function CardCssPopout({
               {!css && (
                 <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-8 text-center">
                   <span className="text-[13px] leading-relaxed text-ink-subtle">
-                    Style <span className="font-mono text-ink-muted">.your-card</span> and the posters on
-                    the right update live. Hit Insert starter for a head start.
+                    {t("Style {selector} and the posters on the right update live. Hit Insert starter for a head start.", {
+                      selector: ".your-card",
+                    })}
                   </span>
                 </div>
               )}
@@ -140,10 +143,10 @@ export function CardCssPopout({
                 <span
                   key={h.sel}
                   className="inline-flex items-center gap-1.5 rounded-md bg-elevated px-2 py-1 text-[11.5px]"
-                  title={h.note}
+                  title={t(h.note)}
                 >
                   <code className="font-mono text-ink">{h.sel}</code>
-                  <span className="text-ink-subtle">{h.note}</span>
+                  <span className="text-ink-subtle">{t(h.note)}</span>
                 </span>
               ))}
             </div>

@@ -3,6 +3,7 @@ import { tmdbPersonIdByName, tmdbPersonIdCached } from "@/lib/providers/tmdb";
 import { useSettings } from "@/lib/settings";
 import { useView } from "@/lib/view";
 import { type AwardEntry, type AwardType } from "@/lib/providers/wikidata";
+import { useT } from "@/lib/i18n";
 import { AwardLogo, laurelColorFor } from "./icons/award-logo";
 import { Laurel } from "./icons/laurel";
 
@@ -51,6 +52,7 @@ const TYPE_TITLE: Record<AwardType, string> = {
 };
 
 export function AwardsBlock({ awards }: { awards: AwardEntry[] }) {
+  const t = useT();
   if (awards.length === 0) return null;
 
   const groups = new Map<AwardType, AwardEntry[]>();
@@ -67,7 +69,7 @@ export function AwardsBlock({ awards }: { awards: AwardEntry[] }) {
 
   return (
     <div id="awards-section" className="scroll-mt-24 border-t border-edge-soft pt-14">
-      <h3 className="mb-10 text-[24px] font-medium tracking-tight text-ink">Awards & Recognition</h3>
+      <h3 className="mb-10 text-[24px] font-medium tracking-tight text-ink">{t("Awards & Recognition")}</h3>
       <div className="flex flex-col gap-14">
         {sorted.map(([type, entries]) => (
           <AwardGroup key={type} type={type} entries={entries} />
@@ -78,6 +80,7 @@ export function AwardsBlock({ awards }: { awards: AwardEntry[] }) {
 }
 
 function AwardGroup({ type, entries }: { type: AwardType; entries: AwardEntry[] }) {
+  const t = useT();
   const { openAward } = useView();
   const wins = entries.filter((e) => e.result === "won" && e.category);
   const noms = entries.filter((e) => e.result === "nominated" && e.category);
@@ -124,7 +127,7 @@ function AwardGroup({ type, entries }: { type: AwardType; entries: AwardEntry[] 
             {totalWins > 0 && (
               <>
                 <span className="text-accent">{totalWins}</span>{" "}
-                {totalWins === 1 ? "Win" : "Wins"}
+                {totalWins === 1 ? t("Win") : t("Wins")}
               </>
             )}
             {totalWins > 0 && totalNoms > 0 && (
@@ -132,7 +135,7 @@ function AwardGroup({ type, entries }: { type: AwardType; entries: AwardEntry[] 
             )}
             {totalNoms > 0 && (
               <>
-                {totalNoms} {totalNoms === 1 ? "Nomination" : "Nominations"}
+                {totalNoms} {totalNoms === 1 ? t("Nomination") : t("Nominations")}
               </>
             )}
           </p>
@@ -161,7 +164,7 @@ function AwardGroup({ type, entries }: { type: AwardType; entries: AwardEntry[] 
           <div className="flex flex-col gap-2">
             {wins.length > 0 && (
               <h5 className="text-[10.5px] font-semibold uppercase tracking-[0.2em] text-ink-subtle">
-                Also Nominated
+                {t("Also Nominated")}
               </h5>
             )}
             <ul className="grid grid-cols-1 gap-x-10 gap-y-0 xl:grid-cols-2">
@@ -178,7 +181,7 @@ function AwardGroup({ type, entries }: { type: AwardType; entries: AwardEntry[] 
 
         {!hasDetail && (
           <p className="text-[13px] leading-relaxed text-ink-subtle">
-            Recognized at the {TYPE_TITLE[type].toLowerCase()}.
+            {t("Recognized at the {award}.", { award: TYPE_TITLE[type].toLowerCase() })}
           </p>
         )}
       </div>

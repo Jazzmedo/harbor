@@ -173,7 +173,7 @@ export function ExtensionRepos({ config, onChanged }: { config: ServerConfig; on
             className="flex flex-col items-start rounded-xl bg-raised px-3.5 py-2 text-start ring-1 ring-edge-soft transition-all hover:ring-edge active:scale-[0.98] disabled:opacity-50"
           >
             <span className="text-[13px] font-semibold text-ink">{s.label}</span>
-            <span className="text-[11.5px] text-ink-subtle">{s.sub}</span>
+            <span className="text-[11.5px] text-ink-subtle">{t(s.sub)}</span>
           </button>
         ))}
       </div>

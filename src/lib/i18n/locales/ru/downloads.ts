@@ -48,7 +48,6 @@ const downloads: Record<string, string> = {
   "No video files found in that folder.": "В этой папке нет видеофайлов.",
   "Couldn't scan that folder.": "Не удалось просканировать папку.",
   "Couldn't open this file": "Не удалось открыть файл",
-  "This file is in OneDrive. If \"Files On-Demand\" is on, the file is a cloud placeholder until it's downloaded. Right-click it in Explorer and pick": "Этот файл находится в OneDrive. Если включены \"Файлы по запросу\", файл остаётся облачным ярлыком, пока не будет скачан. Нажмите на него правой кнопкой в Проводнике и выберите",
   ", then try again.": ", затем повторите попытку.",
   "You're offline": "Вы не в сети",
   "You're offline. Your downloads still play.": "Вы не в сети. Загруженное всё равно можно смотреть.",

@@ -241,20 +241,23 @@ function MinecraftPicker({
 }
 
 function UrlStatusPill({ status }: { status: UrlStatus }) {
+  const t = useT();
   if (status === "checking")
     return (
       <span className="flex items-center gap-1 text-[12px] text-ink-subtle">
-        <Loader2 size={12} className="animate-spin" /> Checking
+        <Loader2 size={12} className="animate-spin" /> {t("Checking")}
       </span>
     );
   if (status === "available")
     return (
       <span className="flex items-center gap-1 text-[12px] font-medium text-success">
-        <Check size={12} strokeWidth={2.8} /> Available
+        <Check size={12} strokeWidth={2.8} /> {t("Available")}
       </span>
     );
-  if (status === "mine") return <span className="text-[12px] text-ink-subtle">Yours</span>;
-  if (status === "taken") return <span className="text-[12px] font-medium text-danger">Taken</span>;
+  if (status === "mine")
+    return <span className="text-[12px] text-ink-subtle">{t("Yours")}</span>;
+  if (status === "taken")
+    return <span className="text-[12px] font-medium text-danger">{t("Taken")}</span>;
   if (status === "invalid") return <span className="text-[12px] text-danger">3-24 a-z 0-9 -</span>;
   return null;
 }
@@ -344,18 +347,18 @@ export function ProfileSettings({
       onSaved(s);
     } catch {
       set("private", !next);
-      setError("Could not update privacy. Try again.");
+      setError(t("Could not update privacy. Try again."));
     }
   };
 
   const save = async (after?: () => void) => {
     if (!form.alias.trim()) {
       setSection("general");
-      setError("Add a display name first. It is the name shown on your profile.");
+      setError(t("Add a display name first. It is the name shown on your profile."));
       bodyRef.current?.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
-    if (urlBlocked) return setError("That custom url is not available.");
+    if (urlBlocked) return setError(t("That custom url is not available."));
     setSaving(true);
     setError(null);
     try {
@@ -368,7 +371,7 @@ export function ProfileSettings({
       onSaved(next);
       (after ?? onClose)();
     } catch {
-      setError("Could not save. Try again.");
+      setError(t("Could not save. Try again."));
     } finally {
       setSaving(false);
     }
@@ -395,14 +398,14 @@ export function ProfileSettings({
       <div className="flex h-full flex-col pt-20">
         <div className="flex shrink-0 items-center justify-between gap-3 border-b border-edge-soft bg-canvas px-6 py-3 lg:px-10">
           <div className="flex min-w-0 items-center gap-3">
-            <h2 className="font-display text-[20px] text-ink">Edit profile</h2>
+            <h2 className="font-display text-[20px] text-ink">{t("Edit profile")}</h2>
           </div>
           <div className="flex shrink-0 items-center gap-2">
             <button
               onClick={onClose}
               className="inline-flex min-h-11 items-center rounded-md px-4 text-[14px] font-medium text-ink-muted transition-colors hover:bg-elevated"
             >
-              Cancel
+              {t("Cancel")}
             </button>
             {(isDirty || saving) && (
               <button
@@ -410,7 +413,7 @@ export function ProfileSettings({
                 disabled={saving}
                 className="inline-flex min-h-11 items-center gap-2 rounded-md bg-accent px-5 text-[14px] font-semibold text-canvas transition-opacity hover:opacity-90 disabled:opacity-40"
               >
-                <Check size={18} /> {saving ? "Saving" : "Save"}
+                <Check size={18} /> {saving ? t("Saving") : t("Save")}
               </button>
             )}
           </div>
@@ -479,45 +482,45 @@ export function ProfileSettings({
                     desc={t("Your name and the details shown at the top of your profile.")}
                   />
 
-                  <Field label="Alias" hint={`${form.alias.length}/32`}>
+                  <Field label={t("Alias")} hint={`${form.alias.length}/32`}>
                     <input
                       value={form.alias}
                       maxLength={32}
                       onChange={(e) => set("alias", e.target.value)}
                       className={inputCls}
-                      placeholder="Display name"
+                      placeholder={t("Display name")}
                     />
                   </Field>
 
-                  <Field label="Status" hint="Shows as a bubble on your profile">
+                  <Field label={t("Status")} hint={t("Shows as a bubble on your profile")}>
                     <input
                       value={form.slogan}
                       maxLength={100}
                       onChange={(e) => set("slogan", e.target.value)}
                       className={inputCls}
-                      placeholder="Here for the late-night sci-fi"
+                      placeholder={t("Here for the late-night sci-fi")}
                     />
                   </Field>
 
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <Field label="Pronouns" hint="optional">
+                    <Field label={t("Pronouns")} hint={t("optional")}>
                       <input
                         value={form.pronouns}
                         maxLength={32}
                         onChange={(e) => set("pronouns", e.target.value)}
                         className={inputCls}
-                        placeholder="they/them"
+                        placeholder={t("they/them")}
                         autoCapitalize="off"
                         spellCheck={false}
                       />
                     </Field>
 
-                    <Field label="Location">
+                    <Field label={t("Location")}>
                       <LocationSelect value={form.location} onChange={(c) => set("location", c)} />
                     </Field>
                   </div>
 
-                  <Field label="Custom url" hint="harbor.site/u/">
+                  <Field label={t("Custom url")} hint="harbor.site/u/">
                     <div className="relative">
                       <input
                         value={form.customUrl}
@@ -534,7 +537,7 @@ export function ProfileSettings({
                     </div>
                   </Field>
 
-                  <Field label="Profile song" hint="YouTube, SoundCloud or Spotify link">
+                  <Field label={t("Profile song")} hint={t("YouTube, SoundCloud or Spotify link")}>
                     <input
                       value={form.audioUrl}
                       maxLength={400}
@@ -546,7 +549,7 @@ export function ProfileSettings({
                     <SongTimes url={form.audioUrl} onChange={(u) => set("audioUrl", u)} />
                   </Field>
 
-                  <Field label="About">
+                  <Field label={t("About")}>
                     <AboutEditor value={form.description} onChange={(v) => set("description", v)} />
                   </Field>
                 </div>
@@ -562,22 +565,22 @@ export function ProfileSettings({
                   <ProfileMedia summary={summary} onSaved={onSaved} />
 
                   <ActionRow
-                    title="Customize profile"
-                    desc="Custom font, page background, and a freeform HTML/CSS canvas"
+                    title={t("Customize profile")}
+                    desc={t("Custom font, page background, and a freeform HTML/CSS canvas")}
                   >
                     <button
                       type="button"
                       onClick={() => setCustomizing(true)}
                       className={`${cardBtn} gap-1.5`}
                     >
-                      <Palette size={16} /> Customize
+                      <Palette size={16} /> {t("Customize")}
                     </button>
                   </ActionRow>
 
                   {onArrange && (
                     <ActionRow
-                      title="Arrange cards"
-                      desc="Reorder or hide the cards on your profile"
+                      title={t("Arrange cards")}
+                      desc={t("Reorder or hide the cards on your profile")}
                     >
                       <button
                         type="button"
@@ -585,7 +588,7 @@ export function ProfileSettings({
                         disabled={saving}
                         className={`${cardBtn} gap-1.5 disabled:opacity-40`}
                       >
-                        <LayoutGrid size={16} /> Arrange
+                        <LayoutGrid size={16} /> {t("Arrange")}
                       </button>
                     </ActionRow>
                   )}
@@ -601,11 +604,11 @@ export function ProfileSettings({
 
                   <div className="grid gap-3 sm:grid-cols-2">
                     <ShowcaseCard
-                      title="Featured lists"
-                      desc="Show up to 6 of your lists on your profile"
+                      title={t("Featured lists")}
+                      desc={t("Show up to 6 of your lists on your profile")}
                     >
                       <button type="button" onClick={() => setPickingLists(true)} className={cardBtn}>
-                        Manage
+                        {t("Manage")}
                       </button>
                     </ShowcaseCard>
 
@@ -626,15 +629,15 @@ export function ProfileSettings({
 
                     {canPickBadges && (
                       <ShowcaseCard
-                        title="Shown badges"
-                        desc="Choose which badges appear by your name, and their order"
+                        title={t("Shown badges")}
+                        desc={t("Choose which badges appear by your name, and their order")}
                       >
                         <button
                           type="button"
                           onClick={() => setPickingBadges(true)}
                           className={cardBtn}
                         >
-                          Choose
+                          {t("Choose")}
                         </button>
                       </ShowcaseCard>
                     )}
@@ -686,17 +689,20 @@ export function ProfileSettings({
 
                   <div className="flex items-center justify-between gap-3 rounded-xl bg-elevated px-4 py-3.5 ring-1 ring-edge-soft">
                     <div className="min-w-0">
-                      <div className="text-[13.5px] font-medium text-ink">Private profile</div>
+                      <div className="text-[13.5px] font-medium text-ink">
+                        {t("Private profile")}
+                      </div>
                       <div className="mt-0.5 text-[12.5px] leading-relaxed text-ink-subtle">
-                        Only you can see your friends, badges, activity, and comments. Your name and
-                        avatar stay visible.
+                        {t(
+                          "Only you can see your friends, badges, activity, and comments. Your name and avatar stay visible.",
+                        )}
                       </div>
                     </div>
                     <button
                       type="button"
                       role="switch"
                       aria-checked={form.private}
-                      aria-label="Private profile"
+                      aria-label={t("Private profile")}
                       onClick={() => void togglePrivate()}
                       style={{ minHeight: 0 }}
                       className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors ${form.private ? "bg-accent" : "bg-edge"}`}
@@ -737,16 +743,18 @@ export function ProfileSettings({
 
                   <div className="flex items-center justify-between gap-3 rounded-xl bg-elevated px-4 py-3.5 ring-1 ring-edge-soft">
                     <div className="min-w-0">
-                      <div className="text-[13.5px] font-medium text-ink">Share watch activity</div>
+                      <div className="text-[13.5px] font-medium text-ink">
+                        {t("Share watch activity")}
+                      </div>
                       <div className="mt-0.5 text-[12.5px] leading-relaxed text-ink-subtle">
-                        Off by default. Let visitors see what you have been watching
+                        {t("Off by default. Let visitors see what you have been watching")}
                       </div>
                     </div>
                     <button
                       type="button"
                       role="switch"
                       aria-checked={form.shareActivity}
-                      aria-label="Share watch activity"
+                      aria-label={t("Share watch activity")}
                       onClick={() => set("shareActivity", !form.shareActivity)}
                       style={{ minHeight: 0 }}
                       className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors ${form.shareActivity ? "bg-accent" : "bg-edge"}`}
@@ -759,17 +767,20 @@ export function ProfileSettings({
 
                   <div className="flex items-center justify-between gap-3 rounded-xl bg-elevated px-4 py-3.5 ring-1 ring-edge-soft">
                     <div className="min-w-0">
-                      <div className="text-[13.5px] font-medium text-ink">Share live watching status</div>
+                      <div className="text-[13.5px] font-medium text-ink">
+                        {t("Share live watching status")}
+                      </div>
                       <div className="mt-0.5 text-[12.5px] leading-relaxed text-ink-subtle">
-                        Off by default. Show what you are watching right now, or your watch party, on
-                        your profile. Applies instantly
+                        {t(
+                          "Off by default. Show what you are watching right now, or your watch party, on your profile. Applies instantly",
+                        )}
                       </div>
                     </div>
                     <button
                       type="button"
                       role="switch"
                       aria-checked={settings.shareWatchPresence}
-                      aria-label="Share live watching status"
+                      aria-label={t("Share live watching status")}
                       onClick={() => updateSettings({ shareWatchPresence: !settings.shareWatchPresence })}
                       style={{ minHeight: 0 }}
                       className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors ${settings.shareWatchPresence ? "bg-accent" : "bg-edge"}`}
