@@ -41,7 +41,7 @@ const LANGS = [
   "zh",
 ] as const;
 const CALL = /\b(?:t|tr)\(\s*(["'])((?:\\.|(?!\1)[^\\])*?)\1/g;
-const KEY = /^\s*(?:"((?:\\.|[^"\\])*)"|([A-Za-z_$][A-Za-z0-9_$]*))\s*:/gm;
+const KEY = /^\s*(?:"((?:\\.|[^"\\])*)"|'((?:\\.|[^'\\])*)'|([A-Za-z_$][A-Za-z0-9_$]*))\s*:/gm;
 const COVERAGE = {
   ar: arCoverage,
   de: deCoverage,
@@ -87,8 +87,8 @@ function uiStrings(): Set<string> {
   const bankEnd = ageGate.indexOf("const AR_QUESTION_BANK", bankStart);
   assert.ok(bankStart >= 0 && bankEnd > bankStart, "age gate question bank is missing");
   const questionBlock = ageGate.slice(bankStart, bankEnd);
-  for (const match of questionBlock.matchAll(/"(?:\\.|[^"\\])*"/g)) {
-    const key = JSON.parse(match[0]) as string;
+  for (const match of questionBlock.matchAll(/(["'])((?:\\.|(?!\1)[^\\])*?)\1/g)) {
+    const key = match[2].replace(/\\(["'\\])/g, "$1");
     if (key) out.add(key);
   }
   return out;
@@ -104,7 +104,7 @@ function localeKeys(lang: string): Set<string> {
     let m: RegExpExecArray | null;
     KEY.lastIndex = 0;
     while ((m = KEY.exec(src))) {
-      const key = m[1] ?? m[2];
+      const key = m[1] ?? m[2] ?? m[3];
       out.add(key.replace(/\\"/g, '"').replace(/\\'/g, "'"));
     }
   }

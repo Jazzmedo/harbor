@@ -75,7 +75,7 @@ test("the wheel exposes every requested eBook action", () => {
 });
 
 test("book details resolve source metadata and chapter statistics without a loading loop", () => {
-  assert.match(wheel, /sourceEBookDetail\(route\)\.then/);
+  assert.match(wheel, /sourceEBookDetail\(route\)[\s\S]*?\.then/);
   assert.match(wheel, /sourceEBookChapters\(route\)/);
   assert.match(wheel, /authors: detail\.authors\.length \? detail\.authors : ebook\.authors/);
   assert.match(view, /if \(current\.id !== detail\.id\) return \{ \.\.\.current, books \}/);

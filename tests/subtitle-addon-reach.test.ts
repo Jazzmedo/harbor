@@ -90,6 +90,10 @@ const subtitleModal = readFileSync(
   new URL("../src/components/popups/subtitle-modal.tsx", import.meta.url),
   "utf8",
 );
+const subtitlePanelSize = readFileSync(
+  new URL("../src/components/player/subtitle-menu/panel-size.ts", import.meta.url),
+  "utf8",
+);
 
 test("one slow subtitle addon cannot discard faster addon results", () => {
   assert.match(
@@ -158,7 +162,10 @@ test("release suffixes are not mistaken for subtitle language tags", () => {
 });
 
 test("the configured languages reach the separate subtitle popup", () => {
-  assert.match(subtitleMenu, /buildOverlayState\(propsRef\.current, preferredLanguages\)/);
+  assert.match(
+    subtitleMenu,
+    /buildOverlayState\(propsRef\.current, preferredLanguages, subtitleContext\)/,
+  );
   assert.match(subtitleModal, /preferredLanguages=\{state\.preferredLanguages\}/);
 });
 
@@ -166,7 +173,10 @@ test("subtitle popup fills compact players while staying above the controls", ()
   assert.match(subtitleMenu, /fixed end-14 bottom-\[150px\]/);
   assert.match(subtitleModal, /mb-\[84px\] me-\[56px\]/);
   assert.match(subtitleMenu, /w-\[560px\] max-w-\[calc\(100vw-72px\)\]/);
-  assert.match(subtitleModal, /w-\[560px\] max-w-\[calc\(100vw-64px\)\]/);
+  assert.match(
+    subtitlePanelSize,
+    /DEFAULT_SUBTITLE_PANEL_SIZE[^=]*= \{ width: 560, height: 460 \}/,
+  );
   assert.doesNotMatch(subtitleModal, /me-\[120px\]/);
 });
 
