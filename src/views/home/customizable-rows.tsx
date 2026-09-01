@@ -64,7 +64,7 @@ const BUILT_IN_HOME_ROW_TITLES: Readonly<Record<string, string>> = {
   "simkl-trending": "Simkl Trending Today",
 };
 
-function displayRowTitle(row: HomeRow, renamed: boolean, t: Translate): string {
+export function displayRowTitle(row: HomeRow, renamed: boolean, t: Translate): string {
   if (renamed) return row.name;
   return BUILT_IN_HOME_ROW_TITLES[row.key] === row.name ? t(row.name) : row.name;
 }

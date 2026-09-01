@@ -6,13 +6,11 @@ import {
   Check,
   ChevronDown,
   ChevronLeft,
-  Database,
   Download,
   FileText,
   Folder,
   FolderOpen,
   Languages,
-  Library,
   Loader2,
   PackageOpen,
   Plus,
@@ -41,6 +39,8 @@ import {
 } from "@/lib/ebook/extensions";
 import {
   addEBookFolder,
+  addEBookGutendex,
+  hasEBookGutendex,
   listEBookSources,
   removeEBookSource,
   subscribeEBookSources,
@@ -54,6 +54,7 @@ import {
   validateGoogleBooksApiKey,
 } from "@/lib/ebook/api";
 import deepseekLogo from "@/assets/ai-logos/deepseek.png";
+import gutenbergLogo from "@/assets/gutenberg.png";
 import {
   loadEBookTranslationSettings,
   saveEBookTranslationSettings,
@@ -62,6 +63,108 @@ import {
 } from "@/lib/ebook/translation";
 import { LANGUAGES as UI_LANGUAGES, useT } from "@/lib/i18n";
 import { openUrl } from "@/lib/window";
+
+const CASE_SHELVES: Array<{
+  base: number;
+  books: Array<[number, number, number]>;
+  accent: number;
+  stack?: [number, number];
+}> = [
+  {
+    base: 104,
+    books: [
+      [30, 15, 70],
+      [48, 12, 79],
+      [63, 20, 64],
+      [86, 11, 74],
+      [100, 16, 60],
+      [119, 13, 68],
+    ],
+    accent: -1,
+    stack: [168, 44],
+  },
+  {
+    base: 197,
+    books: [
+      [96, 14, 62],
+      [113, 19, 73],
+      [135, 11, 56],
+      [149, 16, 68],
+      [168, 12, 64],
+      [183, 17, 58],
+    ],
+    accent: 3,
+    stack: [30, 52],
+  },
+  {
+    base: 290,
+    books: [
+      [30, 18, 66],
+      [51, 12, 75],
+      [66, 15, 59],
+      [84, 11, 70],
+      [98, 20, 64],
+      [121, 13, 56],
+      [137, 16, 69],
+      [156, 12, 61],
+    ],
+    accent: -1,
+  },
+];
+
+function BookcaseArt() {
+  return (
+    <svg
+      className="ebook-sources-case"
+      viewBox="0 0 240 306"
+      role="img"
+      aria-label="An illustration of a bookcase"
+      focusable="false"
+    >
+      <g className="ebook-case-frame">
+        <path d="M12 6v294M228 6v294M12 8h216" />
+        {CASE_SHELVES.map((shelf) => (
+          <path key={shelf.base} d={`M12 ${shelf.base + 5}h216`} />
+        ))}
+      </g>
+      {CASE_SHELVES.map((shelf) =>
+        shelf.books.map(([x, width, height], index) => (
+          <rect
+            key={`${shelf.base}-${x}`}
+            className={index === shelf.accent ? "ebook-case-book is-accent" : "ebook-case-book"}
+            x={x}
+            y={shelf.base - height}
+            width={width}
+            height={height}
+            rx="1.5"
+            opacity={index % 2 ? 1 : 0.78}
+          />
+        )),
+      )}
+      {CASE_SHELVES.map((shelf) =>
+        shelf.stack ? (
+          <g key={`stack-${shelf.base}`}>
+            {[0, 1, 2].map((row) => (
+              <rect
+                key={row}
+                className="ebook-case-book"
+                x={shelf.stack![0] + row * 3}
+                y={shelf.base - 10 - row * 9}
+                width={shelf.stack![1] - row * 6}
+                height="8"
+                rx="1.5"
+                opacity={0.7 + row * 0.1}
+              />
+            ))}
+          </g>
+        ) : null,
+      )}
+      <g className="ebook-case-lean">
+        <rect x="0" y="0" width="13" height="58" rx="1.5" transform="translate(137 46) rotate(11)" />
+      </g>
+    </svg>
+  );
+}
 
 function SectionLabel({ children }: { children: ReactNode }) {
   return (
@@ -395,8 +498,19 @@ function Translation() {
   );
 }
 
+function GutenbergMark({ size = "h-12 w-12" }: { size?: string }) {
+  return (
+    <img
+      src={gutenbergLogo}
+      alt=""
+      className={`${size} shrink-0 rounded-xl object-cover ring-1 ring-edge-soft`}
+    />
+  );
+}
+
 function SourceIcon({ source }: { source: EBookSource }) {
   const [failed, setFailed] = useState(false);
+  if (source.kind === "gutendex") return <GutenbergMark />;
   return (
     <span className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-canvas text-ink-muted ring-1 ring-edge-soft">
       {source.iconUrl && !failed ? (
@@ -506,6 +620,31 @@ function LocalFolderTutorial({ onClose, onChoose }: { onClose: () => void; onCho
       </div>
     </div>,
     document.body,
+  );
+}
+
+function GutenbergQuickAdd() {
+  const [added, setAdded] = useState(() => hasEBookGutendex());
+  return (
+    <div className={`group transition-all hover:ring-edge ${CARD}`}>
+      <button
+        type="button"
+        disabled={added}
+        onClick={() => setAdded(addEBookGutendex())}
+        className="flex w-full items-center gap-4 px-5 py-4 text-start active:scale-[0.99] disabled:active:scale-100"
+      >
+        <GutenbergMark />
+        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="text-[16px] font-semibold text-ink">Project Gutenberg</span>
+          <span className="truncate text-[13px] text-ink-muted">
+            75,000 free public domain books, no account needed
+          </span>
+        </span>
+        <span className="grid h-9 w-9 place-items-center rounded-lg bg-raised text-ink-muted ring-1 ring-edge-soft">
+          {added ? <Check size={18} /> : <Plus size={18} />}
+        </span>
+      </button>
+    </div>
   );
 }
 
@@ -828,25 +967,22 @@ function WorkspaceSection({
   eyebrow,
   title,
   description,
-  icon,
   children,
 }: {
   id: string;
   eyebrow: string;
   title: string;
   description: string;
-  icon: ReactNode;
   children: ReactNode;
 }) {
   return (
     <section id={id} className="ebook-source-workspace-section scroll-mt-6">
       <header className="ebook-source-workspace-heading">
-        <span className="ebook-source-workspace-icon">{icon}</span>
         <span className="min-w-0">
-          <span className="block text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
+          <span className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-subtle">
             {eyebrow}
           </span>
-          <h2 className="mt-1 font-display text-[27px] font-medium tracking-tight text-ink">
+          <h2 className="mt-1 font-display text-[21px] font-medium tracking-tight text-ink">
             {title}
           </h2>
           <p className="mt-1 max-w-2xl text-[13.5px] leading-relaxed text-ink-muted">
@@ -906,19 +1042,16 @@ export function EBookSourcesView({ onBack }: { onBack: () => void }) {
       id: "ebook-source-library",
       label: t("Library"),
       sub: t("{count} connected", { count: sources.length + installed.length }),
-      icon: <Library size={17} />,
     },
     {
       id: "ebook-source-intelligence",
       label: t("Intelligence"),
       sub: t("Metadata & translation"),
-      icon: <Sparkles size={17} />,
     },
     {
       id: "ebook-source-extensions",
       label: t("Extensions"),
       sub: t("{count} repositories", { count: ebookRepoUrls().length }),
-      icon: <Blocks size={17} />,
     },
   ];
   return (
@@ -947,15 +1080,11 @@ export function EBookSourcesView({ onBack }: { onBack: () => void }) {
       </div>
       <section className="ebook-sources-hero">
         <div className="ebook-sources-hero-copy">
-          <span className="ebook-sources-kicker">
-            <BookOpen size={15} /> {t("Harbor reading room")}
-          </span>
-          <h1 className="font-display text-[clamp(38px,5vw,62px)] font-medium leading-[0.98] tracking-[-0.04em] text-ink">
-            {t("Build your own")}
-            <span className="block text-accent">{t("living library.")}</span>
+          <h1 className="font-display text-[28px] font-medium leading-tight text-ink">
+            {t("Build your own library")}
           </h1>
-          <p className="max-w-2xl text-[15px] leading-relaxed text-ink-muted">
-            {t("Connect books you own, trusted reading sources, and metadata services. Harbor keeps the shelf coherent while every source stays under your control.")}
+          <p className="max-w-2xl text-[14px] leading-relaxed text-ink-muted">
+            {t("Connect books you own, reading sources, and metadata services. Harbor keeps the shelf coherent while every source stays under your control.")}
           </p>
           <div className="ebook-sources-stats" aria-label={t("Source overview")}>
             <span><strong>{total}</strong><small>{t("Connected")}</small></span>
@@ -963,15 +1092,7 @@ export function EBookSourcesView({ onBack }: { onBack: () => void }) {
             <span><strong>{ebookRepoUrls().length}</strong><small>{t("Repositories")}</small></span>
           </div>
         </div>
-        <div className="ebook-sources-bookplate" aria-hidden="true">
-          <div className="ebook-sources-bookplate-mark"><BookOpen size={34} /></div>
-          <p>EX LIBRIS</p>
-          <strong>HARBOR</strong>
-          <span>{t("Private reading collection")}</span>
-          <div className="ebook-sources-spines">
-            <i /><i /><i /><i /><i />
-          </div>
-        </div>
+        <BookcaseArt />
       </section>
 
       <div className="grid items-start gap-7 lg:grid-cols-[240px_minmax(0,1fr)]">
@@ -980,15 +1101,13 @@ export function EBookSourcesView({ onBack }: { onBack: () => void }) {
             {t("Contents")}
           </p>
           <nav className="flex flex-col gap-1" aria-label={t("eBook source settings")}>
-            {contents.map((item, index) => (
+            {contents.map((item) => (
               <button
                 key={item.id}
                 type="button"
                 onClick={() => jumpTo(item.id)}
                 className={`ebook-sources-content-link ${activeSection === item.id ? "is-active" : ""}`}
               >
-                <span className="ebook-sources-content-number">0{index + 1}</span>
-                <span className="ebook-sources-content-icon">{item.icon}</span>
                 <span className="min-w-0 flex-1 text-start">
                   <strong>{item.label}</strong>
                   <small>{item.sub}</small>
@@ -1005,10 +1124,9 @@ export function EBookSourcesView({ onBack }: { onBack: () => void }) {
         <div className="flex min-w-0 flex-col gap-7">
           <WorkspaceSection
             id="ebook-source-library"
-            eyebrow={t("01 · Collection")}
+            eyebrow={t("Collection")}
             title={t("Library sources")}
             description={t("Manage every place Harbor can read from, whether it lives on disk or across the web.")}
-            icon={<Library size={22} />}
           >
             {installed.length > 0 && (
               <div className="flex flex-col gap-3">
@@ -1031,17 +1149,17 @@ export function EBookSourcesView({ onBack }: { onBack: () => void }) {
             <div className="flex flex-col gap-3">
               <SectionLabel>{t("Bring your own")}</SectionLabel>
               <div className="grid gap-3">
-                <LocalFolder />
+                <GutenbergQuickAdd />
+        <LocalFolder />
               </div>
             </div>
           </WorkspaceSection>
 
           <WorkspaceSection
             id="ebook-source-intelligence"
-            eyebrow={t("02 · Enrichment")}
+            eyebrow={t("Enrichment")}
             title={t("Library intelligence")}
             description={t("Shape the metadata and reading language Harbor uses without changing your original files.")}
-            icon={<Database size={22} />}
           >
             <MetadataProviders />
             <Translation />
@@ -1049,10 +1167,9 @@ export function EBookSourcesView({ onBack }: { onBack: () => void }) {
 
           <WorkspaceSection
             id="ebook-source-extensions"
-            eyebrow={t("03 · Expand")}
+            eyebrow={t("Expand")}
             title={t("Extension dock")}
             description={t("Bring trusted source packages aboard through Harbor’s isolated extension worker.")}
-            icon={<Blocks size={22} />}
           >
             <Extensions />
             <PluginGuide kind="ebook" />

@@ -16,6 +16,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Blending";
+  src: url("./assets/fonts/blending.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --color-canvas: oklch(0.18 0.004 260);
   --color-surface: oklch(0.22 0.004 260);
@@ -42,6 +50,7 @@
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --font-channel: "General Sans", "Switzer", "Inter", system-ui, sans-serif;
   --font-anime: "WonderfulFontyCure", "Sentient", "Georgia", serif;
+  --font-book: "Blending", "Sentient", "Georgia", serif;
   --font-rank: "Oswald", "Arial Narrow", "Helvetica Neue", sans-serif;
   --font-arabic: "Geeza Pro", "SF Arabic", "Segoe UI", "Tahoma", "Noto Naskh Arabic", serif;
 

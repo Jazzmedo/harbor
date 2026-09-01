@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import {
   createContext,
+  Fragment,
   useCallback,
   useContext,
   useEffect,
@@ -34,6 +35,7 @@ import "./ebook-showcase.css";
 import { NavArrow } from "@/components/nav-arrow";
 import { CoverImg } from "@/components/cover-img";
 import { Poster } from "@/components/poster";
+import { EBookBook3D } from "./ebook/ebook-book3d";
 import { Row } from "@/components/row";
 import { useAnilist } from "@/lib/anilist/provider";
 import { useT, useUiLanguage } from "@/lib/i18n";
@@ -93,6 +95,7 @@ import {
   type EBookChapterContent,
   type EBookCursor,
   type EBookProvider,
+  ebookProviderIcon,
 } from "@/lib/ebook/providers";
 import { subscribeEBookExtensions } from "@/lib/ebook/extensions";
 import { subscribeEBookSources } from "@/lib/ebook/sources";
@@ -105,7 +108,6 @@ import { useView } from "@/lib/view";
 import { useProfiles } from "@/lib/profiles";
 import { usePageVisible } from "@/lib/visibility";
 import { openUrl } from "@/lib/window";
-import { useArtGlow } from "./big-picture/bp-art-color";
 import { EBookSourcesView } from "./ebook/ebook-sources-panel";
 import { EBookSetup } from "./ebook/ebook-setup";
 import { EBookReader } from "./ebook/ebook-reader";
@@ -695,19 +697,23 @@ export function EBookView() {
 
   if (screen === "sources") {
     return (
-      <main data-ebook-page className="flex-1 overflow-y-auto overflow-x-hidden px-12 pb-16 pt-24">
+      <main data-ebook-page className="bg-canvas flex-1 overflow-y-auto overflow-x-hidden px-12 pb-16 pt-24">
         <EBookSourcesView onBack={() => setScreen("browse")} />
       </main>
     );
   }
 
-  if (sourcesReady && providers.length === 0) {
+  if (!sourcesReady) {
+    return <main data-ebook-page className="bg-canvas flex-1" />;
+  }
+
+  if (providers.length === 0) {
     return <EBookSetup onSetup={() => setScreen("sources")} />;
   }
 
   if (screen === "collections") {
     return (
-      <main data-ebook-page className="flex-1 overflow-y-auto overflow-x-hidden px-12 pb-16 pt-24">
+      <main data-ebook-page className="bg-canvas flex-1 overflow-y-auto overflow-x-hidden px-12 pb-16 pt-24">
         <button
           type="button"
           onClick={() => setScreen("browse")}
@@ -806,7 +812,7 @@ export function EBookView() {
     return (
       <EBookTitleLanguageContext.Provider value={titleLanguage}>
         <EBookCardMenuContext.Provider value={openCardMenu}>
-          <main data-ebook-page className="flex-1 overflow-y-auto overflow-x-hidden px-12 pb-16 pt-24">
+          <main data-ebook-page className="bg-canvas flex-1 overflow-y-auto overflow-x-hidden px-12 pb-16 pt-24">
             <button
               type="button"
               onClick={() => setScreen("browse")}
@@ -923,7 +929,7 @@ export function EBookView() {
   return (
     <EBookTitleLanguageContext.Provider value={titleLanguage}>
       <EBookCardMenuContext.Provider value={openCardMenu}>
-      <main data-ebook-page className="flex-1 overflow-y-auto overflow-x-hidden pb-20">
+      <main data-ebook-page className="bg-canvas flex-1 overflow-y-auto overflow-x-hidden pb-20">
         <EBookLibraryHero ebooks={heroBooks} onOpen={(ebook) => openEBook(String(ebook.id))} />
 
         <div className="flex w-full flex-col gap-9 px-12 pt-8">
@@ -1042,7 +1048,7 @@ export function EBookView() {
                 title={t("Refresh source")}
                 disabled={refreshing}
                 onClick={() => (query.trim().length >= 2 ? search(query) : loadSources())}
-                className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-edge-soft bg-elevated/45 text-ink-muted transition-colors hover:border-edge hover:bg-elevated/70 hover:text-ink disabled:pointer-events-none disabled:opacity-60"
+                className="grid h-12 w-12 shrink-0 place-items-center rounded-lg bg-white/[0.06] text-ink-muted ring-1 ring-inset ring-edge-soft transition-colors hover:bg-white/[0.10] hover:text-ink disabled:pointer-events-none disabled:opacity-60"
               >
                 <RefreshCw
                   size={17}
@@ -1260,7 +1266,7 @@ function EBookBrowseDropdown({
         />
       </button>
       {open && (
-        <div className="absolute start-0 z-40 mt-2 max-h-72 min-w-full overflow-y-auto rounded-xl border border-edge-soft bg-raised p-1.5 shadow-[0_18px_44px_-14px_rgba(0,0,0,0.75)]">
+        <div className="absolute start-0 z-40 mt-2 max-h-72 min-w-full overflow-y-auto rounded-lg bg-elevated p-1.5 ring-1 ring-edge-soft shadow-[0_10px_30px_-12px_rgba(0,0,0,0.6)]">
           {options.map((option) => (
             <button
               key={option.id || "all"}
@@ -1285,6 +1291,10 @@ function EBookBrowseDropdown({
 
 const EBOOK_HERO_ROTATE_MS = 9000;
 
+function heroSubject(value: string): string {
+  return value.split("--")[0].split(",")[0].trim();
+}
+
 function EBookLibraryHero({
   ebooks,
   onOpen,
@@ -1301,10 +1311,16 @@ function EBookLibraryHero({
   const [paused, setPaused] = useState(false);
   const pageVisible = usePageVisible();
   const current = ebooks[shown];
-  const currentTitle = current
-    ? ebookTitleForLanguage(current, titleLanguage)
-    : t("A remarkable book for your shelf");
-  const artColor = useArtGlow(current?.cover);
+  const currentTitle = current ? ebookTitleForLanguage(current, titleLanguage) : "";
+  const authors = current?.authors.filter(Boolean).slice(0, 2).join(", ") ?? "";
+  const meta = current
+    ? [current.year ? String(current.year) : "", ...current.genres.map(heroSubject)]
+        .map((value) => value.trim())
+        .filter(Boolean)
+        .filter((value, index, all) => all.indexOf(value) === index)
+        .filter((value) => !authors.toLowerCase().includes(value.toLowerCase()))
+        .slice(0, 3)
+    : [];
 
   useEffect(() => {
     if (paused || ebooks.length < 2 || !pageVisible) return;
@@ -1339,7 +1355,6 @@ function EBookLibraryHero({
   return (
     <section
       className="group ebook-library-hero"
-      style={{ "--ebook-hero-accent": artColor ?? "205 116 50" } as CSSProperties}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onContextMenu={(event) => current && openMenu(current, event)}
@@ -1356,54 +1371,48 @@ function EBookLibraryHero({
           aria-hidden="true"
           focusable="false"
         >
-          <defs>
-            <radialGradient id="ebookHeroPaperWash" cx="18%" cy="14%" r="58%">
-              <stop offset="0%" stopColor={`rgb(${artColor ?? "205 116 50"})`} stopOpacity="0.1" />
-              <stop offset="72%" stopColor="#f2eddf" stopOpacity="0" />
-            </radialGradient>
-          </defs>
-          <path
-            className="ebook-hero-paper-fill"
-            d="M0 0H790C930 0 1005 54 984 118C965 176 858 160 852 216C846 269 975 268 996 332C1018 399 933 467 806 520H0Z"
-          />
-          <path
-            className="ebook-hero-paper-wash"
-            d="M0 0H790C930 0 1005 54 984 118C965 176 858 160 852 216C846 269 975 268 996 332C1018 399 933 467 806 520H0Z"
-          />
+          <path d="M0 0H790C930 0 1005 54 984 118C965 176 858 160 852 216C846 269 975 268 996 332C1018 399 933 467 806 520H0Z" />
         </svg>
 
         <div className="ebook-hero-copy" style={fade}>
-          <span className="ebook-hero-kicker">{t("Featured books · Metadata picks")}</span>
+          <span className="ebook-hero-kicker">{t("Featured book")}</span>
           <h1>{currentTitle}</h1>
-          <p>
-            {current?.description ||
-              t("A living shelf for new worlds, beloved stories, and the books you have yet to meet.")}
-          </p>
-          <div className="ebook-hero-meta">
-            {current?.year && <span>{current.year}</span>}
-            {current?.genres.slice(0, 2).map((genre) => (
-              <span key={genre}>{genre}</span>
-            ))}
-          </div>
+          {authors && <p className="ebook-hero-byline">{authors}</p>}
+          {current?.description && <p>{current.description}</p>}
+          {meta.length > 0 && (
+            <div className="ebook-hero-meta">
+              {meta.map((part, index) => (
+                <Fragment key={part}>
+                  {index > 0 && <i aria-hidden>·</i>}
+                  <span>{part}</span>
+                </Fragment>
+              ))}
+            </div>
+          )}
           {current && (
             <button type="button" onClick={() => onOpen(current)}>
-              <BookOpen size={17} /> {t("Open featured book")}
+              {t("Read now")}
             </button>
           )}
         </div>
 
-        <div className="ebook-hero-showcase" aria-hidden="true" style={fade}>
-          <div className="ebook-hero-book-shadow" />
+        <div className="ebook-hero-showcase" style={fade}>
+          <div className="ebook-hero-book-shadow" aria-hidden="true" />
           <div className="ebook-hero-book-object">
-            <div className="ebook-hero-book-pages" />
-            <Poster
-              src={current?.cover}
-              seed={`ebook-hero:${current?.id ?? "loading"}`}
-              ratio="portrait"
-              className="ebook-hero-book-cover"
-            />
+            {current && (
+              <EBookBook3D
+                cover={current.cover}
+                seed={`ebook-hero:${current.id}`}
+                title={currentTitle}
+                author={authors || undefined}
+                text={current.description}
+                imprint={current.providerName}
+                scale={1.9}
+                thickness={13}
+              />
+            )}
           </div>
-          <span className="ebook-hero-edition">{t("Featured pick")}</span>
+
         </div>
       </div>
 
@@ -1447,7 +1456,7 @@ function EBookDetailDropdown({
   onSelect,
   buttonLabel,
 }: {
-  options: Array<{ id: string; label: string }>;
+  options: Array<{ id: string; label: string; icon?: string }>;
   selected: string;
   onSelect: (id: string) => void;
   buttonLabel?: string;
@@ -1468,9 +1477,13 @@ function EBookDetailDropdown({
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex h-11 items-center gap-2 rounded-xl border border-edge-soft bg-surface/60 px-4 text-[14px] text-ink transition-colors hover:border-edge hover:bg-elevated/60"
+        className="inline-flex h-12 items-center gap-2.5 rounded-full bg-white/[0.06] px-6 text-[15px] font-semibold text-ink ring-1 ring-inset ring-edge-soft transition-colors duration-150 hover:bg-white/[0.10] active:scale-[0.98]"
       >
-        {buttonLabel && <Database size={16} className="text-ink-subtle" />}
+        {active?.icon ? (
+          <img src={active.icon} alt="" className="h-5 w-5 shrink-0 rounded object-contain" />
+        ) : (
+          buttonLabel && <Database size={16} className="text-ink-subtle" />
+        )}
         <span>{buttonLabel ? `${buttonLabel} · ${active?.label}` : active?.label}</span>
         <ChevronDown
           size={16}
@@ -1478,7 +1491,7 @@ function EBookDetailDropdown({
         />
       </button>
       {open && (
-        <div className="absolute right-0 z-30 mt-2 max-h-80 min-w-56 overflow-y-auto rounded-xl border border-edge-soft bg-elevated py-1.5 shadow-[0_18px_44px_rgba(0,0,0,0.45)]">
+        <div className="absolute right-0 z-30 mt-2 max-h-80 min-w-60 overflow-y-auto rounded-lg bg-elevated p-1.5 ring-1 ring-edge-soft shadow-[0_10px_30px_-12px_rgba(0,0,0,0.6)]">
           {options.map((option) => (
             <button
               key={option.id}
@@ -1487,14 +1500,17 @@ function EBookDetailDropdown({
                 onSelect(option.id);
                 setOpen(false);
               }}
-              className={`flex w-full items-center gap-2 px-4 py-2.5 text-left text-[14px] transition-colors hover:bg-raised ${
-                option.id === selected ? "text-ink" : "text-ink-muted"
+              className={`flex w-full items-center gap-2.5 rounded-md px-3 py-2.5 text-left text-[14px] transition-colors ${
+                option.id === selected ? "bg-raised text-ink" : "text-ink-muted hover:bg-raised"
               }`}
             >
               {option.id === selected ? (
                 <Check size={15} className="text-accent" />
               ) : (
                 <span className="w-[15px]" />
+              )}
+              {option.icon && (
+                <img src={option.icon} alt="" className="h-5 w-5 shrink-0 rounded object-contain" />
               )}
               <span className="truncate">{option.label}</span>
             </button>
@@ -1690,23 +1706,27 @@ function EBookCard({
       onContextMenu={(event) => openMenu(ebook, event)}
       className="group flex w-full min-w-0 flex-col gap-2 text-start"
     >
-      <div className="ebook-card-showcase">
-        <div className="ebook-card-showcase-book">
-          <div className="ebook-card-showcase-rear" aria-hidden="true" />
-          <div className="ebook-card-showcase-pages" aria-hidden="true" />
-          <Poster
-            src={ebook.cover}
-            seed={`ebook:${ebook.id}`}
-            ratio="portrait"
-            lazy
-            className="ebook-card-showcase-cover harbor-card-ring"
-          />
-          {readStatus && <EBookReadMark status={readStatus} />}
-        </div>
-      </div>
+      <EBookBook3D
+        cover={ebook.cover}
+        seed={`ebook:${ebook.id}`}
+        title={displayTitle}
+        author={ebook.authors[0]}
+        text={ebook.description}
+        imprint={ebook.providerName}
+        thickness={7}
+        mode="lift"
+        lazy
+      >
+        {readStatus && <EBookReadMark status={readStatus} />}
+      </EBookBook3D>
       <p className="line-clamp-2 min-h-9 text-[13px] font-medium leading-snug text-ink">
         {displayTitle}
       </p>
+      {ebook.authors.length > 0 && (
+        <p className="-mt-1 line-clamp-1 text-[12px] leading-snug text-ink-muted">
+          {ebook.authors.slice(0, 2).join(", ")}
+        </p>
+      )}
       <p className="text-[11.5px] text-ink-subtle">
         {[
           ebook.books?.length ? t("{count} books", { count: ebook.books.length }) : null,
@@ -1979,7 +1999,7 @@ function EBookChapterSection({
           <span className="text-[15px] text-ink-subtle">{selected.length}</span>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex h-11 items-center gap-1 rounded-xl border border-edge-soft bg-surface/60 p-1">
+          <div className="flex h-11 items-center gap-1 rounded-lg bg-canvas p-1 ring-1 ring-inset ring-edge-soft">
             {(
               [
                 ["list", List],
@@ -1999,7 +2019,7 @@ function EBookChapterSection({
               </button>
             ))}
           </div>
-          <div className="flex h-11 items-center gap-1 rounded-xl border border-edge-soft bg-surface/60 p-1">
+          <div className="flex h-11 items-center gap-1 rounded-lg bg-canvas p-1 ring-1 ring-inset ring-edge-soft">
             {(["newest", "oldest"] as const).map((value) => (
               <button
                 key={value}
@@ -2025,7 +2045,7 @@ function EBookChapterSection({
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder={t("Search chapters...")}
-          className="h-11 w-full rounded-xl border border-edge-soft bg-surface/60 pl-11 pr-4 text-[14px] text-ink transition-colors placeholder:text-ink-subtle focus:border-edge focus:outline-none"
+          className="h-11 w-full rounded-lg bg-canvas pl-11 pr-4 text-[14px] text-ink ring-1 ring-inset ring-edge-soft transition-colors placeholder:text-ink-subtle focus:ring-edge focus:outline-none"
         />
       </div>
 
@@ -2068,7 +2088,7 @@ function EBookChapterSection({
               key={chapter.id}
               type="button"
               onClick={() => onRead(chapter)}
-              className="group flex min-h-[64px] flex-col justify-between gap-2 rounded-xl border border-edge-soft bg-surface/60 px-4 py-3.5 text-start transition-colors hover:border-edge hover:bg-elevated/60"
+              className="group flex min-h-[64px] flex-col justify-between gap-2 rounded-lg bg-elevated px-4 py-3.5 text-start ring-1 ring-inset ring-edge-soft transition-colors hover:bg-raised"
             >
               <div className="flex flex-col gap-0.5">
                 {chapter.chapter && (
@@ -2867,7 +2887,7 @@ function EBookDetails({
                 <div className="flex flex-col gap-1.5">
                   <h1
                     className="text-[40px] font-medium leading-[1.05] tracking-tight text-ink drop-shadow-[0_2px_18px_rgba(0,0,0,0.5)]"
-                    style={{ fontFamily: '"QR Ames Beta", var(--font-display), serif' }}
+                    style={{ fontFamily: "var(--font-book)" }}
                   >
                     {ebook.title}
                   </h1>
@@ -2905,7 +2925,7 @@ function EBookDetails({
                       const next = toggleEBookLibrary(ebook);
                       setSaved(next);
                     }}
-                    className="inline-flex h-12 items-center gap-2 rounded-xl bg-accent px-6 text-[15px] font-bold text-canvas transition-transform hover:scale-[1.02] active:scale-[0.97]"
+                    className="inline-flex h-12 items-center gap-2.5 rounded-full bg-ink px-7 text-[15px] font-semibold text-canvas transition-transform duration-200 hover:scale-[1.03] active:scale-[0.98]"
                   >
                     {saved ? <Library size={19} /> : <Bookmark size={19} />}
                     {saved ? t("Bookmarked") : t("Bookmark")}
@@ -2915,6 +2935,7 @@ function EBookDetails({
                       options={sourceOptions.map((source) => ({
                         id: source.id,
                         label: source.providerName ?? source.title,
+                        icon: ebookProviderIcon(source.providerId),
                       }))}
                       selected={sourceRoute}
                       onSelect={setSourceRoute}
@@ -2926,9 +2947,13 @@ function EBookDetails({
                     aria-pressed={favorite}
                     aria-label={favorite ? t("Remove favorite") : t("Add favorite")}
                     onClick={() => setFavorite(toggleEBookFavorite(ebook))}
-                    className={`flex h-12 w-12 items-center justify-center rounded-xl border backdrop-blur-sm transition-colors ${favorite ? "border-rose-400/40 bg-rose-500/15 text-rose-300" : "border-edge bg-elevated/40 text-ink-muted hover:bg-elevated hover:text-ink"}`}
+                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-ink transition-[transform,background-color] duration-200 hover:bg-white/[0.10] active:scale-[0.94]"
                   >
-                    <Heart size={22} fill={favorite ? "currentColor" : "none"} />
+                    <Heart
+                      size={21}
+                      fill={favorite ? "currentColor" : "none"}
+                      className={favorite ? "text-accent" : "text-ink"}
+                    />
                   </button>
                   {ebook.siteUrl && (
                     <button
@@ -2936,7 +2961,7 @@ function EBookDetails({
                       aria-label={t("Open in {provider}", { provider: ebook.source === "anilist" ? "AniList" : "Open Library" })}
                       title={ebook.source === "anilist" ? "AniList" : "Open Library"}
                       onClick={() => openUrl(ebook.siteUrl!)}
-                      className="flex h-12 w-12 items-center justify-center rounded-xl border border-edge bg-elevated/40 text-ink-muted backdrop-blur-sm transition-colors hover:bg-elevated hover:text-ink"
+                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-ink transition-[transform,background-color] duration-200 hover:bg-white/[0.10] active:scale-[0.94]"
                     >
                       <ExternalLink size={21} />
                     </button>
@@ -2977,36 +3002,39 @@ function EBookDetails({
             />
           )}
           {(ebook.books?.length ?? 0) > 1 && (
-            <section className="flex w-fit max-w-full items-center gap-2.5 rounded-xl border border-edge-soft bg-elevated/30 p-2.5">
+            <section className="flex w-fit max-w-full items-center gap-4 rounded-xl bg-elevated/40 p-3 ring-1 ring-edge-soft">
               <div className="shrink-0 px-1">
-                <h2 className="text-[12px] font-semibold text-ink">{t("Available sources")}</h2>
-                <p className="text-[9.5px] text-ink-subtle">{t("Read from")}</p>
+                <h2 className="text-[13.5px] font-semibold text-ink">{t("Available sources")}</h2>
+                <p className="text-[11.5px] text-ink-subtle">{t("Read from")}</p>
               </div>
-              <div className="flex min-w-0 items-center gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <div className="flex min-w-0 items-center gap-2.5 overflow-x-auto py-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {ebook.books!.map((book) => (
                   <div
                     key={book.id}
-                    className={`flex h-12 min-w-[160px] max-w-[205px] shrink-0 items-center gap-2.5 rounded-lg border px-2 transition-colors ${
+                    className={`flex w-[248px] shrink-0 items-center gap-3 rounded-lg p-2.5 ring-1 ring-inset transition-colors ${
                       sourceRoute === book.id
-                        ? "border-accent/45 bg-accent/10"
-                        : "border-edge-soft bg-canvas/35 hover:bg-elevated/70"
+                        ? "bg-elevated ring-accent/45"
+                        : "bg-surface ring-edge-soft hover:bg-elevated"
                     }`}
                   >
-                    <Poster
-                      src={book.cover}
-                      seed={`ebook-book:${book.id}`}
-                      ratio="portrait"
-                      className="w-8 shrink-0 rounded-sm"
-                    />
+                    <span className="w-12 shrink-0 overflow-hidden rounded ring-1 ring-inset ring-edge-soft">
+                      <Poster
+                        src={book.cover}
+                        seed={`ebook-book:${book.id}`}
+                        ratio="portrait"
+                      />
+                    </span>
                     <button
                       type="button"
                       onClick={() => book.source === "source" && setSourceRoute(book.id)}
                       className="min-w-0 flex-1 text-left"
                     >
-                      <span className="block truncate text-[11px] font-medium text-ink">
+                      <span className="block truncate text-[13px] font-semibold text-ink">
                         {book.providerName ?? book.title}
                       </span>
-                      <span className="block truncate text-[9px] text-ink-subtle">{book.title}</span>
+                      <span className="mt-0.5 block line-clamp-2 text-[11.5px] leading-snug text-ink-subtle">
+                        {book.title}
+                      </span>
                     </button>
                     {book.siteUrl && (
                       <button
@@ -3097,7 +3125,7 @@ function EBookDetails({
             type="button"
             onClick={() => detailScrollRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
             aria-label={t("Scroll to top")}
-            className="flex h-14 items-center gap-2.5 rounded-full bg-accent px-6 text-canvas shadow-[0_16px_40px_-10px_rgba(0,0,0,0.7)] transition-transform duration-200 hover:scale-105 active:scale-95"
+            className="flex h-14 items-center gap-2.5 rounded-full bg-accent px-6 text-canvas shadow-[0_10px_30px_-12px_rgba(0,0,0,0.6)] transition-transform duration-200 hover:scale-[1.03] active:scale-[0.97]"
           >
             <ArrowUp size={24} strokeWidth={2.6} />
             <span className="text-[16px] font-bold">{t("Top")}</span>

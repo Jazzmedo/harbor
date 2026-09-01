@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { Meta } from "@/lib/cinemeta";
 import type { HomeRow } from "@/views/home/home-types";
 import { buildCinemetaRows, buildTmdbRows } from "@/views/home/home-rows";
+import { displayRowTitle } from "@/views/home/customizable-rows";
 import { useSettings } from "@/lib/settings";
 import { useT } from "@/lib/i18n";
 import { useHideAnimeMetas, useHideAnimeRows } from "@/lib/anime-hide";
@@ -62,7 +63,15 @@ export function MobileHome() {
     return () => {
       alive = false;
     };
-  }, [settings.tmdbKey, settings.homeMode, reloadKey]);
+  }, [
+    settings.tmdbKey,
+    settings.homeMode,
+    settings.tmdbLanguage,
+    settings.tmdbImageLangs,
+    settings.translateTitles,
+    settings.translateDescriptions,
+    reloadKey,
+  ]);
 
   const shownHero = useHideAnimeMetas(hero);
   const shownRows = useHideAnimeRows(rows);
@@ -94,10 +103,19 @@ export function MobileHome() {
       <MobileHero slides={shownHero} onOpenDetail={setDetailMeta} />
       {cw.length > 0 && <MobileCwRow items={cw} onOpenDetail={setDetailMeta} />}
       {shownRows[0] && shownRows[0].metas.length >= 6 && (
-        <MobileRankRail title={t("Top 10 Today")} metas={dedupeMetas(shownRows[0].metas)} onOpenDetail={setDetailMeta} />
+        <MobileRankRail
+          title={t("Top 10 Today")}
+          metas={dedupeMetas(shownRows[0].metas)}
+          onOpenDetail={setDetailMeta}
+        />
       )}
       {shownRows.slice(1).map((r) => (
-        <MobileRail key={r.key} title={t(r.name)} metas={dedupeMetas(r.metas).slice(0, 18)} onOpenDetail={setDetailMeta} />
+        <MobileRail
+          key={r.key}
+          title={displayRowTitle(r, false, t)}
+          metas={dedupeMetas(r.metas).slice(0, 18)}
+          onOpenDetail={setDetailMeta}
+        />
       ))}
       <div className="h-4" />
       {detailMeta && <MobileDetail meta={detailMeta} onClose={() => setDetailMeta(null)} />}

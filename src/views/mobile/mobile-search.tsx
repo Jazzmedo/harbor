@@ -20,6 +20,10 @@ import { fetchAddonCatalogPage, fetchAddonMeta, isCollectionCatalog } from "@/li
 import { MobileDetail } from "./mobile-detail";
 import { MobileAwards } from "./mobile-awards";
 import { MobileGenrePage } from "./mobile-genre-page";
+import { useMobileRemote } from "./mobile-remote";
+import { LocalLibraryBrand } from "@/components/local-library-brand";
+import { MediaServerBrand } from "@/components/media-server-brand";
+import type { MediaServerProvider } from "@/lib/media-server/types";
 
 const prefersReducedMotion = () =>
   typeof window !== "undefined" &&
@@ -56,7 +60,12 @@ const CATEGORIES = [
 ];
 
 const EXPLORE = [
-  { label: "Recently added", kind: "recent" as const, caption: "Just landed", img: "recently_added" },
+  {
+    label: "Recently added",
+    kind: "recent" as const,
+    caption: "Just landed",
+    img: "recently_added",
+  },
   { label: "Popular", kind: "popular" as const, caption: "Most watched", img: "popular" },
   { label: "Trending", kind: "trending" as const, caption: "On the rise", img: "trending" },
 ];
@@ -82,7 +91,8 @@ export function MobileSearch() {
   const t = useT();
   const { settings, update } = useSettings();
   const { authKey } = useAuth();
-  const { query, results, status, recent, setQuery, clear, recordRecent, removeRecent } = useSearch();
+  const { query, results, status, recent, setQuery, clear, recordRecent, removeRecent } =
+    useSearch();
   const [catalog, setCatalog] = useState<Catalog | null>(null);
   const [collections, setCollections] = useState(false);
   const [genreView, setGenreView] = useState<(typeof CATEGORIES)[number] | null>(null);
@@ -118,7 +128,10 @@ export function MobileSearch() {
     openCatalog(t(e.label), async () => {
       if (key) {
         if (e.kind === "trending") {
-          const [m, t] = await Promise.all([tmdbTrending(key, "movie", "week"), tmdbTrending(key, "tv", "week")]);
+          const [m, t] = await Promise.all([
+            tmdbTrending(key, "movie", "week"),
+            tmdbTrending(key, "tv", "week"),
+          ]);
           return interleave(m, t);
         }
         if (e.kind === "popular") {
@@ -214,7 +227,11 @@ export function MobileSearch() {
             onOpenDetail={setDetailMeta}
           />
         ) : catalog ? (
-          <CatalogView catalog={catalog} onBack={() => setCatalog(null)} onOpenDetail={setDetailMeta} />
+          <CatalogView
+            catalog={catalog}
+            onBack={() => setCatalog(null)}
+            onOpenDetail={setDetailMeta}
+          />
         ) : (
           <Landing
             recent={recent}
@@ -392,7 +409,21 @@ function Landing({
   );
 }
 
-function FeatureCardShell({ onClick, art, title, caption, wash, backdrop }: { onClick: () => void; art: React.ReactNode; title: string; caption: string; wash: string; backdrop?: React.ReactNode }) {
+function FeatureCardShell({
+  onClick,
+  art,
+  title,
+  caption,
+  wash,
+  backdrop,
+}: {
+  onClick: () => void;
+  art: React.ReactNode;
+  title: string;
+  caption: string;
+  wash: string;
+  backdrop?: React.ReactNode;
+}) {
   return (
     <button
       type="button"
@@ -400,10 +431,15 @@ function FeatureCardShell({ onClick, art, title, caption, wash, backdrop }: { on
       className="group relative flex min-h-[132px] flex-col justify-between overflow-hidden rounded-xl bg-surface p-4 text-start ring-1 ring-edge-soft transition-transform duration-150 active:scale-[0.98] motion-reduce:transition-none"
     >
       {backdrop}
-      <span aria-hidden className={`pointer-events-none absolute inset-0 bg-gradient-to-br to-transparent ${wash}`} />
+      <span
+        aria-hidden
+        className={`pointer-events-none absolute inset-0 bg-gradient-to-br to-transparent ${wash}`}
+      />
       <span className="relative flex h-12 items-center">{art}</span>
       <span className="relative mt-3 flex flex-col gap-0.5">
-        <span className="font-display text-[18px] font-medium leading-tight tracking-tight text-ink">{title}</span>
+        <span className="font-display text-[18px] font-medium leading-tight tracking-tight text-ink">
+          {title}
+        </span>
         <span className="text-[12.5px] leading-snug text-ink-muted">{caption}</span>
       </span>
     </button>
@@ -446,7 +482,10 @@ function AwardsCard({ onClick }: { onClick: () => void }) {
       caption={t("Oscar, SAG, BAFTA winners")}
       wash="from-[oklch(0.83_0.10_85_/_0.14)]"
       art={
-        <span className="drop-shadow-[0_2px_10px_rgba(0,0,0,0.25)]" style={{ color: "oklch(0.83 0.10 85)" }}>
+        <span
+          className="drop-shadow-[0_2px_10px_rgba(0,0,0,0.25)]"
+          style={{ color: "oklch(0.83 0.10 85)" }}
+        >
           <Laurel size={48}>
             <AwardMarkCycle />
           </Laurel>
@@ -468,7 +507,9 @@ function useCollectionSlides(key: string): CollectionSlide[] {
       return;
     }
     let alive = true;
-    Promise.all(PREVIEW_COLLECTION_IDS.slice(0, 6).map((id) => tmdbCollection(key, id).catch(() => null)))
+    Promise.all(
+      PREVIEW_COLLECTION_IDS.slice(0, 6).map((id) => tmdbCollection(key, id).catch(() => null)),
+    )
       .then((cols) => {
         if (!alive) return;
         const out: CollectionSlide[] = [];
@@ -479,7 +520,10 @@ function useCollectionSlides(key: string): CollectionSlide[] {
             .filter((x): x is string => !!x)
             .slice(0, 3);
           if (posters.length < 2) continue;
-          out.push({ backdrop: c.backdrop ?? c.parts.find((p) => p.background)?.background, posters });
+          out.push({
+            backdrop: c.backdrop ?? c.parts.find((p) => p.background)?.background,
+            posters,
+          });
         }
         setSlides(out);
       })
@@ -520,8 +564,12 @@ function CollectionsCard({ onClick }: { onClick: () => void }) {
         title={t("Collections")}
         caption={t("Curated sets and sagas")}
         wash={active ? "from-transparent" : "from-accent/12"}
-        backdrop={active?.backdrop ? <CollectionBackdrop src={active.backdrop} slideKey={idx} /> : undefined}
-        art={active ? <CollectionArt posters={active.posters} slideKey={idx} /> : <CollectionStack />}
+        backdrop={
+          active?.backdrop ? <CollectionBackdrop src={active.backdrop} slideKey={idx} /> : undefined
+        }
+        art={
+          active ? <CollectionArt posters={active.posters} slideKey={idx} /> : <CollectionStack />
+        }
       />
     </>
   );
@@ -549,16 +597,27 @@ function CollectionStack() {
 function CollectionArt({ posters, slideKey }: { posters: string[]; slideKey: number }) {
   return (
     <span key={slideKey} aria-hidden className="relative h-11 w-[60px] coll-in">
-      <PosterCard src={posters[0]} className="absolute bottom-0 start-0 h-10 w-[29px] -rotate-[13deg]" />
-      <PosterCard src={posters[1] ?? posters[0]} className="absolute bottom-0 start-[14px] h-10 w-[29px] rotate-[3deg]" />
-      <PosterCard src={posters[2] ?? posters[1] ?? posters[0]} className="absolute bottom-0 start-[28px] h-10 w-[29px] rotate-[13deg]" />
+      <PosterCard
+        src={posters[0]}
+        className="absolute bottom-0 start-0 h-10 w-[29px] -rotate-[13deg]"
+      />
+      <PosterCard
+        src={posters[1] ?? posters[0]}
+        className="absolute bottom-0 start-[14px] h-10 w-[29px] rotate-[3deg]"
+      />
+      <PosterCard
+        src={posters[2] ?? posters[1] ?? posters[0]}
+        className="absolute bottom-0 start-[28px] h-10 w-[29px] rotate-[13deg]"
+      />
     </span>
   );
 }
 
 function PosterCard({ src, className }: { src: string; className: string }) {
   return (
-    <span className={`overflow-hidden rounded-[7px] bg-elevated ring-1 ring-edge-soft ${className}`}>
+    <span
+      className={`overflow-hidden rounded-[7px] bg-elevated ring-1 ring-edge-soft ${className}`}
+    >
       <img src={src} alt="" loading="lazy" className="h-full w-full object-cover" />
     </span>
   );
@@ -566,24 +625,54 @@ function PosterCard({ src, className }: { src: string; className: string }) {
 
 const GENRE_PALETTE: Record<string, { from: string; to: string; ink: string }> = {
   Action: { from: "oklch(0.40 0.18 25)", to: "oklch(0.18 0.10 20)", ink: "oklch(0.96 0.02 25)" },
-  Adventure: { from: "oklch(0.45 0.14 145)", to: "oklch(0.20 0.10 155)", ink: "oklch(0.96 0.02 145)" },
-  Animation: { from: "oklch(0.50 0.16 200)", to: "oklch(0.20 0.10 195)", ink: "oklch(0.96 0.02 200)" },
+  Adventure: {
+    from: "oklch(0.45 0.14 145)",
+    to: "oklch(0.20 0.10 155)",
+    ink: "oklch(0.96 0.02 145)",
+  },
+  Animation: {
+    from: "oklch(0.50 0.16 200)",
+    to: "oklch(0.20 0.10 195)",
+    ink: "oklch(0.96 0.02 200)",
+  },
   Comedy: { from: "oklch(0.55 0.16 75)", to: "oklch(0.22 0.08 60)", ink: "oklch(0.96 0.02 80)" },
   Crime: { from: "oklch(0.32 0.10 50)", to: "oklch(0.14 0.04 30)", ink: "oklch(0.95 0.04 60)" },
-  Documentary: { from: "oklch(0.36 0.10 145)", to: "oklch(0.18 0.06 150)", ink: "oklch(0.96 0.02 145)" },
+  Documentary: {
+    from: "oklch(0.36 0.10 145)",
+    to: "oklch(0.18 0.06 150)",
+    ink: "oklch(0.96 0.02 145)",
+  },
   Drama: { from: "oklch(0.36 0.12 240)", to: "oklch(0.18 0.06 230)", ink: "oklch(0.96 0.02 240)" },
   Family: { from: "oklch(0.50 0.13 100)", to: "oklch(0.20 0.08 110)", ink: "oklch(0.96 0.02 100)" },
-  Fantasy: { from: "oklch(0.42 0.14 320)", to: "oklch(0.18 0.08 305)", ink: "oklch(0.96 0.02 320)" },
+  Fantasy: {
+    from: "oklch(0.42 0.14 320)",
+    to: "oklch(0.18 0.08 305)",
+    ink: "oklch(0.96 0.02 320)",
+  },
   Horror: { from: "oklch(0.30 0.10 15)", to: "oklch(0.10 0.04 20)", ink: "oklch(0.94 0.02 20)" },
   Mystery: { from: "oklch(0.32 0.10 95)", to: "oklch(0.14 0.06 80)", ink: "oklch(0.95 0.04 90)" },
   Romance: { from: "oklch(0.45 0.15 0)", to: "oklch(0.20 0.08 350)", ink: "oklch(0.96 0.02 0)" },
-  "Sci-Fi": { from: "oklch(0.38 0.16 285)", to: "oklch(0.18 0.10 280)", ink: "oklch(0.96 0.02 285)" },
-  Thriller: { from: "oklch(0.32 0.10 200)", to: "oklch(0.14 0.04 220)", ink: "oklch(0.96 0.02 220)" },
+  "Sci-Fi": {
+    from: "oklch(0.38 0.16 285)",
+    to: "oklch(0.18 0.10 280)",
+    ink: "oklch(0.96 0.02 285)",
+  },
+  Thriller: {
+    from: "oklch(0.32 0.10 200)",
+    to: "oklch(0.14 0.04 220)",
+    ink: "oklch(0.96 0.02 220)",
+  },
   War: { from: "oklch(0.32 0.06 70)", to: "oklch(0.14 0.04 60)", ink: "oklch(0.95 0.02 75)" },
   Western: { from: "oklch(0.45 0.12 55)", to: "oklch(0.18 0.08 35)", ink: "oklch(0.96 0.04 60)" },
 };
 
-function GenreTile({ category, onOpen }: { category: (typeof CATEGORIES)[number]; onOpen: () => void }) {
+function GenreTile({
+  category,
+  onOpen,
+}: {
+  category: (typeof CATEGORIES)[number];
+  onOpen: () => void;
+}) {
   const t = useT();
   const { settings } = useSettings();
   const [art, setArt] = useState<Meta[]>([]);
@@ -618,12 +707,24 @@ function GenreTile({ category, onOpen }: { category: (typeof CATEGORIES)[number]
           mixBlendMode: "multiply",
         }}
       />
-      <span aria-hidden className="absolute inset-x-0 bottom-0 h-1/2" style={{ background: `linear-gradient(to bottom, transparent, ${palette.to})` }} />
+      <span
+        aria-hidden
+        className="absolute inset-x-0 bottom-0 h-1/2"
+        style={{ background: `linear-gradient(to bottom, transparent, ${palette.to})` }}
+      />
       <span className="absolute inset-x-3.5 bottom-3 flex items-end justify-between">
-        <span className="font-display text-[17px] font-medium leading-tight tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)]" style={{ color: palette.ink }}>
+        <span
+          className="font-display text-[17px] font-medium leading-tight tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)]"
+          style={{ color: palette.ink }}
+        >
           {t(category.label)}
         </span>
-        <ChevronRight size={16} strokeWidth={2.4} className="shrink-0" style={{ color: palette.ink }} />
+        <ChevronRight
+          size={16}
+          strokeWidth={2.4}
+          className="shrink-0"
+          style={{ color: palette.ink }}
+        />
       </span>
     </button>
   );
@@ -634,7 +735,11 @@ function GenreCollage({ art, rpdbKey }: { art: Meta[]; rpdbKey: string }) {
   return (
     <span aria-hidden className="absolute inset-0 grid grid-cols-3">
       {art.slice(0, 3).map((m, i) => (
-        <span key={m.id} className="relative overflow-hidden" style={{ transform: `skewX(-8deg) translateX(${(i - 1) * 5}px)` }}>
+        <span
+          key={m.id}
+          className="relative overflow-hidden"
+          style={{ transform: `skewX(-8deg) translateX(${(i - 1) * 5}px)` }}
+        >
           <Poster
             src={rpdbPoster(rpdbKey, m.id, m.background ?? m.poster)}
             seed={m.id}
@@ -710,7 +815,9 @@ function CollectionsBrowser({
     (async () => {
       try {
         const cats = await listBrowseCatalogs(authKey);
-        const wanted = cats.filter((c) => isCollectionCatalog({ type: c.type, id: c.id, name: c.name }));
+        const wanted = cats.filter((c) =>
+          isCollectionCatalog({ type: c.type, id: c.id, name: c.name }),
+        );
         const pages = await Promise.all(
           wanted.map((c) => browseFetcher(c, null)(1).catch(() => [] as Meta[])),
         );
@@ -754,7 +861,10 @@ function CollectionsBrowser({
             setMembers(null);
           }}
         />
-        <div key={`members:${active.id}:${members === null ? "loading" : "loaded"}`} className="ms-view-in">
+        <div
+          key={`members:${active.id}:${members === null ? "loading" : "loaded"}`}
+          className="ms-view-in"
+        >
           {members === null ? (
             <LoaderBlock />
           ) : members.length === 0 ? (
@@ -774,7 +884,10 @@ function CollectionsBrowser({
         {list === null ? (
           <LoaderBlock />
         ) : list.length === 0 ? (
-          <EmptyState Icon={Layers} text={t("No collections yet. Add a collections addon to browse curated sets.")} />
+          <EmptyState
+            Icon={Layers}
+            text={t("No collections yet. Add a collections addon to browse curated sets.")}
+          />
         ) : (
           <div className="grid grid-cols-3 gap-x-3 gap-y-4">
             {list.map((m) => (
@@ -799,6 +912,12 @@ function Grid({ metas, onOpenDetail }: { metas: Meta[]; onOpenDetail: (m: Meta) 
 
 function GridTile({ meta, onOpenDetail }: { meta: Meta; onOpenDetail: (m: Meta) => void }) {
   const { settings } = useSettings();
+  const { snapshot } = useMobileRemote();
+  const local = snapshot.library?.local?.some((item) => item.id === meta.id) ?? false;
+  const providers = useMemo(() => {
+    const found = snapshot.library?.mediaServers?.find((item) => item.id === meta.id);
+    return found?.mediaServerProviders ?? [];
+  }, [snapshot.library?.mediaServers, meta.id]);
   const { src, onError } = usePosterChain(
     settings.rpdbKey,
     meta.id,
@@ -811,8 +930,32 @@ function GridTile({ meta, onOpenDetail }: { meta: Meta; onOpenDetail: (m: Meta) 
       onClick={() => onOpenDetail(meta)}
       className="text-start transition-transform duration-150 active:scale-[0.96] motion-reduce:transition-none"
     >
-      <Poster src={src} onError={onError} seed={meta.id} ratio="portrait" lazy className="rounded-[12px]" />
-      <p className="mt-1.5 line-clamp-2 text-[12px] font-medium leading-snug text-ink-muted">{meta.name}</p>
+      <div className="relative overflow-hidden rounded-[12px]">
+        <Poster
+          src={src}
+          onError={onError}
+          seed={meta.id}
+          ratio="portrait"
+          lazy
+          className="rounded-[12px]"
+        />
+        {(local || providers.length > 0) && (
+          <span className="absolute end-1.5 top-1.5 flex items-center gap-1 rounded-lg bg-canvas/90 px-1.5 py-1 text-ink shadow-lg ring-1 ring-edge-soft backdrop-blur-md">
+            {local && <LocalLibraryBrand className="h-4 w-4" />}
+            {providers.map((provider) => (
+              <MediaServerBrand
+                key={provider}
+                provider={provider as MediaServerProvider}
+                name={provider}
+                compact
+              />
+            ))}
+          </span>
+        )}
+      </div>
+      <p className="mt-1.5 line-clamp-2 text-[12px] font-medium leading-snug text-ink-muted">
+        {meta.name}
+      </p>
     </button>
   );
 }
@@ -830,7 +973,9 @@ function CollectionTile({ meta, onOpen }: { meta: Meta; onOpen: (m: Meta) => voi
           <Layers size={13} strokeWidth={2.2} />
         </span>
       </div>
-      <p className="mt-1.5 line-clamp-2 text-[12px] font-medium leading-snug text-ink-muted">{meta.name}</p>
+      <p className="mt-1.5 line-clamp-2 text-[12px] font-medium leading-snug text-ink-muted">
+        {meta.name}
+      </p>
     </button>
   );
 }
@@ -868,7 +1013,9 @@ function LoaderBlock() {
 }
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
-  return <h2 className="font-display text-[19px] font-medium tracking-tight text-ink">{children}</h2>;
+  return (
+    <h2 className="font-display text-[19px] font-medium tracking-tight text-ink">{children}</h2>
+  );
 }
 
 type CollectionVideo = NonNullable<Meta["videos"]>[number];
@@ -884,7 +1031,11 @@ function videoToMeta(v: CollectionVideo, fallback: "movie" | "series"): Meta | n
   if (!v.id) return null;
   const raw = v as Record<string, unknown>;
   const poster =
-    typeof raw.poster === "string" ? raw.poster : typeof v.thumbnail === "string" ? v.thumbnail : undefined;
+    typeof raw.poster === "string"
+      ? raw.poster
+      : typeof v.thumbnail === "string"
+        ? v.thumbnail
+        : undefined;
   return {
     id: v.id,
     type: memberType(v.id, fallback),

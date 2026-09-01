@@ -1,13 +1,13 @@
 import animeCatIcon from "@/assets/category/anime.svg";
 import livetvCatIcon from "@/assets/category/livetv.svg";
 import adultCatIcon from "@/assets/category/adult.svg";
-import { BookOpen, Download, HardDrive, Play } from "lucide-react";
+import { BookOpen, Download, HardDrive } from "lucide-react";
 import { useProfiles } from "@/lib/profiles";
 import { useSettings } from "@/lib/settings";
 import { useSampleArtwork } from "@/lib/sample-artwork";
 import { useT } from "@/lib/i18n";
 import { Dropdown, type DropdownOption } from "@/components/dropdown";
-import { Section, Segmented, ToggleRow } from "../shared";
+import { Section, ToggleRow } from "../shared";
 import { SettingGroup, SettingRow } from "../kit";
 
 export function LibraryTab() {
@@ -91,24 +91,6 @@ export function LibraryTab() {
         )}
       >
         <SettingGroup label={t("On disk")}>
-          <SettingRow
-            icon={<Play size={16} />}
-            label={t("When a title is in your local library")}
-            desc={t("What Play does when a movie or episode also exists on your disk.")}
-            tip={t(
-              "What Play does when a movie or episode also exists on your disk. Autoplay always prefers the local copy unless set to Stream.",
-            )}
-          >
-            <Segmented
-              value={settings.localPlaybackMode}
-              onChange={(v) => update({ localPlaybackMode: v })}
-              options={[
-                { value: "ask", label: t("Ask") },
-                { value: "local", label: t("Play local") },
-                { value: "stream", label: t("Stream") },
-              ]}
-            />
-          </SettingRow>
           <SettingRow
             icon={<HardDrive size={16} />}
             label={t("Minimum file size")}

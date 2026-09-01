@@ -290,6 +290,8 @@ const plurals: Record<string, string> = {
   "{word} {n} seconds. Hold for options": "{word} {n} sekund. Przytrzymaj, aby wyświetlić opcje",
   "{word} {n} seconds. Hold for options#one": "{word} {n} sekunda. Przytrzymaj, aby wyświetlić opcje",
   "{word} {n} seconds. Hold for options#few": "{word} {n} sekundy. Przytrzymaj, aby wyświetlić opcje",
+  "{n} episodes on home servers#one": "{n} odcinek na serwerach domowych",
+  "{n} episodes on home servers#few": "{n} odcinki na serwerach domowych",
 };
 
 export default plurals;

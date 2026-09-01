@@ -1,4 +1,4 @@
-import { Home } from "lucide-react";
+import { NavGlyph } from "@/components/icons/nav-glyph";
 import {
   pinnedBuiltinTitle,
   togglePinnedCatalog,
@@ -36,7 +36,7 @@ export function PinHomeButton({
           : "border-edge-soft bg-canvas/40 text-ink-subtle hover:border-edge hover:text-ink-muted"
       }`}
     >
-      <Home size={14} strokeWidth={2.2} />
+      <NavGlyph name="home" className="h-[15px] w-[15px]" />
     </button>
   );
 }

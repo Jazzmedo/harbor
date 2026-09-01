@@ -1,14 +1,44 @@
-import { ChevronLeft, ChevronDown, ChevronsLeft, ChevronsRight, Loader2, Minus, Monitor, Pause, Play, Plus, RotateCcw, Volume2, VolumeX } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronDown,
+  ChevronsLeft,
+  ChevronsRight,
+  Loader2,
+  Minus,
+  Monitor,
+  Pause,
+  Play,
+  Plus,
+  RotateCcw,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
 import { Search } from "@/components/icons/search-icon";
-import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode, type RefObject } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+  type ReactNode,
+  type RefObject,
+} from "react";
 import { CastIcon } from "@/components/player/cast-icon";
 import { HarborLoader } from "@/components/harbor-loader";
 import { HarborMark } from "@/components/icons/harbor-mark";
 import type { CastDeviceInfo } from "@/lib/cast";
 import { useKeyboardNavigation } from "@/lib/keyboard-navigation";
 import { useRemoteClient } from "@/lib/remote/use-remote-client";
-import type { RemoteCastDevice, RemoteNavKey, RemoteSnapshot, RemoteTextEntry } from "@/lib/remote/protocol";
+import type {
+  RemoteCastDevice,
+  RemoteNavKey,
+  RemoteSnapshot,
+  RemoteTextEntry,
+} from "@/lib/remote/protocol";
 import { useT } from "@/lib/i18n";
+import { ConfirmLeave } from "@/views/mobile/dpad-remote";
+import { useRegisterSheet } from "@/views/mobile/mobile-sheet-lock";
 
 function toCastDevice(d: RemoteCastDevice): CastDeviceInfo {
   return {
@@ -100,11 +130,7 @@ function SeekTen({
       size="lg"
     >
       <span className="relative flex h-9 w-9 items-center justify-center">
-        <RotateCcw
-          size={34}
-          strokeWidth={1.5}
-          className={forward ? "scale-x-[-1]" : undefined}
-        />
+        <RotateCcw size={34} strokeWidth={1.5} className={forward ? "scale-x-[-1]" : undefined} />
         <span className="absolute inset-0 flex items-center justify-center text-[11px] font-semibold tracking-tight">
           10
         </span>
@@ -159,13 +185,7 @@ function TouchpadSurface({
     (dx: number, dy: number) => {
       if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
       const horizontal = Math.abs(dx) >= Math.abs(dy);
-      const key: RemoteNavKey = horizontal
-        ? dx > 0
-          ? "right"
-          : "left"
-        : dy > 0
-          ? "down"
-          : "up";
+      const key: RemoteNavKey = horizontal ? (dx > 0 ? "right" : "left") : dy > 0 ? "down" : "up";
       lastSwipeTimeRef.current = Date.now();
       onNav(key);
     },
@@ -340,7 +360,10 @@ function RendererSheet({
   if (!open) return null;
   const activeId = snapshot.target.kind === "cast" ? snapshot.target.deviceId : "local";
   return (
-    <div className="fixed inset-0 z-50 flex flex-col justify-end bg-canvas/70 backdrop-blur-sm" data-remote-sheet>
+    <div
+      className="fixed inset-0 z-50 flex flex-col justify-end bg-canvas/70 backdrop-blur-sm"
+      data-remote-sheet
+    >
       <div className="flex-1" role="presentation" onClick={onClose} />
       <div className="rounded-t-2xl border border-edge-soft bg-surface px-4 pb-8 pt-3 shadow-2xl">
         <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-edge" />
@@ -353,7 +376,9 @@ function RendererSheet({
             className="rounded-lg border border-edge px-2.5 py-1.5 text-[12px] text-ink-muted hover:bg-elevated hover:text-ink disabled:cursor-default disabled:opacity-60"
           >
             <span className="inline-flex items-center gap-1.5">
-              {snapshot.castDiscovering && <Loader2 size={12} strokeWidth={2.2} className="animate-spin" />}
+              {snapshot.castDiscovering && (
+                <Loader2 size={12} strokeWidth={2.2} className="animate-spin" />
+              )}
               {snapshot.castDiscovering ? t("Scanning...") : t("Refresh")}
             </span>
           </button>
@@ -533,8 +558,7 @@ function RemoteBody({
     [onSubmitText],
   );
 
-  const showTextOverlay =
-    !textDismissed && (textEntryActive || typing) && !!heldTextEntry.current;
+  const showTextOverlay = !textDismissed && (textEntryActive || typing) && !!heldTextEntry.current;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-[clamp(0.75rem,2.2vh,1.25rem)] px-4 pb-[calc(env(safe-area-inset-bottom,0px)+96px)] pt-[max(0.75rem,env(safe-area-inset-top))]">
@@ -572,9 +596,7 @@ function RemoteBody({
               <Monitor size={15} strokeWidth={1.7} />
             )}
           </span>
-          <span className="truncate text-[15px] font-medium text-ink">
-            {snapshot.target.label}
-          </span>
+          <span className="truncate text-[15px] font-medium text-ink">{snapshot.target.label}</span>
           <ChevronDown size={16} strokeWidth={1.8} className="shrink-0 text-ink-muted" />
         </button>
 
@@ -583,11 +605,7 @@ function RemoteBody({
             <Search size={18} strokeWidth={1.7} />
           </CircleBtn>
         ) : (
-          <CircleBtn
-            label={snapshot.muted ? t("Unmute") : t("Mute")}
-            onClick={onMute}
-            size="sm"
-          >
+          <CircleBtn label={snapshot.muted ? t("Unmute") : t("Mute")} onClick={onMute} size="sm">
             {snapshot.muted || snapshot.volume === 0 ? (
               <VolumeX size={18} strokeWidth={1.7} />
             ) : (
@@ -596,7 +614,6 @@ function RemoteBody({
           </CircleBtn>
         )}
       </div>
-
 
       {/* One touchpad for both modes — poster is the surface while playing */}
       <TouchpadSurface
@@ -697,11 +714,7 @@ function RemoteBody({
           data-remote-transport
           className="grid w-full grid-cols-[1fr_auto_1fr] grid-rows-[4.75rem_4.75rem] place-items-center gap-4 pb-2"
         >
-          <CircleBtn
-            label={t("Back on display")}
-            onClick={() => onNav("back")}
-            size="lg"
-          >
+          <CircleBtn label={t("Back on display")} onClick={() => onNav("back")} size="lg">
             <ChevronLeft size={32} strokeWidth={1.7} />
           </CircleBtn>
 
@@ -757,6 +770,12 @@ export function RemoteApp() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [wasConnected, setWasConnected] = useState(false);
   const [showDisconnected, setShowDisconnected] = useState(false);
+  const [confirmBack, setConfirmBack] = useState(false);
+  const reduced =
+    typeof window !== "undefined" &&
+    !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const watching = !!snapshot.mediaId && !snapshot.idle;
+  useRegisterSheet(confirmBack);
 
   useEffect(() => {
     if (status === "connected") {
@@ -779,10 +798,19 @@ export function RemoteApp() {
       closeSheet();
       return true;
     }
-    // Drive the host display back — don't navigate the phone away from /remote.
-    sendCommand({ action: "nav", key: "back" });
+    // Confirm on the phone before asking the host player to leave playback.
+    if (watching) setConfirmBack(true);
+    else sendCommand({ action: "nav", key: "back" });
     return true;
-  }, [sheetOpen, closeSheet, sendCommand]);
+  }, [sheetOpen, closeSheet, sendCommand, watching]);
+
+  const onNav = useCallback(
+    (key: RemoteNavKey) => {
+      if (key === "back" && watching) setConfirmBack(true);
+      else sendCommand({ action: "nav", key });
+    },
+    [sendCommand, watching],
+  );
 
   useKeyboardNavigation({ wrap: false, onBack });
 
@@ -839,14 +867,17 @@ export function RemoteApp() {
                 })
               }
               onVolumeStep={(delta) => {
-                const next = Math.max(0, Math.min(1, (snapshot.muted ? 0 : snapshot.volume) + delta));
+                const next = Math.max(
+                  0,
+                  Math.min(1, (snapshot.muted ? 0 : snapshot.volume) + delta),
+                );
                 sendCommand({ action: "setVolume", volume: next });
                 if (next > 0 && snapshot.muted) sendCommand({ action: "setMuted", muted: false });
               }}
               onMute={() => sendCommand({ action: "setMuted", muted: !snapshot.muted })}
               onPrevEpisode={() => sendCommand({ action: "prevEpisode" })}
               onNextEpisode={() => sendCommand({ action: "nextEpisode" })}
-              onNav={(key) => sendCommand({ action: "nav", key })}
+              onNav={onNav}
               onSetText={(value) => sendCommand({ action: "setText", value })}
               onSubmitText={(value) => sendCommand({ action: "submitText", value })}
               onBlurText={() => sendCommand({ action: "blurText" })}
@@ -867,6 +898,18 @@ export function RemoteApp() {
               setSheetOpen(false);
             }}
           />
+          {confirmBack && (
+            <ConfirmLeave
+              snapshot={snapshot}
+              reduced={reduced}
+              leaving={false}
+              onCancel={() => setConfirmBack(false)}
+              onConfirm={() => {
+                sendCommand({ action: "nav", key: "back" });
+                setConfirmBack(false);
+              }}
+            />
+          )}
         </>
       )}
     </div>
