@@ -310,7 +310,7 @@ export const DEFAULT: Settings = {
   showLocalLibraryBadge: true,
   showWatchedBadge: true,
   localPlaybackMode: "ask",
-  playbackSourcePreference: "ask",
+  playbackSourcePreference: "online",
   preferredMediaServerId: null,
   localMinFileSizeMb: 50,
   catalogsPinned: [],
