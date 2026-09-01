@@ -4,6 +4,7 @@ import { Poster, usePosterChain } from "@/components/poster";
 import { ImdbIcon } from "@/components/icons/imdb-icon";
 import { HeroAwardsCorner } from "@/views/detail/hero-awards";
 import { useSettings } from "@/lib/settings";
+import { useT } from "@/lib/i18n";
 import type { TmdbDetail } from "@/lib/providers/tmdb";
 import { LocalLibraryBrand } from "@/components/local-library-brand";
 import { MediaServerBrand, mediaServerProviderName } from "@/components/media-server-brand";
@@ -41,6 +42,7 @@ export function Hero({
   availability: { local: boolean; providers: MediaServerProvider[] };
   onBack: () => void;
 }) {
+  const t = useT();
   return (
     <div className="relative">
       <div className="relative aspect-[3/4] max-h-[62vh] w-full overflow-hidden bg-surface">
@@ -60,7 +62,7 @@ export function Hero({
       <button
         type="button"
         onClick={onBack}
-        aria-label="Back"
+        aria-label={t("Back")}
         className="absolute start-4 grid h-10 w-10 place-items-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-transform active:scale-95 motion-reduce:transition-none"
         style={{ top: "calc(env(safe-area-inset-top, 0px) + 12px)" }}
       >

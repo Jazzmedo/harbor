@@ -4,6 +4,7 @@ import type { LucideIcon } from "lucide-react";
 import type { Meta } from "@/lib/cinemeta";
 import { Poster, usePosterChain } from "@/components/poster";
 import { useSettings } from "@/lib/settings";
+import { useT } from "@/lib/i18n";
 import type { RemoteLibraryItem } from "@/lib/remote/protocol";
 import { useMobileRemote } from "./mobile-remote";
 import { MobileDetail } from "./mobile-detail";
@@ -106,19 +107,21 @@ export function MobileLibrary() {
 }
 
 function Header() {
+  const t = useT();
   return (
     <div className="flex flex-col gap-1">
       <span className="text-[11px] font-bold uppercase tracking-[0.24em] text-ink-subtle">
-        My library
+        {t("My library")}
       </span>
       <h1 className="font-display text-[26px] font-medium leading-tight tracking-tight text-ink">
-        Your collection
+        {t("Your collection")}
       </h1>
     </div>
   );
 }
 
 function TabStrip({ tab, onTab }: { tab: SectionId; onTab: (t: SectionId) => void }) {
+  const t = useT();
   return (
     <div className="flex items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
       {SECTIONS.map((s) => {
@@ -135,7 +138,7 @@ function TabStrip({ tab, onTab }: { tab: SectionId; onTab: (t: SectionId) => voi
             }`}
           >
             <Icon size={15} strokeWidth={2.3} />
-            {s.label}
+            {t(s.label)}
           </button>
         );
       })}
@@ -167,6 +170,7 @@ function Section({
 }
 
 function GridTile({ meta, onOpenDetail }: { meta: Meta; onOpenDetail: (m: Meta) => void }) {
+  const t = useT();
   const { settings } = useSettings();
   const { src, onError } = usePosterChain(
     settings.rpdbKey,
@@ -178,6 +182,7 @@ function GridTile({ meta, onOpenDetail }: { meta: Meta; onOpenDetail: (m: Meta) 
     <button
       type="button"
       onClick={() => onOpenDetail(meta)}
+      aria-label={t("View {title}", { title: meta.name })}
       className="text-start transition-transform duration-150 active:scale-[0.96] motion-reduce:transition-none"
     >
       <Poster
@@ -214,6 +219,7 @@ function SkeletonGrid() {
 }
 
 function Empty({ kind }: { kind: SectionId }) {
+  const t = useT();
   const cfg = EMPTY[kind];
   const Icon = cfg.icon;
   return (
@@ -222,23 +228,24 @@ function Empty({ kind }: { kind: SectionId }) {
         <Icon size={24} strokeWidth={1.9} />
       </span>
       <div className="flex flex-col gap-1">
-        <h2 className="text-[15px] font-semibold text-ink">{cfg.title}</h2>
-        <p className="max-w-[260px] text-[13px] leading-relaxed text-ink-muted">{cfg.body}</p>
+        <h2 className="text-[15px] font-semibold text-ink">{t(cfg.title)}</h2>
+        <p className="max-w-[260px] text-[13px] leading-relaxed text-ink-muted">{t(cfg.body)}</p>
       </div>
     </div>
   );
 }
 
 function NotConnected() {
+  const t = useT();
   return (
     <div className="flex flex-col items-center gap-3 pt-16 text-center">
       <span className="grid h-14 w-14 place-items-center rounded-2xl bg-surface text-ink-subtle ring-1 ring-edge-soft">
         <WifiOff size={24} strokeWidth={1.9} />
       </span>
       <div className="flex flex-col gap-1">
-        <h2 className="text-[15px] font-semibold text-ink">Not connected to a computer</h2>
+        <h2 className="text-[15px] font-semibold text-ink">{t("Not connected to a computer")}</h2>
         <p className="max-w-[260px] text-[13px] leading-relaxed text-ink-muted">
-          Your library lives on Harbor. Connect to your computer and it shows up here.
+          {t("Your library lives on Harbor. Connect to your computer and it shows up here.")}
         </p>
       </div>
     </div>

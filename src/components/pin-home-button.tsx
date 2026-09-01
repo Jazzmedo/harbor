@@ -1,5 +1,10 @@
 import { NavGlyph } from "@/components/icons/nav-glyph";
-import { togglePinnedCatalog, useIsPinned, type PinnedSource } from "@/lib/pinned-catalogs";
+import {
+  pinnedBuiltinTitle,
+  togglePinnedCatalog,
+  useIsPinned,
+  type PinnedSource,
+} from "@/lib/pinned-catalogs";
 import { useT } from "@/lib/i18n";
 
 export function PinHomeButton({
@@ -18,7 +23,10 @@ export function PinHomeButton({
   return (
     <button
       type="button"
-      onClick={() => togglePinnedCatalog({ id, source, name, params })}
+      onClick={() => {
+        const title = pinnedBuiltinTitle(source, params.railKey);
+        togglePinnedCatalog({ id, source, name: title?.key ?? name, params });
+      }}
       aria-pressed={pinned}
       aria-label={pinned ? t("Remove from Home") : t("Add to Home Screen")}
       title={pinned ? t("Remove from Home") : t("Add to Home Screen")}
