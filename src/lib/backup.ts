@@ -341,7 +341,16 @@ export async function downloadBackup(selected?: BackupSectionKey[]): Promise<boo
   return downloadText(`harbor-backup-${stamp}.harbx`, text, ["harbx"], "Harbor backup");
 }
 
-export type ParsedBackup = { ok: true; backup: Backup } | { ok: false; error: string };
+export type BackupValidationError =
+  | "That file is not valid JSON."
+  | "Unrecognized file."
+  | "This is not a Harbor backup file."
+  | "This backup has no data in it."
+  | "This backup contained nothing restorable.";
+
+export type ParsedBackup =
+  | { ok: true; backup: Backup }
+  | { ok: false; error: BackupValidationError };
 
 export function parseBackup(text: string): ParsedBackup {
   let json: unknown;

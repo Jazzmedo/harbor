@@ -12,8 +12,11 @@ import type { ScoredStream } from "@/lib/streams/types";
 import { type PlayEpisode } from "@/lib/view";
 import {
   anyStreamCached,
-  debridBannerTitle,
+  debridBanner,
   streamIdentity,
+  translateDebridBannerTitle,
+  translatePickerError,
+  translatePipelineErrorTransport,
 } from "@/views/play-picker/picker-utils";
 import { pushBpBack } from "./bp-back";
 import { useBpT } from "./bp-i18n";
@@ -392,10 +395,17 @@ export function BpStreams({
 
       <BpStreamChips s={s} sourceKind={sourceKind} onSourceKind={setSourceKind} onClose={onClose} />
 
-      {play.error && <BpStreamsBanner text={play.error} tone="error" />}
+      {play.error && <BpStreamsBanner text={translatePickerError(t, play.error)} tone="error" />}
       {homeServerError && !play.error && <BpStreamsBanner text={homeServerError} tone="error" />}
-      {s.error && !play.error && <BpStreamsBanner text={s.error} tone="error" />}
-      {debridError && <BpStreamsBanner text={debridBannerTitle(debridError)} tone="info" />}
+      {s.error && !play.error && (
+        <BpStreamsBanner text={translatePipelineErrorTransport(t, s.error)} tone="error" />
+      )}
+      {debridError && (
+        <BpStreamsBanner
+          text={translateDebridBannerTitle(t, debridBanner(debridError))}
+          tone="info"
+        />
+      )}
       {s.filterFellBack && s.activeFilterId != null && (
         <BpStreamsBanner
           text={t("No sources match your filter. Showing all sources.")}

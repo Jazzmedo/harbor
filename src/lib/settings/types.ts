@@ -6,6 +6,7 @@ import type { CustomStreamFilter } from "@/lib/streams/custom-filters";
 import type { SyncIndicatorPosition } from "@/lib/sync-toast-position";
 import type { FullscreenClockFormat, FullscreenClockStyle } from "@/lib/local-time";
 import type { SubtitleOffsetPosition, SubtitleOffsetSize } from "@/lib/player/subtitle-offset";
+import type { UiLanguage } from "@/lib/i18n/languages";
 
 export type StreamingService =
   | "netflix"
@@ -640,7 +641,7 @@ export type Settings = {
   libraryHero: boolean;
   mangaEnabled: boolean;
   feedLocaleBias: boolean;
-  uiLanguage: "en" | "ar" | "pt" | "ru";
+  uiLanguage: UiLanguage;
   arabicWelcomeSeen: boolean;
   cropMode: string;
   customLists: CustomList[];
