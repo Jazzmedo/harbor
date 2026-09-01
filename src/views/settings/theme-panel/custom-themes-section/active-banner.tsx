@@ -36,7 +36,8 @@ export function ActiveBanner({
   }
   const localizedBlurb =
     theme.blurb && getThemeById(theme.id)?.blurb === theme.blurb ? t(theme.blurb) : theme.blurb;
-  const bg = theme.background?.image ?? `linear-gradient(135deg, ${theme.swatch[0]}, ${theme.swatch[1]})`;
+  const bg =
+    theme.background?.image ?? `linear-gradient(135deg, ${theme.swatch[0]}, ${theme.swatch[1]})`;
   const canvasToken = theme.tokens?.["--color-canvas"] ?? theme.swatch[0];
   const isLight = colorLuminance(canvasToken) > 0.6;
   const fg = isLight ? "#0a0a0c" : "#ffffff";
@@ -60,7 +61,10 @@ export function ActiveBanner({
         aria-hidden
         style={{ background: scrim, zIndex: 1 }}
       />
-      <div className="relative flex flex-wrap items-center justify-between gap-4 px-5 py-5" style={{ zIndex: 2 }}>
+      <div
+        className="relative flex flex-wrap items-center justify-between gap-4 px-5 py-5"
+        style={{ zIndex: 2 }}
+      >
         <div className="flex min-w-0 flex-col gap-1">
           <div
             className="flex items-center gap-1.5 text-[10.5px] font-bold uppercase tracking-[0.28em]"
@@ -81,9 +85,17 @@ export function ActiveBanner({
             </p>
           )}
           <div className="mt-1.5 flex flex-wrap gap-1.5">
-            <Chip bg={chipBg} fg={fg}>{t(labelForLayout(theme.layout))}</Chip>
-            <Chip bg={chipBg} fg={fg}>{t(labelForCard(theme.cardStyle))}</Chip>
-            {theme.bokeh && <Chip bg={chipBg} fg={fg}>{t("Bokeh")}</Chip>}
+            <Chip bg={chipBg} fg={fg}>
+              {t(labelForLayout(theme.layout))}
+            </Chip>
+            <Chip bg={chipBg} fg={fg}>
+              {t(labelForCard(theme.cardStyle))}
+            </Chip>
+            {theme.bokeh && (
+              <Chip bg={chipBg} fg={fg}>
+                {t("Bokeh")}
+              </Chip>
+            )}
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-2">
@@ -191,15 +203,7 @@ function labelForCard(c?: string): string {
   }
 }
 
-function Chip({
-  children,
-  bg,
-  fg,
-}: {
-  children: React.ReactNode;
-  bg?: string;
-  fg?: string;
-}) {
+function Chip({ children, bg, fg }: { children: React.ReactNode; bg?: string; fg?: string }) {
   return (
     <span
       className="rounded-[3px] px-2 py-0.5 text-[10.5px] font-semibold uppercase tracking-[0.14em]"

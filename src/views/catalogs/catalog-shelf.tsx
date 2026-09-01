@@ -26,7 +26,10 @@ export function CatalogShelf({ catalog }: { catalog: BrowseCatalog }) {
     const load = () => {
       if (startedRef.current) return;
       startedRef.current = true;
-      void browseFetcher(catalog, null)(1)
+      void browseFetcher(
+        catalog,
+        null,
+      )(1)
         .then((list) => {
           setItems(list);
           loadedRef.current = list.length;

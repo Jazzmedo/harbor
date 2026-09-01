@@ -109,11 +109,15 @@ const rails: Record<string, string> = {
   "Show me more like this": "Hiển thị thêm nội dung tương tự",
   "Show me less like this": "Hiển thị ít nội dung tương tự hơn",
   "Tune your recommendations": "Điều chỉnh đề xuất",
-  "Thumbs down hides this title from Featured. Thumbs up helps surface similar picks.": "Không thích sẽ ẩn tựa phim này khỏi mục Nổi bật. Thích sẽ giúp hiển thị các lựa chọn tương tự.",
+  "Thumbs down hides this title from Featured. Thumbs up helps surface similar picks.":
+    "Không thích sẽ ẩn tựa phim này khỏi mục Nổi bật. Thích sẽ giúp hiển thị các lựa chọn tương tự.",
   "Your addons": "Tiện ích bổ sung của bạn",
-  "What each addon is actually serving up right now.": "Nội dung mà từng tiện ích bổ sung thực sự cung cấp lúc này.",
-  "This addon provides streams only. It has no catalog to browse, but it still works behind every title you open.": "Tiện ích bổ sung này chỉ cung cấp luồng phát. Không có danh mục để duyệt, nhưng vẫn hoạt động với mọi tựa phim bạn mở.",
-  "This catalog came back empty. Try another one, or check the addon in Settings.": "Danh mục này không có nội dung. Hãy thử danh mục khác hoặc kiểm tra tiện ích bổ sung trong Cài đặt.",
+  "What each addon is actually serving up right now.":
+    "Nội dung mà từng tiện ích bổ sung thực sự cung cấp lúc này.",
+  "This addon provides streams only. It has no catalog to browse, but it still works behind every title you open.":
+    "Tiện ích bổ sung này chỉ cung cấp luồng phát. Không có danh mục để duyệt, nhưng vẫn hoạt động với mọi tựa phim bạn mở.",
+  "This catalog came back empty. Try another one, or check the addon in Settings.":
+    "Danh mục này không có nội dung. Hãy thử danh mục khác hoặc kiểm tra tiện ích bổ sung trong Cài đặt.",
 };
 
 export default rails;

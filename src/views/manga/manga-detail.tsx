@@ -3,15 +3,7 @@ import { UiIcon } from "@/components/ui-icon";
 import { PopIcon } from "@/components/pop-icon";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CoverImg } from "@/components/cover-img";
-import {
-  Award,
-  BookOpen,
-  ChevronLeft,
-  Flame,
-  RotateCcw,
-  Sparkles,
-  Star,
-} from "lucide-react";
+import { Award, BookOpen, ChevronLeft, Flame, RotateCcw, Sparkles, Star } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 const COLLECTION_ICON: Record<string, LucideIcon> = {

@@ -103,11 +103,18 @@ async function optimize(
     dim = Math.max(MIN_DIM, Math.round(dim * 0.82));
   }
   if (!out) return null;
-  return { file: new File([out.blob], pngName(name), { type: "image/png" }), width: out.w, height: out.h };
+  return {
+    file: new File([out.blob], pngName(name), { type: "image/png" }),
+    width: out.w,
+    height: out.h,
+  };
 }
 
 export async function cleanPng(file: File): Promise<CleanPngResult> {
-  const head = await file.slice(0, 8).arrayBuffer().catch(() => null);
+  const head = await file
+    .slice(0, 8)
+    .arrayBuffer()
+    .catch(() => null);
   const gif = !!head && isGif(head);
   const url = URL.createObjectURL(file);
   try {
@@ -124,31 +131,55 @@ export async function cleanPng(file: File): Promise<CleanPngResult> {
         } else {
           preview = img ? previewFrom(img) : await fileToDataUrl(file).catch(() => "");
         }
-        if (preview) return { ok: true, icon: { file: asGif(file), preview, width, height, optimized: false } };
+        if (preview)
+          return {
+            ok: true,
+            icon: { file: asGif(file), preview, width, height, optimized: false },
+          };
       }
       if (img) {
         const opt = await optimize(img, file.name);
         if (opt)
           return {
             ok: true,
-            icon: { file: opt.file, preview: previewFrom(img), width: opt.width, height: opt.height, optimized: true, flattened: true },
+            icon: {
+              file: opt.file,
+              preview: previewFrom(img),
+              width: opt.width,
+              height: opt.height,
+              optimized: true,
+              flattened: true,
+            },
           };
       }
       return { ok: false, error: t("could not be optimized") };
     }
 
-    if (!img || !img.naturalWidth || !img.naturalHeight) return { ok: false, error: t("is not an image we can read") };
+    if (!img || !img.naturalWidth || !img.naturalHeight)
+      return { ok: false, error: t("is not an image we can read") };
 
     const preview = previewFrom(img);
     const isPng = !!head && hasPngMagic(head);
     const oversizeDim = img.naturalWidth > MAX_DIM || img.naturalHeight > MAX_DIM;
     const oversizeBytes = file.size > MAX_BYTES;
     if (isPng && !oversizeDim && !oversizeBytes) {
-      return { ok: true, icon: { file, preview, width: img.naturalWidth, height: img.naturalHeight, optimized: false } };
+      return {
+        ok: true,
+        icon: {
+          file,
+          preview,
+          width: img.naturalWidth,
+          height: img.naturalHeight,
+          optimized: false,
+        },
+      };
     }
     const opt = await optimize(img, file.name);
     if (!opt) return { ok: false, error: t("could not be optimized") };
-    return { ok: true, icon: { file: opt.file, preview, width: opt.width, height: opt.height, optimized: true } };
+    return {
+      ok: true,
+      icon: { file: opt.file, preview, width: opt.width, height: opt.height, optimized: true },
+    };
   } finally {
     URL.revokeObjectURL(url);
   }

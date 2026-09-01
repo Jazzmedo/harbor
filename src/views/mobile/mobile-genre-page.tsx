@@ -142,7 +142,9 @@ function GenreHeader({ label, onBack }: { label: string; onBack: () => void }) {
             {label}
           </h1>
           <p className="max-w-md text-[13.5px] leading-relaxed text-ink-muted">
-            {t("The best {genre} movies and shows, updated constantly.", { genre: label.toLowerCase() })}
+            {t("The best {genre} movies and shows, updated constantly.", {
+              genre: label.toLowerCase(),
+            })}
           </p>
         </div>
       </div>
@@ -158,7 +160,9 @@ function GenreEmpty({ label }: { label: string }) {
         <Film size={26} strokeWidth={1.8} />
       </span>
       <div className="flex flex-col gap-1.5">
-        <h2 className="font-display text-[19px] font-medium text-ink">{t("Nothing to show yet")}</h2>
+        <h2 className="font-display text-[19px] font-medium text-ink">
+          {t("Nothing to show yet")}
+        </h2>
         <p className="max-w-xs text-[13.5px] leading-relaxed text-ink-muted">
           {t("No {genre} titles to show right now. Try switching between Movies and TV Shows.", {
             genre: label.toLowerCase(),

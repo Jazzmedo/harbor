@@ -21,10 +21,12 @@ export function AnimeAwardsBlock({ name, year }: { name: string; year?: number }
   return (
     <div id="anime-awards-section" className="scroll-mt-24 border-t border-edge-soft pt-14">
       <div className="mb-10 flex items-baseline justify-between gap-4">
-        <h3 className="text-[24px] font-medium tracking-tight text-ink">{t("Anime Awards & Recognition")}</h3>
+        <h3 className="text-[24px] font-medium tracking-tight text-ink">
+          {t("Anime Awards & Recognition")}
+        </h3>
         <span className="text-[12px] font-semibold uppercase tracking-[0.16em] text-ink-subtle">
-          <span className="text-accent">{totalWins}</span> {totalWins === 1 ? t("Win") : t("Wins")} ·{" "}
-          {groups.length} {groups.length === 1 ? t("ceremony") : t("ceremonies")}
+          <span className="text-accent">{totalWins}</span> {totalWins === 1 ? t("Win") : t("Wins")}{" "}
+          · {groups.length} {groups.length === 1 ? t("ceremony") : t("ceremonies")}
         </span>
       </div>
       <div className="flex flex-col gap-14">
@@ -71,7 +73,8 @@ function SourceGroup({ source, wins }: { source: AwardSourceId; wins: AwardWin[]
             />
           </button>
           <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-ink-subtle">
-            <span className="text-accent">{wins.length}</span> {wins.length === 1 ? t("Win") : t("Wins")}
+            <span className="text-accent">{wins.length}</span>{" "}
+            {wins.length === 1 ? t("Win") : t("Wins")}
           </p>
           {years.length > 0 && (
             <p className="mt-1 text-[11px] font-medium tabular-nums text-ink-subtle/80">

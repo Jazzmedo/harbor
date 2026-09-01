@@ -2,10 +2,7 @@ import { useState } from "react";
 import { ExternalLink, Loader2 } from "lucide-react";
 import { DiscordIcon } from "@/components/discord-icon";
 import { linkDiscord, unlinkDiscord } from "@/lib/account/discord-link";
-import {
-  accountErrorMessage,
-  type AccountErrorMessage,
-} from "@/lib/account/error-messages";
+import { accountErrorMessage, type AccountErrorMessage } from "@/lib/account/error-messages";
 import { canDiscordAuth } from "@/lib/discord-auth";
 import type { Author } from "@/lib/theme-auth";
 import { useT } from "@/lib/i18n";

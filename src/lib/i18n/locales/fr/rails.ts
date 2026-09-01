@@ -87,11 +87,14 @@ const rails: Record<string, string> = {
   "Spring Awakening": "L’Éveil du printemps",
   "Summer Blockbusters": "Blockbusters de l’été",
   "Sword & Sorcery": "Épée et sorcellerie",
-  "This addon provides streams only. It has no catalog to browse, but it still works behind every title you open.": "Cette extension fournit uniquement des flux. Elle ne propose aucun catalogue à parcourir, mais fonctionne tout de même pour chaque titre que vous ouvrez.",
+  "This addon provides streams only. It has no catalog to browse, but it still works behind every title you open.":
+    "Cette extension fournit uniquement des flux. Elle ne propose aucun catalogue à parcourir, mais fonctionne tout de même pour chaque titre que vous ouvrez.",
   "This Afternoon": "Cet après-midi",
-  "This catalog came back empty. Try another one, or check the addon in Settings.": "Ce catalogue est vide. Essayez-en un autre ou vérifiez l’extension dans les Paramètres.",
+  "This catalog came back empty. Try another one, or check the addon in Settings.":
+    "Ce catalogue est vide. Essayez-en un autre ou vérifiez l’extension dans les Paramètres.",
   "This Morning": "Ce matin",
-  "Thumbs down hides this title from Featured. Thumbs up helps surface similar picks.": "Un pouce vers le bas masque ce titre dans À la une. Un pouce vers le haut aide à proposer des titres similaires.",
+  "Thumbs down hides this title from Featured. Thumbs up helps surface similar picks.":
+    "Un pouce vers le bas masque ce titre dans À la une. Un pouce vers le haut aide à proposer des titres similaires.",
   "Top 10 Comedy": "Top 10 des comédies",
   "Top 10 Drama": "Top 10 des drames",
   "Top 10 on Stremio": "Top 10 sur Stremio",
@@ -112,7 +115,8 @@ const rails: Record<string, string> = {
   "Upcoming Anime": "Anime à venir",
   "Upcoming Season": "Saison à venir",
   "War Stories": "Récits de guerre",
-  "What each addon is actually serving up right now.": "Ce que chaque extension propose réellement en ce moment.",
+  "What each addon is actually serving up right now.":
+    "Ce que chaque extension propose réellement en ce moment.",
 };
 
 export default rails;

@@ -5,10 +5,7 @@ import { SFX } from "@/lib/sfx";
 import { useSettings } from "@/lib/settings";
 import { useBpT } from "@/views/big-picture/bp-i18n";
 import { advanceBpOnboardRing } from "../bp-onboard-ring";
-import {
-  BP_ROW_FLUSH,
-  BpDecisionScroll,
-} from "../bp-step-parts";
+import { BP_ROW_FLUSH, BpDecisionScroll } from "../bp-step-parts";
 
 const ROW_SCOPE = { ...BP_ROW_FLUSH, containIntrinsicSize: "auto 96px" } as const;
 

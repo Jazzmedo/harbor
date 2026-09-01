@@ -28,7 +28,6 @@ type AwardError =
 
 type ImportSummary = { matched: number; skipped: number };
 
-
 function mimeFor(name: string): string {
   const ext = (name.split(".").pop() || "").toLowerCase();
   if (ext === "jpg" || ext === "jfif") return "image/jpeg";
@@ -136,7 +135,9 @@ export function AwardIconsPanel() {
       await installPackFromUrl(url.trim());
       setUrl("");
     } catch (e) {
-      setErr(e instanceof Error ? { kind: "remote", message: e.message } : { kind: "install-failed" });
+      setErr(
+        e instanceof Error ? { kind: "remote", message: e.message } : { kind: "install-failed" },
+      );
     } finally {
       setBusy(false);
     }
@@ -156,7 +157,9 @@ export function AwardIconsPanel() {
         const r = await installPackFromZip(file);
         setImportSummary({ matched: r.matched, skipped: r.unmatched.length });
       } catch (e) {
-        setErr(e instanceof Error ? { kind: "remote", message: e.message } : { kind: "import-failed" });
+        setErr(
+          e instanceof Error ? { kind: "remote", message: e.message } : { kind: "import-failed" },
+        );
       } finally {
         setBusy(false);
       }
@@ -179,7 +182,9 @@ export function AwardIconsPanel() {
         const r = await installPackFromFiles(files);
         setImportSummary({ matched: r.matched, skipped: r.unmatched.length });
       } catch (e) {
-        setErr(e instanceof Error ? { kind: "remote", message: e.message } : { kind: "import-failed" });
+        setErr(
+          e instanceof Error ? { kind: "remote", message: e.message } : { kind: "import-failed" },
+        );
       } finally {
         setBusy(false);
       }
@@ -360,7 +365,9 @@ export function AwardIconsPanel() {
             </button>
           </div>
           <span className="text-[12.5px] leading-relaxed text-ink-subtle">
-            {t("Name each file after its award ID. Harbor resizes them and skips anything it cannot match.")}
+            {t(
+              "Name each file after its award ID. Harbor resizes them and skips anything it cannot match.",
+            )}
           </span>
         </div>
 
@@ -393,7 +400,7 @@ export function AwardIconsPanel() {
           <p className="font-semibold text-ink">{t("Or just zip up images")}</p>
           <p>
             {t(
-              "Name each image file after its award ID and put them in a .zip, then use \"Import a .zip pack\" above. No JSON, no hosting needed. Harbor matches each file to its award, stores it locally, resizes it, and skips anything it doesn't recognize.",
+              'Name each image file after its award ID and put them in a .zip, then use "Import a .zip pack" above. No JSON, no hosting needed. Harbor matches each file to its award, stores it locally, resizes it, and skips anything it doesn\'t recognize.',
             )}
           </p>
           <pre className="overflow-x-auto rounded-md bg-canvas p-3 text-[12.5px] text-ink">{`my-pack.zip

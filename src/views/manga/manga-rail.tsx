@@ -112,7 +112,9 @@ export function MangaRail({
         hideKey={hideKey}
         title={title}
         leading={leading}
-        trailing={subtitle ? <span className="text-[13px] text-ink-subtle">{subtitle}</span> : undefined}
+        trailing={
+          subtitle ? <span className="text-[13px] text-ink-subtle">{subtitle}</span> : undefined
+        }
       >
         {row}
       </CollapsibleSection>

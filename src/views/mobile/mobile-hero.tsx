@@ -19,12 +19,17 @@ function upsize(url?: string): string | undefined {
   return url.replace(/\/t\/p\/w\d+\//, "/t/p/w1280/");
 }
 
-
 function prefersReduced(): boolean {
   return !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 }
 
-export function MobileHero({ slides, onOpenDetail }: { slides: Meta[]; onOpenDetail?: (m: Meta) => void }) {
+export function MobileHero({
+  slides,
+  onOpenDetail,
+}: {
+  slides: Meta[];
+  onOpenDetail?: (m: Meta) => void;
+}) {
   const t = useT();
   const { settings } = useSettings();
   const { openOnHost, playOnHost } = useMobileRemote();
@@ -117,13 +122,13 @@ export function MobileHero({ slides, onOpenDetail }: { slides: Meta[]; onOpenDet
 
   const bgOf = (i: number): string | undefined => {
     const m = shown[i];
-    return m ? upsize(m.background) ?? m.poster : undefined;
+    return m ? (upsize(m.background) ?? m.poster) : undefined;
   };
 
   const safeActive = active < shown.length ? active : 0;
   const current = shown[safeActive];
   const target = slots[front] < shown.length ? slots[front] : 0;
-  const logo = current ? logos[current.id] ?? current.logo : undefined;
+  const logo = current ? (logos[current.id] ?? current.logo) : undefined;
   const year = (current?.releaseInfo ?? "").slice(0, 4);
   const inWl = useInWatchlist(current?.id);
 
@@ -177,7 +182,9 @@ export function MobileHero({ slides, onOpenDetail }: { slides: Meta[]; onOpenDet
             style={{
               opacity: textOn ? 1 : 0,
               transform: textOn ? "translateY(0)" : "translateY(8px)",
-              transition: reduce ? "none" : `opacity ${TEXT_MS}ms ease, transform ${TEXT_MS}ms ease`,
+              transition: reduce
+                ? "none"
+                : `opacity ${TEXT_MS}ms ease, transform ${TEXT_MS}ms ease`,
             }}
           >
             <span className="inline-flex items-center gap-1.5 self-start rounded-md bg-black/45 px-2.5 py-1 text-[11.5px] font-semibold text-white backdrop-blur-md">
@@ -205,7 +212,9 @@ export function MobileHero({ slides, onOpenDetail }: { slides: Meta[]; onOpenDet
               )}
               {current.genres?.[0] && <span className="text-white/70">{current.genres[0]}</span>}
             </div>
-            <div className={`mt-1 flex items-center gap-2.5 ${textOn ? "pointer-events-auto" : "pointer-events-none"}`}>
+            <div
+              className={`mt-1 flex items-center gap-2.5 ${textOn ? "pointer-events-auto" : "pointer-events-none"}`}
+            >
               <button
                 type="button"
                 onClick={() => playOnHost(current)}
@@ -229,7 +238,11 @@ export function MobileHero({ slides, onOpenDetail }: { slides: Meta[]; onOpenDet
                 }
                 className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border border-white/25 bg-black/35 text-white backdrop-blur-sm transition-transform duration-150 active:scale-[0.94]"
               >
-                {inWl ? <Check size={20} strokeWidth={2.6} className="text-accent" /> : <Plus size={21} strokeWidth={2.2} />}
+                {inWl ? (
+                  <Check size={20} strokeWidth={2.6} className="text-accent" />
+                ) : (
+                  <Plus size={21} strokeWidth={2.2} />
+                )}
               </button>
               <button
                 type="button"

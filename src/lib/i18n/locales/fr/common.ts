@@ -1,7 +1,8 @@
 const common: Record<string, string> = {
   "+{n} ep": "+{n} ép.",
   "+{n} more": "+{n} de plus",
-  "A quick age check before adult add-ons unlock. Answer three everyday questions any adult would know, and you're in.": "Une vérification rapide de l’âge avant de déverrouiller les extensions pour adultes. Répondez à trois questions courantes dont tout adulte connaît la réponse pour y accéder.",
+  "A quick age check before adult add-ons unlock. Answer three everyday questions any adult would know, and you're in.":
+    "Une vérification rapide de l’âge avant de déverrouiller les extensions pour adultes. Répondez à trois questions courantes dont tout adulte connaît la réponse pour y accéder.",
   "Clear search": "Effacer la recherche",
   "Copied to clipboard": "Copié dans le presse-papiers",
   "Copy link": "Copier le lien",
@@ -27,7 +28,8 @@ const common: Record<string, string> = {
   "Show more": "Afficher plus",
   "Sign in": "Se connecter",
   "Sign out": "Se déconnecter",
-  "That's not it. Try a fresh round in a moment.": "Ce n’est pas ça. Réessayez avec une nouvelle sélection dans un instant.",
+  "That's not it. Try a fresh round in a moment.":
+    "Ce n’est pas ça. Réessayez avec une nouvelle sélection dans un instant.",
   "Try again": "Réessayer",
   "You're verified": "Votre compte est vérifié",
   "{count} dl": "{count} tél.",

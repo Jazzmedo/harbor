@@ -4,7 +4,14 @@ import { useT } from "@/lib/i18n";
 import type { LearnTopic } from "./learn-types";
 import { saveStars } from "./learn-types";
 
-const CONFETTI_ART = ["lilbluewhale", "liloctored", "lilpurpocto", "lilorangestar2", "lilpurplestar", "lilwhale1"];
+const CONFETTI_ART = [
+  "lilbluewhale",
+  "liloctored",
+  "lilpurpocto",
+  "lilorangestar2",
+  "lilpurplestar",
+  "lilwhale1",
+];
 
 export function QuizView({ topic, onDone }: { topic: LearnTopic; onDone: () => void }) {
   const t = useT();
@@ -59,7 +66,10 @@ export function QuizView({ topic, onDone }: { topic: LearnTopic; onDone: () => v
             alt=""
             draggable={false}
             className="pointer-events-none absolute top-[-40px] w-9"
-            style={{ left: `${c.left}%`, animation: `kid-confetti-fall 2.6s ease-in ${c.delay}s infinite` }}
+            style={{
+              left: `${c.left}%`,
+              animation: `kid-confetti-fall 2.6s ease-in ${c.delay}s infinite`,
+            }}
           />
         ))}
         <div className="kids-card flex flex-col items-center gap-4 rounded-[32px] border-4 border-[#ffd166] bg-white/95 px-14 py-12 text-center">

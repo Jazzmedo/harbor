@@ -13,7 +13,15 @@ function hostLabel(raw: string | undefined): string | null {
   return trimmed;
 }
 
-export function RendererSheet({ open, onClose, title = "Play on" }: { open: boolean; onClose: () => void; title?: string }) {
+export function RendererSheet({
+  open,
+  onClose,
+  title = "Play on",
+}: {
+  open: boolean;
+  onClose: () => void;
+  title?: string;
+}) {
   const t = useT();
   const { snapshot, sendCommand } = useMobileRemote();
   const { render, leaving } = useSheetPresence(open);
@@ -27,7 +35,8 @@ export function RendererSheet({ open, onClose, title = "Play on" }: { open: bool
 
   const target = snapshot.target;
   const localActive = target.kind === "local";
-  const localName = hostLabel(target.kind === "local" ? target.label : undefined) ?? t("This Harbor");
+  const localName =
+    hostLabel(target.kind === "local" ? target.label : undefined) ?? t("This Harbor");
 
   return (
     <div
@@ -43,7 +52,9 @@ export function RendererSheet({ open, onClose, title = "Play on" }: { open: bool
         <div className="mx-auto mt-3 h-1 w-10 rounded-full bg-ink/20" />
         <div className="flex items-center justify-between px-5 pb-2 pt-4">
           <h3 className="text-[16px] font-semibold text-ink">{t(title)}</h3>
-          {snapshot.castDiscovering && <span className="text-[12px] text-ink-subtle">{t("Scanning…")}</span>}
+          {snapshot.castDiscovering && (
+            <span className="text-[12px] text-ink-subtle">{t("Scanning…")}</span>
+          )}
         </div>
         <div className="flex flex-col px-2 pb-2">
           <SectionLabel>Harbor</SectionLabel>
@@ -111,12 +122,18 @@ function DeviceRow({
       onClick={onSelect}
       className="flex items-center gap-3.5 rounded-2xl px-4 py-3 text-start transition-colors active:bg-raised/60"
     >
-      <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${active ? "bg-accent-soft text-accent" : "bg-raised text-ink-muted"}`}>
+      <span
+        className={`flex h-10 w-10 items-center justify-center rounded-xl ${active ? "bg-accent-soft text-accent" : "bg-raised text-ink-muted"}`}
+      >
         {icon}
       </span>
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="flex items-center gap-2">
-          <span className={`truncate text-[15px] font-semibold ${active ? "text-accent" : "text-ink"}`}>{name}</span>
+          <span
+            className={`truncate text-[15px] font-semibold ${active ? "text-accent" : "text-ink"}`}
+          >
+            {name}
+          </span>
           {badge && (
             <span className="shrink-0 rounded-md bg-raised px-1.5 py-0.5 text-[10.5px] font-semibold text-ink-subtle">
               {badge}

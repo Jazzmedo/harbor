@@ -77,55 +77,80 @@ export function PickerEmptyLadder({
           action={{ label: t("Open Library settings"), onClick: onOpenLibrarySettings }}
         />
       )}
-      {addonsSettled && streamIds && streamIds.length > 0 && debridCount === 0 && allCount === 0 && (
-        <EmptyState
-          message={t(
-            "No playable streams turned up, and no debrid is configured. Real-Debrid, TorBox, AllDebrid, Premiumize, or Debrid-Link will unlock raw torrent results. Some addons bake debrid in (Sootio, Comet/ElfHosted, MediaFusion/ElfHosted) and play without your own keys.",
-          )}
-          action={{ label: t("Set up a debrid"), onClick: onOpenStreamingSettings }}
-        />
-      )}
-      {addonsSettled && streamIds && streamIds.length > 0 && allCount === 0 && debridCount > 0 && rawCount === 0 && (
-        <NoSourcesState
-          addonCount={addonCount}
-          streamIds={streamIds}
-          isAnime={meta.id.startsWith("kitsu:") || meta.id.startsWith("mal:")}
-        />
-      )}
-      {addonsSettled && streamIds && streamIds.length > 0 && allCount === 0 && debridCount > 0 && rawCount > 0 && isStillInTheatres && (
-        <TheatresEmptyState
-          meta={meta}
-          onShowAll={onShowAll}
-          showingAll={forceShowAll}
-        />
-      )}
-      {addonsSettled && streamIds && streamIds.length > 0 && allCount === 0 && debridCount > 0 && rawCount > 0 && !isStillInTheatres && (
-        <FilteredOutState
-          rawCount={rawCount}
-          rejected={result?.rejected ?? []}
-          strictMode={strictMode || !forceShowAll}
-          onSearchWider={onSearchWider}
-        />
-      )}
+      {addonsSettled &&
+        streamIds &&
+        streamIds.length > 0 &&
+        debridCount === 0 &&
+        allCount === 0 && (
+          <EmptyState
+            message={t(
+              "No playable streams turned up, and no debrid is configured. Real-Debrid, TorBox, AllDebrid, Premiumize, or Debrid-Link will unlock raw torrent results. Some addons bake debrid in (Sootio, Comet/ElfHosted, MediaFusion/ElfHosted) and play without your own keys.",
+            )}
+            action={{ label: t("Set up a debrid"), onClick: onOpenStreamingSettings }}
+          />
+        )}
+      {addonsSettled &&
+        streamIds &&
+        streamIds.length > 0 &&
+        allCount === 0 &&
+        debridCount > 0 &&
+        rawCount === 0 && (
+          <NoSourcesState
+            addonCount={addonCount}
+            streamIds={streamIds}
+            isAnime={meta.id.startsWith("kitsu:") || meta.id.startsWith("mal:")}
+          />
+        )}
+      {addonsSettled &&
+        streamIds &&
+        streamIds.length > 0 &&
+        allCount === 0 &&
+        debridCount > 0 &&
+        rawCount > 0 &&
+        isStillInTheatres && (
+          <TheatresEmptyState meta={meta} onShowAll={onShowAll} showingAll={forceShowAll} />
+        )}
+      {addonsSettled &&
+        streamIds &&
+        streamIds.length > 0 &&
+        allCount === 0 &&
+        debridCount > 0 &&
+        rawCount > 0 &&
+        !isStillInTheatres && (
+          <FilteredOutState
+            rawCount={rawCount}
+            rejected={result?.rejected ?? []}
+            strictMode={strictMode || !forceShowAll}
+            onSearchWider={onSearchWider}
+          />
+        )}
 
       {pipelineDone && allCount > 0 && allCount <= 2 && (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-300/30 bg-amber-300/[0.06] px-5 py-3.5 text-[13px] text-ink">
           <div className="flex min-w-0 flex-1 flex-col">
             <p className="font-semibold text-amber-200">
-              {allCount === 1 ? t("Only 1 source after filtering") : t("Only 2 sources after filtering")}
+              {allCount === 1
+                ? t("Only 1 source after filtering")
+                : t("Only 2 sources after filtering")}
             </p>
             <p className="text-[12.5px] leading-snug text-ink-muted">
               {allCount === 1
                 ? t(
                     "Clean releases for this title haven't surfaced yet. The result below may not match the title you're looking for, so confirm the filename and size before playing.",
                   )
-                : t("Clean releases for this title are still scarce. Confirm the filename and size before playing.")}
+                : t(
+                    "Clean releases for this title are still scarce. Confirm the filename and size before playing.",
+                  )}
               {rawCount - allCount > 0 && !forceShowAll && (
                 <>
                   {" "}
                   {rawCount - allCount === 1
-                    ? t("Harbor dropped {n} suspicious or mismatched result.", { n: rawCount - allCount })
-                    : t("Harbor dropped {n} suspicious or mismatched results.", { n: rawCount - allCount })}
+                    ? t("Harbor dropped {n} suspicious or mismatched result.", {
+                        n: rawCount - allCount,
+                      })
+                    : t("Harbor dropped {n} suspicious or mismatched results.", {
+                        n: rawCount - allCount,
+                      })}
                 </>
               )}
             </p>

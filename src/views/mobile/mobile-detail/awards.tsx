@@ -123,13 +123,17 @@ function AwardEntryRow({ entry }: { entry: AwardEntry }) {
   const recipients = entry.recipients ?? (entry.recipient ? [entry.recipient] : []);
   return (
     <li className="flex items-baseline gap-3 border-t border-edge-soft/30 py-2 text-[12.5px] first:border-t-0">
-      <span className={`w-9 shrink-0 font-semibold tabular-nums ${won ? "text-accent" : "text-ink-subtle"}`}>
+      <span
+        className={`w-9 shrink-0 font-semibold tabular-nums ${won ? "text-accent" : "text-ink-subtle"}`}
+      >
         {entry.year ?? "-"}
       </span>
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="leading-tight text-ink">{entry.category}</span>
         {recipients.length > 0 && (
-          <span className="text-[11.5px] leading-tight text-ink-subtle">{recipients.join(", ")}</span>
+          <span className="text-[11.5px] leading-tight text-ink-subtle">
+            {recipients.join(", ")}
+          </span>
         )}
       </div>
       {!won && (

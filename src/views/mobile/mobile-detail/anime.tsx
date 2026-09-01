@@ -27,7 +27,9 @@ export function CharactersRow({ characters }: { characters: AnimeCharacter[] }) 
   return (
     <section className="flex flex-col gap-3.5">
       <SectionTitle>{t("Characters")}</SectionTitle>
-      <div className={`-mx-5 flex snap-x snap-proximity gap-3.5 overflow-x-auto px-5 ${HIDE_SCROLL}`}>
+      <div
+        className={`-mx-5 flex snap-x snap-proximity gap-3.5 overflow-x-auto px-5 ${HIDE_SCROLL}`}
+      >
         {characters.map((c) => (
           <CharacterChip key={c.id} character={c} />
         ))}
@@ -39,11 +41,19 @@ export function CharactersRow({ characters }: { characters: AnimeCharacter[] }) 
 function CharacterChip({ character }: { character: AnimeCharacter }) {
   return (
     <div className="flex w-[88px] shrink-0 snap-start flex-col gap-2">
-      <Poster src={character.image} seed={String(character.id)} ratio="portrait" lazy className="rounded-xl" />
+      <Poster
+        src={character.image}
+        seed={String(character.id)}
+        ratio="portrait"
+        lazy
+        className="rounded-xl"
+      />
       <div className="flex flex-col gap-0.5">
         <p className="line-clamp-1 text-[12.5px] font-medium text-ink">{character.name}</p>
         {character.role && (
-          <p className="line-clamp-1 text-[11.5px] leading-tight text-ink-subtle">{character.role}</p>
+          <p className="line-clamp-1 text-[11.5px] leading-tight text-ink-subtle">
+            {character.role}
+          </p>
         )}
         {character.favourites ? (
           <span className="inline-flex items-center gap-1 text-[11px] leading-tight text-ink-subtle">
@@ -86,7 +96,11 @@ function RelatedCard({
   onOpen?: (node: AnilistRelatedNode) => void;
 }) {
   const t = useT();
-  const meta = [node.format, node.year ? String(node.year) : undefined, node.rating ? `★ ${node.rating}` : undefined]
+  const meta = [
+    node.format,
+    node.year ? String(node.year) : undefined,
+    node.rating ? `★ ${node.rating}` : undefined,
+  ]
     .filter(Boolean)
     .join(" · ");
   const Wrap: "button" | "div" = onOpen ? "button" : "div";
@@ -95,7 +109,9 @@ function RelatedCard({
     <Wrap
       {...wrapProps}
       className={`flex w-[104px] shrink-0 snap-start flex-col gap-2 text-start ${
-        onOpen ? "transition-transform active:scale-[0.97] motion-reduce:transition-none" : "cursor-default"
+        onOpen
+          ? "transition-transform active:scale-[0.97] motion-reduce:transition-none"
+          : "cursor-default"
       }`}
     >
       <Poster
@@ -115,7 +131,9 @@ function RelatedCard({
         )}
       </Poster>
       <div className="flex flex-col gap-0.5">
-        <p className="line-clamp-2 text-[12px] font-medium leading-tight text-ink-muted">{node.title}</p>
+        <p className="line-clamp-2 text-[12px] font-medium leading-tight text-ink-muted">
+          {node.title}
+        </p>
         {meta && <p className="text-[11px] leading-tight text-ink-subtle">{meta}</p>}
       </div>
     </Wrap>
@@ -137,7 +155,9 @@ export function AnimeInfo({
   const studios = anilist?.studios.length
     ? anilist.studios.slice(0, 3).join(", ")
     : detail?.productionCompanies.slice(0, 3).join(", ");
-  const episodes = anilist?.episodes ?? (detail && detail.numberOfEpisodes > 0 ? detail.numberOfEpisodes : undefined);
+  const episodes =
+    anilist?.episodes ??
+    (detail && detail.numberOfEpisodes > 0 ? detail.numberOfEpisodes : undefined);
   const format = detail ? (detail.kind === "movie" ? t("Movie") : t("TV Series")) : undefined;
   const genres = detail?.genres.length ? detail.genres.join(", ") : undefined;
 
@@ -148,7 +168,8 @@ export function AnimeInfo({
   if (anilist?.source) rows.push({ label: t("Source"), value: anilist.source });
   if (studios) rows.push({ label: t("Studio"), value: studios });
   if (malRating) rows.push({ label: t("MAL Score"), value: `★ ${malRating}` });
-  if (anilist?.favourites) rows.push({ label: t("AniList Favorites"), value: formatCount(anilist.favourites) });
+  if (anilist?.favourites)
+    rows.push({ label: t("AniList Favorites"), value: formatCount(anilist.favourites) });
   if (genres) rows.push({ label: t("Genres"), value: genres });
 
   if (rows.length === 0) return null;
@@ -173,10 +194,21 @@ export function AnimeInfo({
 export function hasAnimeTitles(details: AnilistMediaDetails, primaryTitle: string): boolean {
   const p = primaryTitle.trim().toLowerCase();
   const diff = (v?: string) => !!v && v.trim().toLowerCase() !== p;
-  return diff(details.nativeTitle) || diff(details.romajiTitle) || diff(details.englishTitle) || details.synonyms.length > 0;
+  return (
+    diff(details.nativeTitle) ||
+    diff(details.romajiTitle) ||
+    diff(details.englishTitle) ||
+    details.synonyms.length > 0
+  );
 }
 
-export function AnimeTitles({ details, primaryTitle }: { details: AnilistMediaDetails; primaryTitle: string }) {
+export function AnimeTitles({
+  details,
+  primaryTitle,
+}: {
+  details: AnilistMediaDetails;
+  primaryTitle: string;
+}) {
   const t = useT();
   return (
     <section className="flex flex-col gap-3.5">

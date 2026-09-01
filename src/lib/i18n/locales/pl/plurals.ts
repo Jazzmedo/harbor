@@ -1,11 +1,17 @@
 // Polish uses singular (#one), paucal (#few), and the bare many form.
 const plurals: Record<string, string> = {
-  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.": "Dodać {n} tytułów z listy do obejrzenia Harbor do Trakt? Trakt pominie tytuły, które już ma.",
-  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.#one": "Dodać {n} tytuł z listy do obejrzenia Harbor do Trakt? Trakt pominie tytuł, który już ma.",
-  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.#few": "Dodać {n} tytuły z listy do obejrzenia Harbor do Trakt? Trakt pominie tytuły, które już ma.",
-  "Add {n} titles from your Trakt watchlist to Harbor?": "Dodać {n} tytułów z listy do obejrzenia Trakt do Harbor?",
-  "Add {n} titles from your Trakt watchlist to Harbor?#one": "Dodać {n} tytuł z listy do obejrzenia Trakt do Harbor?",
-  "Add {n} titles from your Trakt watchlist to Harbor?#few": "Dodać {n} tytuły z listy do obejrzenia Trakt do Harbor?",
+  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.":
+    "Dodać {n} tytułów z listy do obejrzenia Harbor do Trakt? Trakt pominie tytuły, które już ma.",
+  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.#one":
+    "Dodać {n} tytuł z listy do obejrzenia Harbor do Trakt? Trakt pominie tytuł, który już ma.",
+  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.#few":
+    "Dodać {n} tytuły z listy do obejrzenia Harbor do Trakt? Trakt pominie tytuły, które już ma.",
+  "Add {n} titles from your Trakt watchlist to Harbor?":
+    "Dodać {n} tytułów z listy do obejrzenia Trakt do Harbor?",
+  "Add {n} titles from your Trakt watchlist to Harbor?#one":
+    "Dodać {n} tytuł z listy do obejrzenia Trakt do Harbor?",
+  "Add {n} titles from your Trakt watchlist to Harbor?#few":
+    "Dodać {n} tytuły z listy do obejrzenia Trakt do Harbor?",
   "After {n} episodes": "Po {n} odcinkach",
   "After {n} episodes#one": "Gdy minie {n} odcinek",
   "After {n} episodes#few": "Po {n} odcinkach",
@@ -42,27 +48,42 @@ const plurals: Record<string, string> = {
   "Import {n} JavaScript sources": "Importuj {n} źródeł JavaScript",
   "Import {n} JavaScript sources#one": "Importuj {n} źródło JavaScript",
   "Import {n} JavaScript sources#few": "Importuj {n} źródła JavaScript",
-  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.": "Nie ma nic do wysłania. Wszystkie {n} pozycji z listy obserwowanych to anime, których Trakt nie może śledzić.",
-  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.#one": "Nie ma czego wysłać. Jedyna {n} pozycja na liście obserwowanych to anime, którego Trakt nie może śledzić.",
-  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.#few": "Nie ma czego wysłać. Wszystkie {n} pozycje na liście obserwowanych to anime, których Trakt nie może śledzić.",
-  "Remove this folder and its {n} items? Files on your disk are not deleted.": "Usunąć ten folder i należących do niego {n} elementów? Pliki na dysku nie zostaną usunięte.",
-  "Remove this folder and its {n} items? Files on your disk are not deleted.#one": "Usunąć ten folder i należący do niego {n} element? Pliki na dysku nie zostaną usunięte.",
-  "Remove this folder and its {n} items? Files on your disk are not deleted.#few": "Usunąć ten folder i należące do niego {n} elementy? Pliki na dysku nie zostaną usunięte.",
-  "Remove {n} items from your library? Files on your disk are not deleted.": "Usunąć {n} elementów z biblioteki? Pliki na dysku nie zostaną usunięte.",
-  "Remove {n} items from your library? Files on your disk are not deleted.#one": "Usunąć {n} element z biblioteki? Pliki na dysku nie zostaną usunięte.",
-  "Remove {n} items from your library? Files on your disk are not deleted.#few": "Usunąć {n} elementy z biblioteki? Pliki na dysku nie zostaną usunięte.",
+  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.":
+    "Nie ma nic do wysłania. Wszystkie {n} pozycji z listy obserwowanych to anime, których Trakt nie może śledzić.",
+  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.#one":
+    "Nie ma czego wysłać. Jedyna {n} pozycja na liście obserwowanych to anime, którego Trakt nie może śledzić.",
+  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.#few":
+    "Nie ma czego wysłać. Wszystkie {n} pozycje na liście obserwowanych to anime, których Trakt nie może śledzić.",
+  "Remove this folder and its {n} items? Files on your disk are not deleted.":
+    "Usunąć ten folder i należących do niego {n} elementów? Pliki na dysku nie zostaną usunięte.",
+  "Remove this folder and its {n} items? Files on your disk are not deleted.#one":
+    "Usunąć ten folder i należący do niego {n} element? Pliki na dysku nie zostaną usunięte.",
+  "Remove this folder and its {n} items? Files on your disk are not deleted.#few":
+    "Usunąć ten folder i należące do niego {n} elementy? Pliki na dysku nie zostaną usunięte.",
+  "Remove {n} items from your library? Files on your disk are not deleted.":
+    "Usunąć {n} elementów z biblioteki? Pliki na dysku nie zostaną usunięte.",
+  "Remove {n} items from your library? Files on your disk are not deleted.#one":
+    "Usunąć {n} element z biblioteki? Pliki na dysku nie zostaną usunięte.",
+  "Remove {n} items from your library? Files on your disk are not deleted.#few":
+    "Usunąć {n} elementy z biblioteki? Pliki na dysku nie zostaną usunięte.",
   "Rising · +{n} star in 24h": "Rosnące · +{n} gwiazdek w ciągu 24 godz.",
   "Rising · +{n} star in 24h#one": "Rosnące · +{n} gwiazdka w ciągu 24 godz.",
   "Rising · +{n} star in 24h#few": "Rosnące · +{n} gwiazdki w ciągu 24 godz.",
   "Rising · +{n} stars in 24h": "Rosnące · +{n} gwiazdek w ciągu 24 godz.",
   "Rising · +{n} stars in 24h#one": "Rosnące · +{n} gwiazdka w ciągu 24 godz.",
   "Rising · +{n} stars in 24h#few": "Rosnące · +{n} gwiazdki w ciągu 24 godz.",
-  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.": "Zapisano harbor-anime-diagnostics.txt ({n} wpisów). Prześlij nam ten plik.",
-  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.#one": "Zapisano harbor-anime-diagnostics.txt ({n} wpis). Prześlij nam ten plik.",
-  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.#few": "Zapisano harbor-anime-diagnostics.txt ({n} wpisy). Prześlij nam ten plik.",
-  "Saved {n} entries to {path}. Send us that file.": "Zapisano {n} wpisów w lokalizacji {path}. Prześlij nam ten plik.",
-  "Saved {n} entries to {path}. Send us that file.#one": "Zapisano {n} wpis w lokalizacji {path}. Prześlij nam ten plik.",
-  "Saved {n} entries to {path}. Send us that file.#few": "Zapisano {n} wpisy w lokalizacji {path}. Prześlij nam ten plik.",
+  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.":
+    "Zapisano harbor-anime-diagnostics.txt ({n} wpisów). Prześlij nam ten plik.",
+  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.#one":
+    "Zapisano harbor-anime-diagnostics.txt ({n} wpis). Prześlij nam ten plik.",
+  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.#few":
+    "Zapisano harbor-anime-diagnostics.txt ({n} wpisy). Prześlij nam ten plik.",
+  "Saved {n} entries to {path}. Send us that file.":
+    "Zapisano {n} wpisów w lokalizacji {path}. Prześlij nam ten plik.",
+  "Saved {n} entries to {path}. Send us that file.#one":
+    "Zapisano {n} wpis w lokalizacji {path}. Prześlij nam ten plik.",
+  "Saved {n} entries to {path}. Send us that file.#few":
+    "Zapisano {n} wpisy w lokalizacji {path}. Prześlij nam ten plik.",
   "Search {n} EPG channels": "Przeszukaj {n} kanałów EPG",
   "Search {n} EPG channels#one": "Przeszukaj {n} kanał EPG",
   "Search {n} EPG channels#few": "Przeszukaj {n} kanały EPG",
@@ -102,12 +123,18 @@ const plurals: Record<string, string> = {
   "{avg} avg · {n} rated": "śr. {avg} · {n} ocen",
   "{avg} avg · {n} rated#one": "{avg} śr. · oceniła {n} osoba",
   "{avg} avg · {n} rated#few": "{avg} śr. · oceniły {n} osoby",
-  "{count} community ratings on stremio-addons.net": "{count} ocen społeczności na stremio-addons.net",
-  "{count} community ratings on stremio-addons.net#one": "{count} ocena społeczności na stremio-addons.net",
-  "{count} community ratings on stremio-addons.net#few": "{count} oceny społeczności na stremio-addons.net",
-  "{count} films, in the order you picked them. Nothing plays until you start.": "{count} filmów w wybranej kolejności. Odtwarzanie rozpocznie się dopiero po uruchomieniu.",
-  "{count} films, in the order you picked them. Nothing plays until you start.#one": "{count} film w wybranej kolejności. Odtwarzanie rozpocznie się dopiero po uruchomieniu.",
-  "{count} films, in the order you picked them. Nothing plays until you start.#few": "{count} filmy w wybranej kolejności. Odtwarzanie rozpocznie się dopiero po uruchomieniu.",
+  "{count} community ratings on stremio-addons.net":
+    "{count} ocen społeczności na stremio-addons.net",
+  "{count} community ratings on stremio-addons.net#one":
+    "{count} ocena społeczności na stremio-addons.net",
+  "{count} community ratings on stremio-addons.net#few":
+    "{count} oceny społeczności na stremio-addons.net",
+  "{count} films, in the order you picked them. Nothing plays until you start.":
+    "{count} filmów w wybranej kolejności. Odtwarzanie rozpocznie się dopiero po uruchomieniu.",
+  "{count} films, in the order you picked them. Nothing plays until you start.#one":
+    "{count} film w wybranej kolejności. Odtwarzanie rozpocznie się dopiero po uruchomieniu.",
+  "{count} films, in the order you picked them. Nothing plays until you start.#few":
+    "{count} filmy w wybranej kolejności. Odtwarzanie rozpocznie się dopiero po uruchomieniu.",
   "{count} friends in common": "{count} wspólnych znajomych",
   "{count} friends in common#one": "{count} wspólny znajomy",
   "{count} friends in common#few": "{count} wspólnych znajomych",
@@ -123,9 +150,12 @@ const plurals: Record<string, string> = {
   "{n} addons": "{n} dodatków",
   "{n} addons#one": "{n} dodatek",
   "{n} addons#few": "{n} dodatki",
-  "{n} addons don't provide streams and aren't listed.": "{n} dodatków nie udostępnia strumieni i nie figuruje na liście.",
-  "{n} addons don't provide streams and aren't listed.#one": "{n} dodatek nie udostępnia strumieni i nie figuruje na liście.",
-  "{n} addons don't provide streams and aren't listed.#few": "{n} dodatki nie udostępniają strumieni i nie figurują na liście.",
+  "{n} addons don't provide streams and aren't listed.":
+    "{n} dodatków nie udostępnia strumieni i nie figuruje na liście.",
+  "{n} addons don't provide streams and aren't listed.#one":
+    "{n} dodatek nie udostępnia strumieni i nie figuruje na liście.",
+  "{n} addons don't provide streams and aren't listed.#few":
+    "{n} dodatki nie udostępniają strumieni i nie figurują na liście.",
   "{n} avatars across film, TV, and anime.": "{n} awatarów z filmów, telewizji i anime.",
   "{n} avatars across film, TV, and anime.#one": "{n} awatar z filmów, telewizji i anime.",
   "{n} avatars across film, TV, and anime.#few": "{n} awatary z filmów, telewizji i anime.",
@@ -171,9 +201,12 @@ const plurals: Record<string, string> = {
   "{n} films": "{n} filmów",
   "{n} films#one": "{n} film",
   "{n} films#few": "{n} filmy",
-  "{n} frame stored. Wiping rebuilds them next time you watch.": "Zapisano {n} klatek. Wyczyszczenie spowoduje ich ponowne utworzenie przy następnym oglądaniu.",
-  "{n} frame stored. Wiping rebuilds them next time you watch.#one": "Zapisano {n} klatkę. Wyczyszczenie spowoduje jej ponowne utworzenie przy następnym oglądaniu.",
-  "{n} frame stored. Wiping rebuilds them next time you watch.#few": "Zapisano {n} klatki. Wyczyszczenie spowoduje ich ponowne utworzenie przy następnym oglądaniu.",
+  "{n} frame stored. Wiping rebuilds them next time you watch.":
+    "Zapisano {n} klatek. Wyczyszczenie spowoduje ich ponowne utworzenie przy następnym oglądaniu.",
+  "{n} frame stored. Wiping rebuilds them next time you watch.#one":
+    "Zapisano {n} klatkę. Wyczyszczenie spowoduje jej ponowne utworzenie przy następnym oglądaniu.",
+  "{n} frame stored. Wiping rebuilds them next time you watch.#few":
+    "Zapisano {n} klatki. Wyczyszczenie spowoduje ich ponowne utworzenie przy następnym oglądaniu.",
   "{n} genre": "{n} gatunków",
   "{n} genre#one": "{n} gatunek",
   "{n} genre#few": "{n} gatunki",
@@ -255,14 +288,20 @@ const plurals: Record<string, string> = {
   "{n} titles": "{n} tytułów",
   "{n} titles#one": "{n} tytuł",
   "{n} titles#few": "{n} tytuły",
-  "{n} titles need review — help us identify them.": "{n} tytułów wymaga przeglądu - pomóż nam je zidentyfikować.",
-  "{n} titles need review — help us identify them.#one": "{n} tytuł wymaga przeglądu - pomóż nam go zidentyfikować.",
-  "{n} titles need review — help us identify them.#few": "{n} tytuły wymagają przeglądu - pomóż nam je zidentyfikować.",
+  "{n} titles need review — help us identify them.":
+    "{n} tytułów wymaga przeglądu - pomóż nam je zidentyfikować.",
+  "{n} titles need review — help us identify them.#one":
+    "{n} tytuł wymaga przeglądu - pomóż nam go zidentyfikować.",
+  "{n} titles need review — help us identify them.#few":
+    "{n} tytuły wymagają przeglądu - pomóż nam je zidentyfikować.",
   "{n} titles together#one": "Łącznie {n} tytuł",
   "{n} titles together#few": "Łącznie {n} tytuły",
-  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.": "W tej sesji zablokowano {n} żądań modułu śledzącego. Sam Harbor nie wysyła żadnych danych telemetrycznych.",
-  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#one": "W tej sesji zablokowano {n} żądanie modułu śledzącego. Sam Harbor nie wysyła żadnych danych telemetrycznych.",
-  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#few": "W tej sesji zablokowano {n} żądania modułu śledzącego. Sam Harbor nie wysyła żadnych danych telemetrycznych.",
+  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.":
+    "W tej sesji zablokowano {n} żądań modułu śledzącego. Sam Harbor nie wysyła żadnych danych telemetrycznych.",
+  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#one":
+    "W tej sesji zablokowano {n} żądanie modułu śledzącego. Sam Harbor nie wysyła żadnych danych telemetrycznych.",
+  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#few":
+    "W tej sesji zablokowano {n} żądania modułu śledzącego. Sam Harbor nie wysyła żadnych danych telemetrycznych.",
   "{n} votes": "{n} głosów",
   "{n} votes#one": "{n} głos",
   "{n} votes#few": "{n} głosy",
@@ -288,8 +327,10 @@ const plurals: Record<string, string> = {
   "{word} {n} seconds#one": "{word} {n} sekunda",
   "{word} {n} seconds#few": "{word} {n} sekundy",
   "{word} {n} seconds. Hold for options": "{word} {n} sekund. Przytrzymaj, aby wyświetlić opcje",
-  "{word} {n} seconds. Hold for options#one": "{word} {n} sekunda. Przytrzymaj, aby wyświetlić opcje",
-  "{word} {n} seconds. Hold for options#few": "{word} {n} sekundy. Przytrzymaj, aby wyświetlić opcje",
+  "{word} {n} seconds. Hold for options#one":
+    "{word} {n} sekunda. Przytrzymaj, aby wyświetlić opcje",
+  "{word} {n} seconds. Hold for options#few":
+    "{word} {n} sekundy. Przytrzymaj, aby wyświetlić opcje",
   "{n} episodes on home servers#one": "{n} odcinek na serwerach domowych",
   "{n} episodes on home servers#few": "{n} odcinki na serwerach domowych",
 };

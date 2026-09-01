@@ -9,18 +9,22 @@ const together: Record<string, string> = {
   " · left the video": " · 動画から退出",
   "The host starts playback for the whole room.": "ホストがルーム全体の再生を開始します。",
   "Waiting for the host to start": "ホストが開始するのを待っています",
-  "Everyone is loaded in. Press play to start watching.": "全員の読み込みが完了しました。再生を押すと視聴を開始します。",
+  "Everyone is loaded in. Press play to start watching.":
+    "全員の読み込みが完了しました。再生を押すと視聴を開始します。",
   "Ready when you are": "準備ができたらどうぞ",
   "Sharing {name}'s Stremio": "{name}さんのStremioを共有中",
-  "Your copy runs {guest}, host's runs {host}. Sync may drift.": "あなた側は{guest}、ホスト側は{host}で再生されています。同期がずれる可能性があります。",
+  "Your copy runs {guest}, host's runs {host}. Sync may drift.":
+    "あなた側は{guest}、ホスト側は{host}で再生されています。同期がずれる可能性があります。",
   "Say something…": "メッセージを入力…",
   "Start anyway ({n} still loading)": "このまま開始（{n}件は読み込み中）",
   " · {n} instant": " · 即時再生 {n}件",
   "Cached only": "キャッシュ済みのみ",
   "Cached only ({n})": "キャッシュ済みのみ（{n}）",
   "No sources cached": "キャッシュ済みのソースはありません",
-  "Sources are not cached for this title. Open the picker page to refresh.": "このタイトルのソースはキャッシュされていません。選択ページを開いて更新してください。",
-  "Probably not cached. Pick another?": "キャッシュされていない可能性があります。別のものを選びますか？",
+  "Sources are not cached for this title. Open the picker page to refresh.":
+    "このタイトルのソースはキャッシュされていません。選択ページを開いて更新してください。",
+  "Probably not cached. Pick another?":
+    "キャッシュされていない可能性があります。別のものを選びますか？",
   "Click any source to swap in place": "いずれかの配信元をクリックすると、その場で切り替わります",
   "Does this stream look right?": "このストリームで合っていますか？",
   "Resume from {time}": "{time}から再開",
@@ -30,8 +34,10 @@ const together: Record<string, string> = {
   "Close match": "近い一致",
   "Pick another": "別のものを選ぶ",
   "Something else": "その他",
-  "Nothing matched. Try the franchise's first film name.": "一致するものがありません。フランチャイズ第1作のタイトルをお試しください。",
-  "Not officially released yet. Click to search anyway in case of an early release.": "まだ正式公開されていません。先行公開されている可能性があるため、クリックすると検索できます。",
+  "Nothing matched. Try the franchise's first film name.":
+    "一致するものがありません。フランチャイズ第1作のタイトルをお試しください。",
+  "Not officially released yet. Click to search anyway in case of an early release.":
+    "まだ正式公開されていません。先行公開されている可能性があるため、クリックすると検索できます。",
   "Hide streams": "ストリームを非表示",
   "Show streams": "ストリームを表示",
   "Flagged shown": "フラグ付きも表示中",
@@ -50,10 +56,10 @@ const together: Record<string, string> = {
   "Advance Continue Watching to the next episode": "「視聴を続ける」を次のエピソードに進める",
   "Invite via link": "リンクで招待",
   "Watch together": "一緒に観る",
-  "Back": "戻る",
-  "Invite": "招待",
+  Back: "戻る",
+  Invite: "招待",
   "Paste invite link": "招待リンクを貼り付け",
-  "Join": "参加",
+  Join: "参加",
   "Open Settings": "設定を開く",
   "Your name": "あなたの名前",
   "Starting…": "開始中…",
@@ -66,7 +72,8 @@ const together: Record<string, string> = {
   "Show cursors": "カーソルを表示",
   "Leave room": "ルームから退出",
   "Watch Together needs a relay.": "一緒に観るにはリレーが必要です。",
-  "A relay is a tiny Cloudflare Worker that passes play/pause/seek messages between you and your friends. No video data ever touches it. Deploy your own in one click (free tier is plenty), or paste a friend's invite link to use theirs.": "リレーは、あなたと友達の間で再生、一時停止、シークの操作を中継する小さなCloudflare Workerです。動画データがリレーを通ることはありません。ワンクリックで自分専用のリレーをデプロイするか（無料枠で十分です）、友達の招待リンクを貼り付けて、そのリレーを利用できます。",
+  "A relay is a tiny Cloudflare Worker that passes play/pause/seek messages between you and your friends. No video data ever touches it. Deploy your own in one click (free tier is plenty), or paste a friend's invite link to use theirs.":
+    "リレーは、あなたと友達の間で再生、一時停止、シークの操作を中継する小さなCloudflare Workerです。動画データがリレーを通ることはありません。ワンクリックで自分専用のリレーをデプロイするか（無料枠で十分です）、友達の招待リンクを貼り付けて、そのリレーを利用できます。",
   "Watch Together": "同時視聴",
 };
 

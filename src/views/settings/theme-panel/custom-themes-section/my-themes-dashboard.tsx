@@ -15,15 +15,22 @@ export function ApiCheatCard({ compact = false }: { compact?: boolean }) {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <div className={`flex flex-col gap-3 rounded-md bg-surface ring-1 ring-edge-soft ${compact ? "p-4" : "p-5"}`}>
+      <div
+        className={`flex flex-col gap-3 rounded-md bg-surface ring-1 ring-edge-soft ${compact ? "p-4" : "p-5"}`}
+      >
         <div className="flex items-start gap-3">
           <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-elevated text-ink-muted">
             <BookOpen size={18} strokeWidth={2} />
           </span>
           <div className="flex min-w-0 flex-col gap-0.5">
-            <span className="text-[14.5px] font-semibold tracking-tight text-ink">{t("Theme API cheat sheet")}</span>
+            <span className="text-[14.5px] font-semibold tracking-tight text-ink">
+              {t("Theme API cheat sheet")}
+            </span>
             <span className="text-[12.5px] leading-snug text-ink-muted">
-              {t("Every color token, stable selector, {api} call, live hook (bell, account menu, avatar, status dot, unread badge), and copy-paste recipe.", { api: "window.harbor" })}
+              {t(
+                "Every color token, stable selector, {api} call, live hook (bell, account menu, avatar, status dot, unread badge), and copy-paste recipe.",
+                { api: "window.harbor" },
+              )}
             </span>
           </div>
         </div>
@@ -46,7 +53,8 @@ function computeStats(themes: StoreTheme[]): AuthorStats {
   const downloads = themes.reduce((s, t) => s + (t.downloads || 0), 0);
   const rated = themes.filter((t) => t.ratingCount > 0);
   const weight = rated.reduce((s, t) => s + t.ratingCount, 0);
-  const rating = weight > 0 ? rated.reduce((s, t) => s + t.ratingAvg * t.ratingCount, 0) / weight : null;
+  const rating =
+    weight > 0 ? rated.reduce((s, t) => s + t.ratingAvg * t.ratingCount, 0) / weight : null;
   const inReview = themes.filter((t) => t.status === "pending").length;
   return { published, downloads, rating, inReview };
 }
@@ -99,7 +107,9 @@ export function MyThemesDashboard() {
         <section className="flex min-w-0 flex-col gap-4">
           <div className="flex items-center justify-between gap-4">
             <div className="flex flex-col">
-              <h3 className="text-[18px] font-semibold tracking-tight text-ink">{t("Published themes")}</h3>
+              <h3 className="text-[18px] font-semibold tracking-tight text-ink">
+                {t("Published themes")}
+              </h3>
               <p className="text-[13px] text-ink-subtle">
                 {t("Push updates, flip visibility, and track where each one is in review.")}
               </p>
@@ -116,7 +126,10 @@ export function MyThemesDashboard() {
           {loading ? (
             <div className="grid gap-4 sm:grid-cols-2">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="harbor-skel h-[176px] rounded-md bg-surface ring-1 ring-edge-soft" />
+                <div
+                  key={i}
+                  className="harbor-skel h-[176px] rounded-md bg-surface ring-1 ring-edge-soft"
+                />
               ))}
             </div>
           ) : error ? (
@@ -164,7 +177,9 @@ function EmptyState() {
       <div className="flex max-w-sm flex-col gap-1">
         <span className="text-[15px] font-semibold text-ink">{t("No published themes yet")}</span>
         <span className="text-[13px] leading-relaxed text-ink-subtle">
-          {t("Open the library, hit Share a theme, and your first publication shows up here with its review status, downloads, and version history.")}
+          {t(
+            "Open the library, hit Share a theme, and your first publication shows up here with its review status, downloads, and version history.",
+          )}
         </span>
       </div>
     </div>

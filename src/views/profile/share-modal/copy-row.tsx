@@ -2,7 +2,15 @@ import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 import { useT } from "@/lib/i18n";
 
-export function CopyRow({ label, value, primary }: { label: string; value: string; primary?: boolean }) {
+export function CopyRow({
+  label,
+  value,
+  primary,
+}: {
+  label: string;
+  value: string;
+  primary?: boolean;
+}) {
   const t = useT();
   const [copied, setCopied] = useState(false);
   const copy = async () => {

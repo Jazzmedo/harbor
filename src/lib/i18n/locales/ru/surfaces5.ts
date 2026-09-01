@@ -3,22 +3,25 @@ const surfaces5: Record<string, string> = {
   "Watching {n} streams at once": "Одновременный просмотр потоков: {n}",
   "Setting up Multiview": "Настройка многооконного режима",
   "Side by side": "Рядом",
-  "Stacked": "Друг над другом",
-  "Triple": "Тройной",
-  "Quad": "Четверной",
+  Stacked: "Друг над другом",
+  Triple: "Тройной",
+  Quad: "Четверной",
   "Fullscreen split view": "Разделённый полноэкранный режим",
   "Show controls": "Показать элементы управления",
   "Hide controls, full grid": "Скрыть элементы управления, развернуть сетку",
   "Hide controls": "Скрыть элементы управления",
-  "Most IPTV providers cap simultaneous streams per account (commonly 1–2). If a tile drops to \"Stream offline\" while others play, your provider may be throttling. Try closing a stream and retrying.": "Большинство IPTV-провайдеров ограничивают число одновременных потоков для одной учётной записи (обычно 1–2). Если на одной из плиток появляется сообщение «Поток недоступен», а остальные продолжают воспроизведение, возможно, провайдер ограничивает число подключений. Закройте один поток и повторите попытку.",
+  'Most IPTV providers cap simultaneous streams per account (commonly 1–2). If a tile drops to "Stream offline" while others play, your provider may be throttling. Try closing a stream and retrying.':
+    "Большинство IPTV-провайдеров ограничивают число одновременных потоков для одной учётной записи (обычно 1–2). Если на одной из плиток появляется сообщение «Поток недоступен», а остальные продолжают воспроизведение, возможно, провайдер ограничивает число подключений. Закройте один поток и повторите попытку.",
   "No PiP session. Closing.": "Сеанс PiP отсутствует. Окно будет закрыто.",
   "Failed to read session: {message}": "Не удалось прочитать данные сеанса: {message}",
   "Subtitle {number}": "Субтитры {number}",
   "Harbor Relay Documentation": "Документация по ретранслятору Harbor",
   "Harbor Relay docs": "Документация по ретранслятору Harbor",
-  "Harbor test message ({service}). If you can read this, your webhook is wired up.": "Тестовое сообщение Harbor ({service}). Если вы его видите, вебхук подключён.",
+  "Harbor test message ({service}). If you can read this, your webhook is wired up.":
+    "Тестовое сообщение Harbor ({service}). Если вы его видите, вебхук подключён.",
   "Use a TTF, OTF, WOFF or WOFF2 file.": "Используйте файл TTF, OTF, WOFF или WOFF2.",
-  "That font is over 32 MB. Try a lighter file.": "Размер этого шрифта превышает 32 МБ. Выберите файл меньшего размера.",
+  "That font is over 32 MB. Try a lighter file.":
+    "Размер этого шрифта превышает 32 МБ. Выберите файл меньшего размера.",
   "That file is not a valid font.": "Этот файл не является допустимым шрифтом.",
   "Adding font…": "Добавление шрифта…",
   "TTF, OTF, WOFF or WOFF2": "TTF, OTF, WOFF или WOFF2",
@@ -27,65 +30,73 @@ const surfaces5: Record<string, string> = {
   "This file isn't a readable theme.": "Не удалось прочитать тему из этого файла.",
   "This file isn't a Harbor theme.": "Этот файл не является темой Harbor.",
   "Theme is missing a name.": "У темы отсутствует название.",
-  "This theme's preview colors look invalid.": "Цвета предварительного просмотра этой темы некорректны.",
+  "This theme's preview colors look invalid.":
+    "Цвета предварительного просмотра этой темы некорректны.",
   "This theme is missing its colors.": "В этой теме отсутствуют цвета.",
   "This theme file is missing a name.": "В файле темы отсутствует название.",
   "This theme file is missing its colors.": "В файле темы отсутствуют цвета.",
-  "Zipped themes aren't supported yet. Drop the theme file directly.": "Темы в ZIP-архивах пока не поддерживаются. Перетащите непосредственно файл темы.",
+  "Zipped themes aren't supported yet. Drop the theme file directly.":
+    "Темы в ZIP-архивах пока не поддерживаются. Перетащите непосредственно файл темы.",
   "{name} +{count} more ({format})": "{name} и ещё {count} ({format})",
   "{name} ({format})": "{name} ({format})",
   "Could not read file": "Не удалось прочитать файл",
-  "Designing \"{name}\"": "Редактирование темы «{name}»",
+  'Designing "{name}"': "Редактирование темы «{name}»",
   "Designing a theme": "Создание темы",
   "Theme Studio": "Студия тем",
   "Save theme": "Сохранить тему",
   "Edit theme": "Изменить тему",
   "Leave without saving?": "Выйти без сохранения?",
-  "Your changes to this theme aren't saved yet. They'll be lost if you leave now.": "Изменения этой темы ещё не сохранены. Если выйти сейчас, они будут потеряны.",
+  "Your changes to this theme aren't saved yet. They'll be lost if you leave now.":
+    "Изменения этой темы ещё не сохранены. Если выйти сейчас, они будут потеряны.",
   "Keep editing": "Продолжить редактирование",
   "Click to edit": "Нажмите, чтобы изменить",
-  "Tight": "Компактно",
-  "Mid": "Средне",
-  "Wide": "Широко",
+  Tight: "Компактно",
+  Mid: "Средне",
+  Wide: "Широко",
   "Max {count} files.": "Не более {count} файлов.",
   "{name} is over 100 MB.": "Размер файла {name} превышает 100 МБ.",
   "{name} is not an image or video.": "{name} не является изображением или видео.",
-  "PNG, JPG, WebP, GIF, MP4, WebM, MOV. Up to {count} files, 100 MB each.": "PNG, JPG, WebP, GIF, MP4, WebM, MOV. До {count} файлов по 100 МБ каждый.",
-  "M": "м",
-  "D": "д",
-  "H": "ч",
-  "Y": "г",
+  "PNG, JPG, WebP, GIF, MP4, WebM, MOV. Up to {count} files, 100 MB each.":
+    "PNG, JPG, WebP, GIF, MP4, WebM, MOV. До {count} файлов по 100 МБ каждый.",
+  M: "м",
+  D: "д",
+  H: "ч",
+  Y: "г",
   "Copy {label}": "Копировать {label}",
   "Casting to": "Трансляция на",
-  "Transcoding": "Перекодирование",
+  Transcoding: "Перекодирование",
   "−15s": "−15 с",
   "+15s": "+15 с",
   "Connecting to": "Подключение к",
   "Paused on": "Приостановлено на",
-  "Harbor queried 1 addon and got nothing back": "Harbor запросил 1 дополнение, но ничего не получил",
-  "Harbor queried {n} addons and got nothing back": "Harbor запросил дополнения ({n}), но ничего не получил",
+  "Harbor queried 1 addon and got nothing back":
+    "Harbor запросил 1 дополнение, но ничего не получил",
+  "Harbor queried {n} addons and got nothing back":
+    "Harbor запросил дополнения ({n}), но ничего не получил",
   "Tried IDs: {ids}": "Проверенные ID: {ids}",
   " · +{n} more": " · ещё +{n}",
   "sketchy files": "подозрительные файлы",
   "cam rips": "экранные копии",
   "tiny stubs": "слишком маленькие заглушки",
-  "oversized": "слишком большой размер",
+  oversized: "слишком большой размер",
   "year mismatch": "неверный год",
   "wrong episode": "неверная серия",
   "season packs": "сборники сезонов",
   "scam metadata": "мошеннические метаданные",
   "dead torrents": "мёртвые торренты",
-  "language": "язык",
+  language: "язык",
   "trailers/extras": "трейлеры и допматериалы",
   "stub files": "файлы-заглушки",
   "wrong movie": "неверный фильм",
   "1 source · 0 made it through": "1 источник · ни один не прошёл отбор",
   "{n} sources · 0 made it through": "{n} источников · ни один не прошёл отбор",
-  "Harbor blocks suspicious files and mismatched releases by default. For older shows and unusual titles this is sometimes too tight.": "По умолчанию Harbor блокирует подозрительные файлы и неподходящие релизы. Для старых сериалов и необычных названий эти ограничения иногда слишком строги.",
-  "No clean release has surfaced yet. This may be too new. Harbor's filters dropped everything that came back as wrong-movie noise.": "Подходящих релизов пока нет. Возможно, новинка вышла совсем недавно. Фильтры Harbor отсеяли все результаты как не относящиеся к нужному фильму.",
+  "Harbor blocks suspicious files and mismatched releases by default. For older shows and unusual titles this is sometimes too tight.":
+    "По умолчанию Harbor блокирует подозрительные файлы и неподходящие релизы. Для старых сериалов и необычных названий эти ограничения иногда слишком строги.",
+  "No clean release has surfaced yet. This may be too new. Harbor's filters dropped everything that came back as wrong-movie noise.":
+    "Подходящих релизов пока нет. Возможно, новинка вышла совсем недавно. Фильтры Harbor отсеяли все результаты как не относящиеся к нужному фильму.",
   "Create a custom filter": "Создать пользовательский фильтр",
-  "Remux": "Ремукс",
-  "Debrid": "Debrid",
+  Remux: "Ремукс",
+  Debrid: "Debrid",
   "{facet} filter: {value}": "Фильтр «{facet}»: {value}",
   "Close menu": "Закрыть меню",
   "{value} +{n}": "{value} +{n}",
@@ -111,10 +122,13 @@ const surfaces5: Record<string, string> = {
   "In {providers}": "В {providers}",
   "Resize columns": "Изменить ширину столбцов",
   "Resize rows": "Изменить высоту строк",
-  "Drag or use arrow keys to resize columns": "Перетащите или используйте клавиши со стрелками, чтобы изменить ширину столбцов",
-  "Drag or use arrow keys to resize rows": "Перетащите или используйте клавиши со стрелками, чтобы изменить высоту строк",
+  "Drag or use arrow keys to resize columns":
+    "Перетащите или используйте клавиши со стрелками, чтобы изменить ширину столбцов",
+  "Drag or use arrow keys to resize rows":
+    "Перетащите или используйте клавиши со стрелками, чтобы изменить высоту строк",
   "Double-click to unlink rows": "Дважды щёлкните, чтобы разъединить строки",
-  "Drag to resize all four panels · Double-click to align rows": "Перетащите, чтобы изменить размер всех четырёх панелей · Дважды щёлкните, чтобы выровнять строки",
+  "Drag to resize all four panels · Double-click to align rows":
+    "Перетащите, чтобы изменить размер всех четырёх панелей · Дважды щёлкните, чтобы выровнять строки",
   "Playing on {device}. Change device": "Воспроизводится на {device}. Сменить устройство",
   "Go to featured item {n}": "Перейти к избранному элементу {n}",
   "#{rank} in Series Today": "#{rank} среди сериалов сегодня",
@@ -124,8 +138,10 @@ const surfaces5: Record<string, string> = {
   "Tap a profile to switch": "Нажмите профиль, чтобы переключиться",
   "Connect to your computer to switch": "Подключитесь к компьютеру, чтобы переключиться",
   "Hide {title}": "Скрыть {title}",
-  "Implement the {provider} object: popular, search, detail, chapters, {contentMethod}, and optional tags. Nothing else.": "Реализуйте объект {provider}: popular, search, detail, chapters, {contentMethod} и необязательные tags. Ничего больше.",
-  "Reach HTTP sources with harbor.http(url, opts), binary gRPC sources with harbor.grpc(url, protobufBytes, opts), and parse HTML with harbor.parseHtml(html). There is no fetch, DOM, or storage in the sandbox.": "Обращайтесь к HTTP-источникам через harbor.http(url, opts), к бинарным источникам gRPC через harbor.grpc(url, protobufBytes, opts), а HTML разбирайте с помощью harbor.parseHtml(html). В песочнице нет fetch, DOM и storage.",
+  "Implement the {provider} object: popular, search, detail, chapters, {contentMethod}, and optional tags. Nothing else.":
+    "Реализуйте объект {provider}: popular, search, detail, chapters, {contentMethod} и необязательные tags. Ничего больше.",
+  "Reach HTTP sources with harbor.http(url, opts), binary gRPC sources with harbor.grpc(url, protobufBytes, opts), and parse HTML with harbor.parseHtml(html). There is no fetch, DOM, or storage in the sandbox.":
+    "Обращайтесь к HTTP-источникам через harbor.http(url, opts), к бинарным источникам gRPC через harbor.grpc(url, protobufBytes, opts), а HTML разбирайте с помощью harbor.parseHtml(html). В песочнице нет fetch, DOM и storage.",
   "Superstar!": "Суперзвезда!",
   "Great job!": "Отличная работа!",
   "Nice try!": "Хорошая попытка!",
@@ -143,7 +159,8 @@ const surfaces5: Record<string, string> = {
   "Couldn't identify the song": "Не удалось распознать песню",
   "Missing Gemini API key": "Отсутствует ключ API Gemini",
   "Missing AudD key": "Отсутствует ключ AudD",
-  "Add it in Settings → Library & metadata": "Добавьте его в разделе «Настройки → Медиатека и метаданные»",
+  "Add it in Settings → Library & metadata":
+    "Добавьте его в разделе «Настройки → Медиатека и метаданные»",
   "Listening…": "Прослушивание…",
   "Song identification failed": "Не удалось распознать песню",
   "Top Rated {genre}": "Лучшее в жанре «{genre}»",
@@ -175,41 +192,57 @@ const surfaces5: Record<string, string> = {
   "{count} wins": "{count} побед",
   "{count} nomination": "{count} номинация",
   "{count} nominations": "{count} номинаций",
-  "Won": "Победитель",
+  Won: "Победитель",
   "A standout this week.": "Выбор недели.",
   "Critics' Pick": "Выбор критиков",
   "Loved by reviewers today": "Сегодня в восторге у критиков",
   "Previous episodes": "Предыдущие серии",
   "In-app browser": "Встроенный браузер",
   "Loading {title}…": "Загрузка {title}…",
-  "{title} blocks embedding from outside its site.": "{title} запрещает встраивание за пределами своего сайта.",
-  "That's a normal security setting. Use the button below to open it in your browser instead.": "Это обычная настройка безопасности. Нажмите кнопку ниже, чтобы открыть страницу в браузере.",
+  "{title} blocks embedding from outside its site.":
+    "{title} запрещает встраивание за пределами своего сайта.",
+  "That's a normal security setting. Use the button below to open it in your browser instead.":
+    "Это обычная настройка безопасности. Нажмите кнопку ниже, чтобы открыть страницу в браузере.",
   "You're leaving Harbor": "Вы покидаете Harbor",
-  "This link goes to an external site that Harbor does not control or vouch for. Triple-check the address before you continue, and never enter your Harbor password anywhere but Harbor.": "Эта ссылка ведёт на внешний сайт, который Harbor не контролирует и не гарантирует его надёжность. Трижды проверьте адрес, прежде чем продолжить, и вводите пароль Harbor только в Harbor.",
-  "Destination": "Адрес назначения",
-  "Only continue if you fully trust this link": "Продолжайте, только если полностью доверяете этой ссылке",
-  "Harbor can open only HTTP or HTTPS destinations.": "Harbor может открывать только адреса HTTP или HTTPS.",
-  "Harbor cannot open links that include embedded credentials.": "Harbor не может открывать ссылки со встроенными учётными данными.",
+  "This link goes to an external site that Harbor does not control or vouch for. Triple-check the address before you continue, and never enter your Harbor password anywhere but Harbor.":
+    "Эта ссылка ведёт на внешний сайт, который Harbor не контролирует и не гарантирует его надёжность. Трижды проверьте адрес, прежде чем продолжить, и вводите пароль Harbor только в Harbor.",
+  Destination: "Адрес назначения",
+  "Only continue if you fully trust this link":
+    "Продолжайте, только если полностью доверяете этой ссылке",
+  "Harbor can open only HTTP or HTTPS destinations.":
+    "Harbor может открывать только адреса HTTP или HTTPS.",
+  "Harbor cannot open links that include embedded credentials.":
+    "Harbor не может открывать ссылки со встроенными учётными данными.",
   "Harbor could not verify this destination.": "Harbor не удалось проверить этот адрес.",
-  "Harbor's temporary viewer requires HTTPS.": "Для временного средства просмотра Harbor требуется HTTPS.",
+  "Harbor's temporary viewer requires HTTPS.":
+    "Для временного средства просмотра Harbor требуется HTTPS.",
   "Source mode": "Режим источников",
-  "Use debrid/addon sources and fall back to peer-to-peer": "Использовать источники debrid и дополнений, а при их недоступности переходить на peer-to-peer",
-  "Only addon/debrid sources, never peer-to-peer": "Только источники дополнений/debrid, без peer-to-peer",
+  "Use debrid/addon sources and fall back to peer-to-peer":
+    "Использовать источники debrid и дополнений, а при их недоступности переходить на peer-to-peer",
+  "Only addon/debrid sources, never peer-to-peer":
+    "Только источники дополнений/debrid, без peer-to-peer",
   "Only peer-to-peer torrent sources": "Только торрент-источники peer-to-peer",
   "an addon": "дополнение",
   "a title": "название",
   "{name} wants you here": "{name} приглашает вас сюда",
-  "Sure": "Хорошо",
-  "That does not look like a valid magnet link or infohash.": "Это не похоже на действительную magnet-ссылку или инфохеш.",
-  "Your remote streaming server is not reachable. Check its address in Settings.": "Удалённый сервер потоковой передачи недоступен. Проверьте его адрес в настройках.",
-  "No playable video file was found in this torrent.": "В этом торренте не найдено видеофайлов для воспроизведения.",
-  "Direct torrent play needs the Harbor desktop app.": "Для прямого воспроизведения торрентов требуется приложение Harbor для компьютера.",
-  "The streaming engine is still starting up. Give it a moment and press Play again.": "Модуль потоковой передачи ещё запускается. Подождите немного и снова нажмите «Воспроизвести».",
-  "Could not find any peers for this torrent yet. It may be dead or very low on seeders.": "Пиры для этого торрента пока не найдены. Возможно, торрент неактивен или у него очень мало сидеров.",
+  Sure: "Хорошо",
+  "That does not look like a valid magnet link or infohash.":
+    "Это не похоже на действительную magnet-ссылку или инфохеш.",
+  "Your remote streaming server is not reachable. Check its address in Settings.":
+    "Удалённый сервер потоковой передачи недоступен. Проверьте его адрес в настройках.",
+  "No playable video file was found in this torrent.":
+    "В этом торренте не найдено видеофайлов для воспроизведения.",
+  "Direct torrent play needs the Harbor desktop app.":
+    "Для прямого воспроизведения торрентов требуется приложение Harbor для компьютера.",
+  "The streaming engine is still starting up. Give it a moment and press Play again.":
+    "Модуль потоковой передачи ещё запускается. Подождите немного и снова нажмите «Воспроизвести».",
+  "Could not find any peers for this torrent yet. It may be dead or very low on seeders.":
+    "Пиры для этого торрента пока не найдены. Возможно, торрент неактивен или у него очень мало сидеров.",
   "Could not start this torrent.": "Не удалось запустить этот торрент.",
   "{count} playable files": "Файлов для воспроизведения: {count}",
   "Torrent link": "Торрент-ссылка",
-  "Streams directly from peers over your own connection.": "Передаёт поток напрямую от пиров через ваше подключение.",
+  "Streams directly from peers over your own connection.":
+    "Передаёт поток напрямую от пиров через ваше подключение.",
   "Magnet stream": "Поток по magnet-ссылке",
   "Explore {name}": "Обзор: {name}",
   "Part of {name}": "Часть {name}",
@@ -241,7 +274,8 @@ const surfaces5: Record<string, string> = {
   "Download and run Suwayomi Server:": "Скачайте и запустите Suwayomi Server:",
   "Every source you enable in Suwayomi then shows up in Harbor. Suwayomi keeps its extensions updated when a site changes, so they keep working.":
     "Все источники, включённые в Suwayomi, затем появятся в Harbor. Suwayomi обновляет расширения при изменениях на сайтах, поэтому они продолжают работать.",
-  "Everything else, through your own server (Suwayomi)": "Все остальные источники через собственный сервер (Suwayomi)",
+  "Everything else, through your own server (Suwayomi)":
+    "Все остальные источники через собственный сервер (Suwayomi)",
   "Expand {title} image": "Развернуть изображение «{title}»",
   "Getting manga sources into Harbor": "Добавление источников манги в Harbor",
   "Harbor also has an experimental plugin runtime. If you want to write a source plugin, see {path} in the Harbor repository. Only install plugins from repositories you trust.":
@@ -257,9 +291,11 @@ const surfaces5: Record<string, string> = {
     "Откройте {url} в браузере. Перейдите в раздел «Расширения / Обзор», добавьте репозиторий источников сообщества, затем установите нужные источники, их доступны сотни. Suwayomi использует те же репозитории расширений, что и экосистема Mihon / Tachiyomi.",
   "SIMKL rating picker": "Выбор оценки SIMKL",
   "Sharing diagnostics": "Передача диагностических данных",
-  "That font is {size} MB. Max is 4 MB.": "Размер этого шрифта составляет {size} МБ. Максимальный размер: 4 МБ.",
-  "This is how you get hundreds of community sources.": "Так можно получить доступ к сотням источников сообщества.",
-  "Unsupported font type \".{extension}\". Use TTF, OTF, WOFF, or WOFF2.":
+  "That font is {size} MB. Max is 4 MB.":
+    "Размер этого шрифта составляет {size} МБ. Максимальный размер: 4 МБ.",
+  "This is how you get hundreds of community sources.":
+    "Так можно получить доступ к сотням источников сообщества.",
+  'Unsupported font type ".{extension}". Use TTF, OTF, WOFF, or WOFF2.':
     "Тип шрифта «.{extension}» не поддерживается. Используйте TTF, OTF, WOFF или WOFF2.",
   "#1 this week": "№ 1 на этой неделе",
   "An unexpected runtime error occurred.": "Произошла непредвиденная ошибка выполнения.",
@@ -273,7 +309,7 @@ const surfaces5: Record<string, string> = {
   "Press T to chat...": "Нажмите T, чтобы открыть чат...",
   "Promise rejection": "Отклонение промиса",
   "Staff pick": "Выбор редакции",
-  "This file is in OneDrive. If \"Files On-Demand\" is on, the file is a cloud placeholder until it's downloaded. Right-click it in Explorer and pick":
+  'This file is in OneDrive. If "Files On-Demand" is on, the file is a cloud placeholder until it\'s downloaded. Right-click it in Explorer and pick':
     "Этот файл находится в OneDrive. Если включена функция «Файлы по запросу», до скачивания он остаётся облачным заполнителем. Щёлкните его правой кнопкой мыши в Проводнике и выберите",
   "Time: {time}": "Время: {time}",
   "Title: {title}": "Название: {title}",
@@ -299,15 +335,15 @@ const surfaces5: Record<string, string> = {
   "Harbor could not open your browser.": "Harbor не удалось открыть браузер.",
   "Harbor's peer-to-peer engine is warming up. This clears on its own in a few seconds, then Play works.":
     "P2P-движок Harbor запускается. Через несколько секунд это сообщение исчезнет само, и воспроизведение станет доступно.",
-  "Minus": "Минус",
+  Minus: "Минус",
   "None of your debrid services could deliver a working file. Pick another stream.":
     "Ни один из ваших debrid-сервисов не смог предоставить рабочий файл. Выберите другой поток.",
   "None of your debrid services could resolve this stream. Try a different one.":
     "Ни один из ваших debrid-сервисов не смог обработать этот поток. Попробуйте другой.",
-  "Plus": "Плюс",
+  Plus: "Плюс",
   "Real-Debrid is refusing this download right now, which usually means its traffic or fair-use limit has been hit. Try again later, pick a different source, or use another debrid.":
     "Real-Debrid сейчас отклоняет эту загрузку. Обычно это означает, что исчерпан лимит трафика или добросовестного использования. Повторите попытку позже, выберите другой источник или используйте другой debrid-сервис.",
-  "Recheck": "Проверить снова",
+  Recheck: "Проверить снова",
   "Remote streaming server unreachable. Check the address in Settings > P2P & servers and that the server machine is online.":
     "Удалённый сервер потоковой передачи недоступен. Проверьте адрес в разделе «Настройки > P2P и серверы» и убедитесь, что компьютер с сервером включён и подключён к сети.",
   "Remote streaming server unreachable. Strict mode is on, so local fallback is disabled.":
@@ -328,10 +364,12 @@ const surfaces5: Record<string, string> = {
     "Этот источник ещё не готов на вашем debrid-сервисе. Повторите попытку через несколько секунд или выберите другой источник.",
   "This source only opens in an external browser, not in Harbor's player.":
     "Этот источник можно открыть только во внешнем браузере, но не в плеере Harbor.",
-  "This stream has no playable source.": "У этого потока нет источника, пригодного для воспроизведения.",
+  "This stream has no playable source.":
+    "У этого потока нет источника, пригодного для воспроизведения.",
   "This stream isn't cached on your debrid yet. Try a different one from the list.":
     "Этот поток ещё не кэширован на вашем debrid-сервисе. Выберите другой поток из списка.",
-  "Turn on Hide spoilers to use this": "Чтобы использовать эту функцию, включите «Скрывать спойлеры»",
+  "Turn on Hide spoilers to use this":
+    "Чтобы использовать эту функцию, включите «Скрывать спойлеры»",
   "Your debrid couldn't fetch this torrent (no seeders). Pick a different source.":
     "Ваш debrid-сервис не смог получить этот торрент из-за отсутствия сидеров. Выберите другой источник.",
   "Your debrid hit an error on this torrent. Pick a different source.":
@@ -350,8 +388,10 @@ const surfaces5: Record<string, string> = {
   "Your {name} subscription looks expired.": "Похоже, срок действия вашей подписки {name} истёк.",
   "{name} is over its traffic or fair-use limit right now.":
     "Сервис {name} сейчас исчерпал лимит трафика или добросовестного использования.",
-  "{name} is rate-limiting Harbor right now.": "Сервис {name} сейчас ограничивает частоту запросов Harbor.",
-  "{name} is temporarily unavailable (server error).": "Сервис {name} временно недоступен из-за ошибки сервера.",
+  "{name} is rate-limiting Harbor right now.":
+    "Сервис {name} сейчас ограничивает частоту запросов Harbor.",
+  "{name} is temporarily unavailable (server error).":
+    "Сервис {name} временно недоступен из-за ошибки сервера.",
   "{name} rejected your API key.": "Сервис {name} отклонил ваш API-ключ.",
   "{name} returned an error ({code}).": "Сервис {name} вернул ошибку ({code}).",
   "Add as many Jellyfin, Emby, or Plex servers as you use.":
@@ -368,7 +408,8 @@ const surfaces5: Record<string, string> = {
   "Ask which server": "Спрашивать, какой сервер использовать",
   "Automatic refresh": "Автоматическое обновление",
   "Available in {name}": "Доступно в {name}",
-  "Bring your own server-rendered library aboard.": "Подключите собственную медиатеку с вашего сервера.",
+  "Bring your own server-rendered library aboard.":
+    "Подключите собственную медиатеку с вашего сервера.",
   "Browse addon sources": "Просмотреть источники дополнений",
   "Build your own library": "Создайте свою библиотеку",
   "Cached titles from this server will also be removed. Your media on the server will not be changed.":
@@ -388,16 +429,16 @@ const surfaces5: Record<string, string> = {
   "Connect server": "Подключить сервер",
   "Connecting to home servers…": "Подключение к домашним серверам…",
   "Connecting…": "Подключение…",
-  "Connections": "Подключения",
+  Connections: "Подключения",
   "Copy the X-Plex-Token value from the XML page URL.":
     "Скопируйте значение X-Plex-Token из URL XML-страницы.",
-  "Disable": "Отключить",
+  Disable: "Отключить",
   "Download media": "Скачать медиафайлы",
   "Download selected ({n})": "Скачать выбранное ({n})",
   "Edge voices need the Harbor desktop app. Reading with the device voice.":
     "Для голосов Edge требуется приложение Harbor для компьютера. Используется голос устройства.",
   "Edit home server": "Изменить домашний сервер",
-  "Enrichment": "Дополнение метаданных",
+  Enrichment: "Дополнение метаданных",
   "Every…": "Каждые…",
   "Featured book": "Рекомендуемая книга",
   "Harbor does not host any books. Open a folder on this device, install a source extension, or connect your own server. Metadata can describe a book, but a source is what lets Harbor open it.":
@@ -412,7 +453,7 @@ const surfaces5: Record<string, string> = {
   "How to find a Plex access token": "Как найти токен доступа Plex",
   "Loading your media server library…": "Загрузка библиотеки с медиасервера…",
   "Local Library": "Локальная библиотека",
-  "Manual": "Вручную",
+  Manual: "Вручную",
   "Media Servers": "Медиасерверы",
   "Media servers": "Медиасерверы",
   "No available episodes in this season.": "В этом сезоне нет доступных серий.",
@@ -458,11 +499,12 @@ const surfaces5: Record<string, string> = {
   "Use access token — Advanced": "Использовать токен доступа: для опытных",
   "Waiting for Plex…": "Ожидание Plex…",
   "You haven’t connected a media server": "Вы ещё не подключили медиасервер",
-  "days": "дней",
+  days: "дней",
   "{n} episodes on home servers": "{n} серий на домашних серверах",
   "{n} episodes on home servers#one": "{n} серия на домашних серверах",
   "{n} episodes on home servers#few": "{n} серии на домашних серверах",
-  "{voice} could not be generated. {message}": "Не удалось создать озвучивание голосом {voice}. {message}",
+  "{voice} could not be generated. {message}":
+    "Не удалось создать озвучивание голосом {voice}. {message}",
 };
 
 export default surfaces5;

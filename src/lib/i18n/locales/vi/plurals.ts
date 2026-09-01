@@ -1,8 +1,12 @@
 const plurals: Record<string, string> = {
-  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.#one": "Thêm {n} tựa phim từ danh sách xem Harbor vào Trakt? Trakt sẽ bỏ qua các tựa phim đã có.#one",
-  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.#few": "Thêm {n} tựa phim từ danh sách xem Harbor vào Trakt? Trakt sẽ bỏ qua các tựa phim đã có.#few",
-  "Add {n} titles from your Trakt watchlist to Harbor?#one": "Thêm {n} tựa phim từ danh sách xem Trakt vào Harbor?#one",
-  "Add {n} titles from your Trakt watchlist to Harbor?#few": "Thêm {n} tựa phim từ danh sách xem Trakt vào Harbor?#few",
+  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.#one":
+    "Thêm {n} tựa phim từ danh sách xem Harbor vào Trakt? Trakt sẽ bỏ qua các tựa phim đã có.#one",
+  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.#few":
+    "Thêm {n} tựa phim từ danh sách xem Harbor vào Trakt? Trakt sẽ bỏ qua các tựa phim đã có.#few",
+  "Add {n} titles from your Trakt watchlist to Harbor?#one":
+    "Thêm {n} tựa phim từ danh sách xem Trakt vào Harbor?#one",
+  "Add {n} titles from your Trakt watchlist to Harbor?#few":
+    "Thêm {n} tựa phim từ danh sách xem Trakt vào Harbor?#few",
   "After {n} episodes#one": "Sau {n} tập#one",
   "After {n} episodes#few": "Sau {n} tập#few",
   "All {n} channels loaded#one": "Đã tải đủ {n} kênh#one",
@@ -27,20 +31,30 @@ const plurals: Record<string, string> = {
   "Health for {n} services below#few": "Tình trạng của {n} dịch vụ bên dưới#few",
   "Import {n} JavaScript sources#one": "Nhập {n} nguồn JavaScript",
   "Import {n} JavaScript sources#few": "Nhập {n} nguồn JavaScript",
-  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.#one": "Không có gì để gửi. Cả {n} mục trong danh sách xem đều là anime nên Trakt không thể theo dõi.",
-  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.#few": "Không có gì để gửi. Cả {n} mục trong danh sách xem đều là anime nên Trakt không thể theo dõi.",
-  "Remove this folder and its {n} items? Files on your disk are not deleted.#one": "Xóa thư mục này và {n} mục trong đó? Các tệp trên ổ đĩa sẽ không bị xóa.",
-  "Remove this folder and its {n} items? Files on your disk are not deleted.#few": "Xóa thư mục này và {n} mục trong đó? Các tệp trên ổ đĩa sẽ không bị xóa.",
-  "Remove {n} items from your library? Files on your disk are not deleted.#one": "Xóa {n} mục khỏi thư viện? Các tệp trên ổ đĩa sẽ không bị xóa.",
-  "Remove {n} items from your library? Files on your disk are not deleted.#few": "Xóa {n} mục khỏi thư viện? Các tệp trên ổ đĩa sẽ không bị xóa.",
+  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.#one":
+    "Không có gì để gửi. Cả {n} mục trong danh sách xem đều là anime nên Trakt không thể theo dõi.",
+  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.#few":
+    "Không có gì để gửi. Cả {n} mục trong danh sách xem đều là anime nên Trakt không thể theo dõi.",
+  "Remove this folder and its {n} items? Files on your disk are not deleted.#one":
+    "Xóa thư mục này và {n} mục trong đó? Các tệp trên ổ đĩa sẽ không bị xóa.",
+  "Remove this folder and its {n} items? Files on your disk are not deleted.#few":
+    "Xóa thư mục này và {n} mục trong đó? Các tệp trên ổ đĩa sẽ không bị xóa.",
+  "Remove {n} items from your library? Files on your disk are not deleted.#one":
+    "Xóa {n} mục khỏi thư viện? Các tệp trên ổ đĩa sẽ không bị xóa.",
+  "Remove {n} items from your library? Files on your disk are not deleted.#few":
+    "Xóa {n} mục khỏi thư viện? Các tệp trên ổ đĩa sẽ không bị xóa.",
   "Rising · +{n} star in 24h#one": "Đang lên · +{n} sao trong 24 giờ",
   "Rising · +{n} star in 24h#few": "Đang lên · +{n} sao trong 24 giờ",
   "Rising · +{n} stars in 24h#one": "Đang lên · +{n} sao trong 24 giờ",
   "Rising · +{n} stars in 24h#few": "Đang lên · +{n} sao trong 24 giờ",
-  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.#one": "Đã lưu harbor-anime-diagnostics.txt ({n} mục). Hãy gửi tệp đó cho chúng tôi.",
-  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.#few": "Đã lưu harbor-anime-diagnostics.txt ({n} mục). Hãy gửi tệp đó cho chúng tôi.",
-  "Saved {n} entries to {path}. Send us that file.#one": "Đã lưu {n} mục vào {path}. Hãy gửi tệp đó cho chúng tôi.",
-  "Saved {n} entries to {path}. Send us that file.#few": "Đã lưu {n} mục vào {path}. Hãy gửi tệp đó cho chúng tôi.",
+  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.#one":
+    "Đã lưu harbor-anime-diagnostics.txt ({n} mục). Hãy gửi tệp đó cho chúng tôi.",
+  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.#few":
+    "Đã lưu harbor-anime-diagnostics.txt ({n} mục). Hãy gửi tệp đó cho chúng tôi.",
+  "Saved {n} entries to {path}. Send us that file.#one":
+    "Đã lưu {n} mục vào {path}. Hãy gửi tệp đó cho chúng tôi.",
+  "Saved {n} entries to {path}. Send us that file.#few":
+    "Đã lưu {n} mục vào {path}. Hãy gửi tệp đó cho chúng tôi.",
   "Search {n} EPG channels#one": "Tìm kiếm trong {n} kênh EPG",
   "Search {n} EPG channels#few": "Tìm kiếm trong {n} kênh EPG",
   "Search {n} channels#one": "Tìm kiếm trong {n} kênh",
@@ -67,10 +81,14 @@ const plurals: Record<string, string> = {
   "in {n} weeks#few": "sau {n} tuần",
   "{avg} avg · {n} rated#one": "TB {avg} · {n} lượt chấm",
   "{avg} avg · {n} rated#few": "TB {avg} · {n} lượt chấm",
-  "{count} community ratings on stremio-addons.net#one": "{count} lượt đánh giá từ cộng đồng trên stremio-addons.net",
-  "{count} community ratings on stremio-addons.net#few": "{count} lượt đánh giá từ cộng đồng trên stremio-addons.net",
-  "{count} films, in the order you picked them. Nothing plays until you start.#one": "{count} phim, theo thứ tự bạn đã chọn. Sẽ không phát nội dung nào cho đến khi bạn bắt đầu.",
-  "{count} films, in the order you picked them. Nothing plays until you start.#few": "{count} phim, theo thứ tự bạn đã chọn. Sẽ không phát nội dung nào cho đến khi bạn bắt đầu.",
+  "{count} community ratings on stremio-addons.net#one":
+    "{count} lượt đánh giá từ cộng đồng trên stremio-addons.net",
+  "{count} community ratings on stremio-addons.net#few":
+    "{count} lượt đánh giá từ cộng đồng trên stremio-addons.net",
+  "{count} films, in the order you picked them. Nothing plays until you start.#one":
+    "{count} phim, theo thứ tự bạn đã chọn. Sẽ không phát nội dung nào cho đến khi bạn bắt đầu.",
+  "{count} films, in the order you picked them. Nothing plays until you start.#few":
+    "{count} phim, theo thứ tự bạn đã chọn. Sẽ không phát nội dung nào cho đến khi bạn bắt đầu.",
   "{count} friends in common#one": "{count} bạn chung",
   "{count} friends in common#few": "{count} bạn chung",
   "{label} · {n} collection#one": "{label} · {n} bộ sưu tập",
@@ -81,10 +99,14 @@ const plurals: Record<string, string> = {
   "{n} addon#few": "{n} tiện ích bổ sung",
   "{n} addons#one": "{n} tiện ích bổ sung",
   "{n} addons#few": "{n} tiện ích bổ sung#few",
-  "{n} addons don't provide streams and aren't listed.#one": "{n} tiện ích bổ sung không cung cấp luồng phát và không được liệt kê.#one",
-  "{n} addons don't provide streams and aren't listed.#few": "{n} tiện ích bổ sung không cung cấp luồng phát và không được liệt kê.#few",
-  "{n} avatars across film, TV, and anime.#one": "{n} ảnh đại diện về điện ảnh, truyền hình và anime.#one",
-  "{n} avatars across film, TV, and anime.#few": "{n} ảnh đại diện về điện ảnh, truyền hình và anime.#few",
+  "{n} addons don't provide streams and aren't listed.#one":
+    "{n} tiện ích bổ sung không cung cấp luồng phát và không được liệt kê.#one",
+  "{n} addons don't provide streams and aren't listed.#few":
+    "{n} tiện ích bổ sung không cung cấp luồng phát và không được liệt kê.#few",
+  "{n} avatars across film, TV, and anime.#one":
+    "{n} ảnh đại diện về điện ảnh, truyền hình và anime.#one",
+  "{n} avatars across film, TV, and anime.#few":
+    "{n} ảnh đại diện về điện ảnh, truyền hình và anime.#few",
   "{n} award#one": "{n} giải thưởng#one",
   "{n} award#few": "{n} giải thưởng#few",
   "{n} awards#one": "{n} giải thưởng#one",
@@ -113,8 +135,10 @@ const plurals: Record<string, string> = {
   "{n} film#few": "{n} phim#few",
   "{n} films#one": "{n} phim#one",
   "{n} films#few": "{n} phim#few",
-  "{n} frame stored. Wiping rebuilds them next time you watch.#one": "Đã lưu {n} khung hình. Xóa chúng sẽ tạo lại vào lần xem tiếp theo.#one",
-  "{n} frame stored. Wiping rebuilds them next time you watch.#few": "Đã lưu {n} khung hình. Xóa chúng sẽ tạo lại vào lần xem tiếp theo.#few",
+  "{n} frame stored. Wiping rebuilds them next time you watch.#one":
+    "Đã lưu {n} khung hình. Xóa chúng sẽ tạo lại vào lần xem tiếp theo.#one",
+  "{n} frame stored. Wiping rebuilds them next time you watch.#few":
+    "Đã lưu {n} khung hình. Xóa chúng sẽ tạo lại vào lần xem tiếp theo.#few",
   "{n} genre#one": "{n} thể loại#one",
   "{n} genre#few": "{n} thể loại#few",
   "{n} genres#one": "{n} thể loại#one",
@@ -169,12 +193,16 @@ const plurals: Record<string, string> = {
   "{n} title#few": "{n} tựa phim#few",
   "{n} titles#one": "{n} tựa phim#one",
   "{n} titles#few": "{n} tựa phim#few",
-  "{n} titles need review — help us identify them.#one": "{n} tựa phim cần xem lại - hãy giúp chúng tôi xác định.#one",
-  "{n} titles need review — help us identify them.#few": "{n} tựa phim cần xem lại - hãy giúp chúng tôi xác định.#few",
+  "{n} titles need review — help us identify them.#one":
+    "{n} tựa phim cần xem lại - hãy giúp chúng tôi xác định.#one",
+  "{n} titles need review — help us identify them.#few":
+    "{n} tựa phim cần xem lại - hãy giúp chúng tôi xác định.#few",
   "{n} titles together#one": "{n} tựa phim cùng nhau#one",
   "{n} titles together#few": "{n} tựa phim cùng nhau#few",
-  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#one": "Đã chặn {n} yêu cầu theo dõi trong phiên này. Bản thân Harbor không gửi dữ liệu đo từ xa.#one",
-  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#few": "Đã chặn {n} yêu cầu theo dõi trong phiên này. Bản thân Harbor không gửi dữ liệu đo từ xa.#few",
+  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#one":
+    "Đã chặn {n} yêu cầu theo dõi trong phiên này. Bản thân Harbor không gửi dữ liệu đo từ xa.#one",
+  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#few":
+    "Đã chặn {n} yêu cầu theo dõi trong phiên này. Bản thân Harbor không gửi dữ liệu đo từ xa.#few",
   "{n} votes#one": "{n} lượt bình chọn#one",
   "{n} votes#few": "{n} lượt bình chọn#few",
   "{n} winner#one": "{n} người chiến thắng#one",

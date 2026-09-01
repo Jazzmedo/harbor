@@ -119,15 +119,35 @@ export function DownloadsView({ active = false }: { active?: boolean }) {
 
         {items.length > 0 && (
           <div className="mb-5 flex flex-wrap items-center gap-1.5">
-            <FilterTab label={t("All")} count={counts.all} active={effective === "all"} onClick={() => setFilter("all")} />
+            <FilterTab
+              label={t("All")}
+              count={counts.all}
+              active={effective === "all"}
+              onClick={() => setFilter("all")}
+            />
             {counts.active > 0 && (
-              <FilterTab label={t("Active")} count={counts.active} active={effective === "active"} onClick={() => setFilter("active")} />
+              <FilterTab
+                label={t("Active")}
+                count={counts.active}
+                active={effective === "active"}
+                onClick={() => setFilter("active")}
+              />
             )}
             {counts.saved > 0 && (
-              <FilterTab label={t("Saved")} count={counts.saved} active={effective === "saved"} onClick={() => setFilter("saved")} />
+              <FilterTab
+                label={t("Saved")}
+                count={counts.saved}
+                active={effective === "saved"}
+                onClick={() => setFilter("saved")}
+              />
             )}
             {counts.issues > 0 && (
-              <FilterTab label={t("Issues")} count={counts.issues} active={effective === "issues"} onClick={() => setFilter("issues")} />
+              <FilterTab
+                label={t("Issues")}
+                count={counts.issues}
+                active={effective === "issues"}
+                onClick={() => setFilter("issues")}
+              />
             )}
           </div>
         )}
@@ -175,7 +195,9 @@ function FilterTab({
       }`}
     >
       {label}
-      <span className={`tabular-nums ${active ? "text-canvas/70" : "text-ink-subtle"}`}>{count}</span>
+      <span className={`tabular-nums ${active ? "text-canvas/70" : "text-ink-subtle"}`}>
+        {count}
+      </span>
     </button>
   );
 }
@@ -191,7 +213,9 @@ function EmptyState() {
       <div className="flex flex-col gap-1.5">
         <p className="text-[15px] font-semibold text-ink">{t("No downloads yet")}</p>
         <p className="max-w-[340px] text-[13.5px] leading-relaxed text-ink-muted">
-          {t("Download a movie, episode, or eBook and it will appear here with its progress and offline status.")}
+          {t(
+            "Download a movie, episode, or eBook and it will appear here with its progress and offline status.",
+          )}
         </p>
       </div>
       <button
@@ -209,7 +233,12 @@ function EmptyState() {
 function ShowGroup({ group }: { group: Extract<DownloadGroup, { kind: "show" }> }) {
   const { settings } = useSettings();
   const t = useT();
-  const poster = usePosterChain(settings.rpdbKey, group.metaId, group.poster ?? undefined, "series");
+  const poster = usePosterChain(
+    settings.rpdbKey,
+    group.metaId,
+    group.poster ?? undefined,
+    "series",
+  );
   const episodes = useMemo(
     () =>
       [...group.items].sort(
@@ -230,7 +259,9 @@ function ShowGroup({ group }: { group: Extract<DownloadGroup, { kind: "show" }> 
         <div className="flex min-w-0 flex-col">
           <span className="truncate text-[14px] font-semibold text-ink">{group.title}</span>
           <span className="text-[11.5px] tabular-nums text-ink-subtle">
-            {episodes.length === 1 ? t("1 episode") : t("{count} episodes", { count: episodes.length })}
+            {episodes.length === 1
+              ? t("1 episode")
+              : t("{count} episodes", { count: episodes.length })}
             {totalBytes > 0 ? `  ·  ${fmtBytes(totalBytes)}` : ""}
           </span>
         </div>

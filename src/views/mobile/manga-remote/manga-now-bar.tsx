@@ -19,7 +19,15 @@ const MANGA_NOWBAR_CSS = `
 }
 `;
 
-export function MangaNowBar({ m, hidden, onExpand }: { m: RemoteMangaState; hidden: boolean; onExpand: () => void }) {
+export function MangaNowBar({
+  m,
+  hidden,
+  onExpand,
+}: {
+  m: RemoteMangaState;
+  hidden: boolean;
+  onExpand: () => void;
+}) {
   const t = useT();
   return (
     <div

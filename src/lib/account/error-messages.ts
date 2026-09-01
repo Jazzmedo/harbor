@@ -19,9 +19,11 @@ const BY_CODE = {
   handle_too_long: "That handle is too long. Use at most 24 characters.",
   handle_invalid: "Handles can use letters, numbers, and single hyphens only.",
   handle_taken: "That handle is already taken. Try one of the suggestions.",
-  handle_cooldown_other: "Someone released that handle recently. It frees up 14 days after they dropped it.",
+  handle_cooldown_other:
+    "Someone released that handle recently. It frees up 14 days after they dropped it.",
   handle_cooldown: "You changed your handle recently. You can change it again after the cooldown.",
-  stremio_already_bound: "That Stremio account is already linked to a different Harbor account. Unlink it there first.",
+  stremio_already_bound:
+    "That Stremio account is already linked to a different Harbor account. Unlink it there first.",
   stremio_key_invalid: "That Stremio sign-in did not go through. Try again.",
   stremio_anonymous: "Sign in to a real Stremio account, not a guest, to verify.",
   stremio_unreachable: "Could not reach Stremio right now. Try again in a moment.",
@@ -37,7 +39,8 @@ const BY_CODE = {
 const BY_REASON = {
   password_too_short: "Your password needs to be at least 8 characters.",
   "too-short": "That name is too short. Use at least 3 characters.",
-  invalid: "That name has characters that aren't allowed. Stick to letters, numbers, and underscores.",
+  invalid:
+    "That name has characters that aren't allowed. Stick to letters, numbers, and underscores.",
   reserved: "That name is reserved. Pick a different one.",
   taken: "That name is already taken. Try another.",
   profanity: "Please choose a different name.",
@@ -79,10 +82,12 @@ function builtIn(key: AccountErrorKey): AccountErrorMessage {
 
 function isNetworkError(e: AccountError): boolean {
   const message = stringValue(e?.message).toLowerCase();
-  return e?.name === "TypeError"
-    || message.includes("failed to fetch")
-    || message.includes("networkerror")
-    || message.includes("load failed");
+  return (
+    e?.name === "TypeError" ||
+    message.includes("failed to fetch") ||
+    message.includes("networkerror") ||
+    message.includes("load failed")
+  );
 }
 
 export function accountErrorMessage(err: unknown): AccountErrorMessage {

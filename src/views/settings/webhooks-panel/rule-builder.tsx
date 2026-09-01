@@ -194,7 +194,7 @@ export function RuleBuilder({
   return (
     <section
       id={settingsAnchor(t("Automations"))}
- className="scroll-mt-28 flex flex-col gap-4 rounded-2xl bg-elevated p-7"
+      className="scroll-mt-28 flex flex-col gap-4 rounded-2xl bg-elevated p-7"
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex flex-col gap-1">
@@ -306,7 +306,9 @@ function RuleRow({
             >
               <span
                 className={`absolute start-0 top-0.5 block h-4 w-4 rounded-full bg-canvas transition-transform ${
-                  rule.enabled ? "translate-x-[18px] rtl:-translate-x-[18px]" : "translate-x-0.5 rtl:-translate-x-0.5"
+                  rule.enabled
+                    ? "translate-x-[18px] rtl:-translate-x-[18px]"
+                    : "translate-x-0.5 rtl:-translate-x-0.5"
                 }`}
               />
             </span>
@@ -368,213 +370,240 @@ function RuleEditor({
   };
 
   return (
- <div className="harbor-rise flex flex-col gap-5 rounded-md bg-canvas p-5">
-        <span className="text-[11.5px] font-bold uppercase tracking-[0.16em] text-ink-subtle">
-          {isNew ? t("New rule") : t("Edit rule")}
-        </span>
+    <div className="harbor-rise flex flex-col gap-5 rounded-md bg-canvas p-5">
+      <span className="text-[11.5px] font-bold uppercase tracking-[0.16em] text-ink-subtle">
+        {isNew ? t("New rule") : t("Edit rule")}
+      </span>
 
-        <Field label={t("Name")}>
-          <input
-            type="text"
-            value={draft.name}
-            onChange={(e) => setDraft({ ...draft, name: e.target.value })}
-            placeholder={t(EVENT_LABELS[draft.trigger.event])}
-            maxLength={80}
-            className="h-11 w-full rounded-md bg-canvas px-3.5 text-[13px] text-ink placeholder:text-ink-subtle outline-none transition-colors focus:bg-elevated"
+      <Field label={t("Name")}>
+        <input
+          type="text"
+          value={draft.name}
+          onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+          placeholder={t(EVENT_LABELS[draft.trigger.event])}
+          maxLength={80}
+          className="h-11 w-full rounded-md bg-canvas px-3.5 text-[13px] text-ink placeholder:text-ink-subtle outline-none transition-colors focus:bg-elevated"
+        />
+      </Field>
+
+      <Field label={t("WHEN")}>
+        <select
+          value={draft.trigger.event}
+          onChange={(e) => setEvent(e.target.value as WebhookTrigger["event"])}
+          className="h-11 w-full rounded-md bg-canvas px-3 text-[13px] text-ink outline-none transition-colors focus:bg-elevated"
+        >
+          {EVENT_ORDER.map((ev) => (
+            <option key={ev} value={ev}>
+              {t(EVENT_LABELS[ev])}
+            </option>
+          ))}
+        </select>
+      </Field>
+
+      {draft.trigger.event === "fromGenre" && (
+        <TriggerSubFields>
+          <SubSelect
+            label={t("Media type")}
+            value={draft.trigger.mediaType}
+            options={[
+              { value: "movie", label: t("Movies") },
+              { value: "tv", label: t("Series") },
+            ]}
+            onChange={(v) =>
+              setDraft({
+                ...draft,
+                trigger: {
+                  ...(draft.trigger as Extract<WebhookTrigger, { event: "fromGenre" }>),
+                  mediaType: v as "movie" | "tv",
+                },
+              })
+            }
           />
-        </Field>
+          <SubChips
+            label={t("Genres")}
+            items={Object.entries(MOVIE_GENRES).map(([name, id]) => ({
+              key: String(id),
+              label: name,
+              selected: (
+                draft.trigger as Extract<WebhookTrigger, { event: "fromGenre" }>
+              ).genreIds.includes(id),
+              onToggle: () => {
+                const t = draft.trigger as Extract<WebhookTrigger, { event: "fromGenre" }>;
+                const next = t.genreIds.includes(id)
+                  ? t.genreIds.filter((x) => x !== id)
+                  : [...t.genreIds, id];
+                setDraft({ ...draft, trigger: { ...t, genreIds: next } });
+              },
+            }))}
+          />
+        </TriggerSubFields>
+      )}
 
-        <Field label={t("WHEN")}>
-          <select
-            value={draft.trigger.event}
-            onChange={(e) => setEvent(e.target.value as WebhookTrigger["event"])}
-            className="h-11 w-full rounded-md bg-canvas px-3 text-[13px] text-ink outline-none transition-colors focus:bg-elevated"
-          >
-            {EVENT_ORDER.map((ev) => (
-              <option key={ev} value={ev}>
-                {t(EVENT_LABELS[ev])}
-              </option>
-            ))}
-          </select>
-        </Field>
+      {draft.trigger.event === "fromProvider" && (
+        <TriggerSubFields>
+          <SubChips
+            label={t("Streamers")}
+            items={PROVIDERS.map((p) => ({
+              key: String(p.id),
+              label: p.name,
+              selected: (
+                draft.trigger as Extract<WebhookTrigger, { event: "fromProvider" }>
+              ).providerIds.includes(p.id),
+              onToggle: () => {
+                const t = draft.trigger as Extract<WebhookTrigger, { event: "fromProvider" }>;
+                const next = t.providerIds.includes(p.id)
+                  ? t.providerIds.filter((x) => x !== p.id)
+                  : [...t.providerIds, p.id];
+                setDraft({ ...draft, trigger: { ...t, providerIds: next } });
+              },
+            }))}
+          />
+        </TriggerSubFields>
+      )}
 
-        {draft.trigger.event === "fromGenre" && (
-          <TriggerSubFields>
-            <SubSelect
-              label={t("Media type")}
-              value={draft.trigger.mediaType}
-              options={[
-                { value: "movie", label: t("Movies") },
-                { value: "tv", label: t("Series") },
-              ]}
-              onChange={(v) =>
-                setDraft({ ...draft, trigger: { ...(draft.trigger as Extract<WebhookTrigger, { event: "fromGenre" }>), mediaType: v as "movie" | "tv" } })
+      {draft.trigger.event === "fromCountry" && (
+        <TriggerSubFields>
+          <SubChips
+            label={t("Countries")}
+            items={COUNTRIES.map((c) => ({
+              key: c.code,
+              label: c.name,
+              selected: (
+                draft.trigger as Extract<WebhookTrigger, { event: "fromCountry" }>
+              ).countryCodes.includes(c.code),
+              onToggle: () => {
+                const t = draft.trigger as Extract<WebhookTrigger, { event: "fromCountry" }>;
+                const next = t.countryCodes.includes(c.code)
+                  ? t.countryCodes.filter((x) => x !== c.code)
+                  : [...t.countryCodes, c.code];
+                setDraft({ ...draft, trigger: { ...t, countryCodes: next } });
+              },
+            }))}
+          />
+        </TriggerSubFields>
+      )}
+
+      {draft.trigger.event === "liveTvEvent" && (
+        <TriggerSubFields>
+          <label className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              checked={
+                (draft.trigger as Extract<WebhookTrigger, { event: "liveTvEvent" }>)
+                  .favoritesOnly !== false
               }
+              onChange={(e) => {
+                const t = draft.trigger as Extract<WebhookTrigger, { event: "liveTvEvent" }>;
+                setDraft({ ...draft, trigger: { ...t, favoritesOnly: e.target.checked } });
+              }}
+              className="h-4 w-4 accent-ink"
             />
-            <SubChips
-              label={t("Genres")}
-              items={Object.entries(MOVIE_GENRES).map(([name, id]) => ({
-                key: String(id),
-                label: name,
-                selected: (draft.trigger as Extract<WebhookTrigger, { event: "fromGenre" }>).genreIds.includes(id),
-                onToggle: () => {
-                  const t = draft.trigger as Extract<WebhookTrigger, { event: "fromGenre" }>;
-                  const next = t.genreIds.includes(id)
-                    ? t.genreIds.filter((x) => x !== id)
-                    : [...t.genreIds, id];
-                  setDraft({ ...draft, trigger: { ...t, genreIds: next } });
-                },
-              }))}
-            />
-          </TriggerSubFields>
-        )}
+            <span className="text-[12.5px] text-ink">{t("Only my favorited channels")}</span>
+          </label>
+          <label className="flex items-center gap-3">
+            <span className="w-[140px] shrink-0 text-[11.5px] font-semibold uppercase tracking-[0.14em] text-ink-subtle">
+              {t("Heads up")}
+            </span>
+            <select
+              value={String(
+                (draft.trigger as Extract<WebhookTrigger, { event: "liveTvEvent" }>).leadMinutes ??
+                  15,
+              )}
+              onChange={(e) => {
+                const t = draft.trigger as Extract<WebhookTrigger, { event: "liveTvEvent" }>;
+                setDraft({ ...draft, trigger: { ...t, leadMinutes: Number(e.target.value) } });
+              }}
+              className="h-9 flex-1 rounded-md bg-canvas px-3 text-[12.5px] text-ink outline-none focus:border-ink"
+            >
+              {[5, 10, 15, 30, 60, 120].map((m) => (
+                <option key={m} value={m}>
+                  {m < 60
+                    ? t("{n} minutes before", { n: m })
+                    : m === 60
+                      ? t("1 hour before")
+                      : t("{n} hours before", { n: m / 60 })}
+                </option>
+              ))}
+            </select>
+          </label>
+          <p className="text-[11.5px] text-ink-subtle">
+            {t("Harbor scans your IPTV playlists' EPG every 30 min for programs about to start.")}
+          </p>
+        </TriggerSubFields>
+      )}
 
-        {draft.trigger.event === "fromProvider" && (
-          <TriggerSubFields>
-            <SubChips
-              label={t("Streamers")}
-              items={PROVIDERS.map((p) => ({
-                key: String(p.id),
-                label: p.name,
-                selected: (draft.trigger as Extract<WebhookTrigger, { event: "fromProvider" }>).providerIds.includes(p.id),
-                onToggle: () => {
-                  const t = draft.trigger as Extract<WebhookTrigger, { event: "fromProvider" }>;
-                  const next = t.providerIds.includes(p.id)
-                    ? t.providerIds.filter((x) => x !== p.id)
-                    : [...t.providerIds, p.id];
-                  setDraft({ ...draft, trigger: { ...t, providerIds: next } });
-                },
-              }))}
-            />
-          </TriggerSubFields>
-        )}
-
-        {draft.trigger.event === "fromCountry" && (
-          <TriggerSubFields>
-            <SubChips
-              label={t("Countries")}
-              items={COUNTRIES.map((c) => ({
-                key: c.code,
-                label: c.name,
-                selected: (draft.trigger as Extract<WebhookTrigger, { event: "fromCountry" }>).countryCodes.includes(c.code),
-                onToggle: () => {
-                  const t = draft.trigger as Extract<WebhookTrigger, { event: "fromCountry" }>;
-                  const next = t.countryCodes.includes(c.code)
-                    ? t.countryCodes.filter((x) => x !== c.code)
-                    : [...t.countryCodes, c.code];
-                  setDraft({ ...draft, trigger: { ...t, countryCodes: next } });
-                },
-              }))}
-            />
-          </TriggerSubFields>
-        )}
-
-        {draft.trigger.event === "liveTvEvent" && (
-          <TriggerSubFields>
-            <label className="flex items-center gap-3">
-              <input
-                type="checkbox"
-                checked={(draft.trigger as Extract<WebhookTrigger, { event: "liveTvEvent" }>).favoritesOnly !== false}
-                onChange={(e) => {
-                  const t = draft.trigger as Extract<WebhookTrigger, { event: "liveTvEvent" }>;
-                  setDraft({ ...draft, trigger: { ...t, favoritesOnly: e.target.checked } });
-                }}
-                className="h-4 w-4 accent-ink"
-              />
-              <span className="text-[12.5px] text-ink">{t("Only my favorited channels")}</span>
-            </label>
-            <label className="flex items-center gap-3">
-              <span className="w-[140px] shrink-0 text-[11.5px] font-semibold uppercase tracking-[0.14em] text-ink-subtle">
-                {t("Heads up")}
-              </span>
-              <select
-                value={String(
-                  (draft.trigger as Extract<WebhookTrigger, { event: "liveTvEvent" }>).leadMinutes ?? 15,
-                )}
-                onChange={(e) => {
-                  const t = draft.trigger as Extract<WebhookTrigger, { event: "liveTvEvent" }>;
-                  setDraft({ ...draft, trigger: { ...t, leadMinutes: Number(e.target.value) } });
-                }}
- className="h-9 flex-1 rounded-md bg-canvas px-3 text-[12.5px] text-ink outline-none focus:border-ink"
-              >
-                {[5, 10, 15, 30, 60, 120].map((m) => (
-                  <option key={m} value={m}>
-                    {m < 60
-                      ? t("{n} minutes before", { n: m })
-                      : m === 60
-                        ? t("1 hour before")
-                        : t("{n} hours before", { n: m / 60 })}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <p className="text-[11.5px] text-ink-subtle">
-              {t("Harbor scans your IPTV playlists' EPG every 30 min for programs about to start.")}
-            </p>
-          </TriggerSubFields>
-        )}
-
-        {draft.trigger.event === "fromTrackedPerson" && trackedPeople.length === 0 && (
-          <div className="rounded-md border border-accent/30 bg-accent/5 px-3 py-2 text-[12.5px] text-accent/85">
-            {t("Add people in the Custom calendar manager first, then come back here.")}
-          </div>
-        )}
-
-        {draft.trigger.event === "fromTrackedPerson" && trackedPeople.length > 0 && (
-          <TriggerSubFields>
-            <SubChips
-              label={t("People (empty = all tracked)")}
-              items={trackedPeople.map((p) => ({
-                key: String(p.id),
-                label: p.name,
-                selected: (
-                  (draft.trigger as Extract<WebhookTrigger, { event: "fromTrackedPerson" }>).personIds ?? []
-                ).includes(p.id),
-                onToggle: () => {
-                  const t = draft.trigger as Extract<WebhookTrigger, { event: "fromTrackedPerson" }>;
-                  const cur = t.personIds ?? [];
-                  const next = cur.includes(p.id) ? cur.filter((x) => x !== p.id) : [...cur, p.id];
-                  setDraft({ ...draft, trigger: { ...t, personIds: next } });
-                },
-              }))}
-            />
-          </TriggerSubFields>
-        )}
-
-        <Field label={t("THEN notify on")}>
-          <div className="flex gap-2">
-            <ChannelToggle
-              label="Discord"
-              on={draft.channels.discord}
-              disabled={!canDiscord}
-              onToggle={() => setDraft({ ...draft, channels: { ...draft.channels, discord: !draft.channels.discord } })}
-            />
-            <ChannelToggle
-              label="Telegram"
-              on={draft.channels.telegram}
-              disabled={!canTelegram}
-              onToggle={() => setDraft({ ...draft, channels: { ...draft.channels, telegram: !draft.channels.telegram } })}
-            />
-          </div>
-        </Field>
-
-        <div className="flex items-center justify-end gap-2 pt-1">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="h-10 rounded-full px-4 text-[13px] font-medium text-ink-muted transition-colors hover:text-ink"
-          >
-            {t("Cancel")}
-          </button>
-          <button
-            type="button"
-            onClick={() => onSave(draft)}
-            disabled={!draft.channels.discord && !draft.channels.telegram}
-            className="h-10 rounded-full bg-ink px-5 text-[13px] font-semibold text-canvas transition-opacity hover:opacity-90 disabled:opacity-40"
-          >
-            {t("Save rule")}
-          </button>
+      {draft.trigger.event === "fromTrackedPerson" && trackedPeople.length === 0 && (
+        <div className="rounded-md border border-accent/30 bg-accent/5 px-3 py-2 text-[12.5px] text-accent/85">
+          {t("Add people in the Custom calendar manager first, then come back here.")}
         </div>
+      )}
+
+      {draft.trigger.event === "fromTrackedPerson" && trackedPeople.length > 0 && (
+        <TriggerSubFields>
+          <SubChips
+            label={t("People (empty = all tracked)")}
+            items={trackedPeople.map((p) => ({
+              key: String(p.id),
+              label: p.name,
+              selected: (
+                (draft.trigger as Extract<WebhookTrigger, { event: "fromTrackedPerson" }>)
+                  .personIds ?? []
+              ).includes(p.id),
+              onToggle: () => {
+                const t = draft.trigger as Extract<WebhookTrigger, { event: "fromTrackedPerson" }>;
+                const cur = t.personIds ?? [];
+                const next = cur.includes(p.id) ? cur.filter((x) => x !== p.id) : [...cur, p.id];
+                setDraft({ ...draft, trigger: { ...t, personIds: next } });
+              },
+            }))}
+          />
+        </TriggerSubFields>
+      )}
+
+      <Field label={t("THEN notify on")}>
+        <div className="flex gap-2">
+          <ChannelToggle
+            label="Discord"
+            on={draft.channels.discord}
+            disabled={!canDiscord}
+            onToggle={() =>
+              setDraft({
+                ...draft,
+                channels: { ...draft.channels, discord: !draft.channels.discord },
+              })
+            }
+          />
+          <ChannelToggle
+            label="Telegram"
+            on={draft.channels.telegram}
+            disabled={!canTelegram}
+            onToggle={() =>
+              setDraft({
+                ...draft,
+                channels: { ...draft.channels, telegram: !draft.channels.telegram },
+              })
+            }
+          />
+        </div>
+      </Field>
+
+      <div className="flex items-center justify-end gap-2 pt-1">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="h-10 rounded-full px-4 text-[13px] font-medium text-ink-muted transition-colors hover:text-ink"
+        >
+          {t("Cancel")}
+        </button>
+        <button
+          type="button"
+          onClick={() => onSave(draft)}
+          disabled={!draft.channels.discord && !draft.channels.telegram}
+          className="h-10 rounded-full bg-ink px-5 text-[13px] font-semibold text-canvas transition-opacity hover:opacity-90 disabled:opacity-40"
+        >
+          {t("Save rule")}
+        </button>
+      </div>
     </div>
   );
 }
@@ -582,18 +611,16 @@ function RuleEditor({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="flex flex-col gap-1.5">
-      <span className="text-[11.5px] font-semibold uppercase tracking-[0.14em] text-ink-subtle">{label}</span>
+      <span className="text-[11.5px] font-semibold uppercase tracking-[0.14em] text-ink-subtle">
+        {label}
+      </span>
       {children}
     </label>
   );
 }
 
 function TriggerSubFields({ children }: { children: React.ReactNode }) {
-  return (
- <div className="flex flex-col gap-3 rounded-md /60 bg-canvas p-3.5">
-      {children}
-    </div>
-  );
+  return <div className="flex flex-col gap-3 rounded-md /60 bg-canvas p-3.5">{children}</div>;
 }
 
 function SubSelect({
@@ -615,7 +642,7 @@ function SubSelect({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
- className="h-9 flex-1 rounded-md bg-canvas px-3 text-[12.5px] text-ink outline-none focus:border-ink"
+        className="h-9 flex-1 rounded-md bg-canvas px-3 text-[12.5px] text-ink outline-none focus:border-ink"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>
@@ -636,7 +663,9 @@ function SubChips({
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-[11.5px] font-semibold uppercase tracking-[0.14em] text-ink-subtle">{label}</span>
+      <span className="text-[11.5px] font-semibold uppercase tracking-[0.14em] text-ink-subtle">
+        {label}
+      </span>
       <div className="flex flex-wrap gap-1.5">
         {items.map((it) => (
           <button

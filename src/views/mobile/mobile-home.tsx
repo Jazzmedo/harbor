@@ -83,7 +83,9 @@ export function MobileHome() {
   if (failed && rows.length === 0 && cw.length === 0) {
     return (
       <div className="flex h-[70vh] flex-col items-center justify-center gap-4 px-8 text-center">
-        <h2 className="font-display text-[20px] font-medium text-ink">{t("Couldn't load your home")}</h2>
+        <h2 className="font-display text-[20px] font-medium text-ink">
+          {t("Couldn't load your home")}
+        </h2>
         <p className="max-w-xs text-[13.5px] leading-relaxed text-ink-muted">
           {t("Harbor couldn't reach the catalog servers. Check your connection and try again.")}
         </p>

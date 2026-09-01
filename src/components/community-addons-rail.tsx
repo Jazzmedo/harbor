@@ -2,7 +2,13 @@ import { ArrowUpRight, Check, Loader2, Plus, Star } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import stremioAddonsLogo from "@/assets/stremio-addons-net.png";
 import { ArrowedScrollRow } from "@/components/arrowed-scroll-row";
-import { addonSiteUrl, isAdultAddon, listAddons, listRising, type SAAddon } from "@/lib/providers/stremio-addons";
+import {
+  addonSiteUrl,
+  isAdultAddon,
+  listAddons,
+  listRising,
+  type SAAddon,
+} from "@/lib/providers/stremio-addons";
 import { useSettings } from "@/lib/settings";
 import { fetchManifestAt, installAddon, manifestToConfigureUrl } from "@/lib/addon-store";
 import { rememberPendingAddon } from "@/lib/addons-store/pending-detail";
@@ -227,8 +233,9 @@ function CommunityCard({
     if (!m?.id || busy) return;
     setBusy(true);
     try {
-      let hints = (m as { behaviorHints?: { configurable?: boolean; configurationRequired?: boolean } })
-        .behaviorHints;
+      let hints = (
+        m as { behaviorHints?: { configurable?: boolean; configurationRequired?: boolean } }
+      ).behaviorHints;
       if (!hints) {
         const full = await fetchManifestAt(addon.manifestUrl).catch(() => null);
         hints = full?.behaviorHints;
@@ -369,9 +376,12 @@ function ErrorState({ message }: { message: string }) {
   const t = useT();
   return (
     <p className="rounded-xl border border-dashed border-edge bg-canvas/30 px-4 py-6 text-center text-[12.5px] text-ink-subtle">
-      {t("{site} should be reachable in a moment. They're deploying right now. Refresh once their docs go live.", {
-        site: SITE_NAME,
-      })}
+      {t(
+        "{site} should be reachable in a moment. They're deploying right now. Refresh once their docs go live.",
+        {
+          site: SITE_NAME,
+        },
+      )}
       <br />
       <span className="text-[10.5px] opacity-70">
         ({message || t("Couldn't reach {site}", { site: SITE_NAME })})

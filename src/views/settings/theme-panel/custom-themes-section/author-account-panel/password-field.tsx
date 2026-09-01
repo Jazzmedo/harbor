@@ -56,7 +56,9 @@ export function PasswordField({
               <span
                 key={seg}
                 className="h-[3px] flex-1 rounded-full transition-colors duration-300"
-                style={{ backgroundColor: seg <= filled ? strengthColor(filled) : "var(--color-edge-soft)" }}
+                style={{
+                  backgroundColor: seg <= filled ? strengthColor(filled) : "var(--color-edge-soft)",
+                }}
               />
             ))}
           </div>

@@ -38,7 +38,12 @@ import { LocationSelect } from "./location-select";
 import { CustomizationPanel } from "./customization/customization-panel";
 import { AboutEditor } from "./customization/about-editor";
 import { useCustomUrlAvailability, type UrlStatus } from "./use-customurl-availability";
-import type { Badge, FriendsVisibility, ProfileSettingsInput, ProfileSummary } from "./profile-types";
+import type {
+  Badge,
+  FriendsVisibility,
+  ProfileSettingsInput,
+  ProfileSummary,
+} from "./profile-types";
 import type { FavoriteKind } from "./use-favorites";
 
 function Field({
@@ -78,7 +83,6 @@ function SongTimes({ url, onChange }: { url: string; onChange: (u: string) => vo
     setStart(p.startSec != null ? formatClock(p.startSec) : "");
     setEnd(p.endSec != null ? formatClock(p.endSec) : "");
     // Resync only when the song itself changes, not on every start/end keystroke.
-
   }, [songKey]);
   if (parsed?.provider !== "youtube") return null;
   const commit = (s: string, e: string) =>
@@ -187,7 +191,11 @@ function MinecraftPicker({
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
   return createPortal(
-    <div className="fixed inset-0 z-[185] flex items-center justify-center p-4" role="dialog" aria-modal>
+    <div
+      className="fixed inset-0 z-[185] flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal
+    >
       <button aria-label={t("Close")} className="absolute inset-0 bg-black/55" onClick={onClose} />
       <div className="relative flex w-full max-w-md flex-col overflow-hidden rounded-xl bg-surface ring-1 ring-edge">
         <div className="flex items-center justify-between border-b border-edge-soft px-6 py-4">
@@ -254,8 +262,7 @@ function UrlStatusPill({ status }: { status: UrlStatus }) {
         <Check size={12} strokeWidth={2.8} /> {t("Available")}
       </span>
     );
-  if (status === "mine")
-    return <span className="text-[12px] text-ink-subtle">{t("Yours")}</span>;
+  if (status === "mine") return <span className="text-[12px] text-ink-subtle">{t("Yours")}</span>;
   if (status === "taken")
     return <span className="text-[12px] font-medium text-danger">{t("Taken")}</span>;
   if (status === "invalid") return <span className="text-[12px] text-danger">3-24 a-z 0-9 -</span>;
@@ -387,11 +394,12 @@ export function ProfileSettings({
     );
   }
 
-  const friendsVisibilityOpts: Array<{ id: FriendsVisibility; label: string; icon: typeof Globe }> = [
-    { id: "everyone", label: t("Everyone"), icon: Globe },
-    { id: "friends", label: t("Friends"), icon: Users },
-    { id: "only_me", label: t("Only me"), icon: Lock },
-  ];
+  const friendsVisibilityOpts: Array<{ id: FriendsVisibility; label: string; icon: typeof Globe }> =
+    [
+      { id: "everyone", label: t("Everyone"), icon: Globe },
+      { id: "friends", label: t("Friends"), icon: Users },
+      { id: "only_me", label: t("Only me"), icon: Lock },
+    ];
 
   return (
     <>
@@ -475,352 +483,397 @@ export function ProfileSettings({
               )}
 
               <div key={section} className="animate-step-in">
-              {section === "general" && (
-                <div className="space-y-5">
-                  <SectionHead
-                    title={t("General")}
-                    desc={t("Your name and the details shown at the top of your profile.")}
-                  />
-
-                  <Field label={t("Alias")} hint={`${form.alias.length}/32`}>
-                    <input
-                      value={form.alias}
-                      maxLength={32}
-                      onChange={(e) => set("alias", e.target.value)}
-                      className={inputCls}
-                      placeholder={t("Display name")}
+                {section === "general" && (
+                  <div className="space-y-5">
+                    <SectionHead
+                      title={t("General")}
+                      desc={t("Your name and the details shown at the top of your profile.")}
                     />
-                  </Field>
 
-                  <Field label={t("Status")} hint={t("Shows as a bubble on your profile")}>
-                    <input
-                      value={form.slogan}
-                      maxLength={100}
-                      onChange={(e) => set("slogan", e.target.value)}
-                      className={inputCls}
-                      placeholder={t("Here for the late-night sci-fi")}
-                    />
-                  </Field>
-
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <Field label={t("Pronouns")} hint={t("optional")}>
+                    <Field label={t("Alias")} hint={`${form.alias.length}/32`}>
                       <input
-                        value={form.pronouns}
+                        value={form.alias}
                         maxLength={32}
-                        onChange={(e) => set("pronouns", e.target.value)}
+                        onChange={(e) => set("alias", e.target.value)}
                         className={inputCls}
-                        placeholder={t("they/them")}
-                        autoCapitalize="off"
-                        spellCheck={false}
+                        placeholder={t("Display name")}
                       />
                     </Field>
 
-                    <Field label={t("Location")}>
-                      <LocationSelect value={form.location} onChange={(c) => set("location", c)} />
+                    <Field label={t("Status")} hint={t("Shows as a bubble on your profile")}>
+                      <input
+                        value={form.slogan}
+                        maxLength={100}
+                        onChange={(e) => set("slogan", e.target.value)}
+                        className={inputCls}
+                        placeholder={t("Here for the late-night sci-fi")}
+                      />
+                    </Field>
+
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <Field label={t("Pronouns")} hint={t("optional")}>
+                        <input
+                          value={form.pronouns}
+                          maxLength={32}
+                          onChange={(e) => set("pronouns", e.target.value)}
+                          className={inputCls}
+                          placeholder={t("they/them")}
+                          autoCapitalize="off"
+                          spellCheck={false}
+                        />
+                      </Field>
+
+                      <Field label={t("Location")}>
+                        <LocationSelect
+                          value={form.location}
+                          onChange={(c) => set("location", c)}
+                        />
+                      </Field>
+                    </div>
+
+                    <Field label={t("Custom url")} hint="harbor.site/u/">
+                      <div className="relative">
+                        <input
+                          value={form.customUrl}
+                          maxLength={24}
+                          onChange={(e) => set("customUrl", e.target.value.toLowerCase())}
+                          className={`${inputCls} pe-28 ${urlBlocked ? "ring-danger" : ""}`}
+                          placeholder="your-handle"
+                          autoCapitalize="off"
+                          spellCheck={false}
+                        />
+                        <span className="pointer-events-none absolute inset-y-0 end-3 flex items-center">
+                          <UrlStatusPill status={urlStatus} />
+                        </span>
+                      </div>
+                    </Field>
+
+                    <Field
+                      label={t("Profile song")}
+                      hint={t("YouTube, SoundCloud or Spotify link")}
+                    >
+                      <input
+                        value={form.audioUrl}
+                        maxLength={400}
+                        onChange={(e) => set("audioUrl", e.target.value.trim())}
+                        className={inputCls}
+                        placeholder="https://youtu.be/..."
+                        spellCheck={false}
+                      />
+                      <SongTimes url={form.audioUrl} onChange={(u) => set("audioUrl", u)} />
+                    </Field>
+
+                    <Field label={t("About")}>
+                      <AboutEditor
+                        value={form.description}
+                        onChange={(v) => set("description", v)}
+                      />
                     </Field>
                   </div>
+                )}
 
-                  <Field label={t("Custom url")} hint="harbor.site/u/">
-                    <div className="relative">
-                      <input
-                        value={form.customUrl}
-                        maxLength={24}
-                        onChange={(e) => set("customUrl", e.target.value.toLowerCase())}
-                        className={`${inputCls} pe-28 ${urlBlocked ? "ring-danger" : ""}`}
-                        placeholder="your-handle"
-                        autoCapitalize="off"
-                        spellCheck={false}
-                      />
-                      <span className="pointer-events-none absolute inset-y-0 end-3 flex items-center">
-                        <UrlStatusPill status={urlStatus} />
-                      </span>
-                    </div>
-                  </Field>
-
-                  <Field label={t("Profile song")} hint={t("YouTube, SoundCloud or Spotify link")}>
-                    <input
-                      value={form.audioUrl}
-                      maxLength={400}
-                      onChange={(e) => set("audioUrl", e.target.value.trim())}
-                      className={inputCls}
-                      placeholder="https://youtu.be/..."
-                      spellCheck={false}
+                {section === "look" && (
+                  <div className="space-y-5">
+                    <SectionHead
+                      title={t("Look")}
+                      desc={t("Your avatar, banner, and how the whole profile is styled.")}
                     />
-                    <SongTimes url={form.audioUrl} onChange={(u) => set("audioUrl", u)} />
-                  </Field>
 
-                  <Field label={t("About")}>
-                    <AboutEditor value={form.description} onChange={(v) => set("description", v)} />
-                  </Field>
-                </div>
-              )}
+                    <ProfileMedia summary={summary} onSaved={onSaved} />
 
-              {section === "look" && (
-                <div className="space-y-5">
-                  <SectionHead
-                    title={t("Look")}
-                    desc={t("Your avatar, banner, and how the whole profile is styled.")}
-                  />
-
-                  <ProfileMedia summary={summary} onSaved={onSaved} />
-
-                  <ActionRow
-                    title={t("Customize profile")}
-                    desc={t("Custom font, page background, and a freeform HTML/CSS canvas")}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => setCustomizing(true)}
-                      className={`${cardBtn} gap-1.5`}
-                    >
-                      <Palette size={16} /> {t("Customize")}
-                    </button>
-                  </ActionRow>
-
-                  {onArrange && (
                     <ActionRow
-                      title={t("Arrange cards")}
-                      desc={t("Reorder or hide the cards on your profile")}
+                      title={t("Customize profile")}
+                      desc={t("Custom font, page background, and a freeform HTML/CSS canvas")}
                     >
                       <button
                         type="button"
-                        onClick={() => void save(onArrange)}
-                        disabled={saving}
-                        className={`${cardBtn} gap-1.5 disabled:opacity-40`}
+                        onClick={() => setCustomizing(true)}
+                        className={`${cardBtn} gap-1.5`}
                       >
-                        <LayoutGrid size={16} /> {t("Arrange")}
+                        <Palette size={16} /> {t("Customize")}
                       </button>
                     </ActionRow>
-                  )}
-                </div>
-              )}
 
-              {section === "showcase" && (
-                <div className="space-y-5">
-                  <SectionHead
-                    title={t("Showcase")}
-                    desc={t("Pick what appears on your profile, and the order it shows in.")}
-                  />
-
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <ShowcaseCard
-                      title={t("Featured lists")}
-                      desc={t("Show up to 6 of your lists on your profile")}
-                    >
-                      <button type="button" onClick={() => setPickingLists(true)} className={cardBtn}>
-                        {t("Manage")}
-                      </button>
-                    </ShowcaseCard>
-
-                    <ShowcaseCard
-                      title={t("Favourites")}
-                      desc={t("Show your favourite games, books and music on your profile")}
-                    >
-                      <button type="button" onClick={() => setPickingFav("game")} className={cardBtn}>
-                        {t("Games")}
-                      </button>
-                      <button type="button" onClick={() => setPickingFav("book")} className={cardBtn}>
-                        {t("Books")}
-                      </button>
-                      <button type="button" onClick={() => setPickingFav("music")} className={cardBtn}>
-                        {t("Music")}
-                      </button>
-                    </ShowcaseCard>
-
-                    {canPickBadges && (
-                      <ShowcaseCard
-                        title={t("Shown badges")}
-                        desc={t("Choose which badges appear by your name, and their order")}
+                    {onArrange && (
+                      <ActionRow
+                        title={t("Arrange cards")}
+                        desc={t("Reorder or hide the cards on your profile")}
                       >
                         <button
                           type="button"
-                          onClick={() => setPickingBadges(true)}
+                          onClick={() => void save(onArrange)}
+                          disabled={saving}
+                          className={`${cardBtn} gap-1.5 disabled:opacity-40`}
+                        >
+                          <LayoutGrid size={16} /> {t("Arrange")}
+                        </button>
+                      </ActionRow>
+                    )}
+                  </div>
+                )}
+
+                {section === "showcase" && (
+                  <div className="space-y-5">
+                    <SectionHead
+                      title={t("Showcase")}
+                      desc={t("Pick what appears on your profile, and the order it shows in.")}
+                    />
+
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <ShowcaseCard
+                        title={t("Featured lists")}
+                        desc={t("Show up to 6 of your lists on your profile")}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => setPickingLists(true)}
+                          className={cardBtn}
+                        >
+                          {t("Manage")}
+                        </button>
+                      </ShowcaseCard>
+
+                      <ShowcaseCard
+                        title={t("Favourites")}
+                        desc={t("Show your favourite games, books and music on your profile")}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => setPickingFav("game")}
+                          className={cardBtn}
+                        >
+                          {t("Games")}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setPickingFav("book")}
+                          className={cardBtn}
+                        >
+                          {t("Books")}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setPickingFav("music")}
+                          className={cardBtn}
+                        >
+                          {t("Music")}
+                        </button>
+                      </ShowcaseCard>
+
+                      {canPickBadges && (
+                        <ShowcaseCard
+                          title={t("Shown badges")}
+                          desc={t("Choose which badges appear by your name, and their order")}
+                        >
+                          <button
+                            type="button"
+                            onClick={() => setPickingBadges(true)}
+                            className={cardBtn}
+                          >
+                            {t("Choose")}
+                          </button>
+                        </ShowcaseCard>
+                      )}
+
+                      <ShowcaseCard
+                        title={t("Hero stats")}
+                        desc={t("Choose which stats show in the row at the top of your profile")}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => setPickingStats(true)}
                           className={cardBtn}
                         >
                           {t("Choose")}
                         </button>
                       </ShowcaseCard>
-                    )}
 
-                    <ShowcaseCard
-                      title={t("Hero stats")}
-                      desc={t("Choose which stats show in the row at the top of your profile")}
-                    >
-                      <button type="button" onClick={() => setPickingStats(true)} className={cardBtn}>
-                        {t("Choose")}
-                      </button>
-                    </ShowcaseCard>
+                      <ShowcaseCard
+                        title={t("Profile cards")}
+                        desc={t(
+                          "Pick which cards show on your profile, and the order they appear in",
+                        )}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => setPickingCards(true)}
+                          className={cardBtn}
+                        >
+                          {t("Choose")}
+                        </button>
+                      </ShowcaseCard>
 
-                    <ShowcaseCard
-                      title={t("Profile cards")}
-                      desc={t("Pick which cards show on your profile, and the order they appear in")}
-                    >
-                      <button type="button" onClick={() => setPickingCards(true)} className={cardBtn}>
-                        {t("Choose")}
-                      </button>
-                    </ShowcaseCard>
+                      <ShowcaseCard
+                        title={t("Minecraft")}
+                        desc={
+                          form.minecraftName
+                            ? t("Showing {name}", { name: form.minecraftName })
+                            : t("Show a Minecraft card with your username")
+                        }
+                      >
+                        <button
+                          type="button"
+                          onClick={() => setPickingMinecraft(true)}
+                          className={cardBtn}
+                        >
+                          {t("Choose")}
+                        </button>
+                      </ShowcaseCard>
+                    </div>
+                  </div>
+                )}
 
-                    <ShowcaseCard
-                      title={t("Minecraft")}
-                      desc={
-                        form.minecraftName
-                          ? t("Showing {name}", { name: form.minecraftName })
-                          : t("Show a Minecraft card with your username")
-                      }
-                    >
+                {section === "privacy" && (
+                  <div className="space-y-3">
+                    <SectionHead
+                      title={t("Privacy")}
+                      desc={t("Control who can see your friends, activity, and stats.")}
+                    />
+
+                    <div className="flex items-center justify-between gap-3 rounded-xl bg-elevated px-4 py-3.5 ring-1 ring-edge-soft">
+                      <div className="min-w-0">
+                        <div className="text-[13.5px] font-medium text-ink">
+                          {t("Private profile")}
+                        </div>
+                        <div className="mt-0.5 text-[12.5px] leading-relaxed text-ink-subtle">
+                          {t(
+                            "Only you can see your friends, badges, activity, and comments. Your name and avatar stay visible.",
+                          )}
+                        </div>
+                      </div>
                       <button
                         type="button"
-                        onClick={() => setPickingMinecraft(true)}
-                        className={cardBtn}
+                        role="switch"
+                        aria-checked={form.private}
+                        aria-label={t("Private profile")}
+                        onClick={() => void togglePrivate()}
+                        style={{ minHeight: 0 }}
+                        className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors ${form.private ? "bg-accent" : "bg-edge"}`}
                       >
-                        {t("Choose")}
+                        <span
+                          className={`block h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${form.private ? "translate-x-5" : "translate-x-0"}`}
+                        />
                       </button>
-                    </ShowcaseCard>
-                  </div>
-                </div>
-              )}
+                    </div>
 
-              {section === "privacy" && (
-                <div className="space-y-3">
-                  <SectionHead
-                    title={t("Privacy")}
-                    desc={t("Control who can see your friends, activity, and stats.")}
-                  />
-
-                  <div className="flex items-center justify-between gap-3 rounded-xl bg-elevated px-4 py-3.5 ring-1 ring-edge-soft">
-                    <div className="min-w-0">
-                      <div className="text-[13.5px] font-medium text-ink">
-                        {t("Private profile")}
+                    <div className="rounded-xl bg-elevated px-4 py-3.5 ring-1 ring-edge-soft">
+                      <div className="min-w-0">
+                        <div className="text-[13.5px] font-medium text-ink">
+                          {t("Friends list")}
+                        </div>
+                        <div className="mt-0.5 text-[12.5px] leading-relaxed text-ink-subtle">
+                          {t("Choose who can see the friends on your profile")}
+                        </div>
                       </div>
-                      <div className="mt-0.5 text-[12.5px] leading-relaxed text-ink-subtle">
-                        {t(
-                          "Only you can see your friends, badges, activity, and comments. Your name and avatar stay visible.",
-                        )}
+                      <div className="mt-3 grid grid-cols-3 gap-2">
+                        {friendsVisibilityOpts.map((o) => {
+                          const on = form.friendsVisibility === o.id;
+                          const Icon = o.icon;
+                          return (
+                            <button
+                              key={o.id}
+                              type="button"
+                              onClick={() => set("friendsVisibility", o.id)}
+                              className={`flex flex-col items-center gap-1 rounded-md border p-2.5 text-center transition-colors ${
+                                on
+                                  ? "border-ink bg-surface"
+                                  : "border-edge-soft bg-surface/40 hover:border-edge"
+                              }`}
+                            >
+                              <Icon size={16} className={on ? "text-ink" : "text-ink-subtle"} />
+                              <span className="text-[12.5px] font-semibold text-ink">
+                                {o.label}
+                              </span>
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={form.private}
-                      aria-label={t("Private profile")}
-                      onClick={() => void togglePrivate()}
-                      style={{ minHeight: 0 }}
-                      className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors ${form.private ? "bg-accent" : "bg-edge"}`}
-                    >
-                      <span
-                        className={`block h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${form.private ? "translate-x-5" : "translate-x-0"}`}
-                      />
-                    </button>
-                  </div>
 
-                  <div className="rounded-xl bg-elevated px-4 py-3.5 ring-1 ring-edge-soft">
-                    <div className="min-w-0">
-                      <div className="text-[13.5px] font-medium text-ink">{t("Friends list")}</div>
-                      <div className="mt-0.5 text-[12.5px] leading-relaxed text-ink-subtle">
-                        {t("Choose who can see the friends on your profile")}
+                    <div className="flex items-center justify-between gap-3 rounded-xl bg-elevated px-4 py-3.5 ring-1 ring-edge-soft">
+                      <div className="min-w-0">
+                        <div className="text-[13.5px] font-medium text-ink">
+                          {t("Share watch activity")}
+                        </div>
+                        <div className="mt-0.5 text-[12.5px] leading-relaxed text-ink-subtle">
+                          {t("Off by default. Let visitors see what you have been watching")}
+                        </div>
                       </div>
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked={form.shareActivity}
+                        aria-label={t("Share watch activity")}
+                        onClick={() => set("shareActivity", !form.shareActivity)}
+                        style={{ minHeight: 0 }}
+                        className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors ${form.shareActivity ? "bg-accent" : "bg-edge"}`}
+                      >
+                        <span
+                          className={`block h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${form.shareActivity ? "translate-x-5" : "translate-x-0"}`}
+                        />
+                      </button>
                     </div>
-                    <div className="mt-3 grid grid-cols-3 gap-2">
-                      {friendsVisibilityOpts.map((o) => {
-                        const on = form.friendsVisibility === o.id;
-                        const Icon = o.icon;
-                        return (
-                          <button
-                            key={o.id}
-                            type="button"
-                            onClick={() => set("friendsVisibility", o.id)}
-                            className={`flex flex-col items-center gap-1 rounded-md border p-2.5 text-center transition-colors ${
-                              on ? "border-ink bg-surface" : "border-edge-soft bg-surface/40 hover:border-edge"
-                            }`}
-                          >
-                            <Icon size={16} className={on ? "text-ink" : "text-ink-subtle"} />
-                            <span className="text-[12.5px] font-semibold text-ink">{o.label}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
 
-                  <div className="flex items-center justify-between gap-3 rounded-xl bg-elevated px-4 py-3.5 ring-1 ring-edge-soft">
-                    <div className="min-w-0">
-                      <div className="text-[13.5px] font-medium text-ink">
-                        {t("Share watch activity")}
+                    <div className="flex items-center justify-between gap-3 rounded-xl bg-elevated px-4 py-3.5 ring-1 ring-edge-soft">
+                      <div className="min-w-0">
+                        <div className="text-[13.5px] font-medium text-ink">
+                          {t("Share live watching status")}
+                        </div>
+                        <div className="mt-0.5 text-[12.5px] leading-relaxed text-ink-subtle">
+                          {t(
+                            "Off by default. Show what you are watching right now, or your watch party, on your profile. Applies instantly",
+                          )}
+                        </div>
                       </div>
-                      <div className="mt-0.5 text-[12.5px] leading-relaxed text-ink-subtle">
-                        {t("Off by default. Let visitors see what you have been watching")}
-                      </div>
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked={settings.shareWatchPresence}
+                        aria-label={t("Share live watching status")}
+                        onClick={() =>
+                          updateSettings({ shareWatchPresence: !settings.shareWatchPresence })
+                        }
+                        style={{ minHeight: 0 }}
+                        className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors ${settings.shareWatchPresence ? "bg-accent" : "bg-edge"}`}
+                      >
+                        <span
+                          className={`block h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${settings.shareWatchPresence ? "translate-x-5" : "translate-x-0"}`}
+                        />
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={form.shareActivity}
-                      aria-label={t("Share watch activity")}
-                      onClick={() => set("shareActivity", !form.shareActivity)}
-                      style={{ minHeight: 0 }}
-                      className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors ${form.shareActivity ? "bg-accent" : "bg-edge"}`}
-                    >
-                      <span
-                        className={`block h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${form.shareActivity ? "translate-x-5" : "translate-x-0"}`}
-                      />
-                    </button>
-                  </div>
 
-                  <div className="flex items-center justify-between gap-3 rounded-xl bg-elevated px-4 py-3.5 ring-1 ring-edge-soft">
-                    <div className="min-w-0">
-                      <div className="text-[13.5px] font-medium text-ink">
-                        {t("Share live watching status")}
+                    <div className="flex items-center justify-between gap-3 rounded-xl bg-elevated px-4 py-3.5 ring-1 ring-edge-soft">
+                      <div className="min-w-0">
+                        <div className="text-[13.5px] font-medium text-ink">
+                          {t("Show your Simkl card")}
+                        </div>
+                        <div className="mt-0.5 text-[12.5px] leading-relaxed text-ink-subtle">
+                          {t(
+                            "Off by default. Shows your Simkl avatar, name and watch stats on your profile for anyone who visits. Manage the connection itself in Settings, Simkl.",
+                          )}
+                        </div>
                       </div>
-                      <div className="mt-0.5 text-[12.5px] leading-relaxed text-ink-subtle">
-                        {t(
-                          "Off by default. Show what you are watching right now, or your watch party, on your profile. Applies instantly",
-                        )}
-                      </div>
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked={settings.showSimklCard}
+                        aria-label={t("Show your Simkl card")}
+                        onClick={() => {
+                          const next = !settings.showSimklCard;
+                          updateSettings({ showSimklCard: next });
+                          if (!next)
+                            void socialPatch("/social/me/profile", { simkl: null }).catch(() => {});
+                        }}
+                        style={{ minHeight: 0 }}
+                        className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors ${settings.showSimklCard ? "bg-accent" : "bg-edge"}`}
+                      >
+                        <span
+                          className={`block h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${settings.showSimklCard ? "translate-x-5" : "translate-x-0"}`}
+                        />
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={settings.shareWatchPresence}
-                      aria-label={t("Share live watching status")}
-                      onClick={() => updateSettings({ shareWatchPresence: !settings.shareWatchPresence })}
-                      style={{ minHeight: 0 }}
-                      className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors ${settings.shareWatchPresence ? "bg-accent" : "bg-edge"}`}
-                    >
-                      <span
-                        className={`block h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${settings.shareWatchPresence ? "translate-x-5" : "translate-x-0"}`}
-                      />
-                    </button>
                   </div>
-
-                  <div className="flex items-center justify-between gap-3 rounded-xl bg-elevated px-4 py-3.5 ring-1 ring-edge-soft">
-                    <div className="min-w-0">
-                      <div className="text-[13.5px] font-medium text-ink">{t("Show your Simkl card")}</div>
-                      <div className="mt-0.5 text-[12.5px] leading-relaxed text-ink-subtle">
-                        {t(
-                          "Off by default. Shows your Simkl avatar, name and watch stats on your profile for anyone who visits. Manage the connection itself in Settings, Simkl.",
-                        )}
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={settings.showSimklCard}
-                      aria-label={t("Show your Simkl card")}
-                      onClick={() => {
-                        const next = !settings.showSimklCard;
-                        updateSettings({ showSimklCard: next });
-                        if (!next)
-                          void socialPatch("/social/me/profile", { simkl: null }).catch(() => {});
-                      }}
-                      style={{ minHeight: 0 }}
-                      className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors ${settings.showSimklCard ? "bg-accent" : "bg-edge"}`}
-                    >
-                      <span
-                        className={`block h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${settings.showSimklCard ? "translate-x-5" : "translate-x-0"}`}
-                      />
-                    </button>
-                  </div>
-                </div>
-              )}
+                )}
               </div>
             </div>
           </div>

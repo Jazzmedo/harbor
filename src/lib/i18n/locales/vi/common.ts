@@ -65,16 +65,20 @@ const common: Record<string, string> = {
   "{h}h {m}m left": "còn {h} giờ {m} phút",
   "{pct}% watched": "đã xem {pct}%",
   "Quick age check": "Xác minh nhanh độ tuổi",
-  "A quick age check before adult add-ons unlock. Answer three everyday questions any adult would know, and you're in.": "Hãy xác minh nhanh độ tuổi trước khi mở khóa các tiện ích bổ sung dành cho người lớn. Trả lời ba câu hỏi thường ngày mà người lớn nào cũng biết là xong.",
+  "A quick age check before adult add-ons unlock. Answer three everyday questions any adult would know, and you're in.":
+    "Hãy xác minh nhanh độ tuổi trước khi mở khóa các tiện ích bổ sung dành cho người lớn. Trả lời ba câu hỏi thường ngày mà người lớn nào cũng biết là xong.",
   "You're verified": "Bạn đã được xác minh",
-  "That's not it. Try a fresh round in a moment.": "Chưa đúng. Hãy thử bộ câu hỏi mới sau giây lát.",
+  "That's not it. Try a fresh round in a moment.":
+    "Chưa đúng. Hãy thử bộ câu hỏi mới sau giây lát.",
   "Chinese (Simplified)": "Tiếng Trung (Giản thể)",
-  "Indonesian": "Tiếng Indonesia",
+  Indonesian: "Tiếng Indonesia",
   "Finish updating Harbor": "Hoàn tất cập nhật Harbor",
-  "Download and run the installer to finish updating. If it keeps failing, run it as administrator once.": "Tải xuống và chạy trình cài đặt để hoàn tất cập nhật. Nếu vẫn không thành công, hãy thử chạy một lần với quyền quản trị viên.",
+  "Download and run the installer to finish updating. If it keeps failing, run it as administrator once.":
+    "Tải xuống và chạy trình cài đặt để hoàn tất cập nhật. Nếu vẫn không thành công, hãy thử chạy một lần với quyền quản trị viên.",
   "Restart to update": "Khởi động lại để cập nhật",
   "Update ready": "Bản cập nhật đã sẵn sàng",
-  "Harbor {version} downloaded but did not install on its own.": "Harbor {version} đã được tải xuống nhưng không tự cài đặt.",
+  "Harbor {version} downloaded but did not install on its own.":
+    "Harbor {version} đã được tải xuống nhưng không tự cài đặt.",
 };
 
 export default common;

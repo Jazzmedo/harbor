@@ -21,7 +21,9 @@ export function IdentityRow({
           className="h-11 w-full rounded-md bg-transparent px-3 pe-7 text-[19px] font-semibold tracking-tight text-ink placeholder:text-ink-subtle/70 focus:outline-none"
         />
         {!name.trim() && (
-          <span className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-[15px] text-accent">*</span>
+          <span className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-[15px] text-accent">
+            *
+          </span>
         )}
       </div>
       <input

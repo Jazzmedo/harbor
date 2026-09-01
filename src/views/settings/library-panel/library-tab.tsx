@@ -155,7 +155,6 @@ export function LibraryTab() {
   );
 }
 
-
 function ArtworkSwatch({ ratio }: { ratio: "portrait" | "landscape" | "logo" }) {
   const t = useT();
   const art = useSampleArtwork();

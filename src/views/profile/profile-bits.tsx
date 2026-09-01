@@ -28,9 +28,18 @@ export function Avatar({
     <span className="relative inline-flex shrink-0" style={{ width: size, height: size }}>
       <span className="grid h-full w-full place-items-center overflow-hidden rounded-full bg-elevated ring-2 ring-edge-soft">
         {showImg ? (
-          <img src={resolved} alt="" onError={() => setFailed(true)} className="h-full w-full object-cover" draggable={false} />
+          <img
+            src={resolved}
+            alt=""
+            onError={() => setFailed(true)}
+            className="h-full w-full object-cover"
+            draggable={false}
+          />
         ) : initial ? (
-          <span className="font-display font-medium text-ink-muted" style={{ fontSize: size * 0.42 }}>
+          <span
+            className="font-display font-medium text-ink-muted"
+            style={{ fontSize: size * 0.42 }}
+          >
             {initial}
           </span>
         ) : (
@@ -97,9 +106,12 @@ export function compactNumber(n: number): string {
  *  >= 12 months → { a: "Y", aVal, b: "M", bVal, c: "D", cVal }
  */
 export function formatWatchTime(totalMinutes: number): {
-  a: string; aVal: number;
-  b: string; bVal: number;
-  c: string; cVal: number;
+  a: string;
+  aVal: number;
+  b: string;
+  bVal: number;
+  c: string;
+  cVal: number;
 } {
   const totalHours = Math.floor(totalMinutes / 60);
   const hours = totalHours % 24;

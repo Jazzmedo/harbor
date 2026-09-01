@@ -1,7 +1,9 @@
 const catalogSymbols: Record<string, string> = {
   " (you)": " (आप)",
-  " Anything you save also syncs to your Trakt account.": " आप जो भी सेव करते हैं, वह आपके Trakt अकाउंट पर भी सिंक हो जाता है।",
-  " Connect Trakt in Settings to sync this list across devices.": " इस सूची को सभी डिवाइस पर सिंक करने के लिए सेटिंग्स में Trakt कनेक्ट करें।",
+  " Anything you save also syncs to your Trakt account.":
+    " आप जो भी सेव करते हैं, वह आपके Trakt अकाउंट पर भी सिंक हो जाता है।",
+  " Connect Trakt in Settings to sync this list across devices.":
+    " इस सूची को सभी डिवाइस पर सिंक करने के लिए सेटिंग्स में Trakt कनेक्ट करें।",
   " through ": " से होते हुए ",
   " · +{n} more": " · +{n} और",
   " · Series": " · सीरीज़",
@@ -14,15 +16,18 @@ const catalogSymbols: Record<string, string> = {
   " · still loading": " · अभी भी लोड हो रहा है",
   " · you": " · आप",
   " · {n} instant": " · {n} तुरंत उपलब्ध",
-  "\"Compound\" interest is calculated on:": "\"चक्रवृद्धि\" ब्याज की गणना इस पर होती है:",
-  "\"{name}\" and everything in it will be removed. This cannot be undone.": "\"{name}\" और उसमें मौजूद सब कुछ हटा दिया जाएगा। इसे वापस नहीं लाया जा सकता।",
+  '"Compound" interest is calculated on:': '"चक्रवृद्धि" ब्याज की गणना इस पर होती है:',
+  '"{name}" and everything in it will be removed. This cannot be undone.':
+    '"{name}" और उसमें मौजूद सब कुछ हटा दिया जाएगा। इसे वापस नहीं लाया जा सकता।',
   "#{position} in {label} Today": "आज {label} में #{position}",
   "#{rank} in Anime Today": "आज एनीमे में #{rank}",
   "#{rank} in Movies Today": "आज फ़िल्मों में #{rank}",
   "#{rank} in Series Today": "आज सीरीज़ में #{rank}",
   "${n} for {days} days": "{days} दिनों के लिए ${n}",
-  "'s setup page in Harbor's built-in browser. Pick your options. When you click Install on their page, Harbor catches the link automatically and updates the addon.": " का सेटअप पेज Harbor के बिल्ट-इन ब्राउज़र में खोलें। अपने विकल्प चुनें। जब आप उसके पेज पर Install पर क्लिक करेंगे, तो Harbor लिंक अपने-आप पहचानकर ऐडऑन अपडेट कर देगा।",
-  "'s setup page. Pick your options, then copy the install link it gives you and paste it below to update the addon.": " का सेटअप पेज खोलें। अपने विकल्प चुनें, फिर उससे मिला इंस्टॉल लिंक कॉपी करके ऐडऑन अपडेट करने के लिए नीचे पेस्ट करें।",
+  "'s setup page in Harbor's built-in browser. Pick your options. When you click Install on their page, Harbor catches the link automatically and updates the addon.":
+    " का सेटअप पेज Harbor के बिल्ट-इन ब्राउज़र में खोलें। अपने विकल्प चुनें। जब आप उसके पेज पर Install पर क्लिक करेंगे, तो Harbor लिंक अपने-आप पहचानकर ऐडऑन अपडेट कर देगा।",
+  "'s setup page. Pick your options, then copy the install link it gives you and paste it below to update the addon.":
+    " का सेटअप पेज खोलें। अपने विकल्प चुनें, फिर उससे मिला इंस्टॉल लिंक कॉपी करके ऐडऑन अपडेट करने के लिए नीचे पेस्ट करें।",
   "(empty body)": "(खाली सामग्री)",
   "), put that suffix here.": "), वह सफ़िक्स यहाँ डालें।",
   "+ Watchlist": "+ वॉचलिस्ट",
@@ -31,12 +36,14 @@ const catalogSymbols: Record<string, string> = {
   "+{n} ep": "+{n} एपिसोड",
   "+{n} more": "+{n} और",
   "+{n} more, search to find yours": "+{n} और, अपना खोजने के लिए सर्च करें",
-  ", discards the first 1.2s so TCP slow-start doesn't tank the result, then measures until it has 150 MB or 8 seconds of steady-state transfer.": ", पहले 1.2s को छोड़ देता है ताकि TCP स्लो-स्टार्ट नतीजे को खराब न करे, फिर 150 MB डेटा या 8 सेकंड का स्थिर ट्रांसफ़र पूरा होने तक मापता है।",
+  ", discards the first 1.2s so TCP slow-start doesn't tank the result, then measures until it has 150 MB or 8 seconds of steady-state transfer.":
+    ", पहले 1.2s को छोड़ देता है ताकि TCP स्लो-स्टार्ट नतीजे को खराब न करे, फिर 150 MB डेटा या 8 सेकंड का स्थिर ट्रांसफ़र पूरा होने तक मापता है।",
   ", then try again.": ", फिर दोबारा कोशिश करें।",
   ", {hiddenCount} hidden": ", {hiddenCount} छिपे हुए",
   ", {n} unrepairable": ", {n} जिन्हें ठीक नहीं किया जा सकता",
   "0 downloads": "0 डाउनलोड",
-  "0% shows the raw image. 100% covers it with the theme color. 60-80% is the readable sweet spot.": "0% पर असली इमेज दिखती है। 100% पर यह थीम के रंग से पूरी तरह ढक जाती है। पढ़ने में आसानी के लिए 60-80% सबसे सही है।",
+  "0% shows the raw image. 100% covers it with the theme color. 60-80% is the readable sweet spot.":
+    "0% पर असली इमेज दिखती है। 100% पर यह थीम के रंग से पूरी तरह ढक जाती है। पढ़ने में आसानी के लिए 60-80% सबसे सही है।",
   "00:23 on the left, -1:12 on the right.": "बाईं ओर 00:23, दाईं ओर -1:12।",
   "01 · Collection": "01 · संग्रह",
   "02 · Enrichment": "02 · संवर्धन",
@@ -50,7 +57,8 @@ const catalogSymbols: Record<string, string> = {
   "1 episode on disk": "डिस्क पर 1 एपिसोड",
   "1 experimental port": "1 प्रयोगात्मक पोर्ट",
   "1 file": "1 फ़ाइल",
-  "1 frame stored. Wiping rebuilds them next time you watch.": "1 फ़्रेम स्टोर है। इसे मिटाने पर अगली बार देखने के दौरान यह फिर बनेगा।",
+  "1 frame stored. Wiping rebuilds them next time you watch.":
+    "1 फ़्रेम स्टोर है। इसे मिटाने पर अगली बार देखने के दौरान यह फिर बनेगा।",
   "1 friend in common": "1 आपसी दोस्त",
   "1 hour": "1 घंटा",
   "1 hour before": "1 घंटा पहले",
@@ -64,7 +72,8 @@ const catalogSymbols: Record<string, string> = {
   "1 other Harbor": "1 अन्य Harbor",
   "1 selected": "1 चुना गया",
   "1 source · 0 made it through": "1 स्रोत · 0 पास हुए",
-  "1 title needs review — help us identify it.": "1 शीर्षक की समीक्षा ज़रूरी है: इसे पहचानने में हमारी मदद करें।",
+  "1 title needs review — help us identify it.":
+    "1 शीर्षक की समीक्षा ज़रूरी है: इसे पहचानने में हमारी मदद करें।",
   "1 week": "1 सप्ताह",
   "1 year": "1 वर्ष",
   "1. Fill in the top": "1. ऊपर वाला भरें",
@@ -85,7 +94,8 @@ const catalogSymbols: Record<string, string> = {
   "14s": "14 सेकंड",
   "15 min": "15 मिनट",
   "15s": "15 सेकंड",
-  "16-0-4-1. The reference variant, heaviest on the GPU.": "16-0-4-1। रेफ़रेंस वैरिएंट, GPU पर सबसे ज़्यादा भार डालता है।",
+  "16-0-4-1. The reference variant, heaviest on the GPU.":
+    "16-0-4-1। रेफ़रेंस वैरिएंट, GPU पर सबसे ज़्यादा भार डालता है।",
   "16:9": "16:9",
   "1k+": "1k+",
   "1½ hr": "1½ घंटा",
@@ -152,7 +162,8 @@ const catalogSymbols: Record<string, string> = {
   "70s": "70 का दशक",
   "70s Auteurs": "70 के दशक के ऑतर्स",
   "8 seconds": "8 सेकंड",
-  "8-0-4-1. Half the passes, kinder to weaker cards.": "8-0-4-1. आधे पास, कमज़ोर कार्ड के लिए अधिक अनुकूल।",
+  "8-0-4-1. Half the passes, kinder to weaker cards.":
+    "8-0-4-1. आधे पास, कमज़ोर कार्ड के लिए अधिक अनुकूल।",
   "8-character key": "8-अक्षरों की कुंजी",
   "80s": "80 का दशक",
   "80s Classics": "80 के दशक के क्लासिक्स",
@@ -160,14 +171,19 @@ const catalogSymbols: Record<string, string> = {
   "90s cooldown": "90s का कूलडाउन",
   "<= {size} GB": "<= {size} GB",
   "@handle or name": "@हैंडल या नाम",
-  "@{handle} will be removed from your friends. You can add them again later.": "@{handle} को आपकी फ़्रेंड लिस्ट से हटा दिया जाएगा। आप उन्हें बाद में फिर जोड़ सकते हैं।",
+  "@{handle} will be removed from your friends. You can add them again later.":
+    "@{handle} को आपकी फ़्रेंड लिस्ट से हटा दिया जाएगा। आप उन्हें बाद में फिर जोड़ सकते हैं।",
   "{actor} commented on {name}": "{actor} ने {name} पर टिप्पणी की",
   "{actor} left a comment": "{actor} ने टिप्पणी की",
   "{alias} keeps this private": "{alias} इसे निजी रखते हैं",
-  "{app} is a completely free and open source project. {app} is under the {license} and you can repurpose and reuse it as you wish. By all means profit from this, shape it to your wishes and needs, whatever your heart desires. It is truly open source.": "{app} पूरी तरह मुफ़्त और ओपन सोर्स प्रोजेक्ट है। {app} {license} के तहत उपलब्ध है और आप अपनी इच्छा के अनुसार इसे नए काम में लगा सकते हैं और दोबारा इस्तेमाल कर सकते हैं। आप बेशक इससे लाभ कमाएँ, इसे अपनी इच्छाओं और ज़रूरतों के मुताबिक ढालें या जो आपका दिल चाहे वह करें। यह सचमुच ओपन सोर्स है।",
-  "{app} is an independent, open-source desktop and web client.": "{app} एक स्वतंत्र, ओपन-सोर्स डेस्कटॉप और वेब क्लाइंट है।",
-  "{app} is open source. PRs that reference a bug get reviewed within 48h and ship with credit in the release notes.": "{app} ओपन सोर्स है। किसी बग का संदर्भ देने वाले PRs की समीक्षा 48h के भीतर की जाती है और रिलीज़ नोट्स में श्रेय के साथ उन्हें जारी किया जाता है।",
-  "{app} itself does not host, distribute, or index any media. All streams come from third-party addons, debrid services, or your own {service} account that you configure yourself. You are responsible for what you choose to play and for complying with the laws of your jurisdiction.": "{app} स्वयं किसी मीडिया को होस्ट, वितरित या इंडेक्स नहीं करता। सभी स्ट्रीम तृतीय-पक्ष ऐडऑन, डीब्रिड सेवाओं या आपके अपने {service} अकाउंट से आती हैं, जिसे आप स्वयं कॉन्फ़िगर करते हैं। आप क्या चलाना चुनते हैं और अपने अधिकार क्षेत्र के कानूनों का पालन करते हैं, इसकी ज़िम्मेदारी आपकी है।",
+  "{app} is a completely free and open source project. {app} is under the {license} and you can repurpose and reuse it as you wish. By all means profit from this, shape it to your wishes and needs, whatever your heart desires. It is truly open source.":
+    "{app} पूरी तरह मुफ़्त और ओपन सोर्स प्रोजेक्ट है। {app} {license} के तहत उपलब्ध है और आप अपनी इच्छा के अनुसार इसे नए काम में लगा सकते हैं और दोबारा इस्तेमाल कर सकते हैं। आप बेशक इससे लाभ कमाएँ, इसे अपनी इच्छाओं और ज़रूरतों के मुताबिक ढालें या जो आपका दिल चाहे वह करें। यह सचमुच ओपन सोर्स है।",
+  "{app} is an independent, open-source desktop and web client.":
+    "{app} एक स्वतंत्र, ओपन-सोर्स डेस्कटॉप और वेब क्लाइंट है।",
+  "{app} is open source. PRs that reference a bug get reviewed within 48h and ship with credit in the release notes.":
+    "{app} ओपन सोर्स है। किसी बग का संदर्भ देने वाले PRs की समीक्षा 48h के भीतर की जाती है और रिलीज़ नोट्स में श्रेय के साथ उन्हें जारी किया जाता है।",
+  "{app} itself does not host, distribute, or index any media. All streams come from third-party addons, debrid services, or your own {service} account that you configure yourself. You are responsible for what you choose to play and for complying with the laws of your jurisdiction.":
+    "{app} स्वयं किसी मीडिया को होस्ट, वितरित या इंडेक्स नहीं करता। सभी स्ट्रीम तृतीय-पक्ष ऐडऑन, डीब्रिड सेवाओं या आपके अपने {service} अकाउंट से आती हैं, जिसे आप स्वयं कॉन्फ़िगर करते हैं। आप क्या चलाना चुनते हैं और अपने अधिकार क्षेत्र के कानूनों का पालन करते हैं, इसकी ज़िम्मेदारी आपकी है।",
   "{author} · 0 installs": "{author} · 0 इंस्टॉल",
   "{avg} avg · {n} rated": "{avg} औसत · {n} को रेट किया",
   "{avg} avg · {n} rated#few": "{avg} औसत · {n} को रेट किया#few",
@@ -176,14 +192,19 @@ const catalogSymbols: Record<string, string> = {
   "{a} badges remapped, {b} rules added": "{a} बैज रीमैप किए गए, {b} नियम जोड़े गए",
   "{a} of {b}": "{b} में से {a}",
   "{a} titles over 8.0, {b} over 9.0": "{a} शीर्षक 8.0 से ऊपर, {b} शीर्षक 9.0 से ऊपर",
-  "{bodies} awards, {wins} winners, {span}, all offline": "{bodies} पुरस्कार, {wins} विजेता, {span}, सभी ऑफ़लाइन",
+  "{bodies} awards, {wins} winners, {span}, all offline":
+    "{bodies} पुरस्कार, {wins} विजेता, {span}, सभी ऑफ़लाइन",
   "{chapter} · page {page}": "{chapter} · पेज {page}",
   "{chars} chars": "{chars} वर्ण",
-  "{code} with a WebSocket upgrade: opens a Watch Together room. State is held in a Durable Object, no persistence beyond the active session.": "{code} WebSocket अपग्रेड के साथ: एक Watch Together रूम खोलता है। स्टेट Durable Object में रखा जाता है और सक्रिय सेशन खत्म होने के बाद सेव नहीं रहता।",
-  "{code}: returns JSON with the worker version. Used by the test button.": "{code}: वर्कर संस्करण वाला JSON लौटाता है। टेस्ट बटन इसका इस्तेमाल करता है।",
+  "{code} with a WebSocket upgrade: opens a Watch Together room. State is held in a Durable Object, no persistence beyond the active session.":
+    "{code} WebSocket अपग्रेड के साथ: एक Watch Together रूम खोलता है। स्टेट Durable Object में रखा जाता है और सक्रिय सेशन खत्म होने के बाद सेव नहीं रहता।",
+  "{code}: returns JSON with the worker version. Used by the test button.":
+    "{code}: वर्कर संस्करण वाला JSON लौटाता है। टेस्ट बटन इसका इस्तेमाल करता है।",
   "{country} Films": "{country} की फ़िल्में",
-  "{count} GIF was over 2 MB, so we kept the first frame. Export it smaller to keep the animation.": "{count} GIF 2 MB से बड़ी थी, इसलिए हमने उसका पहला फ़्रेम रखा. एनिमेशन बनाए रखने के लिए इसे छोटे आकार में एक्सपोर्ट करें.",
-  "{count} GIFs were over 2 MB, so we kept the first frame. Export it smaller to keep the animation.": "{count} GIFs 2 MB से बड़ी थीं, इसलिए हमने उनका पहला फ़्रेम रखा. एनिमेशन बनाए रखने के लिए इन्हें छोटे आकार में एक्सपोर्ट करें.",
+  "{count} GIF was over 2 MB, so we kept the first frame. Export it smaller to keep the animation.":
+    "{count} GIF 2 MB से बड़ी थी, इसलिए हमने उसका पहला फ़्रेम रखा. एनिमेशन बनाए रखने के लिए इसे छोटे आकार में एक्सपोर्ट करें.",
+  "{count} GIFs were over 2 MB, so we kept the first frame. Export it smaller to keep the animation.":
+    "{count} GIFs 2 MB से बड़ी थीं, इसलिए हमने उनका पहला फ़्रेम रखा. एनिमेशन बनाए रखने के लिए इन्हें छोटे आकार में एक्सपोर्ट करें.",
   "{count} aboard": "{count} लोग साथ हैं",
   "{count} added": "{count} जोड़े गए",
   "{count} books": "{count} किताबें",
@@ -198,8 +219,10 @@ const catalogSymbols: Record<string, string> = {
   "{count} characters": "{count} पात्र",
   "{count} collections": "{count} कलेक्शन",
   "{count} community ratings on stremio-addons.net": "stremio-addons.net पर {count} कम्युनिटी रेटिंग",
-  "{count} community ratings on stremio-addons.net#few": "stremio-addons.net पर {count} कम्युनिटी रेटिंग#few",
-  "{count} community ratings on stremio-addons.net#one": "stremio-addons.net पर {count} कम्युनिटी रेटिंग#one",
+  "{count} community ratings on stremio-addons.net#few":
+    "stremio-addons.net पर {count} कम्युनिटी रेटिंग#few",
+  "{count} community ratings on stremio-addons.net#one":
+    "stremio-addons.net पर {count} कम्युनिटी रेटिंग#one",
   "{count} connected": "{count} कनेक्टेड",
   "{count} days ago": "{count} दिन पहले",
   "{count} dl": "{count} डाउनलोड",
@@ -210,10 +233,14 @@ const catalogSymbols: Record<string, string> = {
   "{count} file was skipped": "{count} फ़ाइल छोड़ी गई",
   "{count} files were skipped": "{count} फ़ाइलें छोड़ी गईं",
   "{count} films": "{count} फ़िल्में",
-  "{count} films, in the order you picked them. Nothing plays until you start.": "{count} फ़िल्में, आपके चुने हुए क्रम में। आपके शुरू करने से पहले कुछ भी नहीं चलेगा।",
-  "{count} films, in the order you picked them. Nothing plays until you start.#few": "{count} फ़िल्में, आपके चुने हुए क्रम में। आपके शुरू करने से पहले कुछ भी नहीं चलेगा।#few",
-  "{count} films, in the order you picked them. Nothing plays until you start.#one": "{count} फ़िल्में, आपके चुने हुए क्रम में। आपके शुरू करने से पहले कुछ भी नहीं चलेगा।#one",
-  "{count} frames stored. Wiping rebuilds them next time you watch.": "{count} फ़्रेम स्टोर हैं। इन्हें मिटाने पर अगली बार देखने के दौरान ये फिर बनेंगे।",
+  "{count} films, in the order you picked them. Nothing plays until you start.":
+    "{count} फ़िल्में, आपके चुने हुए क्रम में। आपके शुरू करने से पहले कुछ भी नहीं चलेगा।",
+  "{count} films, in the order you picked them. Nothing plays until you start.#few":
+    "{count} फ़िल्में, आपके चुने हुए क्रम में। आपके शुरू करने से पहले कुछ भी नहीं चलेगा।#few",
+  "{count} films, in the order you picked them. Nothing plays until you start.#one":
+    "{count} फ़िल्में, आपके चुने हुए क्रम में। आपके शुरू करने से पहले कुछ भी नहीं चलेगा।#one",
+  "{count} frames stored. Wiping rebuilds them next time you watch.":
+    "{count} फ़्रेम स्टोर हैं। इन्हें मिटाने पर अगली बार देखने के दौरान ये फिर बनेंगे।",
   "{count} friends in common": "{count} साझा दोस्त",
   "{count} friends in common#few": "{count} साझा दोस्त#few",
   "{count} friends in common#one": "{count} साझा दोस्त#one",
@@ -223,11 +250,13 @@ const catalogSymbols: Record<string, string> = {
   "{count} in queue": "कतार में {count}",
   "{count} in queue · {time}": "कतार में {count} · {time}",
   "{count} in this pack": "इस पैक में {count}",
-  "{count} installed. Add or remove them under Streaming sources.": "{count} इंस्टॉल हैं। इन्हें स्ट्रीमिंग स्रोत के अंतर्गत जोड़ें या हटाएँ।",
+  "{count} installed. Add or remove them under Streaming sources.":
+    "{count} इंस्टॉल हैं। इन्हें स्ट्रीमिंग स्रोत के अंतर्गत जोड़ें या हटाएँ।",
   "{count} installs": "{count} इंस्टॉल",
   "{count} items": "{count} आइटम",
   "{count} left": "{count} बाकी",
-  "{count} manga items are not shown in Big Picture.": "Big Picture में {count} मंगा आइटम नहीं दिखाए जाते।",
+  "{count} manga items are not shown in Big Picture.":
+    "Big Picture में {count} मंगा आइटम नहीं दिखाए जाते।",
   "{count} match ahead": "आगे {count} मिलान",
   "{count} matches ahead": "आगे {count} मिलान",
   "{count} members in total": "कुल {count} सदस्य",
@@ -247,7 +276,8 @@ const catalogSymbols: Record<string, string> = {
   "{count} slot reskinned": "{count} स्लॉट रीस्किन किया गया",
   "{count} slots reskinned": "{count} स्लॉट रीस्किन किए गए",
   "{count} sources": "{count} स्रोत",
-  "{count} tracker request blocked this session. Harbor itself sends zero telemetry.": "इस सत्र में {count} ट्रैकर अनुरोध ब्लॉक किए गए। Harbor खुद कोई टेलीमेट्री नहीं भेजता।",
+  "{count} tracker request blocked this session. Harbor itself sends zero telemetry.":
+    "इस सत्र में {count} ट्रैकर अनुरोध ब्लॉक किए गए। Harbor खुद कोई टेलीमेट्री नहीं भेजता।",
   "{count} views": "{count} व्यू",
   "{count} vols": "{count} वॉल्यूम",
   "{count} volume": "{count} वॉल्यूम",
@@ -268,10 +298,14 @@ const catalogSymbols: Record<string, string> = {
   "{count}w": "{count} हफ़्ते",
   "{count}w ago": "{count} हफ़्ते पहले",
   "{count}y ago": "{count} साल पहले",
-  "{deviceLabel} can't decode this stream natively ({reasons}). Harbor uses ffmpeg to convert it into a format your TV understands.": "{deviceLabel} इस स्ट्रीम को सीधे डीकोड नहीं कर सकता ({reasons}). Harbor इसे ffmpeg की मदद से ऐसे फ़ॉर्मैट में बदलता है जिसे आपका TV समझ सके.",
-  "{deviceLabel} can't play this stream ({reasons}) and none of the {count} available alternatives match its capabilities.": "{deviceLabel} यह स्ट्रीम नहीं चला सकता ({reasons}) और उपलब्ध {count} विकल्पों में से कोई भी इसकी क्षमताओं से मेल नहीं खाता.",
-  "{deviceLabel} can't play this stream ({reasons}). Click \"Pick another\" first to load alternatives, then try casting again.": "{deviceLabel} यह स्ट्रीम नहीं चला सकता ({reasons}). पहले विकल्प लोड करने के लिए \"कोई दूसरा चुनें\" पर क्लिक करें, फिर दोबारा कास्ट करने की कोशिश करें.",
-  "{deviceName} is an audio-only device. Harbor can't transcode video to audio yet, so this device can only stream audio files. Pick a TV, Chromecast, or display-equipped device to stream video.": "{deviceName} सिर्फ़ ऑडियो चलाने वाला डिवाइस है. Harbor अभी वीडियो को ऑडियो में ट्रांसकोड नहीं कर सकता, इसलिए इस डिवाइस पर सिर्फ़ ऑडियो फ़ाइलें स्ट्रीम की जा सकती हैं. वीडियो स्ट्रीम करने के लिए TV, Chromecast या डिस्प्ले वाला डिवाइस चुनें.",
+  "{deviceLabel} can't decode this stream natively ({reasons}). Harbor uses ffmpeg to convert it into a format your TV understands.":
+    "{deviceLabel} इस स्ट्रीम को सीधे डीकोड नहीं कर सकता ({reasons}). Harbor इसे ffmpeg की मदद से ऐसे फ़ॉर्मैट में बदलता है जिसे आपका TV समझ सके.",
+  "{deviceLabel} can't play this stream ({reasons}) and none of the {count} available alternatives match its capabilities.":
+    "{deviceLabel} यह स्ट्रीम नहीं चला सकता ({reasons}) और उपलब्ध {count} विकल्पों में से कोई भी इसकी क्षमताओं से मेल नहीं खाता.",
+  '{deviceLabel} can\'t play this stream ({reasons}). Click "Pick another" first to load alternatives, then try casting again.':
+    '{deviceLabel} यह स्ट्रीम नहीं चला सकता ({reasons}). पहले विकल्प लोड करने के लिए "कोई दूसरा चुनें" पर क्लिक करें, फिर दोबारा कास्ट करने की कोशिश करें.',
+  "{deviceName} is an audio-only device. Harbor can't transcode video to audio yet, so this device can only stream audio files. Pick a TV, Chromecast, or display-equipped device to stream video.":
+    "{deviceName} सिर्फ़ ऑडियो चलाने वाला डिवाइस है. Harbor अभी वीडियो को ऑडियो में ट्रांसकोड नहीं कर सकता, इसलिए इस डिवाइस पर सिर्फ़ ऑडियो फ़ाइलें स्ट्रीम की जा सकती हैं. वीडियो स्ट्रीम करने के लिए TV, Chromecast या डिस्प्ले वाला डिवाइस चुनें.",
   "{done} of {total}": "{total} में से {done}",
   "{done} of {total} films picked.": "{total} में से {done} फ़िल्में चुनी गईं।",
   "{done} of {total} picked": "{total} में से {done} चुने गए",
@@ -279,7 +313,8 @@ const catalogSymbols: Record<string, string> = {
   "{done} of {total} watched so far.": "अब तक {total} में से {done} देखे गए।",
   "{d}d ago": "{d} दिन पहले",
   "{facet} filter: {value}": "{facet} फ़िल्टर: {value}",
-  "{file} is empty. Start typing to restyle Harbor.": "{file} खाली है. Harbor की शैली बदलने के लिए टाइप करना शुरू करें.",
+  "{file} is empty. Start typing to restyle Harbor.":
+    "{file} खाली है. Harbor की शैली बदलने के लिए टाइप करना शुरू करें.",
   "{first} and {second}": "{first} और {second}",
   "{format} added to Downloads": "{format} को डाउनलोड में जोड़ा गया",
   "{genreA} + {genreB}": "{genreA} + {genreB}",
@@ -306,16 +341,20 @@ const catalogSymbols: Record<string, string> = {
   "{language} voices": "{language} आवाज़ें",
   "{lines} lines": "{lines} पंक्तियाँ",
   "{mediaType}: {names}": "{mediaType}: {names}",
-  "{media} between {lo}-{hi} minutes. Pick a length, not a wall of options.": "{lo}-{hi} मिनट की {media}। विकल्पों की भरमार नहीं, एक अवधि चुनें।",
-  "{media} from {name}: popular, acclaimed, and hidden alike.": "{name} की {media}: लोकप्रिय, प्रशंसित और अनदेखी भी।",
-  "{media} produced by {name}, ranked from biggest hits to overlooked gems.": "{name} द्वारा निर्मित {media}, सबसे बड़ी हिट से अनदेखी बेहतरीन कृतियों तक क्रमबद्ध।",
+  "{media} between {lo}-{hi} minutes. Pick a length, not a wall of options.":
+    "{lo}-{hi} मिनट की {media}। विकल्पों की भरमार नहीं, एक अवधि चुनें।",
+  "{media} from {name}: popular, acclaimed, and hidden alike.":
+    "{name} की {media}: लोकप्रिय, प्रशंसित और अनदेखी भी।",
+  "{media} produced by {name}, ranked from biggest hits to overlooked gems.":
+    "{name} द्वारा निर्मित {media}, सबसे बड़ी हिट से अनदेखी बेहतरीन कृतियों तक क्रमबद्ध।",
   "{message}. Using the device voice.": "{message}. डिवाइस की आवाज़ इस्तेमाल की जा रही है.",
   "{moves} moves. Amazing memory!": "{moves} चालें। कमाल की याददाश्त!",
   "{m}m ago": "{m} मिनट पहले",
   "{m}m left": "{m} मिनट बाकी",
   "{m}m {s}s ago": "{m} मिनट {s} सेकंड पहले",
   "{names} +{n} more": "{names} +{n} और",
-  "{names}, and all other names, logos, and brand references are property of their respective owners and are used here only for compatibility and identification.": "{names}, और अन्य सभी नाम, लोगो व ब्रांड संदर्भ उनके संबंधित स्वामियों की संपत्ति हैं और यहां केवल संगतता व पहचान के लिए इस्तेमाल किए गए हैं।",
+  "{names}, and all other names, logos, and brand references are property of their respective owners and are used here only for compatibility and identification.":
+    "{names}, और अन्य सभी नाम, लोगो व ब्रांड संदर्भ उनके संबंधित स्वामियों की संपत्ति हैं और यहां केवल संगतता व पहचान के लिए इस्तेमाल किए गए हैं।",
   "{name} (TV)": "{name} (TV)",
   "{name} ({format})": "{name} ({format})",
   "{name} + {n} more": "{name} + {n} और",
@@ -335,7 +374,8 @@ const catalogSymbols: Record<string, string> = {
   "{name} reached {count} five-star ratings": "{name} को {count} पाँच-स्टार रेटिंग मिलीं",
   "{name} started watching": "{name} ने देखना शुरू किया",
   "{name} wants you here": "आपको {name} ने यहाँ बुलाया है",
-  "{name} will be removed from Harbor. Anything you've set to use it will fall back to Inter.": "{name} को Harbor से हटा दिया जाएगा। जिन चीज़ों के लिए आपने इसे सेट किया है, वे फिर से Inter का उपयोग करेंगी।",
+  "{name} will be removed from Harbor. Anything you've set to use it will fall back to Inter.":
+    "{name} को Harbor से हटा दिया जाएगा। जिन चीज़ों के लिए आपने इसे सेट किया है, वे फिर से Inter का उपयोग करेंगी।",
   "{name} · since {year}": "{name} · {year} से",
   "{name}'s ratings": "{name} की रेटिंग",
   "{name}'s {sub}": "{name} का {sub}",
@@ -355,14 +395,19 @@ const catalogSymbols: Record<string, string> = {
   "{n} addon#few": "{n} ऐडऑन",
   "{n} addon#one": "{n} ऐडऑन",
   "{n} addons": "{n} ऐडऑन",
-  "{n} addons don't provide streams and aren't listed.": "{n} ऐडऑन स्ट्रीम उपलब्ध नहीं कराते, इसलिए वे सूची में नहीं दिखते।",
-  "{n} addons don't provide streams and aren't listed.#few": "{n} ऐडऑन स्ट्रीम उपलब्ध नहीं कराते, इसलिए वे सूची में नहीं दिखते।",
-  "{n} addons don't provide streams and aren't listed.#one": "{n} ऐडऑन स्ट्रीम उपलब्ध नहीं कराता, इसलिए वह सूची में नहीं दिखता।",
+  "{n} addons don't provide streams and aren't listed.":
+    "{n} ऐडऑन स्ट्रीम उपलब्ध नहीं कराते, इसलिए वे सूची में नहीं दिखते।",
+  "{n} addons don't provide streams and aren't listed.#few":
+    "{n} ऐडऑन स्ट्रीम उपलब्ध नहीं कराते, इसलिए वे सूची में नहीं दिखते।",
+  "{n} addons don't provide streams and aren't listed.#one":
+    "{n} ऐडऑन स्ट्रीम उपलब्ध नहीं कराता, इसलिए वह सूची में नहीं दिखता।",
   "{n} addons loading": "{n} ऐडऑन लोड हो रहे हैं",
-  "{n} addons run for you, with Debridge included: TorBox and Usenet accounts, so there is no debrid service to buy separately.": "{n} ऐडऑन आपके लिए चलते हैं और इनमें Debridge शामिल है: TorBox और Usenet अकाउंट, इसलिए अलग से debrid सेवा खरीदने की ज़रूरत नहीं है।",
+  "{n} addons run for you, with Debridge included: TorBox and Usenet accounts, so there is no debrid service to buy separately.":
+    "{n} ऐडऑन आपके लिए चलते हैं और इनमें Debridge शामिल है: TorBox और Usenet अकाउंट, इसलिए अलग से debrid सेवा खरीदने की ज़रूरत नहीं है।",
   "{n} addons#few": "{n} ऐडऑन",
   "{n} addons#one": "{n} ऐडऑन",
-  "{n} anime titles will be left out (Trakt has no IDs for them).": "{n} ऐनिमे शीर्षक छोड़ दिए जाएँगे (Trakt में उनके लिए IDs नहीं हैं)।",
+  "{n} anime titles will be left out (Trakt has no IDs for them).":
+    "{n} ऐनिमे शीर्षक छोड़ दिए जाएँगे (Trakt में उनके लिए IDs नहीं हैं)।",
   "{n} avatars across film, TV, and anime.": "फ़िल्म, TV और ऐनिमे के {n} अवतार।",
   "{n} avatars across film, TV, and anime.#few": "फ़िल्म, TV और ऐनिमे के {n} अवतार।",
   "{n} avatars across film, TV, and anime.#one": "फ़िल्म, TV और ऐनिमे का {n} अवतार।",
@@ -425,10 +470,14 @@ const catalogSymbols: Record<string, string> = {
   "{n} films": "{n} फ़िल्में",
   "{n} films#few": "{n} फ़िल्में",
   "{n} films#one": "{n} फ़िल्म",
-  "{n} frame stored. Wiping rebuilds them next time you watch.": "{n} फ़्रेम स्टोर है। इसे मिटाने पर अगली बार देखने के दौरान यह फिर बन जाएगा।",
-  "{n} frame stored. Wiping rebuilds them next time you watch.#few": "{n} फ़्रेम स्टोर हैं। इन्हें मिटाने पर अगली बार देखने के दौरान ये फिर बन जाएँगे।",
-  "{n} frame stored. Wiping rebuilds them next time you watch.#one": "{n} फ़्रेम स्टोर है। इसे मिटाने पर अगली बार देखने के दौरान यह फिर बन जाएगा।",
-  "{n} frames stored. Wiping rebuilds them next time you watch.": "{n} फ़्रेम स्टोर हैं। इन्हें मिटाने पर अगली बार देखने के दौरान ये फिर बन जाएँगे।",
+  "{n} frame stored. Wiping rebuilds them next time you watch.":
+    "{n} फ़्रेम स्टोर है। इसे मिटाने पर अगली बार देखने के दौरान यह फिर बन जाएगा।",
+  "{n} frame stored. Wiping rebuilds them next time you watch.#few":
+    "{n} फ़्रेम स्टोर हैं। इन्हें मिटाने पर अगली बार देखने के दौरान ये फिर बन जाएँगे।",
+  "{n} frame stored. Wiping rebuilds them next time you watch.#one":
+    "{n} फ़्रेम स्टोर है। इसे मिटाने पर अगली बार देखने के दौरान यह फिर बन जाएगा।",
+  "{n} frames stored. Wiping rebuilds them next time you watch.":
+    "{n} फ़्रेम स्टोर हैं। इन्हें मिटाने पर अगली बार देखने के दौरान ये फिर बन जाएँगे।",
   "{n} genre": "{n} शैली",
   "{n} genre#few": "{n} शैलियाँ",
   "{n} genre#one": "{n} शैली",
@@ -560,19 +609,26 @@ const catalogSymbols: Record<string, string> = {
   "{n} title#few": "{n} टाइटल#few",
   "{n} title#one": "{n} टाइटल#one",
   "{n} titles": "{n} टाइटल",
-  "{n} titles need review — help us identify them.": "{n} टाइटल की समीक्षा ज़रूरी है; उन्हें पहचानने में हमारी मदद करें।",
-  "{n} titles need review — help us identify them.#few": "{n} टाइटल की समीक्षा ज़रूरी है; उन्हें पहचानने में हमारी मदद करें।#few",
-  "{n} titles need review — help us identify them.#one": "{n} टाइटल की समीक्षा ज़रूरी है, उन्हें पहचानने में हमारी मदद करें।#one",
+  "{n} titles need review — help us identify them.":
+    "{n} टाइटल की समीक्षा ज़रूरी है; उन्हें पहचानने में हमारी मदद करें।",
+  "{n} titles need review — help us identify them.#few":
+    "{n} टाइटल की समीक्षा ज़रूरी है; उन्हें पहचानने में हमारी मदद करें।#few",
+  "{n} titles need review — help us identify them.#one":
+    "{n} टाइटल की समीक्षा ज़रूरी है, उन्हें पहचानने में हमारी मदद करें।#one",
   "{n} titles together": "साथ में {n} टाइटल",
   "{n} titles together#few": "साथ में {n} टाइटल#few",
   "{n} titles together#one": "साथ में {n} टाइटल#one",
   "{n} titles you like": "आपके पसंदीदा {n} टाइटल",
   "{n} titles#few": "{n} टाइटल#few",
   "{n} titles#one": "{n} टाइटल#one",
-  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.": "इस सेशन में {n} ट्रैकर अनुरोध ब्लॉक किया गया। Harbor खुद कोई टेलीमेट्री नहीं भेजता।",
-  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#few": "इस सेशन में {n} ट्रैकर अनुरोध ब्लॉक किया गया। Harbor खुद कोई टेलीमेट्री नहीं भेजता।#few",
-  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#one": "इस सेशन में {n} ट्रैकर अनुरोध ब्लॉक किया गया। Harbor खुद कोई टेलीमेट्री नहीं भेजता।#one",
-  "{n} tracker requests blocked this session. Harbor itself sends zero telemetry.": "इस सेशन में {n} ट्रैकर अनुरोध ब्लॉक किए गए। Harbor खुद कोई टेलीमेट्री नहीं भेजता।",
+  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.":
+    "इस सेशन में {n} ट्रैकर अनुरोध ब्लॉक किया गया। Harbor खुद कोई टेलीमेट्री नहीं भेजता।",
+  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#few":
+    "इस सेशन में {n} ट्रैकर अनुरोध ब्लॉक किया गया। Harbor खुद कोई टेलीमेट्री नहीं भेजता।#few",
+  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#one":
+    "इस सेशन में {n} ट्रैकर अनुरोध ब्लॉक किया गया। Harbor खुद कोई टेलीमेट्री नहीं भेजता।#one",
+  "{n} tracker requests blocked this session. Harbor itself sends zero telemetry.":
+    "इस सेशन में {n} ट्रैकर अनुरोध ब्लॉक किए गए। Harbor खुद कोई टेलीमेट्री नहीं भेजता।",
   "{n} tracks": "{n} ट्रैक",
   "{n} uncached hidden": "{n} अनकैश्ड आइटम छिपाए गए",
   "{n} versions": "{n} वर्ज़न",
@@ -617,16 +673,19 @@ const catalogSymbols: Record<string, string> = {
   "{quota} available": "{quota} उपलब्ध",
   "{rating}/5 ({count})": "{rating}/5 ({count})",
   "{repaired} fixed, {clean} already clean": "{repaired} ठीक किए गए, {clean} पहले से सही थे",
-  "{resolution}p above device max {maxResolution}p": "{resolution}p, डिवाइस की अधिकतम सीमा {maxResolution}p से अधिक",
+  "{resolution}p above device max {maxResolution}p":
+    "{resolution}p, डिवाइस की अधिकतम सीमा {maxResolution}p से अधिक",
   "{score} right": "{score} सही",
   "{selected}/{max} selected": "{selected}/{max} चुने गए",
-  "{sharing} of {total} friends are sharing what they watch.": "{total} में से {sharing} दोस्त जो देखते हैं, उसे साझा कर रहे हैं।",
+  "{sharing} of {total} friends are sharing what they watch.":
+    "{total} में से {sharing} दोस्त जो देखते हैं, उसे साझा कर रहे हैं।",
   "{shown} of {total}": "{total} में से {shown}",
   "{shown} of {total} file from your computer": "आपके कंप्यूटर की {total} फ़ाइल में से {shown}",
   "{shown} of {total} files from your computer": "आपके कंप्यूटर की {total} फ़ाइलों में से {shown}",
   "{shown} of {total} sources": "{total} स्रोतों में से {shown}",
   "{sign}{n}s": "{sign}{n} सेकंड",
-  "{site} should be reachable in a moment. They're deploying right now. Refresh once their docs go live.": "{site} कुछ ही देर में उपलब्ध हो जाना चाहिए। वे अभी डिप्लॉय कर रहे हैं। उनके डॉक्स लाइव होने पर रीफ़्रेश करें।",
+  "{site} should be reachable in a moment. They're deploying right now. Refresh once their docs go live.":
+    "{site} कुछ ही देर में उपलब्ध हो जाना चाहिए। वे अभी डिप्लॉय कर रहे हैं। उनके डॉक्स लाइव होने पर रीफ़्रेश करें।",
   "{size} saved": "{size} की बचत",
   "{source} list detected": "{source} की सूची मिली",
   "{staff} requested your diagnostics": "{staff} ने आपका डायग्नोस्टिक डेटा माँगा है",
@@ -639,7 +698,8 @@ const catalogSymbols: Record<string, string> = {
   "{time} left": "{time} बाकी",
   "{title} actions": "{title} की कार्रवाइयाँ",
   "{title} adaptation poster": "{title} के रूपांतरण का पोस्टर",
-  "{title} blocks embedding from outside its site.": "{title} को उसकी साइट के बाहर एम्बेड नहीं किया जा सकता.",
+  "{title} blocks embedding from outside its site.":
+    "{title} को उसकी साइट के बाहर एम्बेड नहीं किया जा सकता.",
   "{title} cover": "{title} का कवर",
   "{title} image viewer": "{title} इमेज व्यूअर",
   "{title} internal cover": "{title} का आंतरिक कवर",
@@ -669,11 +729,16 @@ const catalogSymbols: Record<string, string> = {
   "{word} {n} seconds. Hold for options#one": "{word} {n} सेकंड। विकल्पों के लिए दबाकर रखें#one",
   "{word} {n}s · hold for options": "{word} {n} सेकंड · विकल्पों के लिए दबाकर रखें",
   "{w} wins, {n} nominations": "{w} जीत, {n} नामांकन",
-  "· A debrid key (TorBox, Real-Debrid, etc.) is missing or expired.": "· डीब्रिड कुंजी (TorBox, Real-Debrid, आदि) मौजूद नहीं है या उसकी समय-सीमा खत्म हो गई है।",
-  "· Add a debrid key (TorBox, Real-Debrid, AllDebrid, Premiumize, Debrid-Link).": "· डीब्रिड कुंजी जोड़ें (TorBox, Real-Debrid, AllDebrid, Premiumize, Debrid-Link)।",
-  "· Install a stream addon (Torrentio, Comet, MediaFusion).": "· स्ट्रीम ऐडऑन इंस्टॉल करें (Torrentio, Comet, MediaFusion)।",
-  "· No stream addon is installed yet (Torrentio, MediaFusion, Comet).": "· अभी कोई स्ट्रीम ऐडऑन इंस्टॉल नहीं है (Torrentio, MediaFusion, Comet)।",
-  "· This title is too new and no source has it cached yet.": "· यह टाइटल बहुत नया है और अभी तक किसी स्रोत ने इसे कैश नहीं किया है।",
+  "· A debrid key (TorBox, Real-Debrid, etc.) is missing or expired.":
+    "· डीब्रिड कुंजी (TorBox, Real-Debrid, आदि) मौजूद नहीं है या उसकी समय-सीमा खत्म हो गई है।",
+  "· Add a debrid key (TorBox, Real-Debrid, AllDebrid, Premiumize, Debrid-Link).":
+    "· डीब्रिड कुंजी जोड़ें (TorBox, Real-Debrid, AllDebrid, Premiumize, Debrid-Link)।",
+  "· Install a stream addon (Torrentio, Comet, MediaFusion).":
+    "· स्ट्रीम ऐडऑन इंस्टॉल करें (Torrentio, Comet, MediaFusion)।",
+  "· No stream addon is installed yet (Torrentio, MediaFusion, Comet).":
+    "· अभी कोई स्ट्रीम ऐडऑन इंस्टॉल नहीं है (Torrentio, MediaFusion, Comet)।",
+  "· This title is too new and no source has it cached yet.":
+    "· यह टाइटल बहुत नया है और अभी तक किसी स्रोत ने इसे कैश नहीं किया है।",
   "· currently hidden": "· अभी छिपा हुआ",
   "· {n} nom": "· {n} नामांकन",
   "· {n} noms": "· {n} नामांकन",
@@ -682,7 +747,8 @@ const catalogSymbols: Record<string, string> = {
   "التنس (WTA)": "टेनिस (WTA)",
   "بطولة PGA": "PGA चैंपियनशिप",
   "دوري MLS": "MLS लीग",
-  "“Cached” just means your addon thinks that file is already saved on your debrid, ready to play instantly. That flag isn’t always right: sometimes the file isn’t actually there yet. When that happens the source won’t start, or it plays a short broken clip. It’s not a Harbor problem: pick another source, or give it a minute to finish caching and try again.": "“कैश्ड” का बस यह मतलब है कि आपके ऐडऑन के अनुसार वह फ़ाइल आपके डीब्रिड पर पहले से सेव है और तुरंत चलने के लिए तैयार है। यह संकेत हमेशा सही नहीं होता: कभी-कभी फ़ाइल वास्तव में अभी वहाँ नहीं होती। ऐसा होने पर स्रोत शुरू नहीं होगा या एक छोटी-सी खराब क्लिप चलेगी। यह Harbor की समस्या नहीं है: कोई दूसरा स्रोत चुनें या कैशिंग पूरी होने के लिए एक मिनट रुककर फिर कोशिश करें।",
+  "“Cached” just means your addon thinks that file is already saved on your debrid, ready to play instantly. That flag isn’t always right: sometimes the file isn’t actually there yet. When that happens the source won’t start, or it plays a short broken clip. It’s not a Harbor problem: pick another source, or give it a minute to finish caching and try again.":
+    "“कैश्ड” का बस यह मतलब है कि आपके ऐडऑन के अनुसार वह फ़ाइल आपके डीब्रिड पर पहले से सेव है और तुरंत चलने के लिए तैयार है। यह संकेत हमेशा सही नहीं होता: कभी-कभी फ़ाइल वास्तव में अभी वहाँ नहीं होती। ऐसा होने पर स्रोत शुरू नहीं होगा या एक छोटी-सी खराब क्लिप चलेगी। यह Harbor की समस्या नहीं है: कोई दूसरा स्रोत चुनें या कैशिंग पूरी होने के लिए एक मिनट रुककर फिर कोशिश करें।",
   "← folder or .cbz / .zip": "← फ़ोल्डर या .cbz / .zip",
   "← name it like the manga": "← इसे मंगा के नाम जैसा नाम दें",
   "−15s": "−15 सेकंड",

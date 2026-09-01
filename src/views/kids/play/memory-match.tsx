@@ -146,8 +146,12 @@ export function MemoryMatch() {
           ))}
           <div className="kids-card flex flex-col items-center gap-4 rounded-2xl border-4 border-[#ffd166] bg-white/95 px-12 py-10 text-center">
             <PartyPopper size={44} className="text-[#e08900]" strokeWidth={2} />
-            <p className="font-display text-[30px] font-medium text-[#123a52]">{t("You found them all!")}</p>
-            <p className="text-[16px] font-semibold text-[#3c6a84]">{t("{moves} moves. Amazing memory!", { moves })}</p>
+            <p className="font-display text-[30px] font-medium text-[#123a52]">
+              {t("You found them all!")}
+            </p>
+            <p className="text-[16px] font-semibold text-[#3c6a84]">
+              {t("{moves} moves. Amazing memory!", { moves })}
+            </p>
             <button
               type="button"
               onClick={reset}

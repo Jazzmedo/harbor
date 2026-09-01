@@ -87,11 +87,16 @@ function malOptions(): StatusOption[] {
   ];
 }
 
-function buildRows(trackers: RemoteTrackers, isAnime: boolean, isSeriesLike: boolean): TrackerRow[] {
+function buildRows(
+  trackers: RemoteTrackers,
+  isAnime: boolean,
+  isSeriesLike: boolean,
+): TrackerRow[] {
   const rows: TrackerRow[] = [];
   if (trackers.simkl)
     rows.push({ id: "simkl", name: "Simkl", options: simklOptions(isSeriesLike || isAnime) });
-  if (trackers.anilist && isAnime) rows.push({ id: "anilist", name: "AniList", options: anilistOptions() });
+  if (trackers.anilist && isAnime)
+    rows.push({ id: "anilist", name: "AniList", options: anilistOptions() });
   if (trackers.mal && isAnime) rows.push({ id: "mal", name: "MyAnimeList", options: malOptions() });
   return rows;
 }
@@ -147,7 +152,11 @@ export function TrackGroup({
           const isOpen = open === row.id;
           const pickedKey = chosen[row.id];
           const picked = row.options.find((o) => o.key === pickedKey);
-          const sub = picked ? (picked.remove ? t("Not tracked") : t(picked.label)) : t("Set your status");
+          const sub = picked
+            ? picked.remove
+              ? t("Not tracked")
+              : t(picked.label)
+            : t("Set your status");
           return (
             <div key={row.id} className="overflow-hidden rounded-2xl bg-surface/40">
               <button
@@ -186,7 +195,11 @@ export function TrackGroup({
                     <SheetRow
                       key={opt.key}
                       icon={opt.icon}
-                      label={opt.remove ? t("Remove from {service}", { service: row.name }) : t(opt.label)}
+                      label={
+                        opt.remove
+                          ? t("Remove from {service}", { service: row.name })
+                          : t(opt.label)
+                      }
                       active={pickedKey === opt.key}
                       trailing={
                         pickedKey === opt.key ? (

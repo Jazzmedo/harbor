@@ -12,7 +12,9 @@ export function StoreFeatureCards({ onShare }: { onShare: () => void }) {
         <div className="flex flex-col gap-1">
           <h3 className="text-[15px] font-semibold text-ink">{t("Safe by design")}</h3>
           <p className="text-[13px] leading-relaxed text-ink-muted">
-            {t("Every theme is sandboxed, scanned, and reviewed before it reaches the library, so you can try any look without a second thought.")}
+            {t(
+              "Every theme is sandboxed, scanned, and reviewed before it reaches the library, so you can try any look without a second thought.",
+            )}
           </p>
         </div>
       </div>
@@ -23,7 +25,9 @@ export function StoreFeatureCards({ onShare }: { onShare: () => void }) {
         <div className="flex flex-col gap-1">
           <h3 className="text-[15px] font-semibold text-ink">{t("Publish your own")}</h3>
           <p className="text-[13px] leading-relaxed text-ink-muted">
-            {t("Made a look you love? Share it with the community in a couple of clicks and watch the downloads roll in.")}
+            {t(
+              "Made a look you love? Share it with the community in a couple of clicks and watch the downloads roll in.",
+            )}
           </p>
         </div>
         <button

@@ -10,7 +10,8 @@ export const POSTER_RADII = [
 ];
 
 export function radiusKey(px: number): string {
-  return POSTER_RADII.reduce((best, p) => (Math.abs(p.px - px) < Math.abs(best.px - px) ? p : best)).value;
+  return POSTER_RADII.reduce((best, p) => (Math.abs(p.px - px) < Math.abs(best.px - px) ? p : best))
+    .value;
 }
 
 export function PxField({

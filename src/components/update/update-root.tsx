@@ -16,7 +16,8 @@ const AUTO_DISMISS_MS = 12_000;
 
 function useChromeHidden(): boolean {
   const [hidden, setHidden] = useState(
-    () => typeof document !== "undefined" && document.documentElement.dataset.chromeHidden === "true",
+    () =>
+      typeof document !== "undefined" && document.documentElement.dataset.chromeHidden === "true",
   );
   useEffect(() => {
     const root = document.documentElement;

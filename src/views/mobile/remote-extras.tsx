@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 import { Check, Clock, Gauge } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { useMobileRemote } from "./mobile-remote";
@@ -13,8 +19,7 @@ const SLEEPS: Array<{ label: string; minutes: number }> = [
 ];
 
 const prefersReducedMotion = () =>
-  typeof window !== "undefined" &&
-  window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
 const SHEET_EXIT_MS = 300;
 
@@ -125,7 +130,9 @@ export function KeyboardOverlay({ open, onClose }: { open: boolean; onClose: () 
     >
       <style>{SHEET_EXIT_CSS}</style>
       <div className="flex items-center justify-between px-5 pb-3">
-        <span className="text-[13px] font-semibold text-ink-muted">{t("Typing on your computer")}</span>
+        <span className="text-[13px] font-semibold text-ink-muted">
+          {t("Typing on your computer")}
+        </span>
         <button
           type="button"
           onClick={() => {
@@ -220,7 +227,15 @@ export function SpeedSleepSheet({ open, onClose }: { open: boolean; onClose: () 
   );
 }
 
-function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function Chip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
   return (
     <button
       type="button"

@@ -57,7 +57,9 @@ function ThemeMarketCard({
 }) {
   const t = useT();
   const { state, run } = useAcquireState(() =>
-    downloadTheme(theme.id, theme.cover ?? theme.screenshots[0] ?? null, theme.versionsCount).then(() => {}),
+    downloadTheme(theme.id, theme.cover ?? theme.screenshots[0] ?? null, theme.versionsCount).then(
+      () => {},
+    ),
   );
   const tokens = useMemo(() => tokensFromStoreTheme(theme), [theme]);
   return (
@@ -81,7 +83,9 @@ function ThemeMarketCard({
         </div>
       </div>
       <div className="flex min-w-0 flex-col gap-0.5 px-3.5 pb-3 pt-2.5">
-        <span className="truncate text-[14.5px] font-semibold tracking-tight text-ink">{theme.name}</span>
+        <span className="truncate text-[14.5px] font-semibold tracking-tight text-ink">
+          {theme.name}
+        </span>
         <span className="flex items-center gap-1.5 truncate text-[11.5px] text-ink-subtle">
           {theme.authorHandle ? (
             <UserHoverCard handle={theme.authorHandle}>
@@ -135,7 +139,9 @@ function BundleMarketCard({
         </div>
       </div>
       <div className="flex min-w-0 flex-col gap-0.5 px-3.5 pb-3 pt-2.5">
-        <span className="truncate text-[14.5px] font-semibold tracking-tight text-ink">{bundle.name}</span>
+        <span className="truncate text-[14.5px] font-semibold tracking-tight text-ink">
+          {bundle.name}
+        </span>
         <span className="flex items-center gap-1.5 truncate text-[11.5px] text-ink-subtle">
           {bundle.authorAvatar && (
             <img

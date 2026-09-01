@@ -890,8 +890,12 @@ export function PluginGuide({ kind = "manga" }: { kind?: "manga" | "ebook" }) {
                 title={t("Use the harbor bridge")}
                 body={
                   ebook
-                    ? t("Reach HTTP sources with harbor.http(url, opts), binary gRPC sources with harbor.grpc(url, protobufBytes, opts), and parse HTML with harbor.parseHtml(html). There is no fetch, DOM, or storage in the sandbox.")
-                    : t("Reach the network with harbor.http(url, opts) and parse HTML with harbor.parseHtml(html). There is no fetch, DOM, or storage in the sandbox.")
+                    ? t(
+                        "Reach HTTP sources with harbor.http(url, opts), binary gRPC sources with harbor.grpc(url, protobufBytes, opts), and parse HTML with harbor.parseHtml(html). There is no fetch, DOM, or storage in the sandbox.",
+                      )
+                    : t(
+                        "Reach the network with harbor.http(url, opts) and parse HTML with harbor.parseHtml(html). There is no fetch, DOM, or storage in the sandbox.",
+                      )
                 }
               />
               <Step

@@ -92,7 +92,9 @@ export function DiagnosticsConsentModal({
         style={{ animation: "diag-pop-in 220ms cubic-bezier(0.32,0.72,0.24,1) both" }}
       >
         <div className="flex items-center justify-between border-b border-edge-soft px-5 py-3.5">
-          <span className="text-[14px] font-semibold tracking-tight text-ink">{t("Diagnostics request")}</span>
+          <span className="text-[14px] font-semibold tracking-tight text-ink">
+            {t("Diagnostics request")}
+          </span>
           <button
             type="button"
             onClick={onClose}

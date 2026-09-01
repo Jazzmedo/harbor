@@ -16,8 +16,14 @@ type SortId = (typeof SORTS)[number]["id"];
 function sortThemes(list: StoreTheme[], sort: SortId): StoreTheme[] {
   const copy = [...list];
   if (sort === "downloads") return copy.sort((a, b) => b.downloads - a.downloads);
-  if (sort === "new") return copy.sort((a, b) => (b.createdAt > a.createdAt ? 1 : b.createdAt < a.createdAt ? -1 : 0));
-  return copy.sort((a, b) => b.ratingAvg - a.ratingAvg || b.ratingCount - a.ratingCount || b.downloads - a.downloads);
+  if (sort === "new")
+    return copy.sort((a, b) =>
+      b.createdAt > a.createdAt ? 1 : b.createdAt < a.createdAt ? -1 : 0,
+    );
+  return copy.sort(
+    (a, b) =>
+      b.ratingAvg - a.ratingAvg || b.ratingCount - a.ratingCount || b.downloads - a.downloads,
+  );
 }
 
 export function StoreBrowse({
@@ -79,12 +85,19 @@ export function StoreBrowse({
 
       {shown.length === 0 ? (
         <p className="rounded-md bg-surface px-4 py-14 text-center text-[13px] text-ink-subtle ring-1 ring-edge-soft">
-          {q ? t("No themes match your search.") : t("No community themes yet. Be the first to share one.")}
+          {q
+            ? t("No themes match your search.")
+            : t("No community themes yet. Be the first to share one.")}
         </p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {shown.map((t) => (
-            <MarketCard key={t.id} item={t} kind="theme" onOpen={(item) => onOpen(item as StoreTheme)} />
+            <MarketCard
+              key={t.id}
+              item={t}
+              kind="theme"
+              onOpen={(item) => onOpen(item as StoreTheme)}
+            />
           ))}
         </div>
       )}

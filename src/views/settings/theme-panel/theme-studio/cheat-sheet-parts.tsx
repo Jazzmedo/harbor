@@ -79,14 +79,20 @@ export function CopyName({ text }: { text: string }) {
       >
         <code
           className="col-start-1 row-start-1 font-mono text-[13.5px] font-semibold text-ink transition-[transform,opacity,color] duration-300 group-hover/cn:text-accent"
-          style={{ transform: copied ? "rotateX(90deg)" : "rotateX(0deg)", opacity: copied ? 0 : 1 }}
+          style={{
+            transform: copied ? "rotateX(90deg)" : "rotateX(0deg)",
+            opacity: copied ? 0 : 1,
+          }}
         >
           {text}
         </code>
         <span
           aria-hidden
           className="col-start-1 row-start-1 flex items-center gap-1 transition-[transform,opacity] duration-300"
-          style={{ transform: copied ? "rotateX(0deg)" : "rotateX(-90deg)", opacity: copied ? 1 : 0 }}
+          style={{
+            transform: copied ? "rotateX(0deg)" : "rotateX(-90deg)",
+            opacity: copied ? 1 : 0,
+          }}
         >
           <Check size={14} strokeWidth={2.6} className="text-accent" />
           <code className="font-mono text-[13px] font-semibold text-accent">{t("Copied")}</code>
@@ -96,7 +102,15 @@ export function CopyName({ text }: { text: string }) {
   );
 }
 
-export function CodeBlock({ code, filename, compact }: { code: string; filename?: string; compact?: boolean }) {
+export function CodeBlock({
+  code,
+  filename,
+  compact,
+}: {
+  code: string;
+  filename?: string;
+  compact?: boolean;
+}) {
   const t = useT();
   const [copied, setCopied] = useState(false);
   const copy = async () => {
@@ -115,7 +129,9 @@ export function CodeBlock({ code, filename, compact }: { code: string; filename?
   return (
     <div className={`overflow-hidden rounded-md bg-elevated ${compact ? "mt-2.5" : ""}`}>
       <div className="flex items-center gap-2 px-3 pb-0.5 pt-2">
-        <span className="flex-1 truncate font-mono text-[12.5px] text-ink-subtle">{filename ?? t("example")}</span>
+        <span className="flex-1 truncate font-mono text-[12.5px] text-ink-subtle">
+          {filename ?? t("example")}
+        </span>
         {filename && (
           <button
             type="button"
@@ -135,7 +151,9 @@ export function CodeBlock({ code, filename, compact }: { code: string; filename?
           {copied ? t("Copied") : t("Copy")}
         </button>
       </div>
-      <pre className="overflow-auto px-4 pb-3 pt-1 font-mono text-[13px] leading-relaxed text-ink-muted">{code}</pre>
+      <pre className="overflow-auto px-4 pb-3 pt-1 font-mono text-[13px] leading-relaxed text-ink-muted">
+        {code}
+      </pre>
     </div>
   );
 }

@@ -127,7 +127,9 @@ export function CustomFontTiles({
         <span className="text-[13px] font-semibold text-ink">
           {busy ? t("Adding font…") : t("Upload a font")}
         </span>
-        {!busy && <span className="text-[11.5px] text-ink-subtle">{t("TTF, OTF, WOFF or WOFF2")}</span>}
+        {!busy && (
+          <span className="text-[11.5px] text-ink-subtle">{t("TTF, OTF, WOFF or WOFF2")}</span>
+        )}
       </button>
 
       {localizedError && (

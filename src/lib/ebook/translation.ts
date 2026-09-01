@@ -1,10 +1,7 @@
 import { getUiLanguage, LANGUAGES, type UiLanguage } from "@/lib/i18n";
 import { safeFetchStream } from "@/lib/safe-fetch";
 import { setItemWithRecovery } from "@/lib/storage-recovery";
-import {
-  ebookTranslationCacheGet,
-  ebookTranslationCachePut,
-} from "./cache";
+import { ebookTranslationCacheGet, ebookTranslationCachePut } from "./cache";
 import translationInstructions from "./translation-instructions.md?raw";
 
 const STORAGE_KEY = "harbor.ebook.translation.v1";
@@ -39,11 +36,7 @@ function hash(value: string): string {
   return `${value.length}:${result >>> 0}`;
 }
 
-function cacheSlot(
-  source: string,
-  title: string,
-  settings: EBookTranslationSettings,
-): string {
+function cacheSlot(source: string, title: string, settings: EBookTranslationSettings): string {
   const model = settings.model.trim() || "deepseek-v4-flash";
   const cacheKey = `${model}:${settings.targetLanguage}:${hash(translationInstructions)}:${hash(title)}:${hash(source)}`;
   return `${CACHE_PREFIX}${hash(cacheKey)}`;

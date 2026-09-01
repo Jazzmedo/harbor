@@ -7,11 +7,7 @@ import type { ScoredStream } from "@/lib/streams/types";
 import { useTogether } from "@/lib/together/provider";
 import { useView, type PlayEpisode, type PlayerSrc } from "@/lib/view";
 import { isLivePlaybackSrc } from "@/lib/player/live-src";
-import {
-  playError,
-  streamIdentity,
-  type PickerError,
-} from "@/views/play-picker/picker-utils";
+import { playError, streamIdentity, type PickerError } from "@/views/play-picker/picker-utils";
 import { useAutoCandidates } from "@/views/play-picker/use-auto-candidates";
 import { useAutoFire } from "@/views/play-picker/use-auto-fire";
 import { usePickHandler } from "@/views/play-picker/use-pick-handler";
@@ -113,7 +109,10 @@ export function useBpStreamPlay(params: {
     () => (s.addons ?? []).some((a) => /mediafusion|comet/i.test(a.manifest?.name ?? "")),
     [s.addons],
   );
-  const isTorrentioStream = useCallback((x: ScoredStream) => /torrentio/i.test(x.addonName ?? ""), []);
+  const isTorrentioStream = useCallback(
+    (x: ScoredStream) => /torrentio/i.test(x.addonName ?? ""),
+    [],
+  );
 
   const filteredPicker = useMemo(
     () =>
@@ -162,42 +161,35 @@ export function useBpStreamPlay(params: {
     [settings.subtitlePreselect, inSession, openPlayer],
   );
 
-  const {
-    onPlay,
-    abortResolve,
-    debridDown,
-    resetDebridDown,
-    p2pConfirm,
-    confirmP2p,
-    cancelP2p,
-  } = usePickHandler({
-    meta,
-    imdbId: s.imdbId,
-    imdbIdVerified: s.imdbIdVerified,
-    episode,
-    resume,
-    debrids: s.debrids,
-    isCached: s.isCached,
-    seasonLock,
-    p2pAutoConsent,
-    streamMode: settings.streamMode,
-    inSession,
-    canInvite,
-    inviteSentRef,
-    sendInvite,
-    claimHost,
-    openPlayer: openPlayerGated,
-    intent,
-    autoActive,
-    autoAttemptIdx,
-    autoCandidatesLength: autoCandidates.length,
-    autoFiredRef,
-    setAutoAttemptIdx,
-    setAutoExhausted,
-    setFailedStreams,
-    setResolveError: setError,
-    setResolving,
-  });
+  const { onPlay, abortResolve, debridDown, resetDebridDown, p2pConfirm, confirmP2p, cancelP2p } =
+    usePickHandler({
+      meta,
+      imdbId: s.imdbId,
+      imdbIdVerified: s.imdbIdVerified,
+      episode,
+      resume,
+      debrids: s.debrids,
+      isCached: s.isCached,
+      seasonLock,
+      p2pAutoConsent,
+      streamMode: settings.streamMode,
+      inSession,
+      canInvite,
+      inviteSentRef,
+      sendInvite,
+      claimHost,
+      openPlayer: openPlayerGated,
+      intent,
+      autoActive,
+      autoAttemptIdx,
+      autoCandidatesLength: autoCandidates.length,
+      autoFiredRef,
+      setAutoAttemptIdx,
+      setAutoExhausted,
+      setFailedStreams,
+      setResolveError: setError,
+      setResolving,
+    });
 
   useAutoFire({
     autoActive,
@@ -286,8 +278,7 @@ export function useBpStreamPlay(params: {
     cancelPreselect: () => setPreselect(null),
     // Scoped to auto only. A manual pick keeps the list on screen with the
     // spinner in its own row rather than blanking to a full-page loader.
-    autoBusy:
-      !error && autoActive && (!s.done || autoCandidates.length > 0 || resolving != null),
+    autoBusy: !error && autoActive && (!s.done || autoCandidates.length > 0 || resolving != null),
     autoExhausted,
     autoAttemptIdx,
     autoTriedCount: autoCandidates.length,

@@ -202,7 +202,11 @@ export function CustomThemesSection() {
   const remove = (id: string) => {
     const wasActive = settings.theme.preset === id;
     const image = wasActive
-      ? nextBackgroundImage(settings.theme.backgroundImage, getThemeById(id), getThemeById("cool-grey"))
+      ? nextBackgroundImage(
+          settings.theme.backgroundImage,
+          getThemeById(id),
+          getThemeById("cool-grey"),
+        )
       : null;
     removeCustomTheme(id);
     if (wasActive) {

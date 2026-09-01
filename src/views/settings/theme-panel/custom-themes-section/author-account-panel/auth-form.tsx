@@ -47,7 +47,11 @@ export function AuthForm({ onRecovery }: { onRecovery: (code: string) => void })
         const { recoveryCode: code } = await registerAuthor(username.trim(), password);
         onRecovery(code);
       } else {
-        const { recoveryCode: code } = await recoverAuthor(username.trim(), recoveryCode.trim(), newPassword);
+        const { recoveryCode: code } = await recoverAuthor(
+          username.trim(),
+          recoveryCode.trim(),
+          newPassword,
+        );
         onRecovery(code);
       }
     } catch (err) {
@@ -60,18 +64,22 @@ export function AuthForm({ onRecovery }: { onRecovery: (code: string) => void })
   const active = MODES.find((m) => m.id === mode)!;
 
   return (
- <div className="flex flex-col gap-5 rounded-md bg-surface p-6">
+    <div className="flex flex-col gap-5 rounded-md bg-surface p-6">
       <div className="flex items-center gap-3">
         <span className="flex h-10 w-10 items-center justify-center rounded-md bg-accent-soft text-accent">
           <UserRound size={18} strokeWidth={2} />
         </span>
         <div className="flex flex-col">
-          <h3 className="text-[16px] font-semibold tracking-tight text-ink">{t("Author account")}</h3>
-          <p className="text-[12.5px] text-ink-subtle">{t("Publish themes under your name and update them anytime.")}</p>
+          <h3 className="text-[16px] font-semibold tracking-tight text-ink">
+            {t("Author account")}
+          </h3>
+          <p className="text-[12.5px] text-ink-subtle">
+            {t("Publish themes under your name and update them anytime.")}
+          </p>
         </div>
       </div>
 
- <div className="flex items-center gap-1 rounded-md bg-elevated p-1">
+      <div className="flex items-center gap-1 rounded-md bg-elevated p-1">
         {MODES.map((m) => (
           <button
             key={m.id}
@@ -97,7 +105,11 @@ export function AuthForm({ onRecovery }: { onRecovery: (code: string) => void })
             onChange={setUsername}
             placeholder={t("yourname")}
             maxLength={24}
-            hint={mode === "register" && !usernameOk ? t("3 to 24 letters, numbers or underscores.") : undefined}
+            hint={
+              mode === "register" && !usernameOk
+                ? t("3 to 24 letters, numbers or underscores.")
+                : undefined
+            }
           />
           {mode === "register" && usernameOk && (
             <UsernameStatus state={availability} name={username.trim()} />
@@ -105,10 +117,21 @@ export function AuthForm({ onRecovery }: { onRecovery: (code: string) => void })
         </div>
 
         {mode === "signin" && (
-          <PasswordField label={t("Password")} value={password} onChange={setPassword} placeholder={t("Your password")} />
+          <PasswordField
+            label={t("Password")}
+            value={password}
+            onChange={setPassword}
+            placeholder={t("Your password")}
+          />
         )}
         {mode === "register" && (
-          <PasswordField label={t("Password")} value={password} onChange={setPassword} placeholder={t("At least 8 characters")} showStrength />
+          <PasswordField
+            label={t("Password")}
+            value={password}
+            onChange={setPassword}
+            placeholder={t("At least 8 characters")}
+            showStrength
+          />
         )}
         {mode === "recover" && (
           <>
@@ -119,13 +142,21 @@ export function AuthForm({ onRecovery }: { onRecovery: (code: string) => void })
               placeholder={t("The code from sign up")}
               maxLength={40}
             />
-            <PasswordField label={t("New password")} value={newPassword} onChange={setNewPassword} placeholder={t("At least 8 characters")} showStrength />
+            <PasswordField
+              label={t("New password")}
+              value={newPassword}
+              onChange={setNewPassword}
+              placeholder={t("At least 8 characters")}
+              showStrength
+            />
           </>
         )}
 
         {error && <p className="text-[12.5px] text-danger">{error}</p>}
         {mode === "register" && !error && (
-          <p className="text-[11.5px] text-ink-subtle">{t("You will get a one-time recovery code right after this.")}</p>
+          <p className="text-[11.5px] text-ink-subtle">
+            {t("You will get a one-time recovery code right after this.")}
+          </p>
         )}
 
         <button

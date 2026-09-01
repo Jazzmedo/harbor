@@ -42,7 +42,14 @@ export function MarketHero({
   let art: ReactNode;
   if ("swatch" in item) {
     payload = <PaletteSeam swatch={item.swatch} labeled />;
-    art = <Fit kind="theme" tokens={tokensFromStoreTheme(item)} cover={item.cover ?? item.screenshots[0] ?? null} size="hero" />;
+    art = (
+      <Fit
+        kind="theme"
+        tokens={tokensFromStoreTheme(item)}
+        cover={item.cover ?? item.screenshots[0] ?? null}
+        size="hero"
+      />
+    );
   } else {
     payload = <PackContents bundle={item} variant="hero" />;
     art = <Fit kind={item.kind} icons={item.icons} cover={item.cover} size="hero" />;
@@ -85,10 +92,17 @@ export function MarketHero({
             onClick={() => run()}
             label={kind === "theme" ? t("Get theme") : t("Install")}
           />
-          <MarketCta variant="ghost" size="lg" onClick={() => onOpen(item)} label={t("View details")} />
+          <MarketCta
+            variant="ghost"
+            size="lg"
+            onClick={() => onOpen(item)}
+            label={t("View details")}
+          />
         </div>
       </div>
-      <div className="relative order-1 min-h-[220px] overflow-hidden md:order-2 md:min-h-full">{art}</div>
+      <div className="relative order-1 min-h-[220px] overflow-hidden md:order-2 md:min-h-full">
+        {art}
+      </div>
     </section>
   );
 }

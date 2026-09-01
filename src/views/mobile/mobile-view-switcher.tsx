@@ -42,7 +42,13 @@ const SWITCHER_CSS = `
 }
 `;
 
-export function MobileViewSwitcher({ view, onSelect }: { view: View; onSelect: (v: View) => void }) {
+export function MobileViewSwitcher({
+  view,
+  onSelect,
+}: {
+  view: View;
+  onSelect: (v: View) => void;
+}) {
   const t = useT();
   const { settings } = useSettings();
   const [open, setOpen] = useState(false);

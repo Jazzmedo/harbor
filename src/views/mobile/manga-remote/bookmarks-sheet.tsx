@@ -6,7 +6,6 @@ import { SHEET_EXIT_CSS, useSheetDrag, useSheetPresence } from "../remote-extras
 import { useT } from "@/lib/i18n";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 
-
 export function BookmarksSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { snapshot, sendCommand } = useMobileRemote();
   const manga = snapshot.manga;
@@ -21,7 +20,10 @@ export function BookmarksSheet({ open, onClose }: { open: boolean; onClose: () =
     if (!open) setSaved(false);
   }, [open]);
 
-  const chapterIds = useMemo(() => new Set((manga?.chapters ?? []).map((c) => c.id)), [manga?.chapters]);
+  const chapterIds = useMemo(
+    () => new Set((manga?.chapters ?? []).map((c) => c.id)),
+    [manga?.chapters],
+  );
 
   const timeAgo = (ts: number): string => {
     const seconds = Math.max(0, Math.round((Date.now() - ts) / 1000));
@@ -39,7 +41,9 @@ export function BookmarksSheet({ open, onClose }: { open: boolean; onClose: () =
   const isSpread = (manga.mode === "book" || manga.mode === "double") && spreadNums.length >= 2;
 
   const add = (page?: number) => {
-    if (sendCommand(page != null ? { action: "mangaBookmark", page } : { action: "mangaBookmark" })) {
+    if (
+      sendCommand(page != null ? { action: "mangaBookmark", page } : { action: "mangaBookmark" })
+    ) {
       setSaved(true);
       window.setTimeout(() => setSaved(false), 1400);
     }
@@ -66,7 +70,9 @@ export function BookmarksSheet({ open, onClose }: { open: boolean; onClose: () =
           <div className="flex items-center gap-2 px-5 pb-3 pt-4">
             <Bookmark size={18} className="text-accent" />
             <h3 className="text-[16px] font-semibold text-ink">{t("Bookmarks")}</h3>
-            <span className="ms-auto text-[12px] tabular-nums text-ink-subtle">{bookmarks.length}</span>
+            <span className="ms-auto text-[12px] tabular-nums text-ink-subtle">
+              {bookmarks.length}
+            </span>
           </div>
         </div>
 
@@ -102,7 +108,11 @@ export function BookmarksSheet({ open, onClose }: { open: boolean; onClose: () =
             onClick={() => add()}
             className={`mx-4 mb-3 flex h-12 items-center justify-center gap-2 rounded-2xl text-[15px] font-semibold transition-colors ${saved ? "bg-accent-soft text-accent" : "bg-accent text-canvas active:opacity-90"}`}
           >
-            {saved ? <Check size={18} strokeWidth={2.6} /> : <BookmarkPlus size={18} strokeWidth={2.2} />}
+            {saved ? (
+              <Check size={18} strokeWidth={2.6} />
+            ) : (
+              <BookmarkPlus size={18} strokeWidth={2.2} />
+            )}
             {saved ? t("Saved") : t("Bookmark page {page}", { page: manga.pageIndex + 1 })}
           </button>
         )}
@@ -117,7 +127,10 @@ export function BookmarksSheet({ open, onClose }: { open: boolean; onClose: () =
               {bookmarks.map((bm) => {
                 const missing = chapterIds.size > 0 && !chapterIds.has(bm.chapterId);
                 return (
-                  <div key={bm.id} className="flex items-center gap-1 rounded-2xl px-1 active:bg-raised/40">
+                  <div
+                    key={bm.id}
+                    className="flex items-center gap-1 rounded-2xl px-1 active:bg-raised/40"
+                  >
                     <button
                       type="button"
                       disabled={missing}
@@ -128,7 +141,10 @@ export function BookmarksSheet({ open, onClose }: { open: boolean; onClose: () =
                       <span className="truncate text-[12.5px] text-ink-subtle">
                         {missing
                           ? t("Not in this source")
-                          : t("{chapter} · page {page}", { chapter: bm.chapterLabel, page: bm.page })}
+                          : t("{chapter} · page {page}", {
+                              chapter: bm.chapterLabel,
+                              page: bm.page,
+                            })}
                         <span className="text-ink-subtle/70"> · {timeAgo(bm.createdAt)}</span>
                       </span>
                     </button>

@@ -281,24 +281,37 @@ function VoicePicker({
           <span className="block truncate text-xs font-semibold" style={{ color: colors.ink }}>
             {selected.label}
           </span>
-          <span className="block truncate text-[9px] uppercase tracking-[.12em]" style={{ color: colors.muted }}>
+          <span
+            className="block truncate text-[9px] uppercase tracking-[.12em]"
+            style={{ color: colors.muted }}
+          >
             {selected.locale} · {selected.gender}
           </span>
         </span>
-        <ChevronDown size={13} className={`shrink-0 transition-transform ${open ? "rotate-180" : ""}`} />
+        <ChevronDown
+          size={13}
+          className={`shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
+        />
       </button>
       {open && (
         <div
           className="absolute bottom-[calc(100%+10px)] start-0 z-[140] w-[520px] overflow-hidden rounded-2xl border bg-[#111214]/[.98] p-2 shadow-2xl backdrop-blur-xl"
           style={{ borderColor: `${colors.muted}38` }}
         >
-          <div className="mb-2 flex items-center gap-2 rounded-xl border bg-black/20 px-3" style={{ borderColor: `${colors.muted}30` }}>
+          <div
+            className="mb-2 flex items-center gap-2 rounded-xl border bg-black/20 px-3"
+            style={{ borderColor: `${colors.muted}30` }}
+          >
             <Search size={14} style={{ color: colors.muted }} />
             <input
               autoFocus
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder={t("Search {language}", { language: languageGroups.find((group) => group.code === activeLanguage)?.name ?? t("voices") })}
+              placeholder={t("Search {language}", {
+                language:
+                  languageGroups.find((group) => group.code === activeLanguage)?.name ??
+                  t("voices"),
+              })}
               className="h-10 min-w-0 flex-1 bg-transparent text-xs text-white outline-none placeholder:text-white/35"
             />
             <span className="text-[10px] tabular-nums text-white/35">{filtered.length}</span>
@@ -327,15 +340,22 @@ function VoicePicker({
                     <span className="grid h-7 w-8 shrink-0 place-items-center rounded-lg bg-white/[.05]">
                       <Flag language={group.name} size="sm" showLabel={false} />
                     </span>
-                    <span className="min-w-0 flex-1 truncate text-[11px] font-semibold">{group.name}</span>
-                    <span className="text-[9px] tabular-nums opacity-45">{group.voices.length}</span>
+                    <span className="min-w-0 flex-1 truncate text-[11px] font-semibold">
+                      {group.name}
+                    </span>
+                    <span className="text-[9px] tabular-nums opacity-45">
+                      {group.voices.length}
+                    </span>
                   </button>
                 );
               })}
             </nav>
             <div
               role="listbox"
-              aria-label={t("{language} voices", { language: languageGroups.find((group) => group.code === activeLanguage)?.name ?? "Edge TTS" })}
+              aria-label={t("{language} voices", {
+                language:
+                  languageGroups.find((group) => group.code === activeLanguage)?.name ?? "Edge TTS",
+              })}
               className="max-h-[310px] space-y-1 overflow-y-auto overscroll-contain pe-1"
             >
               {filtered.map((voice) => {
@@ -371,7 +391,11 @@ function VoicePicker({
                     <button
                       type="button"
                       onClick={() => onPreview(voice)}
-                      aria-label={previewing ? t("Stop {voice} sample", { voice: voice.label }) : t("Play {voice} sample", { voice: voice.label })}
+                      aria-label={
+                        previewing
+                          ? t("Stop {voice} sample", { voice: voice.label })
+                          : t("Play {voice} sample", { voice: voice.label })
+                      }
                       title={previewing ? t("Stop sample") : t("Test this voice")}
                       className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg transition ${previewing ? "bg-accent text-black" : "bg-white/[.05] text-white/55 hover:bg-white/[.1] hover:text-white"}`}
                     >
@@ -387,7 +411,9 @@ function VoicePicker({
                 );
               })}
               {!filtered.length && (
-                <p className="px-3 py-8 text-center text-xs text-white/40">{t("No matching voices")}</p>
+                <p className="px-3 py-8 text-center text-xs text-white/40">
+                  {t("No matching voices")}
+                </p>
               )}
             </div>
           </div>
@@ -518,7 +544,10 @@ export function HarborReader({
               label: voice.name.replace(/^Microsoft\s+/i, "").replace(/\s+Online.*$/i, ""),
               tone: `${voice.locale} · ${voice.gender}`,
             }))
-            .sort((left, right) => left.locale.localeCompare(right.locale) || left.label.localeCompare(right.label)),
+            .sort(
+              (left, right) =>
+                left.locale.localeCompare(right.locale) || left.label.localeCompare(right.label),
+            ),
         );
       })
       .catch(() => undefined);
@@ -648,7 +677,16 @@ export function HarborReader({
         totalChapters: bookChapters.length,
       });
     },
-    [bookChapters.length, bookId, chapter, chapterIndex, paragraphs.length, profile, progressId, resumeVolumeLabel],
+    [
+      bookChapters.length,
+      bookId,
+      chapter,
+      chapterIndex,
+      paragraphs.length,
+      profile,
+      progressId,
+      resumeVolumeLabel,
+    ],
   );
   const colors = paper[prefs.background];
   const effectiveDirection =
@@ -677,7 +715,9 @@ export function HarborReader({
       flipLayersRef.current = staged;
       setFlipLayers(staged);
       if (discarded.length) {
-        window.requestAnimationFrame(() => discarded.forEach((item) => releaseFlipPages(item.pages)));
+        window.requestAnimationFrame(() =>
+          discarded.forEach((item) => releaseFlipPages(item.pages)),
+        );
       }
     },
     [],
@@ -732,9 +772,7 @@ export function HarborReader({
     const generation = ++flipGeneration.current;
     const active = flipPagesRef.current;
     const saved = loadEBookProgress(profile, bookId, progressId);
-    const targetParagraph = active.urls.length
-      ? Math.max(0, tracedLine.current)
-      : saved;
+    const targetParagraph = active.urls.length ? Math.max(0, tracedLine.current) : saved;
     const timer = window.setTimeout(
       () => {
         void createEBookFlipPages({
@@ -753,9 +791,7 @@ export function HarborReader({
         })
           .then((next) => {
             if (controller.signal.aborted || generation !== flipGeneration.current) {
-              next.urls.forEach(
-                (url) => url.startsWith("blob:") && URL.revokeObjectURL(url),
-              );
+              next.urls.forEach((url) => url.startsWith("blob:") && URL.revokeObjectURL(url));
               return;
             }
             replaceFlipPages(next, targetParagraph, {
@@ -1168,7 +1204,11 @@ export function HarborReader({
     const sample =
       VOICE_SAMPLE_BY_LOCALE[voice.locale] ??
       VOICE_SAMPLE_TEXT[language] ??
-      paragraphs.slice(current, current + 2).join(" ").trim().slice(0, 320);
+      paragraphs
+        .slice(current, current + 2)
+        .join(" ")
+        .trim()
+        .slice(0, 320);
     if (!sample) return;
     const run = ++voicePreviewRun.current;
     const requestId = `voice-preview-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -1291,14 +1331,14 @@ export function HarborReader({
   const speakFrom = async (index = current): Promise<void> => {
     stopSpeech();
     const run = ++narrationRun.current;
-    const requestId = globalThis.crypto?.randomUUID?.() ?? `reader-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const requestId =
+      globalThis.crypto?.randomUUID?.() ??
+      `reader-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     narrationRequestId.current = requestId;
     const ready = narrationAhead.current;
     const usePrefetched = !!ready && ready.start === index;
     if (!usePrefetched) narrationStep.current = 0;
-    const windowEnd = usePrefetched
-      ? ready!.end
-      : narrationWindowEnd(index, narrationBudget(0));
+    const windowEnd = usePrefetched ? ready!.end : narrationWindowEnd(index, narrationBudget(0));
     const chapterText = paragraphs.slice(index, windowEnd).join("\n\n").trim();
     if (!chapterText) {
       setNarrationNotice("There is nothing to read aloud on this page.");
@@ -1432,7 +1472,9 @@ export function HarborReader({
       narrationAhead.current = null;
       const message = error instanceof Error ? error.message : t("Edge TTS failed");
       if (/desktop app/i.test(message)) {
-        setNarrationNotice(t("Edge voices need the Harbor desktop app. Reading with the device voice."));
+        setNarrationNotice(
+          t("Edge voices need the Harbor desktop app. Reading with the device voice."),
+        );
         speakWithDevice(index);
         return;
       }
@@ -1450,8 +1492,11 @@ export function HarborReader({
       addEBookBookmark(profile, {
         bookId,
         chapterId: chapter.id,
-        chapterTitle: chapter.title || t("Chapter {chapter}", { chapter: chapter.chapter ?? "" }).trim(),
-        chapterLabel: chapter.chapter ? t("Chapter {chapter}", { chapter: chapter.chapter }) : chapter.title || t("Chapter"),
+        chapterTitle:
+          chapter.title || t("Chapter {chapter}", { chapter: chapter.chapter ?? "" }).trim(),
+        chapterLabel: chapter.chapter
+          ? t("Chapter {chapter}", { chapter: chapter.chapter })
+          : chapter.title || t("Chapter"),
         volumeLabel: currentVolume?.label ?? t("Chapters"),
         line: index,
         preview: paragraphs[index]?.slice(0, 140) ?? "",
@@ -1545,7 +1590,9 @@ export function HarborReader({
     selection && {
       id: `an${Date.now().toString(36)}`,
       chapterId: chapter.id,
-      chapterLabel: chapter.chapter ? t("Chapter {chapter}", { chapter: chapter.chapter }) : chapter.title || t("Chapter"),
+      chapterLabel: chapter.chapter
+        ? t("Chapter {chapter}", { chapter: chapter.chapter })
+        : chapter.title || t("Chapter"),
       volumeLabel: currentVolume?.label ?? t("Chapters"),
       text: selection.text,
       ranges: selection.ranges,
@@ -1700,7 +1747,8 @@ export function HarborReader({
           <div className="mt-0.5 text-[11px]" style={{ color: colors.muted }}>
             {prefs.mode === "book"
               ? `${flipPage + 1} / ${Math.max(1, flipPages.urls.length)}`
-              : `${current + 1} / ${Math.max(1, paragraphs.length)}`} · {bookTitle}
+              : `${current + 1} / ${Math.max(1, paragraphs.length)}`}{" "}
+            · {bookTitle}
           </div>
         </div>
         <div className="flex items-center gap-1">
@@ -1751,8 +1799,7 @@ export function HarborReader({
         <div className="absolute inset-x-0 bottom-16 top-16 overflow-hidden">
           {flipLayers.map((layer) => {
             const isActive = layer.id === activeFlipLayerId;
-            const isWaiting =
-              !isActive && layer.id === flipLayers.at(-1)?.id;
+            const isWaiting = !isActive && layer.id === flipLayers.at(-1)?.id;
             const isReplacement = isActive && flipLayers.length > 1;
             return (
               <div
@@ -1794,77 +1841,79 @@ export function HarborReader({
           )}
         </div>
       ) : (
-      <div ref={scroller} className="absolute inset-0 overflow-y-auto px-4 pb-32 pt-24 sm:px-8">
-        <article
-          ref={article}
-          dir={effectiveDirection}
-          className="relative mx-auto min-h-[calc(100vh-8rem)] select-text rounded-[2px] px-7 py-14 shadow-[0_28px_90px_rgba(0,0,0,.42)] transition-[width,background-color] duration-300 sm:px-14"
-          style={{
-            width: `min(100%, ${prefs.width}px)`,
-            background: colors.page,
-            color: colors.ink,
-            "--reader-read-color": `color-mix(in srgb, ${prefs.lineTrackColor} 62%, ${colors.ink})`,
-            WebkitUserSelect: "text",
-            fontFamily: readerFontFamily(prefs),
-            fontSize: `${prefs.fontSize}px`,
-            lineHeight: prefs.lineHeight,
-          } as CSSProperties}
-          onMouseUp={captureSelection}
-          onMouseMove={(event) => prefs.mouseLineTrack && updateTrace(event.clientY)}
-        >
-          <div className="pointer-events-none absolute inset-y-0 start-0 w-px bg-gradient-to-b from-transparent via-black/10 to-transparent" />
-          {chapterIndex === 0 && (internalCover || bookCover) && (
-            <section
-              aria-label={t("{title} cover", { title: bookTitle })}
-              className="mb-14 flex min-h-[70vh] flex-col items-center justify-center border-b pb-14 text-center"
-              style={{ borderColor: `${colors.muted}35` }}
-            >
+        <div ref={scroller} className="absolute inset-0 overflow-y-auto px-4 pb-32 pt-24 sm:px-8">
+          <article
+            ref={article}
+            dir={effectiveDirection}
+            className="relative mx-auto min-h-[calc(100vh-8rem)] select-text rounded-[2px] px-7 py-14 shadow-[0_28px_90px_rgba(0,0,0,.42)] transition-[width,background-color] duration-300 sm:px-14"
+            style={
+              {
+                width: `min(100%, ${prefs.width}px)`,
+                background: colors.page,
+                color: colors.ink,
+                "--reader-read-color": `color-mix(in srgb, ${prefs.lineTrackColor} 62%, ${colors.ink})`,
+                WebkitUserSelect: "text",
+                fontFamily: readerFontFamily(prefs),
+                fontSize: `${prefs.fontSize}px`,
+                lineHeight: prefs.lineHeight,
+              } as CSSProperties
+            }
+            onMouseUp={captureSelection}
+            onMouseMove={(event) => prefs.mouseLineTrack && updateTrace(event.clientY)}
+          >
+            <div className="pointer-events-none absolute inset-y-0 start-0 w-px bg-gradient-to-b from-transparent via-black/10 to-transparent" />
+            {chapterIndex === 0 && (internalCover || bookCover) && (
+              <section
+                aria-label={t("{title} cover", { title: bookTitle })}
+                className="mb-14 flex min-h-[70vh] flex-col items-center justify-center border-b pb-14 text-center"
+                style={{ borderColor: `${colors.muted}35` }}
+              >
+                <img
+                  src={internalCover || bookCover}
+                  alt={t("{title} internal cover", { title: bookTitle })}
+                  className="h-full max-h-[72vh] w-full object-contain shadow-[0_22px_65px_rgba(0,0,0,.38)]"
+                />
+              </section>
+            )}
+            <header className="mb-12 border-b pb-7" style={{ borderColor: `${colors.muted}35` }}>
+              <div
+                className="mb-2 text-xs font-semibold uppercase tracking-[.24em]"
+                style={{ color: colors.muted }}
+              >
+                {t("Harbor Reader")}
+              </div>
+              <h1 className="text-balance text-[1.85em] font-semibold leading-tight">
+                {readerTitle}
+              </h1>
+            </header>
+            {paragraphs.map((text, index) => (
+              <p
+                key={index}
+                data-reader-line={index}
+                ref={(node) => {
+                  blocks.current[index] = node;
+                }}
+                className={`relative mb-[1.1em] scroll-mt-24 text-pretty transition-colors ${index === current ? "reader-current" : index < current ? "reader-read" : ""}`}
+                style={{ textAlign: "start" }}
+                onMouseEnter={() => prefs.mouseLineTrack && setCurrent(index)}
+                onDoubleClick={() => {
+                  setCurrent(index);
+                  addBookmark(index);
+                }}
+              >
+                {renderText(text, index)}
+              </p>
+            ))}
+            {(content.images ?? []).map((src, index) => (
               <img
-                src={internalCover || bookCover}
-                alt={t("{title} internal cover", { title: bookTitle })}
-                className="h-full max-h-[72vh] w-full object-contain shadow-[0_22px_65px_rgba(0,0,0,.38)]"
+                key={src + index}
+                src={src}
+                className="mx-auto my-10 max-h-[80vh] max-w-full rounded"
+                alt=""
               />
-            </section>
-          )}
-          <header className="mb-12 border-b pb-7" style={{ borderColor: `${colors.muted}35` }}>
-            <div
-              className="mb-2 text-xs font-semibold uppercase tracking-[.24em]"
-              style={{ color: colors.muted }}
-            >
-              {t("Harbor Reader")}
-            </div>
-            <h1 className="text-balance text-[1.85em] font-semibold leading-tight">
-              {readerTitle}
-            </h1>
-          </header>
-          {paragraphs.map((text, index) => (
-            <p
-              key={index}
-              data-reader-line={index}
-              ref={(node) => {
-                blocks.current[index] = node;
-              }}
-              className={`relative mb-[1.1em] scroll-mt-24 text-pretty transition-colors ${index === current ? "reader-current" : index < current ? "reader-read" : ""}`}
-              style={{ textAlign: "start" }}
-              onMouseEnter={() => prefs.mouseLineTrack && setCurrent(index)}
-              onDoubleClick={() => {
-                setCurrent(index);
-                addBookmark(index);
-              }}
-            >
-              {renderText(text, index)}
-            </p>
-          ))}
-          {(content.images ?? []).map((src, index) => (
-            <img
-              key={src + index}
-              src={src}
-              className="mx-auto my-10 max-h-[80vh] max-w-full rounded"
-              alt=""
-            />
-          ))}
-        </article>
-      </div>
+            ))}
+          </article>
+        </div>
       )}
 
       {prefs.mode === "harbor" && trace && (
@@ -1933,7 +1982,11 @@ export function HarborReader({
               onClick={() => bookApi.current?.prev()}
               aria-label={t("Previous page")}
             >
-              {effectiveDirection === "rtl" ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+              {effectiveDirection === "rtl" ? (
+                <ChevronRight size={20} />
+              ) : (
+                <ChevronLeft size={20} />
+              )}
             </button>
             <button
               className="reader-icon"
@@ -1941,7 +1994,11 @@ export function HarborReader({
               onClick={() => bookApi.current?.next()}
               aria-label={t("Next page")}
             >
-              {effectiveDirection === "rtl" ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+              {effectiveDirection === "rtl" ? (
+                <ChevronLeft size={20} />
+              ) : (
+                <ChevronRight size={20} />
+              )}
             </button>
           </>
         )}
@@ -2004,11 +2061,7 @@ export function HarborReader({
         <button
           className={`reader-icon ${narrationLoading ? "reader-icon-cancel" : "reader-icon-accent"}`}
           onClick={
-            narrationLoading
-              ? stopSpeech
-              : speaking
-                ? toggleNarrationPause
-                : () => void speakFrom()
+            narrationLoading ? stopSpeech : speaking ? toggleNarrationPause : () => void speakFrom()
           }
           aria-label={
             narrationLoading
@@ -2079,7 +2132,8 @@ export function HarborReader({
             prefs.mode === "book"
               ? ((flipPage + 1) / Math.max(1, flipPages.urls.length)) * 100
               : ((current + 1) / Math.max(1, paragraphs.length)) * 100,
-          )}%
+          )}
+          %
         </div>
         <button
           className="reader-icon"
@@ -2145,7 +2199,9 @@ export function HarborReader({
                     {shownVolume?.label}
                   </strong>
                   <span className="block text-[11px] leading-tight" style={{ color: colors.muted }}>
-                    {shownChapters.length === 1 ? t("{count} chapter", { count: shownChapters.length }) : t("{count} chapters", { count: shownChapters.length })}
+                    {shownChapters.length === 1
+                      ? t("{count} chapter", { count: shownChapters.length })
+                      : t("{count} chapters", { count: shownChapters.length })}
                   </span>
                 </span>
                 <ChevronDown
@@ -2198,7 +2254,11 @@ export function HarborReader({
             className="mt-4 flex items-center justify-between border-y py-3 text-xs"
             style={{ borderColor: `${colors.muted}25`, color: colors.muted }}
           >
-            <span>{shownChapters.length === 1 ? t("{count} chapter", { count: shownChapters.length }) : t("{count} chapters", { count: shownChapters.length })}</span>
+            <span>
+              {shownChapters.length === 1
+                ? t("{count} chapter", { count: shownChapters.length })
+                : t("{count} chapters", { count: shownChapters.length })}
+            </span>
             <span>
               {shownChapters.some((item) => item.id === chapter.id)
                 ? `${shownChapters.findIndex((item) => item.id === chapter.id) + 1} / ${shownChapters.length}`
@@ -2225,7 +2285,9 @@ export function HarborReader({
                       {item.title || t("Chapter {chapter}", { chapter: item.chapter ?? index + 1 })}
                     </strong>
                     <span className="mt-1 block text-[11px]" style={{ color: colors.muted }}>
-                      {item.chapter ? t("Chapter {chapter}", { chapter: item.chapter }) : t("Position {position}", { position: index + 1 })}
+                      {item.chapter
+                        ? t("Chapter {chapter}", { chapter: item.chapter })
+                        : t("Position {position}", { position: index + 1 })}
                     </span>
                   </span>
                 </button>
@@ -2250,18 +2312,16 @@ export function HarborReader({
                     ? t("Notes & highlights")
                     : t("Bookmarks")}
             </h2>
-            <button className="reader-icon" onClick={() => setPanel(null)} aria-label={t("Close panel")}>
+            <button
+              className="reader-icon"
+              onClick={() => setPanel(null)}
+              aria-label={t("Close panel")}
+            >
               <X size={18} />
             </button>
           </div>
           <div className="min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {panel === "settings" && (
-              <Settings
-                prefs={prefs}
-                patch={patchPrefs}
-                colors={colors}
-              />
-            )}
+            {panel === "settings" && <Settings prefs={prefs} patch={patchPrefs} colors={colors} />}
             {panel === "search" && (
               <div>
                 <div
@@ -2306,7 +2366,9 @@ export function HarborReader({
                       className="w-full rounded-xl border border-dashed border-accent/50 p-5 text-sm text-accent"
                     >
                       <strong className="block text-base">
-                        {hiddenResults === 1 ? t("{count} match ahead", { count: hiddenResults }) : t("{count} matches ahead", { count: hiddenResults })}
+                        {hiddenResults === 1
+                          ? t("{count} match ahead", { count: hiddenResults })
+                          : t("{count} matches ahead", { count: hiddenResults })}
                       </strong>
                       <span className="mt-1 block text-xs opacity-70">{t("Show them anyway")}</span>
                     </button>
@@ -2382,7 +2444,9 @@ export function HarborReader({
             )}
             {panel === "bookmarks" && (
               <div className="space-y-2">
-                {!bookmarks.length && <p style={{ color: colors.muted }}>{t("No saved passages yet.")}</p>}
+                {!bookmarks.length && (
+                  <p style={{ color: colors.muted }}>{t("No saved passages yet.")}</p>
+                )}
                 {bookmarks.map((bookmark) => {
                   const savedVolume = volumes.find((volume) =>
                     volume.chapters.some((item) => item.id === bookmark.chapterId),
@@ -2527,11 +2591,7 @@ function SelectionToolbar({
         ))}
       </div>
       <div className="flex items-center overflow-x-auto p-1.5 text-xs">
-        <SelectionAction
-          icon={<Headphones size={15} />}
-          label={t("Listen")}
-          onClick={onListen}
-        />
+        <SelectionAction icon={<Headphones size={15} />} label={t("Listen")} onClick={onListen} />
         <SelectionAction
           icon={<MessageSquareText size={15} />}
           label={t("Note")}
@@ -2633,7 +2693,9 @@ function AnnotationEditor({
             placeholder={t("Write here… nothing will interrupt you.")}
           />
           <div className="border-t border-white/10 pt-3 text-xs text-white/35">
-            {annotation.body.length === 1 ? t("{count} character", { count: annotation.body.length }) : t("{count} characters", { count: annotation.body.length })}
+            {annotation.body.length === 1
+              ? t("{count} character", { count: annotation.body.length })
+              : t("{count} characters", { count: annotation.body.length })}
           </div>
         </main>
         <aside className="flex flex-col border-t border-white/10 bg-white/[.025] p-5 md:border-s md:border-t-0">
@@ -2696,7 +2758,11 @@ function AnnotationEditor({
             >
               {t("Save")}
             </button>
-            <button onClick={onDelete} className="reader-icon text-red-400" aria-label={t("Delete")}>
+            <button
+              onClick={onDelete}
+              className="reader-icon text-red-400"
+              aria-label={t("Delete")}
+            >
               <Trash2 size={17} />
             </button>
           </div>
@@ -2739,10 +2805,12 @@ function Settings({
     <div className="space-y-6">
       <Setting label={t("Reading mode")}>
         <div className="grid grid-cols-2 gap-2">
-          {([
-            { mode: "harbor", label: t("Harbor"), icon: <Type size={18} /> },
-            { mode: "book", label: t("Book"), icon: <BookOpen size={18} /> },
-          ] as const).map((item) => (
+          {(
+            [
+              { mode: "harbor", label: t("Harbor"), icon: <Type size={18} /> },
+              { mode: "book", label: t("Book"), icon: <BookOpen size={18} /> },
+            ] as const
+          ).map((item) => (
             <button
               key={item.mode}
               type="button"
@@ -2769,15 +2837,19 @@ function Settings({
         >
           <Trash2 size={14} /> {t("Delete saved audio")}
         </button>
-        {audioCacheStatus && <p className="mt-2 text-center text-[11px] text-emerald-400">{audioCacheStatus}</p>}
+        {audioCacheStatus && (
+          <p className="mt-2 text-center text-[11px] text-emerald-400">{audioCacheStatus}</p>
+        )}
       </Setting>
       <Setting label={t("Paper")}>
         <div className="grid grid-cols-3 gap-2">
-          {([
-            { background: "dark", label: t("Dark") },
-            { background: "dim", label: t("Dim") },
-            { background: "light", label: t("Light") },
-          ] as const).map(({ background, label }) => (
+          {(
+            [
+              { background: "dark", label: t("Dark") },
+              { background: "dim", label: t("Dim") },
+              { background: "light", label: t("Light") },
+            ] as const
+          ).map(({ background, label }) => (
             <button
               key={background}
               aria-label={label}
@@ -2794,11 +2866,13 @@ function Settings({
       </Setting>
       <Setting label={t("Type")}>
         <div className="grid grid-cols-3 gap-2">
-          {([
-            { font: "literary", label: t("Literary") },
-            { font: "arabic", label: t("Arabic") },
-            { font: "classic", label: t("Classic") },
-          ] as const).map(({ font, label }) => (
+          {(
+            [
+              { font: "literary", label: t("Literary") },
+              { font: "arabic", label: t("Arabic") },
+              { font: "classic", label: t("Classic") },
+            ] as const
+          ).map(({ font, label }) => (
             <button
               key={font}
               onClick={() => patch({ font, customFontId: undefined })}
@@ -2928,11 +3002,13 @@ function Settings({
       </section>
       <Setting label={t("Direction")}>
         <div className="grid grid-cols-3 gap-2">
-          {([
-            { direction: "auto", label: t("Auto") },
-            { direction: "ltr", label: t("LTR") },
-            { direction: "rtl", label: t("RTL") },
-          ] as const).map(({ direction, label }) => (
+          {(
+            [
+              { direction: "auto", label: t("Auto") },
+              { direction: "ltr", label: t("LTR") },
+              { direction: "rtl", label: t("RTL") },
+            ] as const
+          ).map(({ direction, label }) => (
             <button
               key={direction}
               onClick={() => patch({ direction })}

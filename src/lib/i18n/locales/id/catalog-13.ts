@@ -35,10 +35,14 @@ const catalog: Record<string, string> = {
   "{n} films": "{n} film",
   "{n} films#few": "{n} film",
   "{n} films#one": "{n} film",
-  "{n} frame stored. Wiping rebuilds them next time you watch.": "{n} frame tersimpan. Menghapusnya akan membuat ulang frame tersebut saat Anda menonton lagi.",
-  "{n} frame stored. Wiping rebuilds them next time you watch.#few": "{n} frame tersimpan. Menghapusnya akan membuat ulang frame tersebut saat Anda menonton lagi.",
-  "{n} frame stored. Wiping rebuilds them next time you watch.#one": "{n} frame tersimpan. Menghapusnya akan membuat ulang frame tersebut saat Anda menonton lagi.",
-  "{n} frames stored. Wiping rebuilds them next time you watch.": "{n} frame tersimpan. Menghapusnya akan membuat ulang frame tersebut saat Anda menonton lagi.",
+  "{n} frame stored. Wiping rebuilds them next time you watch.":
+    "{n} frame tersimpan. Menghapusnya akan membuat ulang frame tersebut saat Anda menonton lagi.",
+  "{n} frame stored. Wiping rebuilds them next time you watch.#few":
+    "{n} frame tersimpan. Menghapusnya akan membuat ulang frame tersebut saat Anda menonton lagi.",
+  "{n} frame stored. Wiping rebuilds them next time you watch.#one":
+    "{n} frame tersimpan. Menghapusnya akan membuat ulang frame tersebut saat Anda menonton lagi.",
+  "{n} frames stored. Wiping rebuilds them next time you watch.":
+    "{n} frame tersimpan. Menghapusnya akan membuat ulang frame tersebut saat Anda menonton lagi.",
   "{n} genre": "{n} genre",
   "{n} genre#few": "{n} genre",
   "{n} genre#one": "{n} genre",
@@ -114,7 +118,8 @@ const catalog: Record<string, string> = {
   "{n} providers#one": "{n} penyedia",
   "{n} px": "{n} px",
   "{n} px/s": "{n} px/dtk",
-  "{n} ratings were saved before you stopped.": "{n} penilaian telah disimpan sebelum Anda berhenti.",
+  "{n} ratings were saved before you stopped.":
+    "{n} penilaian telah disimpan sebelum Anda berhenti.",
   "{n} recorded winners": "{n} pemenang tercatat",
   "{n} results": "{n} hasil",
   "{n} rules · {m} on": "{n} aturan · {m} aktif",
@@ -170,19 +175,26 @@ const catalog: Record<string, string> = {
   "{n} title#few": "{n} judul",
   "{n} title#one": "{n} judul",
   "{n} titles": "{n} judul",
-  "{n} titles need review — help us identify them.": "{n} judul perlu ditinjau - bantu kami mengidentifikasinya.",
-  "{n} titles need review — help us identify them.#few": "{n} judul perlu ditinjau - bantu kami mengidentifikasinya.",
-  "{n} titles need review — help us identify them.#one": "{n} judul perlu ditinjau - bantu kami mengidentifikasinya.",
+  "{n} titles need review — help us identify them.":
+    "{n} judul perlu ditinjau - bantu kami mengidentifikasinya.",
+  "{n} titles need review — help us identify them.#few":
+    "{n} judul perlu ditinjau - bantu kami mengidentifikasinya.",
+  "{n} titles need review — help us identify them.#one":
+    "{n} judul perlu ditinjau - bantu kami mengidentifikasinya.",
   "{n} titles together": "{n} judul sekaligus",
   "{n} titles together#few": "{n} judul sekaligus",
   "{n} titles together#one": "{n} judul sekaligus",
   "{n} titles you like": "{n} judul yang Anda sukai",
   "{n} titles#few": "{n} judul",
   "{n} titles#one": "{n} judul",
-  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.": "{n} permintaan pelacak diblokir dalam sesi ini. Harbor sama sekali tidak mengirim telemetri.",
-  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#few": "{n} permintaan pelacak diblokir dalam sesi ini. Harbor sama sekali tidak mengirim telemetri.",
-  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#one": "{n} permintaan pelacak diblokir dalam sesi ini. Harbor sama sekali tidak mengirim telemetri.",
-  "{n} tracker requests blocked this session. Harbor itself sends zero telemetry.": "{n} permintaan pelacak diblokir dalam sesi ini. Harbor sama sekali tidak mengirim telemetri.",
+  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.":
+    "{n} permintaan pelacak diblokir dalam sesi ini. Harbor sama sekali tidak mengirim telemetri.",
+  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#few":
+    "{n} permintaan pelacak diblokir dalam sesi ini. Harbor sama sekali tidak mengirim telemetri.",
+  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#one":
+    "{n} permintaan pelacak diblokir dalam sesi ini. Harbor sama sekali tidak mengirim telemetri.",
+  "{n} tracker requests blocked this session. Harbor itself sends zero telemetry.":
+    "{n} permintaan pelacak diblokir dalam sesi ini. Harbor sama sekali tidak mengirim telemetri.",
   "{n} tracks": "{n} trek",
   "{n} uncached hidden": "{n} yang belum di-cache disembunyikan",
   "{n} versions": "{n} versi",
@@ -227,29 +239,34 @@ const catalog: Record<string, string> = {
   "{quota} available": "tersedia {quota}",
   "{rating}/5 ({count})": "{rating}/5 ({count})",
   "{repaired} fixed, {clean} already clean": "{repaired} diperbaiki, {clean} sudah bersih",
-  "{resolution}p above device max {maxResolution}p": "{resolution}p melebihi batas maksimum perangkat {maxResolution}p",
+  "{resolution}p above device max {maxResolution}p":
+    "{resolution}p melebihi batas maksimum perangkat {maxResolution}p",
   "{score} right": "{score} benar",
   "{selected}/{max} selected": "{selected}/{max} dipilih",
-  "{sharing} of {total} friends are sharing what they watch.": "{sharing} dari {total} teman membagikan apa yang mereka tonton.",
+  "{sharing} of {total} friends are sharing what they watch.":
+    "{sharing} dari {total} teman membagikan apa yang mereka tonton.",
   "{shown} of {total}": "{shown} dari {total}",
   "{shown} of {total} file from your computer": "{shown} dari {total} file dari komputer Anda",
   "{shown} of {total} files from your computer": "{shown} dari {total} file dari komputer Anda",
   "{shown} of {total} sources": "{shown} dari {total} sumber",
   "{sign}{n}s": "{sign}{n} dtk",
-  "{site} should be reachable in a moment. They're deploying right now. Refresh once their docs go live.": "{site} akan dapat diakses sebentar lagi. Mereka sedang melakukan deployment. Segarkan setelah dokumentasinya tersedia.",
+  "{site} should be reachable in a moment. They're deploying right now. Refresh once their docs go live.":
+    "{site} akan dapat diakses sebentar lagi. Mereka sedang melakukan deployment. Segarkan setelah dokumentasinya tersedia.",
   "{size} saved": "{size} dihemat",
   "{source} list detected": "Daftar {source} terdeteksi",
   "{staff} requested your diagnostics": "{staff} meminta diagnostik Anda",
   "{start} to {end} · {dur}": "{start} hingga {end} · {dur}",
   "{start}-{end} of {total}": "{start}-{end} dari {total}",
-  "{subtitle} · ranked by current popularity": "{subtitle} · diurutkan berdasarkan popularitas saat ini",
+  "{subtitle} · ranked by current popularity":
+    "{subtitle} · diurutkan berdasarkan popularitas saat ini",
   "{s}s ago": "{s} dtk lalu",
   "{s}s left": "tersisa {s} dtk",
   "{themeName} theme": "Tema {themeName}",
   "{time} left": "tersisa {time}",
   "{title} actions": "Tindakan untuk {title}",
   "{title} adaptation poster": "Poster adaptasi {title}",
-  "{title} blocks embedding from outside its site.": "{title} memblokir penyematan dari luar situsnya.",
+  "{title} blocks embedding from outside its site.":
+    "{title} memblokir penyematan dari luar situsnya.",
   "{title} cover": "Sampul {title}",
   "{title} image viewer": "Penampil gambar {title}",
   "{title} internal cover": "Sampul internal {title}",
@@ -257,7 +274,8 @@ const catalog: Record<string, string> = {
   "{title} overview": "Ringkasan {title}",
   "{title} poster": "Poster {title}",
   "{title} trailer": "Trailer {title}",
-  "{title} will not come back in the Discovery Queue.": "{title} tidak akan muncul lagi di Antrean Penemuan.",
+  "{title} will not come back in the Discovery Queue.":
+    "{title} tidak akan muncul lagi di Antrean Penemuan.",
   "{title} won't load inside Harbor.": "{title} tidak dapat dimuat di dalam Harbor.",
   "{title} · Episode {episode}": "{title} · Episode {episode}",
   "{total} found across 1 source": "{total} ditemukan dari 1 sumber",
@@ -267,7 +285,8 @@ const catalog: Record<string, string> = {
   "{v} avg": "rata-rata {v}",
   "{v} · weight {p}%": "{v} · bobot {p}%",
   "{watched} of {total} watched ({pct}%).": "{watched} dari {total} ditonton ({pct}%).",
-  "{wins} major award wins, {noms} nominations": "{wins} kemenangan penghargaan utama, {noms} nominasi",
+  "{wins} major award wins, {noms} nominations":
+    "{wins} kemenangan penghargaan utama, {noms} nominasi",
   "{wins} wins": "{wins} kemenangan",
   "{wins} wins#few": "{wins} kemenangan#few",
   "{wins} wins#one": "{wins} kemenangan#one",
@@ -279,11 +298,16 @@ const catalog: Record<string, string> = {
   "{word} {n} seconds. Hold for options#one": "{word} {n} detik. Tahan untuk opsi#one",
   "{word} {n}s · hold for options": "{word} {n} dtk · tahan untuk opsi",
   "{w} wins, {n} nominations": "{w} kemenangan, {n} nominasi",
-  "· A debrid key (TorBox, Real-Debrid, etc.) is missing or expired.": "· Kunci debrid (TorBox, Real-Debrid, dll.) tidak ada atau sudah kedaluwarsa.",
-  "· Add a debrid key (TorBox, Real-Debrid, AllDebrid, Premiumize, Debrid-Link).": "· Tambahkan kunci debrid (TorBox, Real-Debrid, AllDebrid, Premiumize, Debrid-Link).",
-  "· Install a stream addon (Torrentio, Comet, MediaFusion).": "· Instal addon stream (Torrentio, Comet, MediaFusion).",
-  "· No stream addon is installed yet (Torrentio, MediaFusion, Comet).": "· Belum ada addon stream yang terinstal (Torrentio, MediaFusion, Comet).",
-  "· This title is too new and no source has it cached yet.": "· Judul ini terlalu baru dan belum ada sumber yang menyimpannya di cache.",
+  "· A debrid key (TorBox, Real-Debrid, etc.) is missing or expired.":
+    "· Kunci debrid (TorBox, Real-Debrid, dll.) tidak ada atau sudah kedaluwarsa.",
+  "· Add a debrid key (TorBox, Real-Debrid, AllDebrid, Premiumize, Debrid-Link).":
+    "· Tambahkan kunci debrid (TorBox, Real-Debrid, AllDebrid, Premiumize, Debrid-Link).",
+  "· Install a stream addon (Torrentio, Comet, MediaFusion).":
+    "· Instal addon stream (Torrentio, Comet, MediaFusion).",
+  "· No stream addon is installed yet (Torrentio, MediaFusion, Comet).":
+    "· Belum ada addon stream yang terinstal (Torrentio, MediaFusion, Comet).",
+  "· This title is too new and no source has it cached yet.":
+    "· Judul ini terlalu baru dan belum ada sumber yang menyimpannya di cache.",
   "· currently hidden": "· saat ini disembunyikan",
   "· {n} nom": "· {n} nominasi",
   "· {n} noms": "· {n} nominasi",
@@ -292,7 +316,8 @@ const catalog: Record<string, string> = {
   "التنس (WTA)": "Tenis (WTA)",
   "بطولة PGA": "Tur PGA",
   "دوري MLS": "Liga MLS",
-  "“Cached” just means your addon thinks that file is already saved on your debrid, ready to play instantly. That flag isn’t always right: sometimes the file isn’t actually there yet. When that happens the source won’t start, or it plays a short broken clip. It’s not a Harbor problem: pick another source, or give it a minute to finish caching and try again.": "“Dalam cache” hanya berarti addon Anda menganggap file tersebut sudah tersimpan di debrid Anda dan siap langsung diputar. Penanda itu tidak selalu benar: terkadang file tersebut sebenarnya belum tersedia. Jika itu terjadi, sumber tidak dapat dimulai atau hanya memutar klip pendek yang rusak. Ini bukan masalah Harbor: pilih sumber lain, atau tunggu sebentar hingga proses penyimpanan ke cache selesai lalu coba lagi.",
+  "“Cached” just means your addon thinks that file is already saved on your debrid, ready to play instantly. That flag isn’t always right: sometimes the file isn’t actually there yet. When that happens the source won’t start, or it plays a short broken clip. It’s not a Harbor problem: pick another source, or give it a minute to finish caching and try again.":
+    "“Dalam cache” hanya berarti addon Anda menganggap file tersebut sudah tersimpan di debrid Anda dan siap langsung diputar. Penanda itu tidak selalu benar: terkadang file tersebut sebenarnya belum tersedia. Jika itu terjadi, sumber tidak dapat dimulai atau hanya memutar klip pendek yang rusak. Ini bukan masalah Harbor: pilih sumber lain, atau tunggu sebentar hingga proses penyimpanan ke cache selesai lalu coba lagi.",
   "← folder or .cbz / .zip": "← folder atau .cbz / .zip",
   "← name it like the manga": "← beri nama seperti judul manga",
   "−15s": "−15 dtk",

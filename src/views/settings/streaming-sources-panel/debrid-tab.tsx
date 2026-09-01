@@ -55,7 +55,9 @@ export function DebridTab({
     <>
       <Section
         title={t("Debrid services")}
-        subtitle={t("Real-Debrid, TorBox, AllDebrid, Premiumize, Debrid-Link. Cached streams play direct. Keys stay local.")}
+        subtitle={t(
+          "Real-Debrid, TorBox, AllDebrid, Premiumize, Debrid-Link. Cached streams play direct. Keys stay local.",
+        )}
       >
         {aioHealth && <AioStatusBanner snapshot={aioHealth} />}
         <KeyField
@@ -175,11 +177,15 @@ export function DebridTab({
 
       <Section
         title={t("Usenet")}
-        subtitle={t("Faster and quieter than torrents if you already pay for Usenet. Configure on the addon page, paste the manifest URL it returns.")}
+        subtitle={t(
+          "Faster and quieter than torrents if you already pay for Usenet. Configure on the addon page, paste the manifest URL it returns.",
+        )}
       >
         <ManualAddonCard
           title="Easynews+"
-          blurb={t("Searches and streams directly off Easynews. No debrid needed. Just your Easynews login.")}
+          blurb={t(
+            "Searches and streams directly off Easynews. No debrid needed. Just your Easynews login.",
+          )}
           configureUrl="https://b89262c192b0-stremio-easynews-addon.baby-beamup.club/configure"
         />
       </Section>
@@ -270,13 +276,7 @@ function AioStatusBanner({ snapshot }: { snapshot: AioStatusSnapshot }) {
   );
 }
 
-function HealthBadge({
-  health,
-  logo,
-}: {
-  health: ServiceHealth | undefined;
-  logo: string | null;
-}) {
+function HealthBadge({ health, logo }: { health: ServiceHealth | undefined; logo: string | null }) {
   const t = useT();
   if (!health) return null;
   const palette =

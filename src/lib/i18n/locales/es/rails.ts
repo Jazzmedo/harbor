@@ -87,11 +87,14 @@ const rails: Record<string, string> = {
   "Spring Awakening": "Spring Awakening",
   "Summer Blockbusters": "Éxitos de taquilla del verano",
   "Sword & Sorcery": "Espada y brujería",
-  "This addon provides streams only. It has no catalog to browse, but it still works behind every title you open.": "Este complemento solo proporciona fuentes. No tiene un catálogo para explorar, pero funciona con cada título que abres.",
+  "This addon provides streams only. It has no catalog to browse, but it still works behind every title you open.":
+    "Este complemento solo proporciona fuentes. No tiene un catálogo para explorar, pero funciona con cada título que abres.",
   "This Afternoon": "Esta tarde",
-  "This catalog came back empty. Try another one, or check the addon in Settings.": "Este catálogo está vacío. Prueba otro o revisa el complemento en Configuración.",
+  "This catalog came back empty. Try another one, or check the addon in Settings.":
+    "Este catálogo está vacío. Prueba otro o revisa el complemento en Configuración.",
   "This Morning": "Esta mañana",
-  "Thumbs down hides this title from Featured. Thumbs up helps surface similar picks.": "El pulgar abajo oculta este título de Destacados. El pulgar arriba ayuda a mostrar opciones similares.",
+  "Thumbs down hides this title from Featured. Thumbs up helps surface similar picks.":
+    "El pulgar abajo oculta este título de Destacados. El pulgar arriba ayuda a mostrar opciones similares.",
   "Top 10 Comedy": "Top 10 de comedia",
   "Top 10 Drama": "Top 10 de drama",
   "Top 10 on Stremio": "Top 10 en Stremio",
@@ -112,7 +115,8 @@ const rails: Record<string, string> = {
   "Upcoming Anime": "Próximos animes",
   "Upcoming Season": "Próxima temporada",
   "War Stories": "Historias de guerra",
-  "What each addon is actually serving up right now.": "Lo que realmente ofrece cada complemento en este momento.",
+  "What each addon is actually serving up right now.":
+    "Lo que realmente ofrece cada complemento en este momento.",
   "Your addons": "Tus complementos",
 };
 

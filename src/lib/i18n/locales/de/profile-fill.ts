@@ -14,19 +14,23 @@ const profileFill: Record<string, string> = {
   "Add group photo": "Gruppenfoto hinzufügen",
   "Add photo": "Foto hinzufügen",
   "Add status": "Status hinzufügen",
-  "Add up to {max} profiles. Enter your handle only, not the full link.": "Füge bis zu {max} Profile hinzu. Gib nur deinen Benutzernamen ein, nicht den vollständigen Link.",
+  "Add up to {max} profiles. Enter your handle only, not the full link.":
+    "Füge bis zu {max} Profile hinzu. Gib nur deinen Benutzernamen ein, nicht den vollständigen Link.",
   "Add your social links": "Deine Social-Media-Links hinzufügen",
   "An API key is needed": "Ein API-Schlüssel ist erforderlich",
-  "Book search needs an API key before it can run.": "Für die Buchsuche ist ein API-Schlüssel erforderlich.",
+  "Book search needs an API key before it can run.":
+    "Für die Buchsuche ist ein API-Schlüssel erforderlich.",
   "Cancel request": "Anfrage abbrechen",
   "Canceling...": "Wird abgebrochen...",
   "Canvas unavailable.": "Zeichenfläche nicht verfügbar.",
   "Change banner": "Banner ändern",
   "Change group photo": "Gruppenfoto ändern",
   "Change photo": "Foto ändern",
-  "Check the spelling or try a shorter search.": "Prüfe die Schreibweise oder versuche eine kürzere Suche.",
+  "Check the spelling or try a shorter search.":
+    "Prüfe die Schreibweise oder versuche eine kürzere Suche.",
   "Choose lists": "Listen auswählen",
-  "Choose which stats show in the row at the top of your profile": "Wähle aus, welche Statistiken oben in deinem Profil angezeigt werden",
+  "Choose which stats show in the row at the top of your profile":
+    "Wähle aus, welche Statistiken oben in deinem Profil angezeigt werden",
   "Clear status": "Status löschen",
   "Contains spoilers": "Enthält Spoiler",
   "Copied for Discord": "Für Discord kopiert",
@@ -57,14 +61,18 @@ const profileFill: Record<string, string> = {
   "Could not update banner.": "Banner konnte nicht aktualisiert werden.",
   "Could not update group photo.": "Gruppenfoto konnte nicht aktualisiert werden.",
   "Could not update photo.": "Foto konnte nicht aktualisiert werden.",
-  "Couldn't reach Harbor, check your connection": "Harbor konnte nicht erreicht werden. Prüfe deine Verbindung",
-  "Create a group to watch and share together.": "Erstelle eine Gruppe, um gemeinsam Inhalte anzusehen und zu teilen.",
+  "Couldn't reach Harbor, check your connection":
+    "Harbor konnte nicht erreicht werden. Prüfe deine Verbindung",
+  "Create a group to watch and share together.":
+    "Erstelle eine Gruppe, um gemeinsam Inhalte anzusehen und zu teilen.",
   "Create group": "Gruppe erstellen",
-  "Create lists in your library to feature them here": "Erstelle Listen in deiner Mediathek, um sie hier hervorzuheben.",
+  "Create lists in your library to feature them here":
+    "Erstelle Listen in deiner Mediathek, um sie hier hervorzuheben.",
   "Delete comment": "Kommentar löschen",
   "Delete group": "Gruppe löschen",
   "Delete this group for everyone?": "Diese Gruppe für alle löschen?",
-  "Earn badges and they will appear here to feature": "Verdiene Abzeichen. Sie erscheinen dann hier und können hervorgehoben werden.",
+  "Earn badges and they will appear here to feature":
+    "Verdiene Abzeichen. Sie erscheinen dann hier und können hervorgehoben werden.",
   "Edit review": "Rezension bearbeiten",
   "Edit your review": "Deine Rezension bearbeiten",
   "Enter to save": "Zum Speichern die Eingabetaste drücken",
@@ -72,9 +80,11 @@ const profileFill: Record<string, string> = {
   "Favourite games": "Lieblingsspiele",
   "Favourite music": "Lieblingsmusik",
   "Featured lists": "Listen im Fokus",
-  "Finished": "Beendet",
-  "Game search needs an API key before it can run.": "Für die Spielesuche ist ein API-Schlüssel erforderlich.",
-  "Harbor is having trouble, try again in a moment": "Harbor hat Probleme. Versuche es gleich noch einmal.",
+  Finished: "Beendet",
+  "Game search needs an API key before it can run.":
+    "Für die Spielesuche ist ein API-Schlüssel erforderlich.",
+  "Harbor is having trouble, try again in a moment":
+    "Harbor hat Probleme. Versuche es gleich noch einmal.",
   "Harbor list": "Harbor-Liste",
   "Hero stats": "Hero-Statistiken",
   "Hidden language": "Ausgeblendete Sprache",
@@ -88,22 +98,25 @@ const profileFill: Record<string, string> = {
   "Leave group": "Gruppe verlassen",
   "Like comment": "Kommentar liken",
   "Like list": "Liste mit „Gefällt mir“ markieren",
-  "Link Simkl and everything you watch shows up right here.": "Verknüpfe Simkl und alles, was du ansiehst, erscheint genau hier.",
+  "Link Simkl and everything you watch shows up right here.":
+    "Verknüpfe Simkl und alles, was du ansiehst, erscheint genau hier.",
   "Link and social": "Links und soziale Netzwerke",
   "Links are not allowed in comments": "Links sind in Kommentaren nicht erlaubt",
   "List full": "Liste ist voll",
   "List link": "Listenlink",
-  "Lists": "Listen",
+  Lists: "Listen",
   "Loading groups": "Gruppen werden geladen",
   "Manage connection": "Verbindung verwalten",
   "Move or hide your cards": "Karten verschieben oder ausblenden",
-  "Music search needs an API key before it can run.": "Für die Musiksuche ist ein API-Schlüssel erforderlich.",
+  "Music search needs an API key before it can run.":
+    "Für die Musiksuche ist ein API-Schlüssel erforderlich.",
   "My lists": "Meine Listen",
   "No artists match that search": "Keine Künstler für diese Suche gefunden",
   "No badges earned yet": "Noch keine Abzeichen erhalten",
   "No badges to show yet": "Noch keine Abzeichen verfügbar",
   "No books match that search": "Keine Bücher für diese Suche gefunden",
-  "No comments yet. Be the first to say hello.": "Noch keine Kommentare. Mach den Anfang und sag Hallo.",
+  "No comments yet. Be the first to say hello.":
+    "Noch keine Kommentare. Mach den Anfang und sag Hallo.",
   "No friends to show yet": "Noch keine Freunde vorhanden",
   "No games match that search": "Keine Spiele entsprechen dieser Suche",
   "No links added yet.": "Noch keine Links hinzugefügt.",
@@ -115,30 +128,41 @@ const profileFill: Record<string, string> = {
   "No status": "Kein Status",
   "No such captain": "Diesen Kapitän gibt es nicht",
   "Nothing tracked on Simkl yet": "Noch nichts auf Simkl erfasst",
-  "Off by default. Shows your Simkl avatar, name and watch stats on your profile for anyone who visits. Manage the connection itself in Settings, Simkl.": "Standardmäßig deaktiviert. Zeigt allen Besuchern deines Profils deinen Simkl-Avatar, deinen Namen und deine Wiedergabestatistiken. Die Verbindung selbst verwaltest du unter Einstellungen, Simkl.",
+  "Off by default. Shows your Simkl avatar, name and watch stats on your profile for anyone who visits. Manage the connection itself in Settings, Simkl.":
+    "Standardmäßig deaktiviert. Zeigt allen Besuchern deines Profils deinen Simkl-Avatar, deinen Namen und deine Wiedergabestatistiken. Die Verbindung selbst verwaltest du unter Einstellungen, Simkl.",
   "On Simkl": "Auf Simkl",
   "Online now": "Jetzt online",
   "Open @{handle} profile": "Profil von @{handle} öffnen",
   "Open Simkl profile": "Simkl-Profil öffnen",
   "Open account settings": "Kontoeinstellungen öffnen",
   "Open {alias} profile": "Profil von {alias} öffnen",
-  "Owner": "Eigentümer",
+  Owner: "Eigentümer",
   "Pick a star rating first": "Wähle zuerst eine Sternebewertung",
-  "Pick lists from your library to show them here": "Wähle Listen aus deiner Mediathek aus, um sie hier anzuzeigen.",
-  "Pick the stats that show in the row at the top of your public profile. At least one has to stay visible.": "Wähle die Statistiken aus, die in der Zeile oben in deinem öffentlichen Profil angezeigt werden. Mindestens eine muss sichtbar bleiben.",
-  "Pick up to {max} artists to show on your profile.": "Wähle bis zu {max} Künstler aus, die auf deinem Profil angezeigt werden sollen.",
-  "Pick up to {max} badges to show by your name. Tap in the order you want them to appear.": "Wähle bis zu {max} Abzeichen aus, die neben deinem Namen angezeigt werden. Tippe sie in der gewünschten Reihenfolge an.",
-  "Pick up to {max} books to show on your profile.": "Wähle bis zu {max} Bücher für dein Profil aus.",
-  "Pick up to {max} games to show on your profile.": "Wähle bis zu {max} Spiele für dein Profil aus.",
-  "Pick up to {max} lists to show on your public profile.": "Wähle bis zu {max} Listen für dein öffentliches Profil aus.",
-  "Pick which cards show on your profile, and the order they appear in": "Wähle aus, welche Karten in deinem Profil angezeigt werden und in welcher Reihenfolge",
-  "Preview unavailable. Click to open profile.": "Vorschau nicht verfügbar. Klicke, um das Profil zu öffnen.",
+  "Pick lists from your library to show them here":
+    "Wähle Listen aus deiner Mediathek aus, um sie hier anzuzeigen.",
+  "Pick the stats that show in the row at the top of your public profile. At least one has to stay visible.":
+    "Wähle die Statistiken aus, die in der Zeile oben in deinem öffentlichen Profil angezeigt werden. Mindestens eine muss sichtbar bleiben.",
+  "Pick up to {max} artists to show on your profile.":
+    "Wähle bis zu {max} Künstler aus, die auf deinem Profil angezeigt werden sollen.",
+  "Pick up to {max} badges to show by your name. Tap in the order you want them to appear.":
+    "Wähle bis zu {max} Abzeichen aus, die neben deinem Namen angezeigt werden. Tippe sie in der gewünschten Reihenfolge an.",
+  "Pick up to {max} books to show on your profile.":
+    "Wähle bis zu {max} Bücher für dein Profil aus.",
+  "Pick up to {max} games to show on your profile.":
+    "Wähle bis zu {max} Spiele für dein Profil aus.",
+  "Pick up to {max} lists to show on your public profile.":
+    "Wähle bis zu {max} Listen für dein öffentliches Profil aus.",
+  "Pick which cards show on your profile, and the order they appear in":
+    "Wähle aus, welche Karten in deinem Profil angezeigt werden und in welcher Reihenfolge",
+  "Preview unavailable. Click to open profile.":
+    "Vorschau nicht verfügbar. Klicke, um das Profil zu öffnen.",
   "Profile background": "Profilhintergrund",
   "Profile cards": "Profilkarten",
   "Profile link": "Profillink",
-  "Rate movies, shows, anime, and manga to build your ratings": "Bewerte Filme, Serien, Anime und Manga, um deine Bewertungsliste aufzubauen",
+  "Rate movies, shows, anime, and manga to build your ratings":
+    "Bewerte Filme, Serien, Anime und Manga, um deine Bewertungsliste aufzubauen",
   "Rate this": "Bewerten",
-  "Rated": "Bewertet",
+  Rated: "Bewertet",
   "Rating removed": "Bewertung entfernt",
   "Rating saved": "Bewertung gespeichert",
   "Ratings need a Harbor account": "Für Bewertungen ist ein Harbor-Konto erforderlich",
@@ -153,12 +177,15 @@ const profileFill: Record<string, string> = {
   "Save review": "Rezension speichern",
   "Save status": "Status speichern",
   "Save to my lists": "In meinen Listen speichern",
-  "Saving now could overwrite them. Try again in a moment.": "Beim jetzigen Speichern könnten sie überschrieben werden. Versuche es gleich noch einmal.",
+  "Saving now could overwrite them. Try again in a moment.":
+    "Beim jetzigen Speichern könnten sie überschrieben werden. Versuche es gleich noch einmal.",
   "Say something first": "Sag zuerst etwas",
   "Search artists": "Künstler suchen",
   "Search books": "Bücher durchsuchen",
-  "Search by handle or name to add people to this group.": "Suche nach Benutzername oder Namen, um dieser Gruppe Personen hinzuzufügen.",
-  "Search by handle or name to send a request.": "Nach Benutzername oder Namen suchen, um eine Anfrage zu senden.",
+  "Search by handle or name to add people to this group.":
+    "Suche nach Benutzername oder Namen, um dieser Gruppe Personen hinzuzufügen.",
+  "Search by handle or name to send a request.":
+    "Nach Benutzername oder Namen suchen, um eine Anfrage zu senden.",
   "Search for a book": "Nach einem Buch suchen",
   "Search for a game": "Nach einem Spiel suchen",
   "Search for an artist": "Nach einem Künstler suchen",
@@ -169,7 +196,8 @@ const profileFill: Record<string, string> = {
   "Share your thoughts (optional)": "Teile deine Gedanken (optional)",
   "Show spoiler": "Spoiler anzeigen",
   "Show your Simkl card": "Deine Simkl-Karte anzeigen",
-  "Show your favourite games, books and music on your profile": "Deine Lieblingsspiele, -bücher und -musik in deinem Profil anzeigen",
+  "Show your favourite games, books and music on your profile":
+    "Deine Lieblingsspiele, -bücher und -musik in deinem Profil anzeigen",
   "Show {count} more": "{count} weitere anzeigen",
   "Shown badges": "Angezeigte Abzeichen",
   "Shown order": "Angezeigte Reihenfolge",
@@ -178,20 +206,27 @@ const profileFill: Record<string, string> = {
   "Slow down a moment before posting again": "Warte kurz, bevor du erneut postest",
   "Social links": "Social-Media-Links",
   "Something went wrong on the way there.": "Auf dem Weg dorthin ist etwas schiefgegangen.",
-  "Something went wrong reaching Harbor. Check your connection and try again.": "Beim Verbinden mit Harbor ist ein Fehler aufgetreten. Prüfe deine Verbindung und versuche es erneut.",
+  "Something went wrong reaching Harbor. Check your connection and try again.":
+    "Beim Verbinden mit Harbor ist ein Fehler aufgetreten. Prüfe deine Verbindung und versuche es erneut.",
   "Start typing to find people.": "Tippe, um Personen zu finden.",
   "Stored as a small optimized webp.": "Als kleine, optimierte WebP-Datei gespeichert.",
   "Tap a star to change, then save": "Stern antippen, um die Bewertung zu ändern, dann speichern",
   "Tap a star to rate": "Tippe zum Bewerten auf einen Stern",
-  "Tap the heart on any movie, show, manga, or character to save it here.": "Tippe bei einem Film, einer Serie, einem Manga oder einer Figur auf das Herz, um den Titel bzw. die Figur hier zu speichern.",
+  "Tap the heart on any movie, show, manga, or character to save it here.":
+    "Tippe bei einem Film, einer Serie, einem Manga oder einer Figur auf das Herz, um den Titel bzw. die Figur hier zu speichern.",
   "That image could not be read.": "Dieses Bild konnte nicht gelesen werden.",
   "That looks like spam, try rephrasing": "Das sieht nach Spam aus. Formuliere es anders.",
-  "That's {max} artists. Remove one to add another.": "Das sind {max} Künstler. Entferne einen, um einen anderen hinzuzufügen.",
-  "That's {max} books. Remove one to add another.": "Das sind {max} Bücher. Entferne eines, um ein anderes hinzuzufügen.",
-  "That's {max} games. Remove one to add another.": "Das sind {max} Spiele. Entferne eines, um ein anderes hinzuzufügen.",
-  "These cards run down your public profile. Set the order they appear in, and hide any you would rather keep to yourself.": "Diese Karten werden untereinander in deinem öffentlichen Profil angezeigt. Lege ihre Reihenfolge fest und blende alle aus, die du lieber für dich behalten möchtest.",
+  "That's {max} artists. Remove one to add another.":
+    "Das sind {max} Künstler. Entferne einen, um einen anderen hinzuzufügen.",
+  "That's {max} books. Remove one to add another.":
+    "Das sind {max} Bücher. Entferne eines, um ein anderes hinzuzufügen.",
+  "That's {max} games. Remove one to add another.":
+    "Das sind {max} Spiele. Entferne eines, um ein anderes hinzuzufügen.",
+  "These cards run down your public profile. Set the order they appear in, and hide any you would rather keep to yourself.":
+    "Diese Karten werden untereinander in deinem öffentlichen Profil angezeigt. Lege ihre Reihenfolge fest und blende alle aus, die du lieber für dich behalten möchtest.",
   "This group could not be loaded.": "Diese Gruppe konnte nicht geladen werden.",
-  "This member has hidden their showcase, activity and friends from public view.": "Dieses Mitglied zeigt seine Profilinhalte, Aktivitäten und Freunde nicht öffentlich.",
+  "This member has hidden their showcase, activity and friends from public view.":
+    "Dieses Mitglied zeigt seine Profilinhalte, Aktivitäten und Freunde nicht öffentlich.",
   "This user has chosen to keep activity private": "Dieser Nutzer hält seine Aktivitäten privat.",
   "This user hasn't featured any lists": "Dieser Nutzer hat keine Listen hervorgehoben",
   "This user hasn't written anything yet": "Dieser Benutzer hat noch nichts geschrieben",
@@ -202,20 +237,25 @@ const profileFill: Record<string, string> = {
   "Unlike list": "„Gefällt mir“ für Liste entfernen",
   "Untitled list": "Unbenannte Liste",
   "Watch time": "Wiedergabezeit",
-  "We could not find anyone at @{handle}. The handle may have changed or the profile was removed.": "Wir konnten niemanden unter @{handle} finden. Der Nutzername wurde möglicherweise geändert oder das Profil entfernt.",
-  "We couldn't load your saved favourites": "Deine gespeicherten Favoriten konnten nicht geladen werden",
+  "We could not find anyone at @{handle}. The handle may have changed or the profile was removed.":
+    "Wir konnten niemanden unter @{handle} finden. Der Nutzername wurde möglicherweise geändert oder das Profil entfernt.",
+  "We couldn't load your saved favourites":
+    "Deine gespeicherten Favoriten konnten nicht geladen werden",
   "What this group is about (optional)": "Worum es in dieser Gruppe geht (optional)",
   "What's on your mind?": "Was beschäftigt dich?",
   "Write a review": "Rezension schreiben",
   "Write something about yourself": "Schreibe etwas über dich",
-  "You are rating too fast, try again in a moment": "Du bewertest zu schnell. Versuche es gleich noch einmal.",
+  "You are rating too fast, try again in a moment":
+    "Du bewertest zu schnell. Versuche es gleich noch einmal.",
   "You have no lists yet": "Du hast noch keine Listen",
   "You have reached the {max} link limit": "Du hast das Limit von {max} Links erreicht",
-  "Your Harbor account is separate from your Stremio sign in. Create one free or sign in from Settings.": "Dein Harbor-Konto ist von deiner Stremio-Anmeldung getrennt. Erstelle kostenlos ein Konto oder melde dich über die Einstellungen an.",
+  "Your Harbor account is separate from your Stremio sign in. Create one free or sign in from Settings.":
+    "Dein Harbor-Konto ist von deiner Stremio-Anmeldung getrennt. Erstelle kostenlos ein Konto oder melde dich über die Einstellungen an.",
   "Your links": "Deine Links",
   "Your rating": "Deine Bewertung",
   "Your rating {n}/10": "Deine Bewertung: {n}/10",
-  "Your review contains language that is not allowed": "Deine Rezension enthält unzulässige Sprache.",
+  "Your review contains language that is not allowed":
+    "Deine Rezension enthält unzulässige Sprache.",
   "not in your library": "nicht in deiner Mediathek",
   "{alias} keeps this private": "{alias} hält dies privat",
   "{count} aboard": "{count} an Bord",

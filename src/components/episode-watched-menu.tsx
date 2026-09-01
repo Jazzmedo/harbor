@@ -93,7 +93,11 @@ export function EpisodeWatchedMenu({
       className="fixed z-[320] flex w-[224px] flex-col rounded-xl border border-edge bg-elevated p-1 shadow-[0_18px_50px_-15px_rgba(0,0,0,0.7)] animate-popover-in"
     >
       {target.watched ? (
-        <Item icon={<EyeOff size={14} strokeWidth={2} />} label={t("Mark as unwatched")} onClick={unmark} />
+        <Item
+          icon={<EyeOff size={14} strokeWidth={2} />}
+          label={t("Mark as unwatched")}
+          onClick={unmark}
+        />
       ) : (
         <>
           <Item
@@ -120,9 +124,7 @@ export function EpisodeWatchedMenu({
                 );
                 setManualWatchedMany(metaId, upTo, true);
                 if (showIds) {
-                  const eps = upTo
-                    .filter((e) => e.season === target.season)
-                    .map((e) => e.episode);
+                  const eps = upTo.filter((e) => e.season === target.season).map((e) => e.episode);
                   if (eps.length > 0) void markEpisodesWatched(showIds, target.season, eps);
                 }
               } else {
@@ -136,7 +138,11 @@ export function EpisodeWatchedMenu({
             }}
           />
           {started && (
-            <Item icon={<EyeOff size={14} strokeWidth={2} />} label={t("Mark as unwatched")} onClick={unmark} />
+            <Item
+              icon={<EyeOff size={14} strokeWidth={2} />}
+              label={t("Mark as unwatched")}
+              onClick={unmark}
+            />
           )}
         </>
       )}

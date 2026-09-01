@@ -16,7 +16,9 @@ export function MangaLocalReader({ onExit }: { onExit: () => void }) {
   const t = useT();
   const m = snapshot.manga;
 
-  const [mode, setMode] = useState<LocalMode>(() => loadLocalMode(mapDesktopMode(m?.mode ?? "long")));
+  const [mode, setMode] = useState<LocalMode>(() =>
+    loadLocalMode(mapDesktopMode(m?.mode ?? "long")),
+  );
   const [chromeHidden, setChromeHidden] = useState(false);
   const [bookSpread, setBookSpread] = useState("");
   const [bookStart, setBookStart] = useState(() => m?.pageIndex ?? 0);
@@ -115,7 +117,12 @@ export function MangaLocalReader({ onExit }: { onExit: () => void }) {
             </div>
           </div>
         ) : mode === "strip" ? (
-          <ModeStrip pages={pages} initialPage={page} onPageChange={setPage} onToggleChrome={toggleChrome} />
+          <ModeStrip
+            pages={pages}
+            initialPage={page}
+            onPageChange={setPage}
+            onToggleChrome={toggleChrome}
+          />
         ) : mode === "book" ? (
           <ModeBook
             pages={pages}

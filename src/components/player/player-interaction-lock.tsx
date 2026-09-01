@@ -64,7 +64,9 @@ export function PlayerInteractionLockControls({
           <Lock aria-hidden="true" className="size-4" strokeWidth={2} />
         </button>
       ) : null}
-      <span className="sr-only">{locked ? t("Player controls locked") : t("Player controls unlocked")}</span>
+      <span className="sr-only">
+        {locked ? t("Player controls locked") : t("Player controls unlocked")}
+      </span>
     </div>
   );
 }

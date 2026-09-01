@@ -115,7 +115,9 @@ export function MobileShows() {
   if (failed && rows.length === 0) {
     return (
       <div className="flex h-[70vh] flex-col items-center justify-center gap-4 px-8 text-center">
-        <h2 className="font-display text-[20px] font-medium text-ink">{t("Couldn't load shows")}</h2>
+        <h2 className="font-display text-[20px] font-medium text-ink">
+          {t("Couldn't load shows")}
+        </h2>
         <p className="max-w-xs text-[13.5px] leading-relaxed text-ink-muted">
           {t("Harbor couldn't reach the catalog servers. Check your connection and try again.")}
         </p>
@@ -134,10 +136,19 @@ export function MobileShows() {
     <div className="flex flex-col gap-7 pt-3 motion-safe:[animation:harbor-step-in_420ms_var(--ease-out)_both]">
       <MobileHero slides={shownHero} onOpenDetail={setDetailMeta} />
       {shownRows[0] && shownRows[0].metas.length >= 6 && (
-        <MobileRankRail title={t("Top 10 Series Today")} metas={dedupeMetas(shownRows[0].metas)} onOpenDetail={setDetailMeta} />
+        <MobileRankRail
+          title={t("Top 10 Series Today")}
+          metas={dedupeMetas(shownRows[0].metas)}
+          onOpenDetail={setDetailMeta}
+        />
       )}
       {shownRows.slice(1).map((r) => (
-        <MobileRail key={r.key} title={t(r.title)} metas={dedupeMetas(r.metas).slice(0, 18)} onOpenDetail={setDetailMeta} />
+        <MobileRail
+          key={r.key}
+          title={t(r.title)}
+          metas={dedupeMetas(r.metas).slice(0, 18)}
+          onOpenDetail={setDetailMeta}
+        />
       ))}
       <div className="h-4" />
       {detailMeta && <MobileDetail meta={detailMeta} onClose={() => setDetailMeta(null)} />}

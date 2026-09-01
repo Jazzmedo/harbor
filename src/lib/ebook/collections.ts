@@ -135,17 +135,12 @@ function awardTitleKeys(title: EBookAwardTitle): string[] {
   return [title.title, ...(title.aliases ?? [])].map(normalize).filter(Boolean);
 }
 
-export function findAwardSourceBook(
-  title: EBookAwardTitle,
-  books: EBook[],
-): EBook | undefined {
+export function findAwardSourceBook(title: EBookAwardTitle, books: EBook[]): EBook | undefined {
   const wanted = awardTitleKeys(title);
   return books.find((book) => {
     const candidates = bookTitleKeys(book);
     return candidates.some((candidate) =>
-      wanted.some(
-        (key) => candidate === key || candidate.includes(key) || key.includes(candidate),
-      ),
+      wanted.some((key) => candidate === key || candidate.includes(key) || key.includes(candidate)),
     );
   });
 }
@@ -186,11 +181,11 @@ function collectionFingerprint(collections: EBookSourceCollection[]): string {
     .join("|");
 }
 
-export function eBookCollectionCacheScope(
-  providerId: string,
-  providerIds: string[],
-): string {
-  const installed = providerIds.filter((id) => id !== "all").sort().join("|");
+export function eBookCollectionCacheScope(providerId: string, providerIds: string[]): string {
+  const installed = providerIds
+    .filter((id) => id !== "all")
+    .sort()
+    .join("|");
   return `${providerId || "all"}::${installed}`;
 }
 
@@ -245,7 +240,6 @@ function localizeCollection(collection: EBookSourceCollection): EBookSourceColle
   const award = awardCopy(collection.id.replace(/^award:/, ""));
   return award ? { ...collection, ...award } : collection;
 }
-
 
 export function buildSourceEBookCollections(items: EBook[]): EBookSourceCollection[] {
   const sourceItems = items.filter((book) => book.source === "source");

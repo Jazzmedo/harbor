@@ -26,12 +26,36 @@ const HOOKS = [
 ];
 
 const FALLBACK: Array<{ id: string; name: string; poster: string }> = [
-  { id: "tt0111161", name: "The Shawshank Redemption", poster: "https://images.metahub.space/poster/medium/tt0111161/img" },
-  { id: "tt0468569", name: "The Dark Knight", poster: "https://images.metahub.space/poster/medium/tt0468569/img" },
-  { id: "tt1375666", name: "Inception", poster: "https://images.metahub.space/poster/medium/tt1375666/img" },
-  { id: "tt0816692", name: "Interstellar", poster: "https://images.metahub.space/poster/medium/tt0816692/img" },
-  { id: "tt0137523", name: "Fight Club", poster: "https://images.metahub.space/poster/medium/tt0137523/img" },
-  { id: "tt0110912", name: "Pulp Fiction", poster: "https://images.metahub.space/poster/medium/tt0110912/img" },
+  {
+    id: "tt0111161",
+    name: "The Shawshank Redemption",
+    poster: "https://images.metahub.space/poster/medium/tt0111161/img",
+  },
+  {
+    id: "tt0468569",
+    name: "The Dark Knight",
+    poster: "https://images.metahub.space/poster/medium/tt0468569/img",
+  },
+  {
+    id: "tt1375666",
+    name: "Inception",
+    poster: "https://images.metahub.space/poster/medium/tt1375666/img",
+  },
+  {
+    id: "tt0816692",
+    name: "Interstellar",
+    poster: "https://images.metahub.space/poster/medium/tt0816692/img",
+  },
+  {
+    id: "tt0137523",
+    name: "Fight Club",
+    poster: "https://images.metahub.space/poster/medium/tt0137523/img",
+  },
+  {
+    id: "tt0110912",
+    name: "Pulp Fiction",
+    poster: "https://images.metahub.space/poster/medium/tt0110912/img",
+  },
 ];
 
 export function CardCssPopout({
@@ -128,9 +152,12 @@ export function CardCssPopout({
               {!css && (
                 <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-8 text-center">
                   <span className="text-[13px] leading-relaxed text-ink-subtle">
-                    {t("Style {selector} and the posters on the right update live. Hit Insert starter for a head start.", {
-                      selector: ".your-card",
-                    })}
+                    {t(
+                      "Style {selector} and the posters on the right update live. Hit Insert starter for a head start.",
+                      {
+                        selector: ".your-card",
+                      },
+                    )}
                   </span>
                 </div>
               )}
@@ -170,7 +197,9 @@ export function CardCssPopout({
                         />
                       </div>
                     </div>
-                    <p className="line-clamp-2 text-[12.5px] font-medium leading-snug text-ink">{p.name}</p>
+                    <p className="line-clamp-2 text-[12.5px] font-medium leading-snug text-ink">
+                      {p.name}
+                    </p>
                   </button>
                 ))}
               </div>

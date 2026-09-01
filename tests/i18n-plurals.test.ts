@@ -13,7 +13,8 @@ test("russian plural categories follow the last-digit rule", () => {
 
 test("the teens are all many, including 11 and 21-adjacent traps", () => {
   for (let n = 11; n <= 14; n++) assert.equal(pluralForm("ru", n), "many", `${n} should be "many"`);
-  for (let n = 111; n <= 114; n++) assert.equal(pluralForm("ru", n), "many", `${n} should be "many"`);
+  for (let n = 111; n <= 114; n++)
+    assert.equal(pluralForm("ru", n), "many", `${n} should be "many"`);
   assert.equal(pluralForm("ru", 11), "many");
   assert.equal(pluralForm("ru", 21), "one");
 });

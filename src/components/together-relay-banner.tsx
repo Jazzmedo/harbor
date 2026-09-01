@@ -47,7 +47,9 @@ export function TogetherRelayBanner() {
         <span className="text-[11.5px] leading-snug text-ink-muted">
           {pub
             ? t("It updates automatically; nothing to do.")
-            : t("Redeploy it to get the latest Watch Together fixes. Harbor's public relay updates on its own.")}
+            : t(
+                "Redeploy it to get the latest Watch Together fixes. Harbor's public relay updates on its own.",
+              )}
         </span>
         {!pub && (
           <button

@@ -16,7 +16,12 @@ export function MalRows() {
             title={
               <span className="inline-flex items-center gap-2">
                 {t("Your MAL: {name}", { name: t(rail.title) })}
-                <PinHomeButton id={`mal:${rail.key}`} source="mal" name="Your MAL: {name}" params={{ railKey: rail.key }} />
+                <PinHomeButton
+                  id={`mal:${rail.key}`}
+                  source="mal"
+                  name="Your MAL: {name}"
+                  params={{ railKey: rail.key }}
+                />
               </span>
             }
             scrollKey={`anime:mal:${rail.key}`}

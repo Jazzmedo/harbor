@@ -76,8 +76,7 @@ export function useAiSuggest(query: string, runSignal = 0) {
           ...(e.detail ? { detail: e.detail } : {}),
         });
       } else {
-        const detail =
-          e instanceof Error ? e.message : typeof e === "string" ? e : undefined;
+        const detail = e instanceof Error ? e.message : typeof e === "string" ? e : undefined;
         setError({
           messageKey: "AI search failed.",
           ...(detail ? { detail } : {}),

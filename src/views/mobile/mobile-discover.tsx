@@ -129,7 +129,9 @@ export function MobileDiscover() {
   if (failed && rawRows.length === 0 && featured.length === 0) {
     return (
       <div className="flex h-[70vh] flex-col items-center justify-center gap-4 px-8 text-center">
-        <h2 className="font-display text-[20px] font-medium text-ink">{t("Couldn't load Discover")}</h2>
+        <h2 className="font-display text-[20px] font-medium text-ink">
+          {t("Couldn't load Discover")}
+        </h2>
         <p className="max-w-xs text-[13.5px] leading-relaxed text-ink-muted">
           {t("Harbor couldn't reach the catalog servers. Check your connection and try again.")}
         </p>
@@ -149,7 +151,12 @@ export function MobileDiscover() {
       <MobileFeatured items={shownFeatured} onOpen={setDetailMeta} />
       {shownRows.map((r, i) =>
         i === 0 && r.id.split(":")[0] === ANCHOR_TRENDING && r.metas.length >= 6 ? (
-          <MobileRankRail key={r.id} title={t(r.title)} metas={r.metas} onOpenDetail={setDetailMeta} />
+          <MobileRankRail
+            key={r.id}
+            title={t(r.title)}
+            metas={r.metas}
+            onOpenDetail={setDetailMeta}
+          />
         ) : (
           <MobileRail key={r.id} title={t(r.title)} metas={r.metas} onOpenDetail={setDetailMeta} />
         ),

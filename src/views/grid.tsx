@@ -78,8 +78,15 @@ export function GridView({ grid }: { grid: GridSpec }) {
         metas.length === 0 &&
         (hero ? (
           <div className="flex flex-col items-center gap-3 py-24 text-center">
-            <img src="/kids/doodles/lilpurpocto.png" alt="" draggable={false} className="h-20 w-auto opacity-80" />
-            <p className="font-display text-[24px] font-bold text-[#0e3a43]">{t("Nothing here yet!")}</p>
+            <img
+              src="/kids/doodles/lilpurpocto.png"
+              alt=""
+              draggable={false}
+              className="h-20 w-auto opacity-80"
+            />
+            <p className="font-display text-[24px] font-bold text-[#0e3a43]">
+              {t("Nothing here yet!")}
+            </p>
           </div>
         ) : (
           <p className="py-20 text-center text-[14px] text-ink-subtle">{t("Nothing here yet.")}</p>
@@ -102,7 +109,9 @@ export function GridView({ grid }: { grid: GridSpec }) {
             ) : (
               <div className={`absolute inset-0 bg-gradient-to-br ${hero.grad}`} />
             )}
-            <div className={`pointer-events-none absolute inset-0 bg-gradient-to-tr ${hero.grad} opacity-25 mix-blend-overlay`} />
+            <div
+              className={`pointer-events-none absolute inset-0 bg-gradient-to-tr ${hero.grad} opacity-25 mix-blend-overlay`}
+            />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-canvas via-canvas/35 to-transparent" />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/45 via-black/10 to-transparent" />
             <img

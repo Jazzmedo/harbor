@@ -13,7 +13,10 @@ export function useComments(themeId: string) {
     setError(null);
     listComments(themeId)
       .then((c) => !cancelled && setComments(c))
-      .catch((e) => !cancelled && setError(e instanceof Error ? e.message : t("Could not load comments.")))
+      .catch(
+        (e) =>
+          !cancelled && setError(e instanceof Error ? e.message : t("Could not load comments.")),
+      )
       .finally(() => !cancelled && setLoading(false));
     return () => {
       cancelled = true;

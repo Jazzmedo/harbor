@@ -49,7 +49,9 @@ function RecCard({ meta, onOpen }: { meta: Meta; onOpen: () => void }) {
         lazy
         className="rounded-xl ring-1 ring-edge-soft/60"
       />
-      <p className="line-clamp-2 text-[12px] font-medium leading-tight text-ink-muted">{meta.name}</p>
+      <p className="line-clamp-2 text-[12px] font-medium leading-tight text-ink-muted">
+        {meta.name}
+      </p>
     </button>
   );
 }

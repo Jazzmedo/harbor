@@ -105,7 +105,11 @@ export function RecoveryKeyInput({
               placeholder="•••••"
               className="h-11 w-full min-w-0 rounded-md border border-edge-soft bg-elevated/40 text-center font-mono text-[15px] uppercase tracking-[0.16em] text-ink transition-colors placeholder:text-ink-subtle/40 focus:border-edge focus:outline-none"
             />
-            {i < GROUPS - 1 && <span aria-hidden className="text-[13px] text-ink-subtle/60">-</span>}
+            {i < GROUPS - 1 && (
+              <span aria-hidden className="text-[13px] text-ink-subtle/60">
+                -
+              </span>
+            )}
           </Fragment>
         ))}
       </div>

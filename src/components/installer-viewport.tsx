@@ -32,9 +32,7 @@ export function openInstallerViewport(url: string, title?: string, logo?: string
     return;
   }
   window.__harborInstallerOpen = true;
-  window.dispatchEvent(
-    new CustomEvent<InstallerDetail>(EVENT, { detail: { url, title, logo } }),
-  );
+  window.dispatchEvent(new CustomEvent<InstallerDetail>(EVENT, { detail: { url, title, logo } }));
 }
 
 export function InstallerViewportRoot() {
@@ -319,7 +317,9 @@ function InstallerViewport({
               {t("{title} won't load inside Harbor.", { title })}
             </p>
             <p className="max-w-[44ch] text-[12.5px] text-ink-muted">
-              {t("Open it in a regular browser, set it up there, then come back and paste the install link below.")}
+              {t(
+                "Open it in a regular browser, set it up there, then come back and paste the install link below.",
+              )}
             </p>
             <button
               type="button"
@@ -348,8 +348,12 @@ function InstallerViewport({
       <footer className="flex shrink-0 flex-col gap-2.5 border-t border-white/10 bg-canvas/72 px-5 py-3.5 backdrop-blur-md">
         <p className="text-[12.5px] leading-snug text-ink-muted">
           {isWeb()
-            ? t("Configure the addon above, then copy its manifest URL and paste it here. The web app can't catch the Install button automatically the way the desktop app does.")
-            : t("Paste the manifest URL, or click Install on the addon's configuration page above.")}
+            ? t(
+                "Configure the addon above, then copy its manifest URL and paste it here. The web app can't catch the Install button automatically the way the desktop app does.",
+              )
+            : t(
+                "Paste the manifest URL, or click Install on the addon's configuration page above.",
+              )}
         </p>
         <form
           onSubmit={(e) => {

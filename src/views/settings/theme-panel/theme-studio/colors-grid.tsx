@@ -29,7 +29,12 @@ export function ColorsGrid({
     <div className="flex flex-col gap-4">
       <div className="flex h-24 w-full overflow-hidden rounded-md ring-1 ring-edge-soft">
         {SURFACES.map((s) => (
-          <SwatchField key={s.key} value={colors[s.key]} onChange={(v) => set(s.key, v)} className="flex-1">
+          <SwatchField
+            key={s.key}
+            value={colors[s.key]}
+            onChange={(v) => set(s.key, v)}
+            className="flex-1"
+          >
             <span
               aria-hidden
               className="absolute inset-x-0 bottom-0 px-2 py-1.5 text-[10.5px] font-semibold uppercase tracking-[0.08em]"
@@ -41,7 +46,10 @@ export function ColorsGrid({
         ))}
       </div>
 
-      <div className="flex flex-col gap-1 rounded-md p-3.5 ring-1 ring-edge-soft" style={{ background: colors.canvas }}>
+      <div
+        className="flex flex-col gap-1 rounded-md p-3.5 ring-1 ring-edge-soft"
+        style={{ background: colors.canvas }}
+      >
         {INK.map((l) => (
           <ColorPopover key={l.key} value={colors[l.key]} onChange={(v) => set(l.key, v)}>
             {(open) => (
@@ -60,11 +68,19 @@ export function ColorsGrid({
 
       <div className="grid grid-cols-3 gap-2.5">
         <div className="flex flex-col gap-1.5">
-          <SwatchField value={colors.accent} onChange={(v) => set("accent", v)} className="h-14 rounded-md" />
+          <SwatchField
+            value={colors.accent}
+            onChange={(v) => set("accent", v)}
+            className="h-14 rounded-md"
+          />
           <span className="text-[11.5px] text-ink-subtle">{t("Accent")}</span>
         </div>
         <div className="flex flex-col gap-1.5">
-          <SwatchField value={colors.danger} onChange={(v) => set("danger", v)} className="h-14 rounded-md" />
+          <SwatchField
+            value={colors.danger}
+            onChange={(v) => set("danger", v)}
+            className="h-14 rounded-md"
+          />
           <span className="text-[11.5px] text-ink-subtle">{t("Danger")}</span>
         </div>
         <div className="flex flex-col gap-1.5">

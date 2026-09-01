@@ -32,7 +32,11 @@ export function useStoreBundles(kind: BundleKind): {
         caches[kind] = list;
         setBundles(list);
       })
-      .catch((e) => !cancelled && setError(e instanceof Error ? e.message : t("Could not reach the bundle library.")))
+      .catch(
+        (e) =>
+          !cancelled &&
+          setError(e instanceof Error ? e.message : t("Could not reach the bundle library.")),
+      )
       .finally(() => !cancelled && setLoading(false));
     return () => {
       cancelled = true;

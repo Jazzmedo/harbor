@@ -799,10 +799,8 @@ const appFill: Record<string, string> = {
     "Это обновление также заменяет встроенные в Harbor плееры и инструменты, поэтому оно устанавливается через Harbor Setup. Harbor закроется, установщик завершит работу, затем Harbor откроется снова.",
   "This one installs through Harbor Setup, but the update manifest carries no signature for it. Harbor will not run an installer it cannot verify. Download it and run it yourself.":
     "Это обновление устанавливается через Harbor Setup, но в манифесте обновления нет подписи для него. Harbor не запускает установщик, который не может проверить. Скачайте его и запустите сами.",
-  "Download installer":
-    "Скачать установщик",
-  "Install and reopen":
-    "Установить и открыть заново",
+  "Download installer": "Скачать установщик",
+  "Install and reopen": "Установить и открыть заново",
   "Harbor is closing. Harbor Setup will finish and reopen it.":
     "Harbor закрывается. Harbor Setup завершит установку и откроет его снова.",
   "Harbor Setup did not finish updating Harbor. Nothing was changed.":

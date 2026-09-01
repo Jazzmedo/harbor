@@ -97,8 +97,12 @@ export function CommentItem({
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <div className="flex items-center gap-2">
             {nameEl}
-            {handle && <span className="shrink-0 font-display text-[11.5px] text-ink-subtle">@{handle}</span>}
-            <span className="shrink-0 text-[11.5px] text-ink-subtle">{timeAgo(comment.createdAt)}</span>
+            {handle && (
+              <span className="shrink-0 font-display text-[11.5px] text-ink-subtle">@{handle}</span>
+            )}
+            <span className="shrink-0 text-[11.5px] text-ink-subtle">
+              {timeAgo(comment.createdAt)}
+            </span>
             {comment.canDelete && (
               <button
                 type="button"

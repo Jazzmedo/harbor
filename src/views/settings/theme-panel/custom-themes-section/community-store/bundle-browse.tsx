@@ -1,5 +1,14 @@
 import { useMemo, useState } from "react";
-import { AlertCircle, ArrowDownToLine, ChevronLeft, Package, RefreshCw, Sparkles, Star, Upload } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowDownToLine,
+  ChevronLeft,
+  Package,
+  RefreshCw,
+  Sparkles,
+  Star,
+  Upload,
+} from "lucide-react";
 import { Search } from "@/components/icons/search-icon";
 import { useT } from "@/lib/i18n";
 import { type BundleKind, type StoreBundle } from "@/lib/bundle-store";
@@ -38,7 +47,8 @@ const COPY: Record<BundleKind, Copy> = {
     search: "Search badge packs",
     heroLabel: "Badge pack",
     emptyTitle: "No badge packs yet",
-    emptyBody: "Be the first to share a set of badge icons. Publish a pack and it shows up here for everyone.",
+    emptyBody:
+      "Be the first to share a set of badge icons. Publish a pack and it shows up here for everyone.",
     noResults: "No badge packs match your search.",
     share: "Share a badge pack",
   },
@@ -48,7 +58,8 @@ const COPY: Record<BundleKind, Copy> = {
     search: "Search award packs",
     heroLabel: "Award pack",
     emptyTitle: "No award packs yet",
-    emptyBody: "Be the first to reskin the award trophies. Publish a pack and it shows up here for everyone.",
+    emptyBody:
+      "Be the first to reskin the award trophies. Publish a pack and it shows up here for everyone.",
     noResults: "No award packs match your search.",
     share: "Share an award pack",
   },
@@ -57,8 +68,14 @@ const COPY: Record<BundleKind, Copy> = {
 function sortBundles(list: StoreBundle[], sort: SortId): StoreBundle[] {
   const copy = [...list];
   if (sort === "downloads") return copy.sort((a, b) => b.downloads - a.downloads);
-  if (sort === "new") return copy.sort((a, b) => (b.createdAt > a.createdAt ? 1 : b.createdAt < a.createdAt ? -1 : 0));
-  return copy.sort((a, b) => b.ratingAvg - a.ratingAvg || b.ratingCount - a.ratingCount || b.downloads - a.downloads);
+  if (sort === "new")
+    return copy.sort((a, b) =>
+      b.createdAt > a.createdAt ? 1 : b.createdAt < a.createdAt ? -1 : 0,
+    );
+  return copy.sort(
+    (a, b) =>
+      b.ratingAvg - a.ratingAvg || b.ratingCount - a.ratingCount || b.downloads - a.downloads,
+  );
 }
 
 export function BundleBrowse({ kind, onShare }: { kind: BundleKind; onShare?: () => void }) {
@@ -73,7 +90,9 @@ export function BundleBrowse({ kind, onShare }: { kind: BundleKind; onShare?: ()
 
   const hero = useMemo(() => {
     if (!bundles || bundles.length === 0) return null;
-    const ranked = [...bundles].sort((a, b) => b.ratingAvg - a.ratingAvg || b.downloads - a.downloads);
+    const ranked = [...bundles].sort(
+      (a, b) => b.ratingAvg - a.ratingAvg || b.downloads - a.downloads,
+    );
     return ranked.find((b) => b.cover) ?? ranked[0] ?? null;
   }, [bundles]);
 
@@ -107,7 +126,9 @@ export function BundleBrowse({ kind, onShare }: { kind: BundleKind; onShare?: ()
 
   return (
     <section className="flex flex-col gap-10">
-      {showShelves && hero && <BundleHero bundle={hero} label={copy.heroLabel} onOpen={openBundle} />}
+      {showShelves && hero && (
+        <BundleHero bundle={hero} label={copy.heroLabel} onOpen={openBundle} />
+      )}
 
       <div className="flex flex-col gap-8 ps-[9px]">
         <FilterBar
@@ -154,7 +175,10 @@ export function BundleBrowse({ kind, onShare }: { kind: BundleKind; onShare?: ()
           </div>
         ) : (
           <div className="flex flex-col gap-5">
-            <SectionHeader icon={<Package size={14} strokeWidth={2.2} />} label={q ? t("Results") : t("All packs")} />
+            <SectionHeader
+              icon={<Package size={14} strokeWidth={2.2} />}
+              label={q ? t("Results") : t("All packs")}
+            />
             {shown.length === 0 ? (
               <p className="rounded-md border border-dashed border-edge px-4 py-14 text-center text-[13px] text-ink-subtle">
                 {t(copy.noResults)}
@@ -205,12 +229,12 @@ function FilterBar({
         <button
           type="button"
           onClick={onBack}
- className="inline-flex h-8 items-center gap-1 rounded-full bg-elevated pe-3.5 ps-2.5 text-[12.5px] font-semibold text-ink-muted transition-colors hover:bg-raised hover:text-ink"
+          className="inline-flex h-8 items-center gap-1 rounded-full bg-elevated pe-3.5 ps-2.5 text-[12.5px] font-semibold text-ink-muted transition-colors hover:bg-raised hover:text-ink"
         >
           <ChevronLeft size={14} strokeWidth={2.4} className="dir-icon" /> {t("Featured")}
         </button>
       )}
- <div className="flex h-8 items-center gap-2 rounded-full bg-elevated px-3.5">
+      <div className="flex h-8 items-center gap-2 rounded-full bg-elevated px-3.5">
         <Search size={14} className="text-ink-subtle" />
         <input
           value={query}
@@ -243,7 +267,7 @@ function FilterBar({
 function BundleError({ message, onRetry }: { message: string; onRetry: () => void }) {
   const t = useT();
   return (
- <div className="mx-auto flex max-w-sm flex-col items-center gap-4 rounded-md bg-surface px-6 py-14 text-center">
+    <div className="mx-auto flex max-w-sm flex-col items-center gap-4 rounded-md bg-surface px-6 py-14 text-center">
       <span className="grid h-12 w-12 place-items-center rounded-full bg-danger/15 text-danger">
         <AlertCircle size={22} />
       </span>

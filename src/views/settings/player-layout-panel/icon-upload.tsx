@@ -9,7 +9,8 @@ const WARN_BYTES = Math.floor(MAX_BYTES * 0.8);
 const MIN_DIM = 16;
 const MAX_DIM = 512;
 
-const SVG_STRIP = /<script[\s\S]*?<\/script>|\son\w+="[^"]*"|\son\w+='[^']*'|\s(?:xlink:href|href)="(?:javascript:|data:text\/html)[^"]*"/gi;
+const SVG_STRIP =
+  /<script[\s\S]*?<\/script>|\son\w+="[^"]*"|\son\w+='[^']*'|\s(?:xlink:href|href)="(?:javascript:|data:text\/html)[^"]*"/gi;
 
 export function IconUpload({
   currentUrl,
@@ -39,7 +40,12 @@ export function IconUpload({
   const presets = controlId ? getIconPresets(controlId) : [];
   const uploadUI =
     states && states.length > 0 ? (
-      <MultiStateUpload states={states} onUpload={onUpload} onReset={onReset} onApplyToAll={onApplyToAll} />
+      <MultiStateUpload
+        states={states}
+        onUpload={onUpload}
+        onReset={onReset}
+        onApplyToAll={onApplyToAll}
+      />
     ) : (
       <SingleUpload currentUrl={currentUrl} onUpload={onUpload} onReset={onReset} />
     );
@@ -62,7 +68,8 @@ function PresetRow({
 }) {
   const t = useT();
   const apply = (p: IconPreset) => {
-    for (const [state, url] of Object.entries(p.icons)) onUpload(url, state === "default" ? undefined : state);
+    for (const [state, url] of Object.entries(p.icons))
+      onUpload(url, state === "default" ? undefined : state);
   };
   return (
     <div className="flex items-center gap-1">
@@ -75,7 +82,12 @@ function PresetRow({
           title={t("{label} icons", { label: t(p.label) })}
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-white/12 bg-white/6 transition-colors hover:border-accent hover:bg-white/12"
         >
-          <img src={presetThumb(p)} alt={t(p.label)} className="h-5 w-5 object-contain" draggable={false} />
+          <img
+            src={presetThumb(p)}
+            alt={t(p.label)}
+            className="h-5 w-5 object-contain"
+            draggable={false}
+          />
         </button>
       ))}
     </div>
@@ -106,10 +118,12 @@ function SingleUpload({
       return;
     }
     if (file.size > MAX_BYTES) {
-      window.alert(t("Icon must be under {max} KB. Yours is {size} KB.", {
-        max: Math.round(MAX_BYTES / 1024),
-        size: Math.round(file.size / 1024),
-      }));
+      window.alert(
+        t("Icon must be under {max} KB. Yours is {size} KB.", {
+          max: Math.round(MAX_BYTES / 1024),
+          size: Math.round(file.size / 1024),
+        }),
+      );
       return;
     }
     setBusy(true);
@@ -118,13 +132,20 @@ function SingleUpload({
       const sanitized = file.type === "image/svg+xml" ? sanitizeSvgDataUrl(dataUrl) : dataUrl;
       const dims = await probeImage(sanitized);
       const messages: string[] = [];
-      if (file.size > WARN_BYTES) messages.push(t("large file ({size} KB)", { size: Math.round(file.size / 1024) }));
-      if (dims && (dims.w < MIN_DIM || dims.h < MIN_DIM)) messages.push(t("tiny ({width}×{height}px)", { width: dims.w, height: dims.h }));
-      if (dims && (dims.w > MAX_DIM || dims.h > MAX_DIM)) messages.push(t("huge ({width}×{height}px)", { width: dims.w, height: dims.h }));
+      if (file.size > WARN_BYTES)
+        messages.push(t("large file ({size} KB)", { size: Math.round(file.size / 1024) }));
+      if (dims && (dims.w < MIN_DIM || dims.h < MIN_DIM))
+        messages.push(t("tiny ({width}×{height}px)", { width: dims.w, height: dims.h }));
+      if (dims && (dims.w > MAX_DIM || dims.h > MAX_DIM))
+        messages.push(t("huge ({width}×{height}px)", { width: dims.w, height: dims.h }));
       if (messages.length > 0) setWarning(messages.join(" · "));
       onUpload(sanitized);
     } catch (err) {
-      window.alert(err instanceof Error && err.message === "Unexpected file contents." ? t("Unexpected file contents.") : t("Could not read the file."));
+      window.alert(
+        err instanceof Error && err.message === "Unexpected file contents."
+          ? t("Unexpected file contents.")
+          : t("Could not read the file."),
+      );
     } finally {
       setBusy(false);
     }
@@ -227,7 +248,11 @@ function Thumb({
     <div
       title={warning ?? (label ? t("{label} icon", { label }) : undefined)}
       className={`relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-md border bg-white/8 transition-colors ${
-        dragOver ? "border-accent ring-2 ring-accent" : warning ? "border-accent/40" : "border-white/12"
+        dragOver
+          ? "border-accent ring-2 ring-accent"
+          : warning
+            ? "border-accent/40"
+            : "border-white/12"
       }`}
     >
       {busy ? (

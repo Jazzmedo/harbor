@@ -1,5 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowDownWideNarrow, ArrowUp, ArrowUpNarrowWide, Check, ChevronDown, ChevronLeft, Layers } from "lucide-react";
+import {
+  ArrowDownWideNarrow,
+  ArrowUp,
+  ArrowUpNarrowWide,
+  Check,
+  ChevronDown,
+  ChevronLeft,
+  Layers,
+} from "lucide-react";
 import { Search } from "@/components/icons/search-icon";
 import { useMobileRemote } from "../mobile-remote";
 import { useRegisterSheet } from "../mobile-sheet-lock";
@@ -68,7 +76,9 @@ export function ChapterNavigator({
     const num = (c: RemoteMangaChapter) => parseFloat(c.chapter ?? "") || 0;
     return chapters
       .filter((c) => effSrc === "all" || c.sourceId === effSrc)
-      .filter((c) => !q || c.label.toLowerCase().includes(q) || (c.title ?? "").toLowerCase().includes(q))
+      .filter(
+        (c) => !q || c.label.toLowerCase().includes(q) || (c.title ?? "").toLowerCase().includes(q),
+      )
       .sort((a, b) => (desc ? num(b) - num(a) : num(a) - num(b)));
   }, [chapters, query, desc, effSrc]);
 
@@ -165,11 +175,20 @@ export function ChapterNavigator({
           }
           className="flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-edge-soft/70 px-3 text-[12.5px] font-semibold text-ink-muted transition-transform active:scale-95"
         >
-          {desc ? <ArrowDownWideNarrow size={15} strokeWidth={2.2} /> : <ArrowUpNarrowWide size={15} strokeWidth={2.2} />}
+          {desc ? (
+            <ArrowDownWideNarrow size={15} strokeWidth={2.2} />
+          ) : (
+            <ArrowUpNarrowWide size={15} strokeWidth={2.2} />
+          )}
           {desc ? t("Newest") : t("Oldest")}
         </button>
         {multiSource ? (
-          <SourceDropdown sources={sources} total={chapters.length} active={effSrc} onPick={setSrc} />
+          <SourceDropdown
+            sources={sources}
+            total={chapters.length}
+            active={effSrc}
+            onPick={setSrc}
+          />
         ) : sources.length === 1 ? (
           <span className="flex h-9 min-w-0 items-center gap-1.5 rounded-full bg-elevated/50 px-3 text-[12.5px] font-medium text-ink-subtle">
             <Layers size={14} strokeWidth={2.2} className="shrink-0" />
@@ -190,7 +209,10 @@ export function ChapterNavigator({
           style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 16px)" }}
         >
           <div className="relative" style={{ height: vw.totalHeight }}>
-            <div className="absolute inset-x-0 top-0" style={{ transform: `translateY(${vw.padTop}px)` }}>
+            <div
+              className="absolute inset-x-0 top-0"
+              style={{ transform: `translateY(${vw.padTop}px)` }}
+            >
               {rows.slice(vw.start, vw.end).map((c) => (
                 <ChapterRow
                   key={c.id}
@@ -246,11 +268,15 @@ function ChapterRow({
           {chapter.chapter ?? "•"}
         </span>
         <span className="flex min-w-0 flex-1 flex-col">
-          <span className={`truncate text-[15px] ${active ? "font-semibold text-accent" : "font-medium text-ink"}`}>
+          <span
+            className={`truncate text-[15px] ${active ? "font-semibold text-accent" : "font-medium text-ink"}`}
+          >
             {chapter.label}
           </span>
           {(chapter.title || chapter.group) && (
-            <span className="truncate text-[12px] text-ink-subtle">{chapter.title || chapter.group}</span>
+            <span className="truncate text-[12px] text-ink-subtle">
+              {chapter.title || chapter.group}
+            </span>
           )}
         </span>
         {showSource && source && (
@@ -296,7 +322,7 @@ function SourceDropdown({
   const activeName =
     active === "all"
       ? t("All sources")
-      : sources.find((s) => s.id === active)?.name ?? t("All sources");
+      : (sources.find((s) => s.id === active)?.name ?? t("All sources"));
 
   return (
     <div ref={ref} className="relative min-w-0 flex-1">
@@ -308,13 +334,34 @@ function SourceDropdown({
       >
         <Layers size={14} strokeWidth={2.2} className="shrink-0 text-ink-subtle" />
         <span className="min-w-0 flex-1 truncate text-start">{activeName}</span>
-        <ChevronDown size={14} strokeWidth={2.4} className={`shrink-0 text-ink-subtle transition-transform ${open ? "rotate-180" : ""}`} />
+        <ChevronDown
+          size={14}
+          strokeWidth={2.4}
+          className={`shrink-0 text-ink-subtle transition-transform ${open ? "rotate-180" : ""}`}
+        />
       </button>
       {open && (
         <div className="absolute inset-x-0 top-[calc(100%+6px)] z-30 overflow-hidden rounded-2xl border border-edge-soft bg-elevated p-1.5 shadow-[0_18px_44px_-14px_rgba(0,0,0,0.7)]">
-          <SourceOption name={t("All sources")} count={total} active={active === "all"} onClick={() => { onPick("all"); setOpen(false); }} />
+          <SourceOption
+            name={t("All sources")}
+            count={total}
+            active={active === "all"}
+            onClick={() => {
+              onPick("all");
+              setOpen(false);
+            }}
+          />
           {sources.map((s) => (
-            <SourceOption key={s.id} name={s.name} count={s.count} active={active === s.id} onClick={() => { onPick(s.id); setOpen(false); }} />
+            <SourceOption
+              key={s.id}
+              name={s.name}
+              count={s.count}
+              active={active === s.id}
+              onClick={() => {
+                onPick(s.id);
+                setOpen(false);
+              }}
+            />
           ))}
         </div>
       )}
@@ -322,7 +369,17 @@ function SourceDropdown({
   );
 }
 
-function SourceOption({ name, count, active, onClick }: { name: string; count: number; active: boolean; onClick: () => void }) {
+function SourceOption({
+  name,
+  count,
+  active,
+  onClick,
+}: {
+  name: string;
+  count: number;
+  active: boolean;
+  onClick: () => void;
+}) {
   return (
     <button
       type="button"

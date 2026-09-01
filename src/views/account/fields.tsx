@@ -5,12 +5,26 @@ import { useT } from "@/lib/i18n";
 export const inputClass =
   "h-11 w-full rounded-md bg-canvas px-3.5 text-[14px] text-ink placeholder:text-ink-subtle transition-colors duration-150 focus:bg-elevated focus:outline-none";
 
-export function Field({ label, hint, tone, children }: { label: string; hint?: string; tone?: "muted" | "danger"; children: ReactNode }) {
+export function Field({
+  label,
+  hint,
+  tone,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  tone?: "muted" | "danger";
+  children: ReactNode;
+}) {
   return (
     <label className="flex flex-col gap-1.5">
       <span className="text-[12.5px] font-semibold text-ink">{label}</span>
       {children}
-      {hint && <span className={`text-[11.5px] ${tone === "danger" ? "text-danger" : "text-ink-subtle"}`}>{hint}</span>}
+      {hint && (
+        <span className={`text-[11.5px] ${tone === "danger" ? "text-danger" : "text-ink-subtle"}`}>
+          {hint}
+        </span>
+      )}
     </label>
   );
 }

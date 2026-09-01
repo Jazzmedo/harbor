@@ -92,10 +92,14 @@ function SpeedResultBadge({ value }: { value: string }) {
           <p className="mb-2.5 text-[12.5px] leading-snug text-ink-muted">
             {t("Harbor opens 4 parallel requests to")}{" "}
             <span className="font-medium text-ink">speed.cloudflare.com</span>
-            {t(", discards the first 1.2s so TCP slow-start doesn't tank the result, then measures until it has 150 MB or 8 seconds of steady-state transfer.")}
+            {t(
+              ", discards the first 1.2s so TCP slow-start doesn't tank the result, then measures until it has 150 MB or 8 seconds of steady-state transfer.",
+            )}
           </p>
           <p className="mb-2 text-[12.5px] leading-snug text-ink-muted">
-            {t("The number is bytes divided by the time they actually took to arrive. Cloudflare is a single origin, so on a very fast line this can read lower than a multi-server test like speedtest.net.")}
+            {t(
+              "The number is bytes divided by the time they actually took to arrive. Cloudflare is a single origin, so on a very fast line this can read lower than a multi-server test like speedtest.net.",
+            )}
           </p>
           <div className="mt-2 flex items-center gap-2 border-t border-edge-soft pt-2 text-[11.5px] text-ink-subtle">
             <span className="h-1 w-1 rounded-full bg-ink-subtle/60" />
@@ -113,7 +117,7 @@ export function SpeedTestButton() {
   const t = useT();
   if (!isTauri) {
     return (
- <span className="flex h-8 shrink-0 items-center rounded-md bg-canvas px-3 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-ink-subtle">
+      <span className="flex h-8 shrink-0 items-center rounded-md bg-canvas px-3 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-ink-subtle">
         {t("Desktop only")}
       </span>
     );
@@ -175,7 +179,9 @@ function SpeedTestButtonInner() {
   if (state === "error") {
     return (
       <div className="flex shrink-0 items-center gap-2.5">
-        <span className="max-w-[260px] text-end text-[12.5px] leading-snug text-ink-subtle">{error}</span>
+        <span className="max-w-[260px] text-end text-[12.5px] leading-snug text-ink-subtle">
+          {error}
+        </span>
         <button
           type="button"
           onClick={run}
@@ -196,7 +202,7 @@ function SpeedTestButtonInner() {
       <button
         type="button"
         onClick={run}
- className="flex h-8 shrink-0 items-center rounded-md bg-canvas px-3 text-[11.5px] font-semibold uppercase tracking-[0.12em] text-ink-muted transition-colors hover:bg-surface hover:text-ink"
+        className="flex h-8 shrink-0 items-center rounded-md bg-canvas px-3 text-[11.5px] font-semibold uppercase tracking-[0.12em] text-ink-muted transition-colors hover:bg-surface hover:text-ink"
       >
         {t("Run speed test")}
       </button>
@@ -209,7 +215,11 @@ function SpeedTestButtonInner() {
         type="button"
         onClick={run}
         disabled={cooling}
-        aria-label={cooling ? t("Wait {seconds}s", { seconds: Math.ceil(cooldownRemaining / 1000) }) : t("Re-test")}
+        aria-label={
+          cooling
+            ? t("Wait {seconds}s", { seconds: Math.ceil(cooldownRemaining / 1000) })
+            : t("Re-test")
+        }
         className={`flex h-7 items-center justify-center rounded-full text-ink-subtle transition-colors ${
           cooling
             ? "w-auto cursor-not-allowed px-2 text-[10.5px] font-semibold tabular-nums tracking-wide"

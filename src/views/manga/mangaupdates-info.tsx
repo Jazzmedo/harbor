@@ -13,7 +13,8 @@ import { openUrl } from "@/lib/window";
 import { Tooltip } from "@/views/detail/tooltip";
 
 const MICRO = "text-[10.5px] font-semibold uppercase tracking-[0.18em] text-ink-subtle";
-const CHIP = "rounded-full bg-elevated/60 px-3 py-1 text-[13px] text-ink-muted ring-1 ring-edge-soft";
+const CHIP =
+  "rounded-full bg-elevated/60 px-3 py-1 text-[13px] text-ink-muted ring-1 ring-edge-soft";
 const MORE =
   "px-1 text-[13.5px] font-medium text-accent transition-colors hover:text-ink motion-reduce:transition-none";
 
@@ -45,8 +46,7 @@ function humanizeStatus(status?: string): string | undefined {
 
 function shortStatus(info: MangaUpdatesInfo | null): string | undefined {
   if (!info) return undefined;
-  if (typeof info.completed === "boolean")
-    return info.completed ? t("Completed") : t("Ongoing");
+  if (typeof info.completed === "boolean") return info.completed ? t("Completed") : t("Ongoing");
   const raw = /\(([^)]+)\)\s*$/.exec(info.status ?? "")?.[1]?.trim() || info.status?.trim();
   if (!raw) return undefined;
   const low = raw.toLowerCase();
@@ -290,13 +290,19 @@ export function MangaUpdatesSection({
                   {rating != null && (
                     <span className="inline-flex items-baseline gap-1.5">
                       <Star size={15} className="translate-y-0.5 text-accent" fill="currentColor" />
-                      <span className="text-[18px] font-semibold text-ink">{rating.toFixed(2)}</span>
+                      <span className="text-[18px] font-semibold text-ink">
+                        {rating.toFixed(2)}
+                      </span>
                       <span className="text-[12px] text-ink-subtle">/ 10</span>
                     </span>
                   )}
-                  {rating != null && summaryBits.length > 0 && <span className="text-ink-subtle/40">·</span>}
+                  {rating != null && summaryBits.length > 0 && (
+                    <span className="text-ink-subtle/40">·</span>
+                  )}
                   {summaryBits.length > 0 && (
-                    <span className="text-[13.5px] text-ink-muted">{summaryBits.join("  ·  ")}</span>
+                    <span className="text-[13.5px] text-ink-muted">
+                      {summaryBits.join("  ·  ")}
+                    </span>
                   )}
                 </div>
               )}

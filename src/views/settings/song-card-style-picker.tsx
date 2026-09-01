@@ -26,7 +26,9 @@ export function SongCardStylePicker() {
   return (
     <Section
       title={t("Now Playing card")}
-      subtitle={t("Adds an Identify-song button to the player that recognizes the current music via AudD and shows a Now Playing card. Off by default; needs an AudD key below.")}
+      subtitle={t(
+        "Adds an Identify-song button to the player that recognizes the current music via AudD and shows a Now Playing card. Off by default; needs an AudD key below.",
+      )}
     >
       <ToggleRow
         label={t("Identify the current song")}

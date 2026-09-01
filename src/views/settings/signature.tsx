@@ -37,10 +37,9 @@ export function Signature() {
             )}
           </p>
           <p>
-            {t(
-              "A special thank you to the team at {team}. Please consider supporting them.",
-              { team: "Stremio-Addons" },
-            )}
+            {t("A special thank you to the team at {team}. Please consider supporting them.", {
+              team: "Stremio-Addons",
+            })}
           </p>
           <p>
             {t(

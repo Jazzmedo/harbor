@@ -241,21 +241,28 @@ function buildJson(root: HTMLElement, title: string) {
     const head = sec.querySelector("h2, h3");
     if (head) ensureSection((head.textContent ?? "").trim());
     else if (!current) ensureSection("");
-    sec.querySelectorAll(":scope > p, :scope > ul, :scope > ol, :scope > pre, :scope > div table").forEach((el) => {
-      const tag = el.tagName.toLowerCase();
-      if (tag === "p") current!.blocks.push({ type: "paragraph", text: (el.textContent ?? "").trim() });
-      else if (tag === "pre") current!.blocks.push({ type: "code", text: el.textContent ?? "" });
-      else if (tag === "ul" || tag === "ol") {
-        const items = Array.from(el.querySelectorAll(":scope > li")).map((li) => (li.textContent ?? "").trim());
-        current!.blocks.push({ type: tag === "ol" ? "ordered_list" : "list", items });
-      } else if (tag === "table") {
-        const rows = Array.from(el.querySelectorAll("tbody tr")).map((tr) =>
-          Array.from(tr.querySelectorAll("td")).map((td) => (td.textContent ?? "").trim()),
-        );
-        const headers = Array.from(el.querySelectorAll("thead th")).map((th) => (th.textContent ?? "").trim());
-        current!.blocks.push({ type: "table", headers, rows });
-      }
-    });
+    sec
+      .querySelectorAll(":scope > p, :scope > ul, :scope > ol, :scope > pre, :scope > div table")
+      .forEach((el) => {
+        const tag = el.tagName.toLowerCase();
+        if (tag === "p")
+          current!.blocks.push({ type: "paragraph", text: (el.textContent ?? "").trim() });
+        else if (tag === "pre") current!.blocks.push({ type: "code", text: el.textContent ?? "" });
+        else if (tag === "ul" || tag === "ol") {
+          const items = Array.from(el.querySelectorAll(":scope > li")).map((li) =>
+            (li.textContent ?? "").trim(),
+          );
+          current!.blocks.push({ type: tag === "ol" ? "ordered_list" : "list", items });
+        } else if (tag === "table") {
+          const rows = Array.from(el.querySelectorAll("tbody tr")).map((tr) =>
+            Array.from(tr.querySelectorAll("td")).map((td) => (td.textContent ?? "").trim()),
+          );
+          const headers = Array.from(el.querySelectorAll("thead th")).map((th) =>
+            (th.textContent ?? "").trim(),
+          );
+          current!.blocks.push({ type: "table", headers, rows });
+        }
+      });
   });
   return {
     title,

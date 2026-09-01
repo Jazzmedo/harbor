@@ -42,9 +42,7 @@ export function OrderStyleSwitch({
             aria-pressed={on}
             onClick={() => onPick(o.value)}
             className={`h-8 shrink-0 whitespace-nowrap rounded-full px-3.5 text-[12.5px] font-semibold transition-colors active:scale-[0.97] motion-reduce:transition-none ${
-              on
-                ? "bg-ink text-canvas"
-                : "bg-surface text-ink-muted ring-1 ring-edge-soft/70"
+              on ? "bg-ink text-canvas" : "bg-surface text-ink-muted ring-1 ring-edge-soft/70"
             }`}
           >
             {Object.hasOwn(BUILT_IN_ORDER_LABELS, label) ? t(label) : label}

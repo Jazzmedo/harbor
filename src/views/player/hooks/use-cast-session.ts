@@ -36,7 +36,9 @@ export function localizedFfmpegInstallStep(): string {
   if (step === "Open a terminal and run: brew install ffmpeg") {
     return t("Open a terminal and run: brew install ffmpeg");
   }
-  if (step === "Install ffmpeg using your system package manager (apt, dnf, pacman, zypper, etc.).") {
+  if (
+    step === "Install ffmpeg using your system package manager (apt, dnf, pacman, zypper, etc.)."
+  ) {
     return t("Install ffmpeg using your system package manager (apt, dnf, pacman, zypper, etc.).");
   }
   if (step === "Open a terminal and run: winget install Gyan.FFmpeg") {
@@ -50,7 +52,10 @@ function buildActionableCastError(
   deviceName: string,
   deviceKind: CastDeviceInfo["kind"],
 ): CastErrorInfo | null {
-  if (deviceKind === "roku" && /ROKU_ECP_BLOCKED|control by mobile apps|network access/i.test(err)) {
+  if (
+    deviceKind === "roku" &&
+    /ROKU_ECP_BLOCKED|control by mobile apps|network access/i.test(err)
+  ) {
     return {
       title: t("Enable Roku Network Access"),
       message: t(
@@ -113,7 +118,9 @@ function buildActionableCastError(
 
 export function useCastSession(bridgeRef?: RefObject<PlayerBridge | null>) {
   const [castMenuOpen, setCastMenuOpen] = useState(false);
-  const [castMenuAnchor, setCastMenuAnchor] = useState<{ right: number; bottom: number } | null>(null);
+  const [castMenuAnchor, setCastMenuAnchor] = useState<{ right: number; bottom: number } | null>(
+    null,
+  );
   const [castDevice, setCastDevice] = useState<CastDeviceInfo | null>(null);
   const [pendingCastDevice, setPendingCastDevice] = useState<CastDeviceInfo | null>(null);
   const [castError, setCastError] = useState<string | null>(null);
@@ -144,7 +151,11 @@ export function useCastSession(bridgeRef?: RefObject<PlayerBridge | null>) {
   const closeCastMenu = useCallback(() => setCastMenuOpen(false), []);
 
   const pickCastDevice = useCallback(
-    async (device: CastDeviceInfo, params: Omit<LoadParams, "host" | "port">, beforeLoad?: () => void) => {
+    async (
+      device: CastDeviceInfo,
+      params: Omit<LoadParams, "host" | "port">,
+      beforeLoad?: () => void,
+    ) => {
       setCastMenuOpen(false);
       setCastError(null);
       setPendingCastDevice(device);

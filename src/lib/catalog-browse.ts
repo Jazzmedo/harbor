@@ -1,4 +1,9 @@
-import { createAddonCatalogFetcher, gatherCatalogAddons, isCollectionCatalog, type CatalogExtra } from "./addons";
+import {
+  createAddonCatalogFetcher,
+  gatherCatalogAddons,
+  isCollectionCatalog,
+  type CatalogExtra,
+} from "./addons";
 
 const NON_CONTENT = new Set(["addon_catalog"]);
 
@@ -61,6 +66,8 @@ export function browseFetcher(cat: BrowseCatalog, genre: string | null) {
   const collection = isCollectionCatalog({ type: cat.type, id: cat.id, name: cat.name });
   return createAddonCatalogFetcher(cursor, {
     mapMeta: (m) =>
-      collection ? { ...m, addonOrigin: origin, isCollection: true } : { ...m, addonOrigin: origin },
+      collection
+        ? { ...m, addonOrigin: origin, isCollection: true }
+        : { ...m, addonOrigin: origin },
   });
 }

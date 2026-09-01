@@ -1,9 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  pinnedBuiltinTitle,
-  usePinnedCatalogs,
-  type PinnedCatalog,
-} from "@/lib/pinned-catalogs";
+import { pinnedBuiltinTitle, usePinnedCatalogs, type PinnedCatalog } from "@/lib/pinned-catalogs";
 import { buildPinnedCatalogRows, pinnedRowKey } from "@/lib/pinned-catalogs-rows";
 import { useAnilistAnimeRails } from "@/lib/use-anilist-anime-rails";
 import { useMalAnimeRails } from "@/lib/use-mal-anime-rails";
@@ -16,9 +12,7 @@ type Translate = (key: string, vars?: Record<string, string | number>) => string
 function pinnedTitle(desc: PinnedCatalog, t: Translate): string {
   const title = pinnedBuiltinTitle(desc.source, desc.params.railKey);
   if (!title) return desc.name;
-  return title.valueKey
-    ? t(title.key, { name: t(title.valueKey) })
-    : t(title.key);
+  return title.valueKey ? t(title.key, { name: t(title.valueKey) }) : t(title.key);
 }
 
 export function usePinnedRows(): HomeRow[] {
@@ -50,10 +44,26 @@ export function usePinnedRows(): HomeRow[] {
   const extraMap = useMemo(() => {
     const m = new Map<string, HomeRow>();
     if (trendingMetas.length > 0) {
-      m.set("trending", { key: "", type: "series", name: "", metas: trendingMetas, page: 1, hasMore: false, noDedup: true });
+      m.set("trending", {
+        key: "",
+        type: "series",
+        name: "",
+        metas: trendingMetas,
+        page: 1,
+        hasMore: false,
+        noDedup: true,
+      });
     }
     if (topMetas.length > 0) {
-      m.set("top100", { key: "", type: "series", name: "", metas: topMetas, page: 1, hasMore: false, noDedup: true });
+      m.set("top100", {
+        key: "",
+        type: "series",
+        name: "",
+        metas: topMetas,
+        page: 1,
+        hasMore: false,
+        noDedup: true,
+      });
     }
     return m;
   }, [trendingMetas, topMetas]);
@@ -76,12 +86,28 @@ export function usePinnedRows(): HomeRow[] {
         }
         const rail = anilistRails.find((r) => r.key === desc.params.railKey);
         if (rail && rail.metas.length > 0) {
-          out.push({ key, type: "series", name, metas: rail.metas, page: 1, hasMore: false, noDedup: true });
+          out.push({
+            key,
+            type: "series",
+            name,
+            metas: rail.metas,
+            page: 1,
+            hasMore: false,
+            noDedup: true,
+          });
         }
       } else if (desc.source === "mal") {
         const rail = malRails.find((r) => r.key === desc.params.railKey);
         if (rail && rail.metas.length > 0) {
-          out.push({ key, type: "series", name, metas: rail.metas, page: 1, hasMore: false, noDedup: true });
+          out.push({
+            key,
+            type: "series",
+            name,
+            metas: rail.metas,
+            page: 1,
+            hasMore: false,
+            noDedup: true,
+          });
         }
       }
     }

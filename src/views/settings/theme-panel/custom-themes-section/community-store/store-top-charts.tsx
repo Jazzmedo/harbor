@@ -31,9 +31,27 @@ export function StoreTopCharts({
   const tr = useT();
   return (
     <div className="grid gap-4 lg:grid-cols-3">
-      <ChartColumn title={tr("Trending")} Icon={TrendingUp} kind="rating" themes={trending} onOpen={onOpen} />
-      <ChartColumn title={tr("Most popular")} Icon={Flame} kind="downloads" themes={popular} onOpen={onOpen} />
-      <ChartColumn title={tr("New & notable")} Icon={Sparkles} kind="fresh" themes={fresh} onOpen={onOpen} />
+      <ChartColumn
+        title={tr("Trending")}
+        Icon={TrendingUp}
+        kind="rating"
+        themes={trending}
+        onOpen={onOpen}
+      />
+      <ChartColumn
+        title={tr("Most popular")}
+        Icon={Flame}
+        kind="downloads"
+        themes={popular}
+        onOpen={onOpen}
+      />
+      <ChartColumn
+        title={tr("New & notable")}
+        Icon={Sparkles}
+        kind="fresh"
+        themes={fresh}
+        onOpen={onOpen}
+      />
     </div>
   );
 }
@@ -58,9 +76,13 @@ function ChartColumn({
       <SectionHeader icon={<Icon size={16} className="text-ink-subtle" />} label={tr(title)} />
       <div className="flex flex-col">
         {rows.length === 0 ? (
-          <p className="px-1 py-6 text-center text-[13px] text-ink-subtle">{tr("Nothing here yet")}</p>
+          <p className="px-1 py-6 text-center text-[13px] text-ink-subtle">
+            {tr("Nothing here yet")}
+          </p>
         ) : (
-          rows.map((t, i) => <ChartRow key={t.id} rank={i + 1} theme={t} kind={kind} onOpen={onOpen} />)
+          rows.map((t, i) => (
+            <ChartRow key={t.id} rank={i + 1} theme={t} kind={kind} onOpen={onOpen} />
+          ))
         )}
       </div>
     </section>
@@ -73,7 +95,14 @@ function RowThumb({ theme }: { theme: StoreTheme }) {
   return (
     <span className="relative h-10 w-14 shrink-0 overflow-hidden rounded-[7px] bg-elevated ring-1 ring-edge-soft">
       {img ? (
-        <img src={img} alt="" draggable={false} loading="lazy" decoding="async" className="h-full w-full object-cover" />
+        <img
+          src={img}
+          alt=""
+          draggable={false}
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-cover"
+        />
       ) : (
         <span className="flex h-full w-full">
           {theme.swatch.map((c, i) => (
@@ -120,8 +149,12 @@ function ChartRow({
       </span>
       <RowThumb theme={theme} />
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate text-[13px] font-semibold leading-tight text-ink">{theme.name}</span>
-        <span className="truncate text-[11.5px] text-ink-subtle">{theme.author || tr("Anonymous")}</span>
+        <span className="truncate text-[13px] font-semibold leading-tight text-ink">
+          {theme.name}
+        </span>
+        <span className="truncate text-[11.5px] text-ink-subtle">
+          {theme.author || tr("Anonymous")}
+        </span>
       </span>
       <span className="shrink-0 ps-1">
         {kind === "rating" && theme.ratingCount > 0 ? (
@@ -135,7 +168,9 @@ function ChartRow({
             {fmtCount(theme.downloads)}
           </span>
         ) : (
-          <span className="text-[11.5px] font-semibold tabular-nums text-ink-subtle">{relTime(theme.createdAt)}</span>
+          <span className="text-[11.5px] font-semibold tabular-nums text-ink-subtle">
+            {relTime(theme.createdAt)}
+          </span>
         )}
       </span>
     </button>

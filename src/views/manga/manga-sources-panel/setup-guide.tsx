@@ -1,5 +1,14 @@
 import { useState, type ReactNode } from "react";
-import { BookOpen, Check, ChevronDown, Copy, Download, ExternalLink, FolderOpen, Server } from "lucide-react";
+import {
+  BookOpen,
+  Check,
+  ChevronDown,
+  Copy,
+  Download,
+  ExternalLink,
+  FolderOpen,
+  Server,
+} from "lucide-react";
 import { openUrl } from "@/lib/window";
 import { CARD } from "./shared";
 import { useT } from "@/lib/i18n";
@@ -142,9 +151,13 @@ export function SetupGuide() {
             <BookOpen size={20} />
           </span>
           <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <span className="text-[16px] font-semibold text-ink">{t("Suwayomi / Tachidesk walkthrough")}</span>
+            <span className="text-[16px] font-semibold text-ink">
+              {t("Suwayomi / Tachidesk walkthrough")}
+            </span>
             <span className="truncate text-[13px] text-ink-muted">
-              {t("Prefer a server? Run every source through your own Suwayomi and point Harbor at it")}
+              {t(
+                "Prefer a server? Run every source through your own Suwayomi and point Harbor at it",
+              )}
             </span>
           </span>
           <ChevronDown
@@ -169,7 +182,11 @@ export function SetupGuide() {
                 onClick={copy}
                 className="inline-flex h-11 items-center gap-2 rounded-xl bg-raised px-5 text-[14px] font-semibold text-ink-muted ring-1 ring-edge-soft transition-all hover:text-ink active:scale-95"
               >
-                {copied ? <Check size={17} strokeWidth={2.4} className="text-accent" /> : <Copy size={16} />}
+                {copied ? (
+                  <Check size={17} strokeWidth={2.4} className="text-accent" />
+                ) : (
+                  <Copy size={16} />
+                )}
                 {copied ? t("Copied") : t("Copy")}
               </button>
             </div>

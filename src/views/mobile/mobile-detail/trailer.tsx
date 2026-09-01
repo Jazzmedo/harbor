@@ -31,7 +31,7 @@ export function MobileTrailerOverlay({
     playsinline: "1",
     fs: "1",
   });
-  const proto = typeof window !== "undefined" ? window.location?.protocol ?? "" : "";
+  const proto = typeof window !== "undefined" ? (window.location?.protocol ?? "") : "";
   if (/^https?:$/.test(proto) && window.location?.origin) {
     params.set("origin", window.location.origin);
   }

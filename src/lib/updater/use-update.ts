@@ -346,9 +346,7 @@ async function detectFailedHandoff(pending: {
     return false;
   }
   clearPending();
-  const plan = await readHandoffPlan(
-    betaChannel() ? BETA_HEADERS : undefined,
-  ).catch(() => null);
+  const plan = await readHandoffPlan(betaChannel() ? BETA_HEADERS : undefined).catch(() => null);
   set({
     status: "error",
     installFailed: true,

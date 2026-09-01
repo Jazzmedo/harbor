@@ -12,7 +12,14 @@ import { effectiveOrderProvider } from "@/lib/settings/episode-order";
 import { t as translate, useT, useUiLanguage } from "@/lib/i18n";
 import { getViewedSeason, setViewedSeason } from "@/lib/season-view-pref";
 import { useMobileRemote } from "../mobile-remote";
-import { HIDE_SCROLL, prefersReducedMotion, stillFrom, tmdbTvId, type Ep, type SeasonOption } from "./data";
+import {
+  HIDE_SCROLL,
+  prefersReducedMotion,
+  stillFrom,
+  tmdbTvId,
+  type Ep,
+  type SeasonOption,
+} from "./data";
 import { Line, SectionTitle } from "./ui";
 import { OrderStyleSwitch, type OrderOption } from "./order-switch";
 
@@ -62,7 +69,10 @@ export function EpisodeSection({
   const imdbId = detail?.imdbId ?? (meta.id.startsWith("tt") ? meta.id : null);
 
   const settingsProvider = effectiveOrderProvider(settings);
-  const [override, setOverride] = useState<{ provider: "default" | "tvdb"; seasonType: string } | null>(null);
+  const [override, setOverride] = useState<{
+    provider: "default" | "tvdb";
+    seasonType: string;
+  } | null>(null);
   useEffect(() => {
     setOverride(null);
   }, [meta.id]);
@@ -100,10 +110,14 @@ export function EpisodeSection({
 
   const [season, setSeason] = useState<number>(() => {
     const v = getViewedSeason(meta.id);
-    return v != null && seasonOptions.some((o) => o.number === v) ? v : seasonOptions[0]?.number ?? 1;
+    return v != null && seasonOptions.some((o) => o.number === v)
+      ? v
+      : (seasonOptions[0]?.number ?? 1);
   });
   useEffect(() => {
-    setSeason((s) => (seasonOptions.some((o) => o.number === s) ? s : seasonOptions[0]?.number ?? 1));
+    setSeason((s) =>
+      seasonOptions.some((o) => o.number === s) ? s : (seasonOptions[0]?.number ?? 1),
+    );
   }, [seasonOptions]);
   const pickSeason = (n: number) => {
     setViewedSeason(meta.id, n);
@@ -177,14 +191,21 @@ export function EpisodeSection({
 
   if (seasonOptions.length === 0) return null;
 
-  const activeLabel = seasonOptions.find((o) => o.number === season)?.label ?? t("Season {number}", { number: season });
+  const activeLabel =
+    seasonOptions.find((o) => o.number === season)?.label ??
+    t("Season {number}", { number: season });
 
   return (
     <section className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-3">
         <SectionTitle>{t("Episodes")}</SectionTitle>
         {seasonOptions.length > 1 && (
-          <SeasonPicker options={seasonOptions} value={season} label={activeLabel} onChange={pickSeason} />
+          <SeasonPicker
+            options={seasonOptions}
+            value={season}
+            label={activeLabel}
+            onChange={pickSeason}
+          />
         )}
       </div>
       {orderOptions.length > 1 && (

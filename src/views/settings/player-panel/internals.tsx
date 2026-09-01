@@ -39,7 +39,9 @@ export function SubField({
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
         <Label>{label}</Label>
-        {value && <span className="font-mono text-[12.5px] tabular-nums text-ink-muted">{value}</span>}
+        {value && (
+          <span className="font-mono text-[12.5px] tabular-nums text-ink-muted">{value}</span>
+        )}
       </div>
       {children}
     </div>

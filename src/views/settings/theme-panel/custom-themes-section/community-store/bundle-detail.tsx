@@ -3,14 +3,23 @@ import { useModalExit } from "@/components/modal-shell";
 import { createPortal } from "react-dom";
 import { Check, Flag, Package, Share2, Star, X } from "lucide-react";
 import { useT } from "@/lib/i18n";
-import { getBundle, installBundle, rateBundle, reportBundle, type StoreBundle } from "@/lib/bundle-store";
+import {
+  getBundle,
+  installBundle,
+  rateBundle,
+  reportBundle,
+  type StoreBundle,
+} from "@/lib/bundle-store";
 import { fmtCount } from "./format";
 import { BundleFit } from "./market/bundle-fit";
 import { PackContents } from "./market/pack-contents";
 import { MarketCta } from "./market/market-cta";
 import { useAcquireState } from "./market/use-acquire";
 
-const KIND_LABEL: Record<StoreBundle["kind"], string> = { badge: "Badge pack", award: "Award pack" };
+const KIND_LABEL: Record<StoreBundle["kind"], string> = {
+  badge: "Badge pack",
+  award: "Award pack",
+};
 
 export function BundleDetail({ bundle, onClose }: { bundle: StoreBundle; onClose: () => void }) {
   const tr = useT();
@@ -71,9 +80,17 @@ export function BundleDetail({ bundle, onClose }: { bundle: StoreBundle; onClose
   const shownStars = hover || myRating || Math.round(t.ratingAvg);
 
   return createPortal(
-    <div className={`${closing ? "animate-scrim-out" : "animate-scrim-in"} fixed inset-0 z-[244] flex items-center justify-center p-4 sm:p-6`}>
-      <button aria-label={tr("Close")} onClick={close} className="absolute inset-0 cursor-default bg-canvas/75 backdrop-blur-sm" />
-      <div className={`modal-panel ${closing ? "animate-dialog-out" : "animate-dialog-in"} relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-md bg-elevated ring-1 ring-edge-soft harbor-float`}>
+    <div
+      className={`${closing ? "animate-scrim-out" : "animate-scrim-in"} fixed inset-0 z-[244] flex items-center justify-center p-4 sm:p-6`}
+    >
+      <button
+        aria-label={tr("Close")}
+        onClick={close}
+        className="absolute inset-0 cursor-default bg-canvas/75 backdrop-blur-sm"
+      />
+      <div
+        className={`modal-panel ${closing ? "animate-dialog-out" : "animate-dialog-in"} relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-md bg-elevated ring-1 ring-edge-soft harbor-float`}
+      >
         <button
           onClick={close}
           aria-label={tr("Close")}
@@ -98,14 +115,22 @@ export function BundleDetail({ bundle, onClose }: { bundle: StoreBundle; onClose
               <p className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[12.5px] font-medium text-white/80">
                 <span className="inline-flex items-center gap-1.5">
                   {t.authorAvatar && (
-                    <img src={t.authorAvatar} alt="" className="h-4 w-4 rounded-full object-cover ring-1 ring-white/25" />
+                    <img
+                      src={t.authorAvatar}
+                      alt=""
+                      className="h-4 w-4 rounded-full object-cover ring-1 ring-white/25"
+                    />
                   )}
                   {tr("by {author}", { author: t.author || tr("Anonymous") })}
                 </span>
                 <span className="text-white/40">·</span>
-                <span className="tabular-nums">{tr("{count} installs", { count: fmtCount(t.downloads) })}</span>
+                <span className="tabular-nums">
+                  {tr("{count} installs", { count: fmtCount(t.downloads) })}
+                </span>
                 <span className="text-white/40">·</span>
-                <span className="tabular-nums">{tr("{count} icons", { count: t.icons.length })}</span>
+                <span className="tabular-nums">
+                  {tr("{count} icons", { count: t.icons.length })}
+                </span>
                 {t.ratingCount > 0 && (
                   <>
                     <span className="text-white/40">·</span>
@@ -121,7 +146,13 @@ export function BundleDetail({ bundle, onClose }: { bundle: StoreBundle; onClose
 
           <div className="flex flex-col gap-5 p-6">
             <div className="flex flex-wrap items-center gap-3">
-              <MarketCta variant="acquire" size="lg" state={state} onClick={run} label={tr("Install pack")} />
+              <MarketCta
+                variant="acquire"
+                size="lg"
+                state={state}
+                onClick={run}
+                label={tr("Install pack")}
+              />
               <MarketCta variant="ghost" size="lg" onClick={share}>
                 {copied ? <Check size={16} /> : <Share2 size={16} />}
                 {copied ? tr("Copied") : tr("Share")}
@@ -149,14 +180,19 @@ export function BundleDetail({ bundle, onClose }: { bundle: StoreBundle; onClose
                     aria-label={tr("Rate {count} stars", { count: n })}
                     className="p-0.5 transition-transform hover:scale-110 active:scale-95 motion-reduce:transform-none"
                   >
-                    <Star size={21} className={n <= shownStars ? "fill-accent text-accent" : "text-ink-subtle"} />
+                    <Star
+                      size={21}
+                      className={n <= shownStars ? "fill-accent text-accent" : "text-ink-subtle"}
+                    />
                   </button>
                 ))}
               </div>
             </div>
             {state === "error" && errMsg && <p className="text-[12.5px] text-danger">{errMsg}</p>}
 
-            {t.description && <p className="text-[13.5px] leading-relaxed text-ink-muted">{t.description}</p>}
+            {t.description && (
+              <p className="text-[13.5px] leading-relaxed text-ink-muted">{t.description}</p>
+            )}
 
             <div className="h-px bg-edge-soft" />
 

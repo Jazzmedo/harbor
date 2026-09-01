@@ -86,7 +86,25 @@ if (isModal || isHdrOverlay) {
     root.style.backgroundColor = "transparent";
   }
 }
-if (import.meta.env.DEV) console.log("[harbor] entry: pip =", isPip, "modal =", isModal, "hdr =", isHdrOverlay, "remote =", isRemote, "label =", (() => { try { return getCurrentWindow().label; } catch { return "?"; } })());
+if (import.meta.env.DEV)
+  console.log(
+    "[harbor] entry: pip =",
+    isPip,
+    "modal =",
+    isModal,
+    "hdr =",
+    isHdrOverlay,
+    "remote =",
+    isRemote,
+    "label =",
+    (() => {
+      try {
+        return getCurrentWindow().label;
+      } catch {
+        return "?";
+      }
+    })(),
+  );
 if (import.meta.env.DEV && !isPip && !isModal && !isHdrOverlay && !isRemote) {
   void import("./lib/streams/__fixtures__/verify").then((m) => m.logVerificationReport());
 }

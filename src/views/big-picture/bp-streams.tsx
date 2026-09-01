@@ -395,9 +395,7 @@ export function BpStreams({
 
       <BpStreamChips s={s} sourceKind={sourceKind} onSourceKind={setSourceKind} onClose={onClose} />
 
-      {play.error && (
-        <BpStreamsBanner text={translatePickerError(t, play.error)} tone="error" />
-      )}
+      {play.error && <BpStreamsBanner text={translatePickerError(t, play.error)} tone="error" />}
       {homeServerError && !play.error && <BpStreamsBanner text={homeServerError} tone="error" />}
       {s.error && !play.error && (
         <BpStreamsBanner text={translatePipelineErrorTransport(t, s.error)} tone="error" />

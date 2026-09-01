@@ -137,7 +137,9 @@ export function useProviderKeys({
             <>
               {t("Free at")}{" "}
               <ExtLink href="https://www.omdbapi.com/apikey.aspx">omdbapi.com/apikey.aspx</ExtLink>.{" "}
-              {t("They email an activation link the first time. Click it, then come back and save.")}
+              {t(
+                "They email an activation link the first time. Click it, then come back and save.",
+              )}
             </>
           }
         />

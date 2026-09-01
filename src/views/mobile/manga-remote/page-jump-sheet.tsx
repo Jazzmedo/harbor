@@ -52,14 +52,19 @@ export function PageJumpSheet({ open, onClose }: { open: boolean; onClose: () =>
           <span className="text-[13px] font-semibold uppercase tracking-[0.12em] text-ink-subtle">
             {isPair ? t("Jump to spread") : t("Jump to page")}
           </span>
-          <span className={`font-bold leading-none tabular-nums text-ink ${isPair ? "text-[34px]" : "text-[44px]"}`}>
+          <span
+            className={`font-bold leading-none tabular-nums text-ink ${isPair ? "text-[34px]" : "text-[44px]"}`}
+          >
             {pageDisp}
             <span className="text-[20px] font-semibold text-ink-subtle"> / {total}</span>
           </span>
         </div>
         <PageScrubber page={page} total={total} onChange={setPage} reduce={reduce} />
         <div className="flex items-center gap-3">
-          <Stepper label={t("Previous page")} onPress={() => setPage((p) => clampPage(p - 1, total))}>
+          <Stepper
+            label={t("Previous page")}
+            onPress={() => setPage((p) => clampPage(p - 1, total))}
+          >
             <Minus size={20} strokeWidth={2.4} />
           </Stepper>
           <button
@@ -129,7 +134,10 @@ function PageScrubber({
       <div className="absolute inset-x-0 top-1/2 h-2 -translate-y-1/2 overflow-hidden rounded-full bg-raised">
         <div
           className="h-full rounded-full bg-accent"
-          style={{ width: `${pct * 100}%`, transition: still ? "none" : "width 120ms var(--ease-out)" }}
+          style={{
+            width: `${pct * 100}%`,
+            transition: still ? "none" : "width 120ms var(--ease-out)",
+          }}
         />
       </div>
       <div
@@ -140,7 +148,15 @@ function PageScrubber({
   );
 }
 
-function Stepper({ label, onPress, children }: { label: string; onPress: () => void; children: ReactNode }) {
+function Stepper({
+  label,
+  onPress,
+  children,
+}: {
+  label: string;
+  onPress: () => void;
+  children: ReactNode;
+}) {
   return (
     <button
       type="button"

@@ -44,7 +44,7 @@ export function NotificationBell({ onOpenTheme }: { onOpenTheme: (themeId: strin
         type="button"
         onClick={toggle}
         aria-label={t("Notifications")}
- className="relative grid h-9 w-9 place-items-center rounded-full bg-elevated text-ink-muted transition-colors hover:bg-raised hover:text-ink"
+        className="relative grid h-9 w-9 place-items-center rounded-full bg-elevated text-ink-muted transition-colors hover:bg-raised hover:text-ink"
       >
         <Bell size={16} strokeWidth={2.1} />
         {unread > 0 && (
@@ -55,7 +55,7 @@ export function NotificationBell({ onOpenTheme }: { onOpenTheme: (themeId: strin
       </button>
 
       {open && (
- <div className="animate-in fade-in slide-in-from-top-1 absolute end-0 top-11 z-50 w-[340px] overflow-hidden rounded-sm bg-elevated harbor-float motion-reduce:animate-none">
+        <div className="animate-in fade-in slide-in-from-top-1 absolute end-0 top-11 z-50 w-[340px] overflow-hidden rounded-sm bg-elevated harbor-float motion-reduce:animate-none">
           <div className="flex items-center justify-between border-b border-edge-soft px-4 py-3">
             <span className="text-[13px] font-semibold text-ink">{t("Notifications")}</span>
             {unread > 0 && (

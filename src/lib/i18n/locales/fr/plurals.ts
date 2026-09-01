@@ -1,8 +1,12 @@
 const plurals: Record<string, string> = {
-  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.#few": "Ajouter {n} titres de votre liste de suivi Harbor à Trakt ? Trakt ignore ceux qui y figurent déjà.",
-  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.#one": "Ajouter {n} titre de votre liste de suivi Harbor à Trakt ? Trakt l’ignore s’il y figure déjà.",
-  "Add {n} titles from your Trakt watchlist to Harbor?#few": "Ajouter {n} titres de votre liste de suivi Trakt à Harbor ?",
-  "Add {n} titles from your Trakt watchlist to Harbor?#one": "Ajouter {n} titre de votre liste de suivi Trakt à Harbor ?",
+  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.#few":
+    "Ajouter {n} titres de votre liste de suivi Harbor à Trakt ? Trakt ignore ceux qui y figurent déjà.",
+  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.#one":
+    "Ajouter {n} titre de votre liste de suivi Harbor à Trakt ? Trakt l’ignore s’il y figure déjà.",
+  "Add {n} titles from your Trakt watchlist to Harbor?#few":
+    "Ajouter {n} titres de votre liste de suivi Trakt à Harbor ?",
+  "Add {n} titles from your Trakt watchlist to Harbor?#one":
+    "Ajouter {n} titre de votre liste de suivi Trakt à Harbor ?",
   "After {n} episodes#few": "Après {n} épisodes",
   "After {n} episodes#one": "Après {n} épisode",
   "All {n} channels loaded#few": "Les {n} chaînes ont toutes été chargées",
@@ -29,20 +33,30 @@ const plurals: Record<string, string> = {
   "Import {n} JavaScript sources#one": "Importer {n} source JavaScript",
   "in {n} weeks#few": "dans {n} semaines",
   "in {n} weeks#one": "dans {n} semaine",
-  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.#few": "Rien à envoyer. Les {n} titres de la liste de suivi sont tous des animes, que Trakt ne peut pas suivre.",
-  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.#one": "Rien à envoyer. {n} titre de la liste de suivi est un anime que Trakt ne peut pas suivre.",
-  "Remove this folder and its {n} items? Files on your disk are not deleted.#few": "Supprimer ce dossier et ses {n} éléments ? Les fichiers sur votre disque ne seront pas supprimés.",
-  "Remove this folder and its {n} items? Files on your disk are not deleted.#one": "Supprimer ce dossier et son contenu ({n} élément) ? Les fichiers présents sur votre disque ne seront pas supprimés.",
-  "Remove {n} items from your library? Files on your disk are not deleted.#few": "Supprimer {n} éléments de votre bibliothèque ? Les fichiers sur votre disque ne seront pas supprimés.",
-  "Remove {n} items from your library? Files on your disk are not deleted.#one": "Supprimer {n} élément de votre bibliothèque ? Les fichiers sur votre disque ne seront pas supprimés.",
+  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.#few":
+    "Rien à envoyer. Les {n} titres de la liste de suivi sont tous des animes, que Trakt ne peut pas suivre.",
+  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.#one":
+    "Rien à envoyer. {n} titre de la liste de suivi est un anime que Trakt ne peut pas suivre.",
+  "Remove this folder and its {n} items? Files on your disk are not deleted.#few":
+    "Supprimer ce dossier et ses {n} éléments ? Les fichiers sur votre disque ne seront pas supprimés.",
+  "Remove this folder and its {n} items? Files on your disk are not deleted.#one":
+    "Supprimer ce dossier et son contenu ({n} élément) ? Les fichiers présents sur votre disque ne seront pas supprimés.",
+  "Remove {n} items from your library? Files on your disk are not deleted.#few":
+    "Supprimer {n} éléments de votre bibliothèque ? Les fichiers sur votre disque ne seront pas supprimés.",
+  "Remove {n} items from your library? Files on your disk are not deleted.#one":
+    "Supprimer {n} élément de votre bibliothèque ? Les fichiers sur votre disque ne seront pas supprimés.",
   "Rising · +{n} star in 24h#few": "En hausse · +{n} étoiles en 24 h",
   "Rising · +{n} star in 24h#one": "En hausse · +{n} étoile en 24 h",
   "Rising · +{n} stars in 24h#few": "En hausse · +{n} étoiles en 24 h",
   "Rising · +{n} stars in 24h#one": "En hausse · +{n} étoile en 24 h",
-  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.#few": "Fichier harbor-anime-diagnostics.txt enregistré ({n} entrées). Envoyez-nous ce fichier.",
-  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.#one": "Fichier harbor-anime-diagnostics.txt enregistré ({n} entrée). Envoyez-nous ce fichier.",
-  "Saved {n} entries to {path}. Send us that file.#few": "{n} entrées enregistrées dans {path}. Envoyez-nous ce fichier.",
-  "Saved {n} entries to {path}. Send us that file.#one": "{n} entrée enregistrée dans {path}. Envoyez-nous ce fichier.",
+  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.#few":
+    "Fichier harbor-anime-diagnostics.txt enregistré ({n} entrées). Envoyez-nous ce fichier.",
+  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.#one":
+    "Fichier harbor-anime-diagnostics.txt enregistré ({n} entrée). Envoyez-nous ce fichier.",
+  "Saved {n} entries to {path}. Send us that file.#few":
+    "{n} entrées enregistrées dans {path}. Envoyez-nous ce fichier.",
+  "Saved {n} entries to {path}. Send us that file.#one":
+    "{n} entrée enregistrée dans {path}. Envoyez-nous ce fichier.",
   "Search {n} channels#few": "Rechercher parmi {n} chaînes",
   "Search {n} channels#one": "Rechercher parmi {n} chaîne",
   "Search {n} EPG channels#few": "Rechercher parmi {n} chaînes EPG",
@@ -67,10 +81,14 @@ const plurals: Record<string, string> = {
   "You've reached the end · {n} addons#one": "Vous avez atteint la fin · {n} extension",
   "{avg} avg · {n} rated#few": "{avg} de moy. · {n} notes",
   "{avg} avg · {n} rated#one": "{avg} de moy. · {n} note",
-  "{count} community ratings on stremio-addons.net#few": "{count} notes de la communauté sur stremio-addons.net",
-  "{count} community ratings on stremio-addons.net#one": "{count} note de la communauté sur stremio-addons.net",
-  "{count} films, in the order you picked them. Nothing plays until you start.#few": "{count} films, dans l’ordre choisi. Rien ne sera lu avant que vous lanciez la lecture.",
-  "{count} films, in the order you picked them. Nothing plays until you start.#one": "{count} film, dans l’ordre choisi. Rien ne sera lu avant que vous lanciez la lecture.",
+  "{count} community ratings on stremio-addons.net#few":
+    "{count} notes de la communauté sur stremio-addons.net",
+  "{count} community ratings on stremio-addons.net#one":
+    "{count} note de la communauté sur stremio-addons.net",
+  "{count} films, in the order you picked them. Nothing plays until you start.#few":
+    "{count} films, dans l’ordre choisi. Rien ne sera lu avant que vous lanciez la lecture.",
+  "{count} films, in the order you picked them. Nothing plays until you start.#one":
+    "{count} film, dans l’ordre choisi. Rien ne sera lu avant que vous lanciez la lecture.",
   "{count} friends in common#few": "{count} amis en commun",
   "{count} friends in common#one": "{count} ami en commun",
   "{label} · {n} collection#few": "{label} · {n} collections",
@@ -79,8 +97,10 @@ const plurals: Record<string, string> = {
   "{label} · {n} collections#one": "{label} · {n} collection",
   "{n} addon#few": "{n} extensions",
   "{n} addon#one": "{n} extension",
-  "{n} addons don't provide streams and aren't listed.#few": "{n} extensions ne fournissent aucun flux et ne sont pas répertoriées.",
-  "{n} addons don't provide streams and aren't listed.#one": "{n} extension ne fournit aucun flux et n’est pas répertoriée.",
+  "{n} addons don't provide streams and aren't listed.#few":
+    "{n} extensions ne fournissent aucun flux et ne sont pas répertoriées.",
+  "{n} addons don't provide streams and aren't listed.#one":
+    "{n} extension ne fournit aucun flux et n’est pas répertoriée.",
   "{n} addons#few": "{n} extensions",
   "{n} addons#one": "{n} extension",
   "{n} avatars across film, TV, and anime.#few": "{n} avatars de films, de séries TV et d’animes.",
@@ -113,8 +133,10 @@ const plurals: Record<string, string> = {
   "{n} film#one": "{n} film",
   "{n} films#few": "{n} films",
   "{n} films#one": "{n} film",
-  "{n} frame stored. Wiping rebuilds them next time you watch.#few": "{n} images enregistrées. Les effacer les recréera lors du prochain visionnage.",
-  "{n} frame stored. Wiping rebuilds them next time you watch.#one": "{n} image enregistrée. L’effacer la recréera lors du prochain visionnage.",
+  "{n} frame stored. Wiping rebuilds them next time you watch.#few":
+    "{n} images enregistrées. Les effacer les recréera lors du prochain visionnage.",
+  "{n} frame stored. Wiping rebuilds them next time you watch.#one":
+    "{n} image enregistrée. L’effacer la recréera lors du prochain visionnage.",
   "{n} genre#few": "{n} genres",
   "{n} genre#one": "{n} genre",
   "{n} genres#few": "{n} genres",
@@ -127,8 +149,10 @@ const plurals: Record<string, string> = {
   "{n} languages#one": "{n} langue",
   "{n} month ago#few": "il y a {n} mois",
   "{n} month ago#one": "il y a {n} mois",
-  "{n} new episodes since you last watched#few": "{n} nouveaux épisodes depuis votre dernier visionnage",
-  "{n} new episodes since you last watched#one": "{n} nouvel épisode depuis votre dernier visionnage",
+  "{n} new episodes since you last watched#few":
+    "{n} nouveaux épisodes depuis votre dernier visionnage",
+  "{n} new episodes since you last watched#one":
+    "{n} nouvel épisode depuis votre dernier visionnage",
   "{n} option#few": "{n} options",
   "{n} option#one": "{n} option",
   "{n} options#few": "{n} options",
@@ -155,26 +179,32 @@ const plurals: Record<string, string> = {
   "{n} sources#one": "{n} source",
   "{n} tab locked#few": "{n} onglets verrouillés",
   "{n} tab locked#one": "{n} onglet verrouillé",
-  "{n} tab requires this profile's PIN.#few": "Les {n} onglets nécessitent le code PIN de ce profil.",
+  "{n} tab requires this profile's PIN.#few":
+    "Les {n} onglets nécessitent le code PIN de ce profil.",
   "{n} tab requires this profile's PIN.#one": "L’onglet {n} nécessite le code PIN de ce profil.",
   "{n} tab#few": "{n} onglets",
   "{n} tab#one": "{n} onglet",
   "{n} tabs locked#few": "{n} onglets verrouillés",
   "{n} tabs locked#one": "{n} onglet verrouillé",
-  "{n} tabs require this profile's PIN.#few": "Les {n} onglets nécessitent le code PIN de ce profil.",
+  "{n} tabs require this profile's PIN.#few":
+    "Les {n} onglets nécessitent le code PIN de ce profil.",
   "{n} tabs require this profile's PIN.#one": "L’onglet {n} nécessite le code PIN de ce profil.",
   "{n} tabs#few": "{n} onglets",
   "{n} tabs#one": "{n} onglet",
   "{n} title#few": "{n} titres",
   "{n} title#one": "{n} titre",
-  "{n} titles need review — help us identify them.#few": "{n} titres sont à vérifier, aidez-nous à les identifier.",
-  "{n} titles need review — help us identify them.#one": "{n} titre est à vérifier, aidez-nous à l’identifier.",
+  "{n} titles need review — help us identify them.#few":
+    "{n} titres sont à vérifier, aidez-nous à les identifier.",
+  "{n} titles need review — help us identify them.#one":
+    "{n} titre est à vérifier, aidez-nous à l’identifier.",
   "{n} titles together#few": "{n} titres en commun",
   "{n} titles together#one": "{n} titre en commun",
   "{n} titles#few": "{n} titres",
   "{n} titles#one": "{n} titre",
-  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#few": "{n} requêtes de traqueurs bloquées pendant cette session. Harbor n’envoie aucune donnée de télémétrie.",
-  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#one": "{n} requête de traqueur bloquée pendant cette session. Harbor n’envoie aucune donnée de télémétrie.",
+  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#few":
+    "{n} requêtes de traqueurs bloquées pendant cette session. Harbor n’envoie aucune donnée de télémétrie.",
+  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#one":
+    "{n} requête de traqueur bloquée pendant cette session. Harbor n’envoie aucune donnée de télémétrie.",
   "{n} votes#few": "{n} votes",
   "{n} votes#one": "{n} vote",
   "{n} winner#few": "{n} lauréats",
@@ -191,8 +221,10 @@ const plurals: Record<string, string> = {
   "{wins} wins#one": "{wins} victoire",
   "{word} {n} seconds#few": "{word} {n} secondes",
   "{word} {n} seconds#one": "{word} {n} seconde",
-  "{word} {n} seconds. Hold for options#few": "{word} {n} secondes. Maintenez pour afficher les options",
-  "{word} {n} seconds. Hold for options#one": "{word} {n} seconde. Maintenez pour afficher les options",
+  "{word} {n} seconds. Hold for options#few":
+    "{word} {n} secondes. Maintenez pour afficher les options",
+  "{word} {n} seconds. Hold for options#one":
+    "{word} {n} seconde. Maintenez pour afficher les options",
 };
 
 export default plurals;

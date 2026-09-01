@@ -24,7 +24,9 @@ export function PresetGallery({ onSeed }: { onSeed: (t: ThemePreset) => void }) 
           </div>
           <div className="flex min-w-0 flex-col gap-0.5 px-3 pb-2.5 pt-2">
             <span className="truncate text-[12.5px] font-semibold text-ink">{t(p.name)}</span>
-            {p.blurb && <span className="truncate text-[11.5px] text-ink-subtle">{t(p.blurb)}</span>}
+            {p.blurb && (
+              <span className="truncate text-[11.5px] text-ink-subtle">{t(p.blurb)}</span>
+            )}
           </div>
         </button>
       ))}

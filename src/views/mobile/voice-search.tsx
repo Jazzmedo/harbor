@@ -30,8 +30,7 @@ export function getSpeechRecognition(): SpeechRecognitionCtor | null {
 }
 
 const reducedMotion = () =>
-  typeof window !== "undefined" &&
-  window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
 const EXIT_MS = 260;
 const HOLD_CAPTURED = 460;
@@ -222,7 +221,10 @@ export function VoiceSearch({
         <div className="relative grid h-[92px] w-[92px] place-items-center">
           {phase === "listening" && !reduced && (
             <>
-              <span aria-hidden className="voice-ring absolute inset-0 rounded-full border-[1.5px] border-accent" />
+              <span
+                aria-hidden
+                className="voice-ring absolute inset-0 rounded-full border-[1.5px] border-accent"
+              />
               <span
                 aria-hidden
                 className="voice-ring voice-ring-late absolute inset-0 rounded-full border-[1.5px] border-accent"
@@ -269,7 +271,11 @@ export function VoiceSearch({
                 {reduced
                   ? interim
                   : words.map((w, i) => (
-                      <span key={i} className="voice-word inline-block" style={{ marginRight: "0.26em" }}>
+                      <span
+                        key={i}
+                        className="voice-word inline-block"
+                        style={{ marginRight: "0.26em" }}
+                      >
                         {w}
                       </span>
                     ))}

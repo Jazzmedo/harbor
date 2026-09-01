@@ -30,7 +30,7 @@ export function CodeSection({
         {t("Open code editor")}
       </button>
 
- <div className="flex items-center justify-between gap-3 rounded-md bg-elevated px-4 py-3">
+      <div className="flex items-center justify-between gap-3 rounded-md bg-elevated px-4 py-3">
         <span className="text-[13px] text-ink-muted">
           {anyCode
             ? t("CSS {css} · HTML {html} · JS {js}", {
@@ -43,7 +43,7 @@ export function CodeSection({
         <button
           type="button"
           onClick={() => setSheetOpen(true)}
- className="flex h-11 shrink-0 items-center gap-1.5 rounded-md px-3.5 text-[13.5px] font-semibold text-ink-muted transition-colors hover:bg-canvas hover:text-ink"
+          className="flex h-11 shrink-0 items-center gap-1.5 rounded-md px-3.5 text-[13.5px] font-semibold text-ink-muted transition-colors hover:bg-canvas hover:text-ink"
         >
           <BookOpen size={16} strokeWidth={2.2} />
           {t("Cheat sheet")}

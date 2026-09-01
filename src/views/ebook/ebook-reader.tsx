@@ -10,8 +10,16 @@ function textDirection(text: string): "ltr" | "rtl" {
 }
 
 export function EBookReader({
-  bookId, bookTitle, bookCover, internalCover, chapter, content, error,
-  volumes, onSelectChapter, onClose,
+  bookId,
+  bookTitle,
+  bookCover,
+  internalCover,
+  chapter,
+  content,
+  error,
+  volumes,
+  onSelectChapter,
+  onClose,
 }: {
   bookId: string;
   bookTitle: string;
@@ -33,9 +41,15 @@ export function EBookReader({
     return (
       <div className="fixed inset-0 z-[90] grid place-items-center bg-[#0b0b0d] text-ink">
         <div className="text-center">
-          <p className={error ? "text-red-400" : "text-ink-muted"}>{error ?? t("Loading chapter…")}</p>
+          <p className={error ? "text-red-400" : "text-ink-muted"}>
+            {error ?? t("Loading chapter…")}
+          </p>
           {error && (
-            <button type="button" onClick={onClose} className="mt-4 rounded-xl bg-raised px-4 py-2 text-sm">
+            <button
+              type="button"
+              onClick={onClose}
+              className="mt-4 rounded-xl bg-raised px-4 py-2 text-sm"
+            >
               {t("Close reader")}
             </button>
           )}

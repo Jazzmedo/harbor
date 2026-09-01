@@ -2,10 +2,7 @@ import { useState } from "react";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { recoverIdentity } from "@/lib/account/identity";
 import { finishDiscordRecovery, startDiscordRecovery } from "@/lib/account/discord-link";
-import {
-  accountErrorMessage,
-  type AccountErrorMessage,
-} from "@/lib/account/error-messages";
+import { accountErrorMessage, type AccountErrorMessage } from "@/lib/account/error-messages";
 import { canDiscordAuth } from "@/lib/discord-auth";
 import { DiscordIcon } from "@/components/discord-icon";
 import { PasswordField, TextField } from "./fields";

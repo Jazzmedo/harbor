@@ -73,7 +73,8 @@ function Swatch({ kind, variant }: { kind: "card" | "button"; variant: string })
           className="aspect-[5/3] w-full rounded-md"
           style={{
             background: "linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.04))",
-            boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.18), inset 0 1px 0 rgba(255,255,255,0.2)",
+            boxShadow:
+              "inset 0 0 0 1px rgba(255,255,255,0.18), inset 0 1px 0 rgba(255,255,255,0.2)",
             backdropFilter: "blur(8px)",
           }}
         />
@@ -93,7 +94,8 @@ function Swatch({ kind, variant }: { kind: "card" | "button"; variant: string })
           className="aspect-[5/3] w-full rounded-md"
           style={{
             background: "#ffffff",
-            boxShadow: "inset 0 0 0 1px rgba(15,15,18,0.16), 0 2px 6px -2px rgba(15,15,18,0.10), inset 0 1px 0 rgba(255,255,255,0.7)",
+            boxShadow:
+              "inset 0 0 0 1px rgba(15,15,18,0.16), 0 2px 6px -2px rgba(15,15,18,0.10), inset 0 1px 0 rgba(255,255,255,0.7)",
           }}
         />
       );
@@ -106,7 +108,8 @@ function Swatch({ kind, variant }: { kind: "card" | "button"; variant: string })
         <div
           className="rounded-full px-4 py-2 text-[12.5px] font-semibold text-white"
           style={{
-            background: "linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0) 55%), var(--color-accent)",
+            background:
+              "linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0) 55%), var(--color-accent)",
             boxShadow: "inset 0 1px 0 rgba(255,255,255,0.5), 0 6px 18px -6px rgba(0,0,0,0.45)",
           }}
         >

@@ -1,4 +1,17 @@
-import { Check, ChevronDown, Ghost, Heart, MessageSquareWarning, Plus, ShieldAlert, Star, Swords, ThumbsUp, Wine, type LucideIcon } from "lucide-react";
+import {
+  Check,
+  ChevronDown,
+  Ghost,
+  Heart,
+  MessageSquareWarning,
+  Plus,
+  ShieldAlert,
+  Star,
+  Swords,
+  ThumbsUp,
+  Wine,
+  type LucideIcon,
+} from "lucide-react";
 import { Play } from "@/components/icons/play-filled";
 import { Fragment, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { Meta } from "@/lib/cinemeta";
@@ -56,19 +69,23 @@ const ADVISORY_COLOR: Record<string, string> = {
 
 function advisoryChip(category: string): { Icon: LucideIcon; label: string; builtIn: boolean } {
   const c = category.toLowerCase();
-  if (c.includes("sex") || c.includes("nudity")) return { Icon: Heart, label: "Nudity", builtIn: true };
-  if (c.includes("violence") || c.includes("gore")) return { Icon: Swords, label: "Violence", builtIn: true };
-  if (c.includes("profanity")) return { Icon: MessageSquareWarning, label: "Language", builtIn: true };
+  if (c.includes("sex") || c.includes("nudity"))
+    return { Icon: Heart, label: "Nudity", builtIn: true };
+  if (c.includes("violence") || c.includes("gore"))
+    return { Icon: Swords, label: "Violence", builtIn: true };
+  if (c.includes("profanity"))
+    return { Icon: MessageSquareWarning, label: "Language", builtIn: true };
   if (c.includes("alcohol") || c.includes("drug") || c.includes("smoking")) {
     return { Icon: Wine, label: "Substances", builtIn: true };
   }
-  if (c.includes("frighten") || c.includes("intense")) return { Icon: Ghost, label: "Intense", builtIn: true };
+  if (c.includes("frighten") || c.includes("intense"))
+    return { Icon: Ghost, label: "Intense", builtIn: true };
   return { Icon: ShieldAlert, label: category, builtIn: false };
 }
 
 function useAdvisory(imdbId: string | undefined): ParentalCategory[] {
-  const [cats, setCats] = useState<ParentalCategory[]>(
-    () => (imdbId ? harborImdbParentalCached(imdbId) ?? [] : []),
+  const [cats, setCats] = useState<ParentalCategory[]>(() =>
+    imdbId ? (harborImdbParentalCached(imdbId) ?? []) : [],
   );
   useEffect(() => {
     if (!imdbId) {
@@ -191,7 +208,7 @@ function MarqueeBlock({
   const t = useT();
   const meta = data.meta;
   const alt = tmdbImdbCached(meta.id);
-  const imdb = meta.id.startsWith("tt") ? meta.id : alt ?? undefined;
+  const imdb = meta.id.startsWith("tt") ? meta.id : (alt ?? undefined);
   const altIds = useMemo(() => [alt ?? undefined], [alt]);
   const inList = useInWatchlist(meta.id, altIds);
   const [watched, setWatched] = useState(false);

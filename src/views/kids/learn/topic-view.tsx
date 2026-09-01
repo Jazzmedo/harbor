@@ -51,11 +51,15 @@ export function TopicView({ topic, onDone }: { topic: LearnTopic; onDone: () => 
           </div>
         )}
         <div className="flex flex-col gap-3 px-9 py-7 text-center">
-          <h3 className="font-display text-[30px] font-medium leading-tight text-[#123a52]">{card.title}</h3>
+          <h3 className="font-display text-[30px] font-medium leading-tight text-[#123a52]">
+            {card.title}
+          </h3>
           <p className="text-[18px] font-semibold leading-relaxed text-[#2d5a75]">{card.text}</p>
           <div className="mx-auto flex items-start gap-2.5 rounded-2xl bg-[#fff3d6] px-5 py-3 text-start">
             <Lightbulb size={19} strokeWidth={2.4} className="mt-0.5 shrink-0 text-[#e08900]" />
-            <span className="text-[14.5px] font-semibold leading-snug text-[#7a5200]">{card.funFact}</span>
+            <span className="text-[14.5px] font-semibold leading-snug text-[#7a5200]">
+              {card.funFact}
+            </span>
           </div>
         </div>
       </div>

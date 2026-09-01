@@ -33,7 +33,9 @@ export function ShaderCard({ entry }: { entry: ShaderCatalogEntry }) {
   const lockReason = entry.conflictsWith?.some((c) =>
     c === "hdrToSdr" ? settings.playerHdrToSdr : c === "rtxHdr" ? settings.playerRtxHdr : false,
   )
-    ? t("Harbor's built-in HDR to SDR conversion is on. Turn it off in Video tuning to use this instead. Running both double-processes the picture.")
+    ? t(
+        "Harbor's built-in HDR to SDR conversion is on. Turn it off in Video tuning to use this instead. Running both double-processes the picture.",
+      )
     : undefined;
 
   const patch = (next: { enabled?: boolean; variant?: string; dir?: string }) => {
@@ -53,7 +55,9 @@ export function ShaderCard({ entry }: { entry: ShaderCatalogEntry }) {
         window.setTimeout(() => setJustUpdated(false), 2200);
       }
     } catch (e) {
-      setError(typeof e === "string" ? e : t("Download failed. Check your connection and try again."));
+      setError(
+        typeof e === "string" ? e : t("Download failed. Check your connection and try again."),
+      );
     } finally {
       setBusy(false);
     }
@@ -99,7 +103,11 @@ export function ShaderCard({ entry }: { entry: ShaderCatalogEntry }) {
           disabled={busy}
           className="harbor-press-pop flex h-11 w-fit items-center gap-2 rounded-md bg-ink px-5 text-[13.5px] font-semibold text-canvas transition-opacity hover:opacity-90 disabled:cursor-wait disabled:opacity-70"
         >
-          {busy ? <Loader2 size={16} className="animate-spin motion-reduce:hidden" /> : <Download size={16} strokeWidth={2.2} />}
+          {busy ? (
+            <Loader2 size={16} className="animate-spin motion-reduce:hidden" />
+          ) : (
+            <Download size={16} strokeWidth={2.2} />
+          )}
           {busy ? t("Downloading…") : t("Download shader")}
         </button>
       ) : (
@@ -111,7 +119,9 @@ export function ShaderCard({ entry }: { entry: ShaderCatalogEntry }) {
                 ? t("Applies only to HDR sources when you play them.")
                 : entry.content === "anime"
                   ? t("Applies to anime when you play it.")
-                  : t("Applies when you play something. Only visibly changes the picture when the video is being scaled.")
+                  : t(
+                      "Applies when you play something. Only visibly changes the picture when the video is being scaled.",
+                    )
             }
             value={!!state?.enabled}
             onChange={(v) => patch({ enabled: v })}
@@ -146,7 +156,11 @@ export function ShaderCard({ entry }: { entry: ShaderCatalogEntry }) {
             >
               {busy ? (
                 <>
-                  <Loader2 size={12} className="animate-spin motion-reduce:hidden" strokeWidth={2.6} />
+                  <Loader2
+                    size={12}
+                    className="animate-spin motion-reduce:hidden"
+                    strokeWidth={2.6}
+                  />
                   {t("Updating…")}
                 </>
               ) : justUpdated ? (

@@ -108,7 +108,9 @@ export function TvdbGuideModal({ open, onClose }: { open: boolean; onClose: () =
                   <div className="mt-1 flex items-start gap-2 rounded-md bg-canvas px-3.5 py-3">
                     <Check size={16} strokeWidth={2.6} className="mt-0.5 shrink-0 text-accent" />
                     <p className="text-[12.5px] leading-relaxed text-ink">
-                      {t("Ignore the paid tiers. Personal use is free, you are not a company. Just pick the first option and keep going.")}
+                      {t(
+                        "Ignore the paid tiers. Personal use is free, you are not a company. Just pick the first option and keep going.",
+                      )}
                     </p>
                   </div>
                 )}

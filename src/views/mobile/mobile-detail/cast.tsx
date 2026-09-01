@@ -11,11 +11,20 @@ export function CrewSection({ detail, onPerson }: { detail: TmdbDetail; onPerson
   const t = useT();
   const groups: Array<{ label: string; people: PersonRef[] }> = [];
   if (detail.directors.length > 0)
-    groups.push({ label: detail.directors.length === 1 ? t("Director") : t("Directors"), people: detail.directors });
+    groups.push({
+      label: detail.directors.length === 1 ? t("Director") : t("Directors"),
+      people: detail.directors,
+    });
   if (detail.creators.length > 0)
-    groups.push({ label: detail.creators.length === 1 ? t("Creator") : t("Creators"), people: detail.creators });
+    groups.push({
+      label: detail.creators.length === 1 ? t("Creator") : t("Creators"),
+      people: detail.creators,
+    });
   if (detail.writers.length > 0)
-    groups.push({ label: detail.writers.length === 1 ? t("Writer") : t("Writers"), people: detail.writers.slice(0, 4) });
+    groups.push({
+      label: detail.writers.length === 1 ? t("Writer") : t("Writers"),
+      people: detail.writers.slice(0, 4),
+    });
   if (groups.length === 0) return null;
   return (
     <section className="flex flex-col gap-3">
@@ -60,7 +69,9 @@ export function CastRow({ cast, onPerson }: { cast: CastEntry[]; onPerson?: OnPe
   return (
     <section className="flex flex-col gap-3.5">
       <SectionTitle>{t("Cast")}</SectionTitle>
-      <div className={`-mx-5 flex snap-x snap-proximity gap-3.5 overflow-x-auto px-5 ${HIDE_SCROLL}`}>
+      <div
+        className={`-mx-5 flex snap-x snap-proximity gap-3.5 overflow-x-auto px-5 ${HIDE_SCROLL}`}
+      >
         {shown.map((c, i) => (
           <CastChip key={`${c.id}-${i}`} cast={c} onPerson={onPerson} />
         ))}
@@ -91,7 +102,9 @@ function CastChip({ cast, onPerson }: { cast: CastEntry; onPerson?: OnPerson }) 
       <div className="flex flex-col gap-0.5">
         <p className="line-clamp-1 text-[12.5px] font-medium text-ink">{cast.name}</p>
         {cast.character && (
-          <p className="line-clamp-1 text-[11.5px] leading-tight text-ink-subtle">{cast.character}</p>
+          <p className="line-clamp-1 text-[11.5px] leading-tight text-ink-subtle">
+            {cast.character}
+          </p>
         )}
       </div>
     </Wrap>

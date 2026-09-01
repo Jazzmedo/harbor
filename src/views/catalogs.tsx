@@ -77,11 +77,15 @@ export function Catalogs({ active = true }: { active?: boolean }) {
         <header className="flex flex-col gap-5">
           <div className="flex items-end justify-between gap-4">
             <div className="flex flex-col gap-1.5">
-              <h1 className="font-display text-[30px] font-medium tracking-tight text-ink">{t("Catalogs")}</h1>
+              <h1 className="font-display text-[30px] font-medium tracking-tight text-ink">
+                {t("Catalogs")}
+              </h1>
               <p className="text-[14px] text-ink-muted">
                 {customize
                   ? t("Choose what shows, what stays hidden, and what sits up top.")
-                  : t("Everything your addons offer, shown as posters. Scroll, search, or filter to what you want.")}
+                  : t(
+                      "Everything your addons offer, shown as posters. Scroll, search, or filter to what you want.",
+                    )}
               </p>
             </div>
             {!loading && catalogs.length > 0 && (
@@ -103,7 +107,10 @@ export function Catalogs({ active = true }: { active?: boolean }) {
             <div className="flex flex-col gap-3">
               <div className="flex flex-wrap items-center gap-3">
                 <div className="relative h-11 w-full max-w-[360px] min-w-0">
-                  <Search size={16} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-ink-subtle" />
+                  <Search
+                    size={16}
+                    className="absolute start-3.5 top-1/2 -translate-y-1/2 text-ink-subtle"
+                  />
                   <input
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
@@ -122,7 +129,11 @@ export function Catalogs({ active = true }: { active?: boolean }) {
                   )}
                 </div>
                 <div className="flex flex-wrap items-center gap-1.5">
-                  <Chip label={t("All")} active={typeFilter === "all"} onClick={() => setTypeFilter("all")} />
+                  <Chip
+                    label={t("All")}
+                    active={typeFilter === "all"}
+                    onClick={() => setTypeFilter("all")}
+                  />
                   {types.map((ty) => {
                     const labelKey = catalogTypeLabelKey(ty);
                     return (
@@ -136,7 +147,11 @@ export function Catalogs({ active = true }: { active?: boolean }) {
                   })}
                 </div>
                 {addons.length > 1 && (
-                  <AddonFilterSelect addons={addons} value={addonFilter} onChange={setAddonFilter} />
+                  <AddonFilterSelect
+                    addons={addons}
+                    value={addonFilter}
+                    onChange={setAddonFilter}
+                  />
                 )}
               </div>
             </div>
@@ -173,7 +188,9 @@ export function Catalogs({ active = true }: { active?: boolean }) {
               <section className="flex flex-col gap-4">
                 <div className="flex items-center gap-2.5">
                   <Pin size={16} className="text-accent" />
-                  <h2 className="text-[15.5px] font-semibold tracking-tight text-ink">{t("Pinned")}</h2>
+                  <h2 className="text-[15.5px] font-semibold tracking-tight text-ink">
+                    {t("Pinned")}
+                  </h2>
                   <span className="text-[12px] text-ink-subtle">{pinnedCats.length}</span>
                 </div>
                 <div className="flex flex-col gap-7">
@@ -187,7 +204,12 @@ export function Catalogs({ active = true }: { active?: boolean }) {
               <section key={g.name} className="flex flex-col gap-4">
                 <div className="flex items-center gap-2.5">
                   {g.logo ? (
-                    <img src={g.logo} alt="" draggable={false} className="h-6 w-6 rounded-sm object-contain" />
+                    <img
+                      src={g.logo}
+                      alt=""
+                      draggable={false}
+                      className="h-6 w-6 rounded-sm object-contain"
+                    />
                   ) : (
                     <span className="flex h-6 w-6 items-center justify-center rounded-sm bg-elevated text-[11px] font-bold text-ink-subtle ring-1 ring-edge-soft">
                       {g.name.charAt(0).toUpperCase()}
@@ -215,7 +237,9 @@ function Chip({ label, active, onClick }: { label: string; active: boolean; onCl
     <button
       onClick={onClick}
       className={`h-9 rounded-full px-3.5 text-[13px] font-semibold transition-colors ${
-        active ? "bg-ink text-canvas" : "bg-elevated/40 text-ink-muted hover:bg-elevated hover:text-ink"
+        active
+          ? "bg-ink text-canvas"
+          : "bg-elevated/40 text-ink-muted hover:bg-elevated hover:text-ink"
       }`}
     >
       {label}
@@ -231,7 +255,10 @@ function ShelfSkeletons() {
           <div className="h-4 w-32 animate-pulse rounded-full bg-elevated/50" />
           <div className="flex gap-3 overflow-hidden">
             {[0, 1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="aspect-[2/3] w-36 shrink-0 animate-pulse rounded-xl bg-elevated/35" />
+              <div
+                key={i}
+                className="aspect-[2/3] w-36 shrink-0 animate-pulse rounded-xl bg-elevated/35"
+              />
             ))}
           </div>
         </div>
@@ -277,7 +304,9 @@ function EmptyState({ onOpenAddons }: { onOpenAddons: () => void }) {
       <div className="flex flex-col gap-1">
         <h2 className="text-[17px] font-semibold text-ink">{t("No catalogs yet")}</h2>
         <p className="max-w-md text-[13px] leading-relaxed text-ink-muted">
-          {t("Install a Stremio addon and its catalogs show up here as poster rails, ready to browse.")}
+          {t(
+            "Install a Stremio addon and its catalogs show up here as poster rails, ready to browse.",
+          )}
         </p>
       </div>
       <button

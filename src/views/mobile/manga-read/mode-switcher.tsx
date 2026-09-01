@@ -1,4 +1,10 @@
-import { BookOpen, Columns2, GalleryVertical, RectangleVertical, type LucideIcon } from "lucide-react";
+import {
+  BookOpen,
+  Columns2,
+  GalleryVertical,
+  RectangleVertical,
+  type LucideIcon,
+} from "lucide-react";
 import { useT } from "@/lib/i18n";
 import type { LocalMode } from "./local-reader-types";
 

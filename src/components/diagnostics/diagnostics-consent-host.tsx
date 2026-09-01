@@ -7,7 +7,9 @@ import { DiagnosticsProgress } from "./remote-support-progress";
 import { useDiagnosticsRun } from "./use-diagnostics-run";
 import { useT } from "@/lib/i18n";
 
-type Active = { requestId: string; phase: "consent" } | { requestId: string; phase: "progress"; ticket: string };
+type Active =
+  | { requestId: string; phase: "consent" }
+  | { requestId: string; phase: "progress"; ticket: string };
 
 function ProgressShell({
   requestId,
@@ -74,6 +76,10 @@ export function DiagnosticsConsentHost() {
   }
 
   return (
-    <ProgressShell requestId={active.requestId} ticket={active.ticket} onClose={() => setActive(null)} />
+    <ProgressShell
+      requestId={active.requestId}
+      ticket={active.ticket}
+      onClose={() => setActive(null)}
+    />
   );
 }

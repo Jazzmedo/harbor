@@ -94,7 +94,8 @@ export function DownloadRow({ d, compact = false }: { d: DownloadItem; compact?:
               <>
                 <Check size={13} className="text-accent" strokeWidth={2.6} />
                 <span className="text-ink-muted">
-                  {d.phaseLabel ? t(d.phaseLabel) : t("Saved")}{d.streamLabel ? ` · ${d.streamLabel}` : ""}
+                  {d.phaseLabel ? t(d.phaseLabel) : t("Saved")}
+                  {d.streamLabel ? ` · ${d.streamLabel}` : ""}
                   {d.totalBytes ? ` · ${fmtBytes(d.totalBytes)}` : ""}
                 </span>
               </>
@@ -140,12 +141,19 @@ export function DownloadRow({ d, compact = false }: { d: DownloadItem; compact?:
                   </RowBtn>
                 )}
                 {isEBook && d.format === "pdf" ? (
-                  <span className="flex h-9 w-9 items-center justify-center text-ink-subtle" title={t("PDF print dialog opened")}>
+                  <span
+                    className="flex h-9 w-9 items-center justify-center text-ink-subtle"
+                    title={t("PDF print dialog opened")}
+                  >
                     <FileText size={16} />
                   </span>
                 ) : (
                   <RowBtn label={t("Show in folder")} onClick={() => void revealDownload(d.id)}>
-                    {isEBook ? <BookOpen size={16} strokeWidth={2} /> : <FolderOpen size={16} strokeWidth={2} />}
+                    {isEBook ? (
+                      <BookOpen size={16} strokeWidth={2} />
+                    ) : (
+                      <FolderOpen size={16} strokeWidth={2} />
+                    )}
                   </RowBtn>
                 )}
               </>

@@ -1,4 +1,13 @@
-import { AlertTriangle, Loader2, Plus, RefreshCw, Repeat2, Volume2, VolumeX, X } from "lucide-react";
+import {
+  AlertTriangle,
+  Loader2,
+  Plus,
+  RefreshCw,
+  Repeat2,
+  Volume2,
+  VolumeX,
+  X,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { SlotChannel } from "@/lib/multiview/store";
 import { useT } from "@/lib/i18n";
@@ -163,10 +172,14 @@ export function Cell({
             {status === "offline" ? (
               <>
                 <AlertTriangle size={22} className="text-danger" />
-                <span className="text-[12px] font-medium text-ink-muted">{t("Stream offline")}</span>
+                <span className="text-[12px] font-medium text-ink-muted">
+                  {t("Stream offline")}
+                </span>
                 {exhausted && (
                   <p className="max-w-[260px] text-center text-[11px] leading-snug text-ink-subtle">
-                    {t("If multiple streams are running, your IPTV provider may limit concurrent connections.")}
+                    {t(
+                      "If multiple streams are running, your IPTV provider may limit concurrent connections.",
+                    )}
                   </p>
                 )}
                 <button
@@ -185,7 +198,9 @@ export function Cell({
               <>
                 <Loader2 size={20} className="animate-spin" />
                 {status === "retrying" && (
-                  <span className="text-[11px] font-medium text-ink-muted">{t("Reconnecting…")}</span>
+                  <span className="text-[11px] font-medium text-ink-muted">
+                    {t("Reconnecting…")}
+                  </span>
                 )}
               </>
             )}

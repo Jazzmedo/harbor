@@ -59,12 +59,7 @@ function FlagChip({ code, size = 24 }: { code: string; size?: number }) {
       className="inline-block overflow-hidden rounded-sm ring-1 ring-edge-soft"
       style={{ width: size, height: Math.round(size * 0.75) }}
     >
-      <img
-        src={src}
-        alt=""
-        draggable={false}
-        className="h-full w-full object-cover"
-      />
+      <img src={src} alt="" draggable={false} className="h-full w-full object-cover" />
     </span>
   );
 }
@@ -155,56 +150,73 @@ export function RegionPicker({
               setOpen(false);
             }}
           />
-        <div
-          className="absolute left-0 right-0 z-30 mt-2 flex max-h-[420px] flex-col overflow-hidden rounded-md bg-surface harbor-float"
-          style={{ animation: "harbor-fade-in 140ms ease-out both" }}
-        >
-          <div className="p-2">
-            <div className="flex items-center gap-2 rounded-md bg-canvas px-3">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-                <circle cx="11" cy="11" r="6.5" stroke="currentColor" strokeWidth="1.7" className="text-ink-subtle" />
-                <path d="M16 16l4 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" className="text-ink-subtle" />
-              </svg>
-              <input
-                ref={inputRef}
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={t("Search countries...")}
-                className="h-10 flex-1 bg-transparent text-[13.5px] text-ink placeholder:text-ink-subtle outline-none"
-              />
+          <div
+            className="absolute left-0 right-0 z-30 mt-2 flex max-h-[420px] flex-col overflow-hidden rounded-md bg-surface harbor-float"
+            style={{ animation: "harbor-fade-in 140ms ease-out both" }}
+          >
+            <div className="p-2">
+              <div className="flex items-center gap-2 rounded-md bg-canvas px-3">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+                  <circle
+                    cx="11"
+                    cy="11"
+                    r="6.5"
+                    stroke="currentColor"
+                    strokeWidth="1.7"
+                    className="text-ink-subtle"
+                  />
+                  <path
+                    d="M16 16l4 4"
+                    stroke="currentColor"
+                    strokeWidth="1.7"
+                    strokeLinecap="round"
+                    className="text-ink-subtle"
+                  />
+                </svg>
+                <input
+                  ref={inputRef}
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={t("Search countries...")}
+                  className="h-10 flex-1 bg-transparent text-[13.5px] text-ink placeholder:text-ink-subtle outline-none"
+                />
+              </div>
+            </div>
+            <div className="flex-1 overflow-y-auto px-1.5 pb-1.5 [scrollbar-width:thin]">
+              {filtered.length === 0 ? (
+                <div className="px-4 py-6 text-center text-[13px] text-ink-subtle">
+                  {t("No matches")}
+                </div>
+              ) : (
+                filtered.map((r) => {
+                  const selected = r.code === currentCode;
+                  return (
+                    <button
+                      key={r.code}
+                      onClick={() => {
+                        onChange(r.code);
+                        setOpen(false);
+                      }}
+                      className={`flex h-12 w-full items-center gap-3 rounded-md px-2.5 text-start transition-colors ${
+                        selected
+                          ? "bg-elevated text-ink"
+                          : "text-ink-muted hover:bg-elevated hover:text-ink"
+                      }`}
+                    >
+                      <FlagChip code={r.code} size={30} />
+                      <span className="flex-1 truncate text-[13.5px] font-medium">
+                        {t(r.label)}
+                      </span>
+                      <span className="shrink-0 font-mono text-[10.5px] tracking-wider text-ink-subtle">
+                        {r.code}
+                      </span>
+                      {selected && <Check size={14} strokeWidth={2.4} className="ms-1 text-ink" />}
+                    </button>
+                  );
+                })
+              )}
             </div>
           </div>
-          <div className="flex-1 overflow-y-auto px-1.5 pb-1.5 [scrollbar-width:thin]">
-            {filtered.length === 0 ? (
-              <div className="px-4 py-6 text-center text-[13px] text-ink-subtle">{t("No matches")}</div>
-            ) : (
-              filtered.map((r) => {
-                const selected = r.code === currentCode;
-                return (
-                  <button
-                    key={r.code}
-                    onClick={() => {
-                      onChange(r.code);
-                      setOpen(false);
-                    }}
-                    className={`flex h-12 w-full items-center gap-3 rounded-md px-2.5 text-start transition-colors ${
-                      selected ? "bg-elevated text-ink" : "text-ink-muted hover:bg-elevated hover:text-ink"
-                    }`}
-                  >
-                    <FlagChip code={r.code} size={30} />
-                    <span className="flex-1 truncate text-[13.5px] font-medium">
-                      {t(r.label)}
-                    </span>
-                    <span className="shrink-0 font-mono text-[10.5px] tracking-wider text-ink-subtle">
-                      {r.code}
-                    </span>
-                    {selected && <Check size={14} strokeWidth={2.4} className="ms-1 text-ink" />}
-                  </button>
-                );
-              })
-            )}
-          </div>
-        </div>
         </>
       )}
     </div>

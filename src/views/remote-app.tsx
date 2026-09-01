@@ -398,7 +398,9 @@ function RendererSheet({
               </span>
               <span className="flex flex-1 flex-col">
                 <span className="text-[16px] font-medium">{t("This PC")}</span>
-                <span className="text-[12px] text-ink-muted">{t("Harbor on the server display")}</span>
+                <span className="text-[12px] text-ink-muted">
+                  {t("Harbor on the server display")}
+                </span>
               </span>
             </button>
           </li>
@@ -425,7 +427,9 @@ function RendererSheet({
             <li className="px-3 py-4 text-[13px] text-ink-muted">
               {snapshot.castDiscovering
                 ? t("Scanning your network...")
-                : t("No Chromecast, DLNA, or Roku devices found. Make sure your TV is on, awake, and on the same Wi-Fi.")}
+                : t(
+                    "No Chromecast, DLNA, or Roku devices found. Make sure your TV is on, awake, and on the same Wi-Fi.",
+                  )}
             </li>
           )}
         </ul>

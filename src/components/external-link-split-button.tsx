@@ -26,7 +26,6 @@ function ActionIcon({ action }: { action: ExternalLinkDestinationPreference }) {
   );
 }
 
-
 export function ExternalLinkSplitButton({
   main,
   alternate,
@@ -119,7 +118,9 @@ export function ExternalLinkSplitButton({
             className="flex min-h-11 w-full items-center gap-2.5 rounded-lg px-3 text-start text-[13px] font-medium text-ink transition-colors hover:bg-raised"
           >
             <ActionIcon action={alternate} />
-            <span>{alternate === "harbor" ? t("Continue in Harbor") : t("Continue in browser")}</span>
+            <span>
+              {alternate === "harbor" ? t("Continue in Harbor") : t("Continue in browser")}
+            </span>
           </button>
         </div>
       )}

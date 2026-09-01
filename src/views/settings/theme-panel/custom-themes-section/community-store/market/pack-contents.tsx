@@ -3,7 +3,15 @@ import { useT } from "@/lib/i18n";
 import type { StoreBundle } from "@/lib/bundle-store";
 import { labelForIcon } from "./bundle-labels";
 
-function PackTile({ url, label, variant }: { url: string; label: string; variant: "hero" | "detail" }) {
+function PackTile({
+  url,
+  label,
+  variant,
+}: {
+  url: string;
+  label: string;
+  variant: "hero" | "detail";
+}) {
   const [failed, setFailed] = useState(false);
   if (variant === "hero") {
     return (
@@ -60,9 +68,18 @@ export function PackContents({
       <span className="text-[12.5px] font-semibold uppercase tracking-[0.12em] text-ink-subtle">
         {t("{count} in this pack", { count: icons.length })}
       </span>
-      <div className={variant === "hero" ? "flex flex-wrap gap-2" : "grid grid-cols-2 gap-2 sm:grid-cols-3"}>
+      <div
+        className={
+          variant === "hero" ? "flex flex-wrap gap-2" : "grid grid-cols-2 gap-2 sm:grid-cols-3"
+        }
+      >
         {shown.map((ic) => (
-          <PackTile key={ic.key} url={ic.url} label={labelForIcon(bundle.kind, ic.key)} variant={variant} />
+          <PackTile
+            key={ic.key}
+            url={ic.url}
+            label={labelForIcon(bundle.kind, ic.key)}
+            variant={variant}
+          />
         ))}
         {variant === "hero" && overflow > 0 && (
           <span className="inline-flex items-center rounded-md bg-elevated px-2.5 py-1.5 text-[12.5px] font-semibold text-ink-muted ring-1 ring-edge-soft">

@@ -217,12 +217,20 @@ export function MobileAwards({
           ) : mode === "grid" ? (
             <>
               <WinnerGrid films={films} onOpen={onOpenDetail} />
-              {loadingMore && <div className="mt-4"><GridSkeleton rows={1} /></div>}
+              {loadingMore && (
+                <div className="mt-4">
+                  <GridSkeleton rows={1} />
+                </div>
+              )}
             </>
           ) : (
             <>
               <WinnerList films={films} awardType={awardType} tint={tint} onOpen={onOpenDetail} />
-              {loadingMore && <div className="mt-2"><ListSkeleton rows={2} /></div>}
+              {loadingMore && (
+                <div className="mt-2">
+                  <ListSkeleton rows={2} />
+                </div>
+              )}
             </>
           )}
 
@@ -274,10 +282,20 @@ function ModeToggle({
   const t = useT();
   return (
     <div className="flex items-center gap-1 rounded-full border border-edge-soft bg-surface p-1">
-      <ModeButton active={mode === "grid"} onClick={() => onSelect("grid")} label={t("Grid view")} tint={tint}>
+      <ModeButton
+        active={mode === "grid"}
+        onClick={() => onSelect("grid")}
+        label={t("Grid view")}
+        tint={tint}
+      >
         <LayoutGrid size={16} strokeWidth={2.2} />
       </ModeButton>
-      <ModeButton active={mode === "list"} onClick={() => onSelect("list")} label={t("List view")} tint={tint}>
+      <ModeButton
+        active={mode === "list"}
+        onClick={() => onSelect("list")}
+        label={t("List view")}
+        tint={tint}
+      >
         <List size={16} strokeWidth={2.2} />
       </ModeButton>
     </div>
@@ -339,8 +357,17 @@ function GridTile({ meta, onOpen }: { meta: Meta; onOpen: (m: Meta) => void }) {
       aria-label={t("View {title}", { title: meta.name })}
       className="text-start transition-transform duration-150 active:scale-[0.96] motion-reduce:transition-none"
     >
-      <Poster src={src} onError={onError} seed={meta.id} ratio="portrait" lazy className="rounded-[12px]" />
-      <p className="mt-1.5 line-clamp-2 text-[12px] font-medium leading-snug text-ink-muted">{meta.name}</p>
+      <Poster
+        src={src}
+        onError={onError}
+        seed={meta.id}
+        ratio="portrait"
+        lazy
+        className="rounded-[12px]"
+      />
+      <p className="mt-1.5 line-clamp-2 text-[12px] font-medium leading-snug text-ink-muted">
+        {meta.name}
+      </p>
     </button>
   );
 }
@@ -393,10 +420,19 @@ function ListRow({
       className="flex items-center gap-3.5 rounded-2xl p-2 text-start transition-colors active:bg-elevated/50 motion-reduce:transition-none"
     >
       <div className="w-[46px] shrink-0">
-        <Poster src={src} onError={onError} seed={meta.id} ratio="portrait" lazy className="rounded-[8px]" />
+        <Poster
+          src={src}
+          onError={onError}
+          seed={meta.id}
+          ratio="portrait"
+          lazy
+          className="rounded-[8px]"
+        />
       </div>
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="line-clamp-1 text-[15px] font-medium leading-snug text-ink">{meta.name}</span>
+        <span className="line-clamp-1 text-[15px] font-medium leading-snug text-ink">
+          {meta.name}
+        </span>
         <span className="text-[12.5px] tabular-nums text-ink-subtle">
           {year ? `${year} · ` : ""}
           {meta.type === "series" ? t("Series") : t("Film")}

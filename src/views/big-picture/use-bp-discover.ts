@@ -181,7 +181,14 @@ export function useBpGenreArt(genre: string, enabled: boolean): Meta[] {
     fetchGenreSample(settings.tmdbKey, genre)
       .then((list) => {
         if (dead) return;
-        setArt(claimUniqueArt(key, list.filter((m) => m.background), (m) => m.id, 3));
+        setArt(
+          claimUniqueArt(
+            key,
+            list.filter((m) => m.background),
+            (m) => m.id,
+            3,
+          ),
+        );
       })
       .catch(() => {});
     return () => {
@@ -192,7 +199,6 @@ export function useBpGenreArt(genre: string, enabled: boolean): Meta[] {
 
   return art;
 }
-
 
 export type BpDiscoverRail = { key: string; name: string; kicker?: string; metas: Meta[] };
 

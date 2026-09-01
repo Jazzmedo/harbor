@@ -84,7 +84,11 @@ export function LibraryBrowser({
           onClick={onClose}
           className="group inline-flex items-center gap-1.5 text-[13px] font-semibold text-ink-subtle transition-colors hover:text-ink"
         >
-          <ChevronLeft size={16} strokeWidth={2.4} className="dir-icon transition-transform group-hover:-translate-x-0.5 rtl:group-hover:translate-x-0.5" />
+          <ChevronLeft
+            size={16}
+            strokeWidth={2.4}
+            className="dir-icon transition-transform group-hover:-translate-x-0.5 rtl:group-hover:translate-x-0.5"
+          />
           {t("Your themes")}
         </button>
         <MarketSegmented
@@ -99,71 +103,108 @@ export function LibraryBrowser({
       </div>
 
       <div className="flex flex-col gap-8">
-          {tab === "community" ? (
-            <CommunityStore initialTab={initialStoreTab} />
-          ) : tab === "mine" ? (
-            <MyThemesDashboard />
-          ) : (
+        {tab === "community" ? (
+          <CommunityStore initialTab={initialStoreTab} />
+        ) : tab === "mine" ? (
+          <MyThemesDashboard />
+        ) : (
           <>
-          <ThemeUpdatesBanner />
-          <MyLibraryFilters
-            query={libQuery}
-            onQuery={setLibQuery}
-            cat={libCat}
-            onCat={setLibCat}
-            counts={libCounts}
-            shown={libShown.length}
-            total={libAll.length}
-          />
-          {libFiltering ? (
-            libShown.length > 0 ? (
-              <BrowserGrid
-                entries={libShown}
-                activeId={activeId}
-                onActivate={onActivate}
-                onExport={onExport}
-                onDownload={onDownload}
-                onRemove={onRemove}
-              />
+            <ThemeUpdatesBanner />
+            <MyLibraryFilters
+              query={libQuery}
+              onQuery={setLibQuery}
+              cat={libCat}
+              onCat={setLibCat}
+              counts={libCounts}
+              shown={libShown.length}
+              total={libAll.length}
+            />
+            {libFiltering ? (
+              libShown.length > 0 ? (
+                <BrowserGrid
+                  entries={libShown}
+                  activeId={activeId}
+                  onActivate={onActivate}
+                  onExport={onExport}
+                  onDownload={onDownload}
+                  onRemove={onRemove}
+                />
+              ) : (
+                <p className="rounded-md border border-dashed border-edge px-4 py-14 text-center text-[13px] text-ink-subtle">
+                  {t("No themes match your filter.")}
+                </p>
+              )
             ) : (
-              <p className="rounded-md border border-dashed border-edge px-4 py-14 text-center text-[13px] text-ink-subtle">
-                {t("No themes match your filter.")}
-              </p>
-            )
-          ) : (
-            <>
-              {featured.length > 0 && (
-                <BrowserSection title="Featured" subtitle="Hand-picked reskins from the Harbor crew.">
-                  <BrowserGrid entries={featured} activeId={activeId} onActivate={onActivate} onExport={onExport} onDownload={onDownload} onRemove={onRemove} />
-                </BrowserSection>
-              )}
-              {BETA_THEMES.length > 0 && (
-                <BrowserSection title="Beta" subtitle="Experimental 1:1 ports of other apps.">
-                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                    <BetaThemesCard count={BETA_THEMES.length} onClick={() => setBetaOpen(true)} />
-                  </div>
-                </BrowserSection>
-              )}
-              {builtIn.length > 0 && (
-                <BrowserSection title="Built-in" subtitle="Ships with Harbor. Always available.">
-                  <BrowserGrid entries={builtIn} activeId={activeId} onActivate={onActivate} onExport={onExport} onDownload={onDownload} onRemove={onRemove} />
-                </BrowserSection>
-              )}
-              {templates.length > 0 && (
-                <BrowserSection title="Templates" subtitle="Starting points to remix and save your own.">
-                  <BrowserGrid entries={templates} activeId={activeId} onActivate={onActivate} onExport={onExport} onDownload={onDownload} onRemove={onRemove} />
-                </BrowserSection>
-              )}
-              {yours.length > 0 && (
-                <BrowserSection title="Your themes" subtitle="Themes you imported or built.">
-                  <BrowserGrid entries={yours} activeId={activeId} onActivate={onActivate} onExport={onExport} onDownload={onDownload} onRemove={onRemove} />
-                </BrowserSection>
-              )}
-            </>
-          )}
+              <>
+                {featured.length > 0 && (
+                  <BrowserSection
+                    title="Featured"
+                    subtitle="Hand-picked reskins from the Harbor crew."
+                  >
+                    <BrowserGrid
+                      entries={featured}
+                      activeId={activeId}
+                      onActivate={onActivate}
+                      onExport={onExport}
+                      onDownload={onDownload}
+                      onRemove={onRemove}
+                    />
+                  </BrowserSection>
+                )}
+                {BETA_THEMES.length > 0 && (
+                  <BrowserSection title="Beta" subtitle="Experimental 1:1 ports of other apps.">
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                      <BetaThemesCard
+                        count={BETA_THEMES.length}
+                        onClick={() => setBetaOpen(true)}
+                      />
+                    </div>
+                  </BrowserSection>
+                )}
+                {builtIn.length > 0 && (
+                  <BrowserSection title="Built-in" subtitle="Ships with Harbor. Always available.">
+                    <BrowserGrid
+                      entries={builtIn}
+                      activeId={activeId}
+                      onActivate={onActivate}
+                      onExport={onExport}
+                      onDownload={onDownload}
+                      onRemove={onRemove}
+                    />
+                  </BrowserSection>
+                )}
+                {templates.length > 0 && (
+                  <BrowserSection
+                    title="Templates"
+                    subtitle="Starting points to remix and save your own."
+                  >
+                    <BrowserGrid
+                      entries={templates}
+                      activeId={activeId}
+                      onActivate={onActivate}
+                      onExport={onExport}
+                      onDownload={onDownload}
+                      onRemove={onRemove}
+                    />
+                  </BrowserSection>
+                )}
+                {yours.length > 0 && (
+                  <BrowserSection title="Your themes" subtitle="Themes you imported or built.">
+                    <BrowserGrid
+                      entries={yours}
+                      activeId={activeId}
+                      onActivate={onActivate}
+                      onExport={onExport}
+                      onDownload={onDownload}
+                      onRemove={onRemove}
+                    />
+                  </BrowserSection>
+                )}
+              </>
+            )}
           </>
-          )}
-        </div>
+        )}
+      </div>
       <BetaThemesModal
         open={betaOpen}
         activeId={activeId}

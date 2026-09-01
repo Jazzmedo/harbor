@@ -7,12 +7,32 @@ type Category = "Action" | "Puzzle" | "Learning" | "Sports & Racing" | "Build & 
 type Game = { name: string; blurb: string; scratchId: number; cat: Category };
 
 const GAMES: Game[] = [
-  { name: "Paper Minecraft", blurb: "Build and explore in 2D", scratchId: 10128407, cat: "Build & Cook" },
-  { name: "Miner Cat", blurb: "Dig deep, collect it all", scratchId: 336338957, cat: "Build & Cook" },
-  { name: "Burger Maker", blurb: "Stack the tastiest burger", scratchId: 650886217, cat: "Build & Cook" },
+  {
+    name: "Paper Minecraft",
+    blurb: "Build and explore in 2D",
+    scratchId: 10128407,
+    cat: "Build & Cook",
+  },
+  {
+    name: "Miner Cat",
+    blurb: "Dig deep, collect it all",
+    scratchId: 336338957,
+    cat: "Build & Cook",
+  },
+  {
+    name: "Burger Maker",
+    blurb: "Stack the tastiest burger",
+    scratchId: 650886217,
+    cat: "Build & Cook",
+  },
   { name: "Appel", blurb: "Jumpy apple platformer", scratchId: 60917032, cat: "Action" },
   { name: "Platformer!", blurb: "Run, jump and bounce", scratchId: 853110869, cat: "Action" },
-  { name: "Geometry Dash Wave", blurb: "Ride the wave, dodge spikes", scratchId: 728467856, cat: "Action" },
+  {
+    name: "Geometry Dash Wave",
+    blurb: "Ride the wave, dodge spikes",
+    scratchId: 728467856,
+    cat: "Action",
+  },
   { name: "Flappy Bird", blurb: "Flap between the pipes", scratchId: 195385320, cat: "Action" },
   { name: "Crossy Road", blurb: "Hop across safely", scratchId: 230324399, cat: "Action" },
   { name: "Getting Over It", blurb: "Climb up. Don't fall!", scratchId: 389464290, cat: "Action" },
@@ -20,7 +40,12 @@ const GAMES: Game[] = [
   { name: "Pacman Platformer", blurb: "Chomp and jump", scratchId: 273440163, cat: "Action" },
   { name: "Space Shooter", blurb: "Blast through space", scratchId: 562520973, cat: "Action" },
   { name: "Dino Runner", blurb: "The no-internet dinosaur", scratchId: 318868094, cat: "Action" },
-  { name: "Dino Game Remastered", blurb: "Jump the cactuses, fancy", scratchId: 339875080, cat: "Action" },
+  {
+    name: "Dino Game Remastered",
+    blurb: "Jump the cactuses, fancy",
+    scratchId: 339875080,
+    cat: "Action",
+  },
   { name: "Tetris", blurb: "Stack the falling blocks", scratchId: 469540467, cat: "Puzzle" },
   { name: "2048", blurb: "Slide tiles, make big numbers", scratchId: 312722722, cat: "Puzzle" },
   { name: "Mini Pacman", blurb: "Eat dots, dodge ghosts", scratchId: 164237855, cat: "Puzzle" },
@@ -31,7 +56,12 @@ const GAMES: Game[] = [
   { name: "Tower Defense", blurb: "Stop the invaders", scratchId: 411210603, cat: "Puzzle" },
   { name: "Tower Defense 2", blurb: "Even bigger defenses", scratchId: 187139359, cat: "Puzzle" },
   { name: "Math Game", blurb: "Quick math challenges", scratchId: 621467787, cat: "Learning" },
-  { name: "Rapid Multiplication", blurb: "Times tables, fast!", scratchId: 196194631, cat: "Learning" },
+  {
+    name: "Rapid Multiplication",
+    blurb: "Times tables, fast!",
+    scratchId: 196194631,
+    cat: "Learning",
+  },
   { name: "Typing Game", blurb: "Type words like a pro", scratchId: 219477156, cat: "Learning" },
   { name: "Piano", blurb: "Play real songs", scratchId: 409714793, cat: "Learning" },
   { name: "Pixel Art Creator", blurb: "Draw with pixels", scratchId: 744659873, cat: "Learning" },
@@ -46,23 +76,66 @@ const GAMES: Game[] = [
   { name: "Pong", blurb: "The original paddle battle", scratchId: 244698177, cat: "Puzzle" },
   { name: "Breakout", blurb: "Smash all the bricks", scratchId: 580704486, cat: "Puzzle" },
   { name: "Minesweeper", blurb: "Clear the field carefully", scratchId: 199047441, cat: "Puzzle" },
-  { name: "Super Tic-Tac-Toe", blurb: "Tic-tac-toe, leveled up", scratchId: 902399095, cat: "Puzzle" },
+  {
+    name: "Super Tic-Tac-Toe",
+    blurb: "Tic-tac-toe, leveled up",
+    scratchId: 902399095,
+    cat: "Puzzle",
+  },
   { name: "Wordle", blurb: "Guess the secret word", scratchId: 639908378, cat: "Learning" },
-  { name: "Solar System Sandbox", blurb: "Build your own planets", scratchId: 1020945768, cat: "Learning" },
+  {
+    name: "Solar System Sandbox",
+    blurb: "Build your own planets",
+    scratchId: 1020945768,
+    cat: "Learning",
+  },
   { name: "Lines", blurb: "A calm drawing puzzle", scratchId: 237232045, cat: "Learning" },
   { name: "Planet Clicker", blurb: "Grow a whole planet", scratchId: 377874630, cat: "Clickers" },
   { name: "Cookie Clicker", blurb: "Bake ALL the cookies", scratchId: 930655286, cat: "Clickers" },
   { name: "Money Clicker", blurb: "Tap your way to riches", scratchId: 208974963, cat: "Clickers" },
-  { name: "Restaurant Tycoon", blurb: "Run your own restaurant", scratchId: 261028674, cat: "Clickers" },
-  { name: "3D Ping Pong", blurb: "Table tennis in 3D", scratchId: 247987287, cat: "Sports & Racing" },
+  {
+    name: "Restaurant Tycoon",
+    blurb: "Run your own restaurant",
+    scratchId: 261028674,
+    cat: "Clickers",
+  },
+  {
+    name: "3D Ping Pong",
+    blurb: "Table tennis in 3D",
+    scratchId: 247987287,
+    cat: "Sports & Racing",
+  },
   { name: "3D Tennis", blurb: "Serve and smash", scratchId: 520716879, cat: "Sports & Racing" },
-  { name: "Head Soccer", blurb: "Big-head soccer showdown", scratchId: 474230268, cat: "Sports & Racing" },
+  {
+    name: "Head Soccer",
+    blurb: "Big-head soccer showdown",
+    scratchId: 474230268,
+    cat: "Sports & Racing",
+  },
   { name: "Soccer Pong", blurb: "Soccer meets pong", scratchId: 184355332, cat: "Sports & Racing" },
-  { name: "Nitro Racing", blurb: "Pedal to the metal", scratchId: 400349603, cat: "Sports & Racing" },
-  { name: "Mini Golf", blurb: "Putt through silly courses", scratchId: 166369590, cat: "Sports & Racing" },
+  {
+    name: "Nitro Racing",
+    blurb: "Pedal to the metal",
+    scratchId: 400349603,
+    cat: "Sports & Racing",
+  },
+  {
+    name: "Mini Golf",
+    blurb: "Putt through silly courses",
+    scratchId: 166369590,
+    cat: "Sports & Racing",
+  },
 ];
 
-const FILTERS: Array<"All" | Category> = ["All", "Action", "Puzzle", "Learning", "Clickers", "Sports & Racing", "Build & Cook"];
+const FILTERS: Array<"All" | Category> = [
+  "All",
+  "Action",
+  "Puzzle",
+  "Learning",
+  "Clickers",
+  "Sports & Racing",
+  "Build & Cook",
+];
 
 const STAGE_W = 480;
 const STAGE_H = 360;
@@ -106,7 +179,9 @@ export function GameArcade({
             type="button"
             onClick={() => setFilter(f)}
             className={`h-12 rounded-full px-6 text-[15.5px] font-bold transition-transform duration-150 active:scale-95 ${
-              f === filter ? "bg-[#ffd166] text-[#4a3200]" : "bg-white/20 text-white hover:bg-white/30"
+              f === filter
+                ? "bg-[#ffd166] text-[#4a3200]"
+                : "bg-white/20 text-white hover:bg-white/30"
             }`}
           >
             {t(f)}
@@ -141,7 +216,9 @@ export function GameArcade({
                 <span className="truncate font-display text-[17px] font-medium leading-tight text-[#123a52]">
                   {g.name}
                 </span>
-                <span className="truncate text-[12.5px] font-semibold text-[#3c6a84]">{t(g.blurb)}</span>
+                <span className="truncate text-[12.5px] font-semibold text-[#3c6a84]">
+                  {t(g.blurb)}
+                </span>
               </span>
             </button>
           ))}
@@ -167,7 +244,10 @@ function GamePlayer({ game, onBack }: { game: Game; onBack: () => void }) {
     const update = () => {
       const rect = el.getBoundingClientRect();
       const pad = 8;
-      const s = Math.max(0.5, Math.min((rect.width - pad) / STAGE_W, (rect.height - pad) / STAGE_H));
+      const s = Math.max(
+        0.5,
+        Math.min((rect.width - pad) / STAGE_W, (rect.height - pad) / STAGE_H),
+      );
       setScale(s);
     };
     update();
@@ -242,7 +322,11 @@ function GamePlayer({ game, onBack }: { game: Game; onBack: () => void }) {
             title={fullscreen ? t("Exit full screen") : t("Full screen")}
             className="flex h-12 w-12 items-center justify-center rounded-full border-4 border-white/40 bg-white/90 text-[#123a52] transition-transform duration-150 hover:scale-[1.06] active:scale-95"
           >
-            {fullscreen ? <Minimize size={18} strokeWidth={2.6} /> : <Expand size={18} strokeWidth={2.6} />}
+            {fullscreen ? (
+              <Minimize size={18} strokeWidth={2.6} />
+            ) : (
+              <Expand size={18} strokeWidth={2.6} />
+            )}
           </button>
         </div>
       </div>
@@ -283,7 +367,12 @@ function GamePlayer({ game, onBack }: { game: Game; onBack: () => void }) {
           )}
           {state === "failed" && (
             <div className="flex flex-col items-center gap-4 px-8 py-10 text-center">
-              <img src="/kids/doodles/liloctored.png" alt="" draggable={false} className="h-20 w-auto" />
+              <img
+                src="/kids/doodles/liloctored.png"
+                alt=""
+                draggable={false}
+                className="h-20 w-auto"
+              />
               <p className="font-display text-[22px] font-medium text-white">
                 {t("This game couldn't load right now.")}
               </p>

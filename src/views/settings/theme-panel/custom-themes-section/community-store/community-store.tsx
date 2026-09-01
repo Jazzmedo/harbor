@@ -30,7 +30,8 @@ export function CommunityStore({ initialTab = "discover" }: { initialTab?: Store
   const empty = ready && data.all.length === 0;
   const interactive = ready && !empty;
   const themeTab = tab === "discover" || tab === "themes";
-  const bundleKind: BundleKind | null = tab === "badges" ? "badge" : tab === "awards" ? "award" : null;
+  const bundleKind: BundleKind | null =
+    tab === "badges" ? "badge" : tab === "awards" ? "award" : null;
 
   const onTab = (t: StoreTab) => {
     setTab(t);
@@ -63,7 +64,9 @@ export function CommunityStore({ initialTab = "discover" }: { initialTab?: Store
       setSelected(t);
       return;
     }
-    getTheme(themeId).then(setSelected).catch(() => {});
+    getTheme(themeId)
+      .then(setSelected)
+      .catch(() => {});
   };
 
   return (
@@ -138,7 +141,9 @@ export function CommunityStore({ initialTab = "discover" }: { initialTab?: Store
 
       {selected && <ThemeDetail theme={selected} onClose={() => setSelected(null)} />}
       {uploadOpen && <ThemeUploadFlow onClose={() => setUploadOpen(false)} />}
-      {bundleUpload && <BundleUploadFlow initialKind={bundleUpload} onClose={() => setBundleUpload(null)} />}
+      {bundleUpload && (
+        <BundleUploadFlow initialKind={bundleUpload} onClose={() => setBundleUpload(null)} />
+      )}
     </section>
   );
 }
@@ -146,7 +151,7 @@ export function CommunityStore({ initialTab = "discover" }: { initialTab?: Store
 function ErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
   const t = useT();
   return (
- <div className="mx-auto flex max-w-sm flex-col items-center gap-4 rounded-md bg-surface px-6 py-14 text-center">
+    <div className="mx-auto flex max-w-sm flex-col items-center gap-4 rounded-md bg-surface px-6 py-14 text-center">
       <span className="grid h-12 w-12 place-items-center rounded-full bg-danger/15 text-danger">
         <AlertCircle size={22} />
       </span>
@@ -170,7 +175,9 @@ function EmptyState({ onShare }: { onShare: () => void }) {
         <Sparkles size={26} />
       </span>
       <div className="flex flex-col gap-1.5">
-        <h3 className="text-[18px] font-semibold tracking-tight text-ink">{t("No community themes yet")}</h3>
+        <h3 className="text-[18px] font-semibold tracking-tight text-ink">
+          {t("No community themes yet")}
+        </h3>
         <p className="text-[13.5px] leading-relaxed text-ink-muted">
           {t("Be the first to share a look. Publish a theme and it shows up here for everyone.")}
         </p>

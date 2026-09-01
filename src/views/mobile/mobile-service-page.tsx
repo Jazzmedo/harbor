@@ -130,7 +130,9 @@ function ServiceHero({
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-64"
-        style={{ background: `radial-gradient(125% 85% at 50% -8%, ${tint}33 0%, transparent 60%)` }}
+        style={{
+          background: `radial-gradient(125% 85% at 50% -8%, ${tint}33 0%, transparent 60%)`,
+        }}
       />
       <div
         className="relative flex flex-col gap-4 px-4"
@@ -163,7 +165,10 @@ function ServiceHero({
 function EmptyState({ name, hasKey }: { name: string; hasKey: boolean }) {
   const t = useT();
   const message = hasKey
-    ? t("Nothing from {service} is available in your region right now. Try another genre or switch between Movies and Shows.", { service: name })
+    ? t(
+        "Nothing from {service} is available in your region right now. Try another genre or switch between Movies and Shows.",
+        { service: name },
+      )
     : t("Add a TMDB key in Settings to browse service catalogs.");
   return (
     <div className="flex min-h-[42vh] flex-col items-center justify-center gap-4 px-8 text-center">
@@ -171,7 +176,9 @@ function EmptyState({ name, hasKey }: { name: string; hasKey: boolean }) {
         <Film size={26} strokeWidth={1.8} />
       </span>
       <div className="flex flex-col gap-1.5">
-        <h2 className="font-display text-[19px] font-medium text-ink">{t("Nothing to show yet")}</h2>
+        <h2 className="font-display text-[19px] font-medium text-ink">
+          {t("Nothing to show yet")}
+        </h2>
         <p className="max-w-xs text-[13.5px] leading-relaxed text-ink-muted">{message}</p>
       </div>
     </div>

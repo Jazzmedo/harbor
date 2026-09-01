@@ -198,7 +198,9 @@ export function DpadRemote() {
             <button
               key={dir}
               type="button"
-              aria-label={t(dir === "up" ? "Up" : dir === "right" ? "Right" : dir === "down" ? "Down" : "Left")}
+              aria-label={t(
+                dir === "up" ? "Up" : dir === "right" ? "Right" : dir === "down" ? "Down" : "Left",
+              )}
               onPointerDown={() => {
                 startPress(dir);
               }}
@@ -398,7 +400,10 @@ export function DpadRemote() {
             </Circle>
           </div>
           <div className="flex w-full justify-around">
-            <Circle label={t("Subtitles")} onPress={() => sendCommand({ action: "toggleSubtitles" })}>
+            <Circle
+              label={t("Subtitles")}
+              onPress={() => sendCommand({ action: "toggleSubtitles" })}
+            >
               <RemoteIcon name="captions" size={26} />
             </Circle>
           </div>

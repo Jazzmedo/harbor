@@ -41,7 +41,10 @@ export function KidsLearnZone({ onClose }: { onClose: () => void }) {
   return createPortal(
     <div className="fixed inset-0 z-[150] flex flex-col overflow-hidden animate-in fade-in duration-200">
       <UnderwaterScene />
-      <header data-tauri-drag-region className="relative z-10 flex shrink-0 items-center gap-4 px-8 pt-7">
+      <header
+        data-tauri-drag-region
+        className="relative z-10 flex shrink-0 items-center gap-4 px-8 pt-7"
+      >
         <button
           type="button"
           onClick={() => (topic != null ? backToHub() : onClose())}
@@ -55,7 +58,9 @@ export function KidsLearnZone({ onClose }: { onClose: () => void }) {
             {topic ? `${topic.emoji} ${topic.title}` : t("Learn Lagoon")}
           </h1>
           {!topic && (
-            <p className="text-[15px] font-semibold text-white/75">{t("Explore, discover and earn stars")}</p>
+            <p className="text-[15px] font-semibold text-white/75">
+              {t("Explore, discover and earn stars")}
+            </p>
           )}
         </div>
         <img

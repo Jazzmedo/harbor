@@ -41,7 +41,9 @@ export function CatalogManageList({
   return (
     <div className="flex flex-col gap-8">
       <p className="rounded-2xl border border-edge-soft bg-elevated/25 px-5 py-3.5 text-[13px] leading-relaxed text-ink-muted">
-        {t("Pin the catalogs you want up top, hide the ones you never open, and reorder your pinned rails. Your browse view updates instantly.")}
+        {t(
+          "Pin the catalogs you want up top, hide the ones you never open, and reorder your pinned rails. Your browse view updates instantly.",
+        )}
       </p>
 
       {pinnedCats.length > 0 && (
@@ -71,7 +73,12 @@ export function CatalogManageList({
         <section key={g.name} className="flex flex-col gap-2.5">
           <h2 className="flex items-center gap-2 text-[13px] font-semibold uppercase tracking-wide text-ink-subtle">
             {g.logo ? (
-              <img src={g.logo} alt="" draggable={false} className="h-4 w-4 rounded-[4px] object-contain" />
+              <img
+                src={g.logo}
+                alt=""
+                draggable={false}
+                className="h-4 w-4 rounded-[4px] object-contain"
+              />
             ) : null}
             {g.name}
           </h2>
@@ -127,7 +134,12 @@ function ManageRow({
       }`}
     >
       {catalog.addonLogo ? (
-        <img src={catalog.addonLogo} alt="" draggable={false} className="h-7 w-7 shrink-0 rounded-sm object-contain" />
+        <img
+          src={catalog.addonLogo}
+          alt=""
+          draggable={false}
+          className="h-7 w-7 shrink-0 rounded-sm object-contain"
+        />
       ) : (
         <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm bg-canvas text-[11px] font-bold text-ink-subtle ring-1 ring-edge-soft">
           {catalog.addonName.charAt(0).toUpperCase()}
@@ -158,7 +170,11 @@ function ManageRow({
       >
         <NavGlyph name="home" className="h-[17px] w-[17px]" />
       </IconBtn>
-      <IconBtn label={hidden ? t("Show this catalog") : t("Hide this catalog")} onClick={onToggleHide} active={hidden}>
+      <IconBtn
+        label={hidden ? t("Show this catalog") : t("Hide this catalog")}
+        onClick={onToggleHide}
+        active={hidden}
+      >
         {hidden ? <EyeOff size={16} /> : <Eye size={16} />}
       </IconBtn>
       <IconBtn label={pinned ? t("Unpin") : t("Pin to top")} onClick={onTogglePin} active={pinned}>
@@ -189,7 +205,9 @@ function IconBtn({
       aria-label={label}
       title={label}
       className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors disabled:opacity-25 ${
-        active ? "text-accent hover:bg-canvas/60" : "text-ink-subtle hover:bg-canvas/60 hover:text-ink"
+        active
+          ? "text-accent hover:bg-canvas/60"
+          : "text-ink-subtle hover:bg-canvas/60 hover:text-ink"
       }`}
     >
       {children}

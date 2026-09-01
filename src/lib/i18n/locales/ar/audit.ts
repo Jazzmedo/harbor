@@ -4,7 +4,7 @@ const audit: Record<string, string> = {
   "26-50": "26-50",
   "51-100": "51-100",
   "Accept the terms": "الموافقة على الشروط",
-  "Actor": "ممثل",
+  Actor: "ممثل",
   "Air Date": "تاريخ العرض",
   "Already have a TMDB login? Sign in and skip ahead. Otherwise press Register and fill in a username, password and email.":
     "هل لديك حساب TMDB بالفعل؟ سجّل الدخول وتجاوز الخطوات التالية. وإلا فاضغط «تسجيل» وأدخل اسم مستخدم وكلمة مرور وبريدًا إلكترونيًا.",
@@ -21,7 +21,8 @@ const audit: Record<string, string> = {
   "Fill in the details, then Subscribe": "أدخل التفاصيل، ثم اضغط «اشتراك»",
   "For Application URL anything works, for example https://harbor.site. TMDB never visits it.":
     "يمكنك إدخال أي عنوان في حقل Application URL، مثل https://harbor.site. لن يزور TMDB هذا العنوان.",
-  "Free forever for personal use. No payment, ever.": "مجاني دائمًا للاستخدام الشخصي. لا يتطلب أي دفع.",
+  "Free forever for personal use. No payment, ever.":
+    "مجاني دائمًا للاستخدام الشخصي. لا يتطلب أي دفع.",
   "Get your free TMDB key": "احصل على مفتاح TMDB المجاني",
   "Jina Reader": "Jina Reader",
   "Live web": "الويب المباشر",
@@ -29,7 +30,7 @@ const audit: Record<string, string> = {
   "Open the email TMDB sent to the address you registered with and press the activate button inside it. Check spam if it has not arrived.":
     "افتح الرسالة التي أرسلها TMDB إلى البريد الذي سجلت به، واضغط زر التفعيل فيها. تحقّق من مجلد الرسائل غير المرغوب فيها إذا لم تصل.",
   "Open your account settings": "افتح إعدادات حسابك",
-  "Producer": "منتج",
+  Producer: "منتج",
   "Prove you are human": "أثبت أنك لست روبوتًا",
   "Request a key": "اطلب مفتاحًا",
   "Right after registering TMDB tells you the account is not active yet. Nothing is broken, the email is on its way.":
@@ -56,7 +57,7 @@ const audit: Record<string, string> = {
     "اكتب ما تريده بلغة طبيعية ودع النموذج يعثر عليه. استخدم مفتاح API الخاص بك من أي من الخدمتين.",
   "Use the button below. If you are not signed in yet TMDB says you do not have permission, which is normal. Click the link in that message to sign in.":
     "استخدم الزر أدناه. إذا لم تكن مسجلًا للدخول، فسيخبرك TMDB بأنك لا تملك الإذن، وهذا طبيعي. اضغط الرابط في الرسالة لتسجيل الدخول.",
-  "Votes": "الأصوات",
+  Votes: "الأصوات",
   "Where you watch from": "البلد الذي تشاهد منه",
   "Who is breaking out this week. Live, with weekly movement.":
     "النجوم الصاعدون هذا الأسبوع، ببيانات مباشرة وتغيّر أسبوعي.",
@@ -72,30 +73,32 @@ const audit: Record<string, string> = {
   "Cursor speed": "سرعة المؤشر",
   "Export your Harbor setup to a single file — pick exactly what goes in. Restore brings back only what the file contains. Your Stremio sign-in is always left out.":
     "صدّر إعداد Harbor إلى ملف واحد وحدّد بدقة ما يتضمنه. لا تستعيد عملية الاستعادة إلا ما يحتويه الملف، ولا تتضمن بيانات تسجيل الدخول إلى Stremio مطلقًا.",
-  "How quickly the Harbor cursor moves with the right stick.": "سرعة تحرك مؤشر Harbor باستخدام العصا اليمنى.",
+  "How quickly the Harbor cursor moves with the right stick.":
+    "سرعة تحرك مؤشر Harbor باستخدام العصا اليمنى.",
   "Keyboard size": "حجم لوحة المفاتيح",
   "On shows titles in your metadata language (English by default). Off keeps titles in English.":
     "عند التفعيل، تظهر العناوين بلغة البيانات الوصفية، وهي الإنجليزية افتراضيًا. وعند التعطيل، تبقى العناوين بالإنجليزية.",
   "Player screen lock": "قفل شاشة المشغّل",
   "Show a lock control in the player that blocks mouse, keyboard, remote, and media-key input until you unlock it.":
     "يعرض زر قفل في المشغّل يمنع إدخال الفأرة ولوحة المفاتيح وجهاز التحكم ومفاتيح الوسائط حتى إلغاء القفل.",
-  "Size of the controller on-screen keyboard.": "حجم لوحة المفاتيح التي تظهر على الشاشة عند استخدام جهاز التحكم.",
+  "Size of the controller on-screen keyboard.":
+    "حجم لوحة المفاتيح التي تظهر على الشاشة عند استخدام جهاز التحكم.",
 
-  "Arabic": "العربية",
+  Arabic: "العربية",
   "Chinese (Simplified)": "الصينية (المبسّطة)",
-  "French": "الفرنسية",
-  "German": "الألمانية",
-  "Hindi": "الهندية",
-  "Indonesian": "الإندونيسية",
-  "Italian": "الإيطالية",
-  "Japanese": "اليابانية",
-  "Korean": "الكورية",
-  "Polish": "البولندية",
-  "Portuguese": "البرتغالية",
-  "Russian": "الروسية",
-  "Spanish": "الإسبانية",
-  "Turkish": "التركية",
-  "Vietnamese": "الفيتنامية",
+  French: "الفرنسية",
+  German: "الألمانية",
+  Hindi: "الهندية",
+  Indonesian: "الإندونيسية",
+  Italian: "الإيطالية",
+  Japanese: "اليابانية",
+  Korean: "الكورية",
+  Polish: "البولندية",
+  Portuguese: "البرتغالية",
+  Russian: "الروسية",
+  Spanish: "الإسبانية",
+  Turkish: "التركية",
+  Vietnamese: "الفيتنامية",
   "Right to left": "من اليمين إلى اليسار",
 
   "nav.catalogs": "الكتالوجات",
@@ -109,28 +112,29 @@ const audit: Record<string, string> = {
     "نزّل برنامج التثبيت وشغّله لإكمال التحديث. إذا استمر الفشل، فشغّله مرة واحدة بصلاحيات المسؤول.",
   "Restart to update": "إعادة التشغيل للتحديث",
   "Update ready": "التحديث جاهز",
-  "Harbor {version} downloaded but did not install on its own.": "تم تنزيل Harbor {version} لكنه لم يُثبّت تلقائيًا.",
+  "Harbor {version} downloaded but did not install on its own.":
+    "تم تنزيل Harbor {version} لكنه لم يُثبّت تلقائيًا.",
   "Big Picture": "وضع الشاشة الكبيرة",
-  "Dismiss": "تجاهل",
+  Dismiss: "تجاهل",
   "Download installer": "تنزيل برنامج التثبيت",
   "Install and reopen": "التثبيت وإعادة الفتح",
   "Harbor is closing. Harbor Setup will finish and reopen it.":
     "جارٍ إغلاق Harbor. سيكمل Harbor Setup التثبيت ثم يعيد فتحه.",
 
   "Broadcast networks": "شبكات البث",
-  "News": "الأخبار",
-  "Sports": "الرياضة",
+  News: "الأخبار",
+  Sports: "الرياضة",
   "Premium movies": "أفلام مميزة",
-  "Entertainment": "الترفيه",
+  Entertainment: "الترفيه",
   "Lifestyle & Reality": "أسلوب الحياة وتلفزيون الواقع",
   "Documentary & Discovery": "الوثائقيات والاستكشاف",
   "Kids & Family": "الأطفال والعائلة",
-  "Music": "الموسيقى",
+  Music: "الموسيقى",
   "Rede aberta": "القنوات المفتوحة",
-  "Esportes": "الرياضة",
-  "Broadcast": "البث",
-  "Movies": "الأفلام",
-  "Documentary": "وثائقي",
+  Esportes: "الرياضة",
+  Broadcast: "البث",
+  Movies: "الأفلام",
+  Documentary: "وثائقي",
 
   "What everyone is reading": "ما يقرؤه الجميع",
   "Critically Acclaimed": "أعمال حازت إشادة النقاد",
@@ -148,7 +152,7 @@ const audit: Record<string, string> = {
   "Seiun Winner": "فائز بجائزة Seiun",
   "Anime Expo": "معرض Anime Expo",
 
-  "Bingeing": "المشاهدة المتواصلة",
+  Bingeing: "المشاهدة المتواصلة",
   "Episodes and spoilers": "الحلقات والحرق",
   "Getting around the TV": "التنقّل على التلفاز",
   "Languages on the TV": "اللغات على التلفاز",
@@ -174,7 +178,8 @@ const audit: Record<string, string> = {
   "Download and run Suwayomi Server:": "نزّل Suwayomi Server وشغّله:",
   "Every source you enable in Suwayomi then shows up in Harbor. Suwayomi keeps its extensions updated when a site changes, so they keep working.":
     "سيظهر في Harbor كل مصدر تفعّله في Suwayomi. ويحدّث Suwayomi إضافاته عند تغيّر المواقع لتستمر في العمل.",
-  "Everything else, through your own server (Suwayomi)": "كل المصادر الأخرى عبر خادمك الخاص (Suwayomi)",
+  "Everything else, through your own server (Suwayomi)":
+    "كل المصادر الأخرى عبر خادمك الخاص (Suwayomi)",
   "Expand {title} image": "تكبير صورة {title}",
   "Getting manga sources into Harbor": "إضافة مصادر المانغا إلى Harbor",
   "Harbor also has an experimental plugin runtime. If you want to write a source plugin, see {path} in the Harbor repository. Only install plugins from repositories you trust.":
@@ -191,8 +196,9 @@ const audit: Record<string, string> = {
   "SIMKL rating picker": "منتقي تقييم SIMKL",
   "Sharing diagnostics": "مشاركة بيانات التشخيص",
   "That font is {size} MB. Max is 4 MB.": "حجم هذا الخط {size} ميغابايت. الحد الأقصى 4 ميغابايت.",
-  "This is how you get hundreds of community sources.": "بهذه الطريقة تحصل على مئات المصادر المجتمعية.",
-  "Unsupported font type \".{extension}\". Use TTF, OTF, WOFF, or WOFF2.":
+  "This is how you get hundreds of community sources.":
+    "بهذه الطريقة تحصل على مئات المصادر المجتمعية.",
+  'Unsupported font type ".{extension}". Use TTF, OTF, WOFF, or WOFF2.':
     "نوع الخط «.{extension}» غير مدعوم. استخدم TTF أو OTF أو WOFF أو WOFF2.",
   "#1 this week": "الأول هذا الأسبوع",
   "An unexpected runtime error occurred.": "حدث خطأ غير متوقع أثناء التشغيل.",
@@ -282,7 +288,8 @@ const audit: Record<string, string> = {
   "{name} is over its traffic or fair-use limit right now.":
     "تجاوزت خدمة {name} حاليًا حد حركة البيانات أو الاستخدام العادل.",
   "{name} is rate-limiting Harbor right now.": "تفرض خدمة {name} حاليًا حدًا على معدل طلبات Harbor.",
-  "{name} is temporarily unavailable (server error).": "خدمة {name} غير متاحة مؤقتًا (خطأ في الخادم).",
+  "{name} is temporarily unavailable (server error).":
+    "خدمة {name} غير متاحة مؤقتًا (خطأ في الخادم).",
   "{name} rejected your API key.": "رفضت خدمة {name} مفتاح API الخاص بك.",
   "{name} returned an error ({code}).": "أعادت خدمة {name} خطأً ({code}).",
   "Add as many Jellyfin, Emby, or Plex servers as you use.":

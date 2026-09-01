@@ -88,11 +88,19 @@ export function BottomTabBar({
                     ) : pname ? (
                       pname.slice(0, 1).toUpperCase()
                     ) : (
-                      <User size={15} strokeWidth={2.1} className={on ? "text-canvas" : "text-ink-subtle"} />
+                      <User
+                        size={15}
+                        strokeWidth={2.1}
+                        className={on ? "text-canvas" : "text-ink-subtle"}
+                      />
                     )}
                   </span>
                 ) : (
-                  <Icon size={22} strokeWidth={2.1} className={on ? "text-canvas" : "text-ink-subtle"} />
+                  <Icon
+                    size={22}
+                    strokeWidth={2.1}
+                    className={on ? "text-canvas" : "text-ink-subtle"}
+                  />
                 )}
               </span>
             </button>

@@ -2,7 +2,8 @@ const player: Record<string, string> = {
   ", then try again.": ", puis réessayez.",
   "2nd": "2e",
   "About this title": "À propos de ce titre",
-  "Add a TMDB key in Settings to see the cast for every title.": "Ajoutez une clé TMDB dans les paramètres pour voir la distribution de chaque titre.",
+  "Add a TMDB key in Settings to see the cast for every title.":
+    "Ajoutez une clé TMDB dans les paramètres pour voir la distribution de chaque titre.",
   "Align {dir}": "Aligner {dir}",
   "All languages": "Toutes les langues",
   "Always keep on this device": "Toujours conserver sur cet appareil",
@@ -16,7 +17,8 @@ const player: Record<string, string> = {
   "Auto (match video)": "Automatique (adapté à la vidéo)",
   "Auto-loading the best stream": "Chargement automatique du meilleur flux",
   "Automatic correction": "Correction automatique",
-  "Automatic timing correction requires an external text subtitle.": "La correction automatique du minutage nécessite un fichier de sous-titres texte externe.",
+  "Automatic timing correction requires an external text subtitle.":
+    "La correction automatique du minutage nécessite un fichier de sous-titres texte externe.",
   "Back 30 seconds": "Reculer de 30 secondes",
   "Back to library": "Retour à la bibliothèque",
   "Browse provider": "Parcourir par fournisseur",
@@ -26,28 +28,34 @@ const player: Record<string, string> = {
   "Cached only ({n})": "En cache uniquement ({n})",
   "Cancel autoplay": "Annuler la lecture automatique",
   "Cancel timer": "Annuler le minuteur",
-  "Cast information isn't available for this title.": "Les informations sur la distribution ne sont pas disponibles pour ce titre.",
+  "Cast information isn't available for this title.":
+    "Les informations sur la distribution ne sont pas disponibles pour ce titre.",
   "Cast to a device": "Diffuser sur un appareil",
   "Cast to TV or speaker": "Diffuser sur un téléviseur ou une enceinte",
   "Casting comes with the mpv backend": "La diffusion est incluse avec le moteur mpv",
   "Channel is taking a while": "La chaîne met du temps à répondre",
   "Channel won't load": "Impossible de charger la chaîne",
   "Choose a folder...": "Choisir un dossier...",
-  "Choose the frame rate the subtitle was authored for.": "Choisissez la fréquence d’images pour laquelle les sous-titres ont été créés.",
+  "Choose the frame rate the subtitle was authored for.":
+    "Choisissez la fréquence d’images pour laquelle les sous-titres ont été créés.",
   "Clear A-B loop": "Effacer la boucle A-B",
-  "Click any source to swap in place": "Cliquez sur n’importe quelle source pour la remplacer sur place",
+  "Click any source to swap in place":
+    "Cliquez sur n’importe quelle source pour la remplacer sur place",
   "Click to apply · Right-click to delete": "Clic pour appliquer · Clic droit pour supprimer",
   "click to cancel": "cliquez pour annuler",
   "Close guide": "Fermer le guide",
   "Close match": "Fermer le match",
   "Close trailer": "Fermer la bande-annonce",
   "Couldn't add, try again": "Impossible d’ajouter, réessayez",
-  "Couldn't apply subtitle FPS. Try again.": "Impossible d’appliquer la fréquence d’images aux sous-titres. Réessayez.",
+  "Couldn't apply subtitle FPS. Try again.":
+    "Impossible d’appliquer la fréquence d’images aux sous-titres. Réessayez.",
   "Couldn't download, try again": "Impossible de télécharger, réessayez",
-  "Couldn't load that subtitle file. Try another.": "Impossible de charger ce fichier de sous-titres. Essayez-en un autre.",
+  "Couldn't load that subtitle file. Try another.":
+    "Impossible de charger ce fichier de sous-titres. Essayez-en un autre.",
   "Couldn't load {name}": "Impossible de charger {name}",
   "Couldn't open this file": "Impossible d’ouvrir ce fichier",
-  "Couldn't save the synced subtitle. Try again.": "Impossible d’enregistrer les sous-titres synchronisés. Réessayez.",
+  "Couldn't save the synced subtitle. Try again.":
+    "Impossible d’enregistrer les sous-titres synchronisés. Réessayez.",
   "Couldn't switch subtitles. Try again.": "Impossible de changer de sous-titres. Réessayez.",
   "Custom length": "Durée personnalisée",
   "Custom subtitle FPS": "FPS personnalisés des sous-titres",
@@ -63,17 +71,21 @@ const player: Record<string, string> = {
   "Download to disk": "Télécharger sur le disque",
   "Download video": "Télécharger la vidéo",
   "Downloading {pct}%, click to cancel": "Téléchargement à {pct}%, cliquez pour annuler",
-  "Drag the corner to resize. Left and right change width; up and down change height; Home resets the size.": "Faites glisser le coin pour redimensionner. Vers la gauche ou la droite, vous modifiez la largeur ; vers le haut ou le bas, la hauteur. La touche Home rétablit la taille.",
-  "Drag to resize. Use arrow keys to adjust, or Home to reset.": "Faites glisser pour redimensionner. Utilisez les touches fléchées pour ajuster, ou Home pour réinitialiser.",
+  "Drag the corner to resize. Left and right change width; up and down change height; Home resets the size.":
+    "Faites glisser le coin pour redimensionner. Vers la gauche ou la droite, vous modifiez la largeur ; vers le haut ou le bas, la hauteur. La touche Home rétablit la taille.",
+  "Drag to resize. Use arrow keys to adjust, or Home to reset.":
+    "Faites glisser pour redimensionner. Utilisez les touches fléchées pour ajuster, ou Home pour réinitialiser.",
   "Draw on screen": "Dessiner à l’écran",
   "Draw on video": "Dessiner sur la vidéo",
   "Dropped (decode / vo)": "Images perdues (décodage / vo)",
   "DVR record": "Enregistrement DVR",
-  "Embedded subtitles keep their own styling. Click to force your style onto them.": "Les sous-titres intégrés conservent leur propre style. Cliquez pour leur imposer le vôtre.",
+  "Embedded subtitles keep their own styling. Click to force your style onto them.":
+    "Les sous-titres intégrés conservent leur propre style. Cliquez pour leur imposer le vôtre.",
   "Embedded track": "Piste intégrée",
   "End ep": "Ép. de fin",
   "Enter an FPS from 1 to 240.": "Saisissez une fréquence d’images comprise entre 1 et 240 FPS.",
-  "Everyone is loaded in. Press play to start watching.": "Tout le monde est prêt. Appuyez sur Lire pour commencer.",
+  "Everyone is loaded in. Press play to start watching.":
+    "Tout le monde est prêt. Appuyez sur Lire pour commencer.",
   "Exit fullscreen": "Quitter le plein écran",
   "Exit Picture in Picture": "Quitter le mode Image dans l’image",
   "Exit PiP": "Quitter le mode PiP",
@@ -82,7 +94,8 @@ const player: Record<string, string> = {
   "Find closer match": "Trouver une meilleure correspondance",
   "Find more subtitles": "Trouver d’autres sous-titres",
   "Flagged shown": "Éléments signalés affichés",
-  "Force your look onto subtitles that carry their own styling.": "Applique votre style aux sous-titres qui possèdent leur propre mise en forme.",
+  "Force your look onto subtitles that carry their own styling.":
+    "Applique votre style aux sous-titres qui possèdent leur propre mise en forme.",
   "Forced only": "Sous-titres forcés uniquement",
   "Forced subs with native audio": "Sous-titres forcés avec la piste audio d’origine",
   "Forward 30 seconds": "Avancer de 30 secondes",
@@ -98,14 +111,16 @@ const player: Record<string, string> = {
   "Hide search": "Masquer la recherche",
   "HW decode": "Décodage matériel",
   "Imported and now playing": "Importé et en cours de lecture",
-  "Instant Play: clicking Play queues the next stream automatically.": "Lecture instantanée : cliquer sur Lecture met automatiquement le flux suivant en file d’attente.",
+  "Instant Play: clicking Play queues the next stream automatically.":
+    "Lecture instantanée : cliquer sur Lecture met automatiquement le flux suivant en file d’attente.",
   "Is the channel playing right?": "La chaîne fonctionne-t-elle correctement ?",
   "Jump to live edge": "Revenir au direct",
   "Just the next show: {title}": "Uniquement le programme suivant : {title}",
   "Letter spacing": "Espacement des lettres",
   "Limit reached": "Limite atteinte",
   "Line spacing": "Interligne",
-  "Load a .srt or .ass from your computer": "Charger un fichier .srt ou .ass depuis votre ordinateur",
+  "Load a .srt or .ass from your computer":
+    "Charger un fichier .srt ou .ass depuis votre ordinateur",
   "Load file": "Charger un fichier",
   "Loaded {name}": "{name} chargé",
   "Loading favorites from other providers…": "Chargement des favoris d’autres fournisseurs…",
@@ -118,15 +133,19 @@ const player: Record<string, string> = {
   "Looking for subtitles…": "Recherche de sous-titres…",
   "Lower subtitles": "Baisser les sous-titres",
   "Manage recording": "Gérer l’enregistrement",
-  "Manual mode: clicking Play opens the source picker here.": "Mode manuel : cliquer sur Lecture ouvre ici le sélecteur de source.",
+  "Manual mode: clicking Play opens the source picker here.":
+    "Mode manuel : cliquer sur Lecture ouvre ici le sélecteur de source.",
   "Manual source FPS": "Fréquence d’images manuelle de la source",
   "Match estimate": "Estimation de la correspondance",
   "Match evidence": "Indices de correspondance",
-  "Measure this subtitle against speech and correct delay and gradual drift together.": "Comparez ces sous-titres aux dialogues et corrigez à la fois le décalage et la dérive progressive.",
+  "Measure this subtitle against speech and correct delay and gradual drift together.":
+    "Comparez ces sous-titres aux dialogues et corrigez à la fois le décalage et la dérive progressive.",
   "More subtitle options": "Plus d’options de sous-titres",
   "Movie's too new": "Film trop récent",
-  "Movie's too new. Subtitles haven't been published yet.": "Film trop récent. Les sous-titres n’ont pas encore été publiés.",
-  "mpv is required for recording. Install mpv and restart Harbor.": "mpv est requis pour l’enregistrement. Installez mpv, puis redémarrez Harbor.",
+  "Movie's too new. Subtitles haven't been published yet.":
+    "Film trop récent. Les sous-titres n’ont pas encore été publiés.",
+  "mpv is required for recording. Install mpv and restart Harbor.":
+    "mpv est requis pour l’enregistrement. Installez mpv, puis redémarrez Harbor.",
   "Mute · M": "Couper le son · M",
   "Name your first template": "Nommez votre premier modèle",
   "Name your look": "Nommez votre style",
@@ -135,19 +154,25 @@ const player: Record<string, string> = {
   "Next and Previous behavior": "Comportement de Suivant et Précédent",
   "Next and Previous follow this show": "Suivant et Précédent suivent cette série",
   "Next and Previous follow your queue": "Suivant et Précédent suivent votre file d’attente",
-  "No audio: this stream's audio format (likely Dolby or DTS) is not supported by the HTML5 engine.": "Pas de son : le format audio de ce flux (probablement Dolby ou DTS) n’est pas pris en charge par le moteur HTML5.",
-  "No channels match. Try a different category or clear the search.": "Aucune chaîne ne correspond. Essayez une autre catégorie ou effacez la recherche.",
-  "No Chromecast, DLNA, or Roku devices found. Make sure your TV is on, woken up, and on the same Wi-Fi.": "Aucun appareil Chromecast, DLNA ou Roku détecté. Vérifiez que votre téléviseur est allumé, sorti de veille et connecté au même réseau Wi-Fi.",
+  "No audio: this stream's audio format (likely Dolby or DTS) is not supported by the HTML5 engine.":
+    "Pas de son : le format audio de ce flux (probablement Dolby ou DTS) n’est pas pris en charge par le moteur HTML5.",
+  "No channels match. Try a different category or clear the search.":
+    "Aucune chaîne ne correspond. Essayez une autre catégorie ou effacez la recherche.",
+  "No Chromecast, DLNA, or Roku devices found. Make sure your TV is on, woken up, and on the same Wi-Fi.":
+    "Aucun appareil Chromecast, DLNA ou Roku détecté. Vérifiez que votre téléviseur est allumé, sorti de veille et connecté au même réseau Wi-Fi.",
   "No correction": "Aucune correction",
   "No correction (default)": "Aucune correction (par défaut)",
   "No description available.": "Aucune description disponible.",
-  "No favorites yet. Star a channel to pin it here.": "Aucun favori pour le moment. Ajoutez une chaîne aux favoris pour l’épingler ici.",
+  "No favorites yet. Star a channel to pin it here.":
+    "Aucun favori pour le moment. Ajoutez une chaîne aux favoris pour l’épingler ici.",
   "No program info available": "Aucune information disponible sur le programme",
   "No sources cached": "Aucune source en cache",
   "No styling": "Aucun style",
-  "No subtitles found yet. Try the search at the bottom.": "Aucun sous-titre trouvé pour le moment. Essayez la recherche en bas.",
+  "No subtitles found yet. Try the search at the bottom.":
+    "Aucun sous-titre trouvé pour le moment. Essayez la recherche en bas.",
   "No subtitles found.": "Aucun sous-titre trouvé.",
-  "No tracks match these filters. Try toggling HI/SDH or Forced.": "Aucune piste ne correspond à ces filtres. Essayez d’activer ou de désactiver HI/SDH ou Forcés.",
+  "No tracks match these filters. Try toggling HI/SDH or Forced.":
+    "Aucune piste ne correspond à ces filtres. Essayez d’activer ou de désactiver HI/SDH ou Forcés.",
   "No unsaved changes": "Aucune modification non enregistrée",
   "Not provided": "Non fourni",
   "Now playing: {label}": "Lecture en cours : {label}",
@@ -182,7 +207,8 @@ const player: Record<string, string> = {
   "Record from TV (DVR)": "Enregistrer depuis la TV (DVR)",
   "Recording finished": "Enregistrement terminé",
   "Recording now": "Enregistrement en cours",
-  "Recording · {pct}% · {remaining} · click to manage": "Enregistrement · {pct}% · {remaining} · cliquez pour gérer",
+  "Recording · {pct}% · {remaining} · click to manage":
+    "Enregistrement · {pct}% · {remaining} · cliquez pour gérer",
   "Reset sync": "Réinitialiser la synchronisation",
   "Resize subtitle menu": "Redimensionner le menu des sous-titres",
   "Resume from {time}": "Reprendre à {time}",
@@ -194,7 +220,8 @@ const player: Record<string, string> = {
   "Save this look": "Enregistrer ce style",
   "Save this look as a template": "Enregistrer ce style comme modèle",
   "Save to": "Enregistrer dans",
-  "Saved as .ts (works in mpv, VLC, ffmpeg)": "Enregistré au format .ts (fonctionne avec mpv, VLC et ffmpeg)",
+  "Saved as .ts (works in mpv, VLC, ffmpeg)":
+    "Enregistré au format .ts (fonctionne avec mpv, VLC et ffmpeg)",
   "Saved to disk": "Enregistré sur le disque",
   "Saved to {folder} · open folder": "Enregistré dans {folder} · ouvrir le dossier",
   "Saving GIF…": "Enregistrement du GIF…",
@@ -218,7 +245,8 @@ const player: Record<string, string> = {
   "Show HI/SDH": "Afficher HI/SDH",
   "Show in folder": "Afficher dans le dossier",
   "Show others' drawings": "Afficher les dessins des autres",
-  "Show sources hidden by the trust filter": "Afficher les sources masquées par le filtre de confiance",
+  "Show sources hidden by the trust filter":
+    "Afficher les sources masquées par le filtre de confiance",
   "Show {langs} only": "Afficher uniquement en {langs}",
   "Skip Credits": "Passer le générique",
   "Skip Intro": "Passer l’introduction",
@@ -226,7 +254,8 @@ const player: Record<string, string> = {
   "Sleep timer": "Minuteur de veille",
   "Something else": "Autre chose",
   "Sort by source": "Trier par source",
-  "Sources are not cached for this title. Open the picker page to refresh.": "Les sources de ce titre ne sont pas en cache. Ouvrez la page de sélection pour actualiser.",
+  "Sources are not cached for this title. Open the picker page to refresh.":
+    "Les sources de ce titre ne sont pas en cache. Ouvrez la page de sélection pour actualiser.",
   "Speed & sleep": "Vitesse et veille",
   "Speed and sleep timer": "Vitesse et minuteur de veille",
   "Start anyway ({n} still loading)": "Démarrer quand même ({n} encore en cours de chargement)",
@@ -244,26 +273,36 @@ const player: Record<string, string> = {
   "Subtitle color {color}": "Couleur des sous-titres : {color}",
   "Subtitle details": "Détails des sous-titres",
   "Subtitle FPS": "FPS des sous-titres",
-  "Subtitle FPS conversion is only available for text-based subtitles.": "La conversion des FPS n’est disponible que pour les sous-titres au format texte.",
-  "Subtitle FPS is only available with the libmpv player.": "Les FPS des sous-titres ne sont disponibles qu’avec le lecteur libmpv.",
-  "Subtitle FPS is unavailable in this libmpv runtime.": "Les FPS des sous-titres ne sont pas disponibles dans cet environnement d’exécution libmpv.",
-  "Subtitle FPS is unavailable while a secondary subtitle is active.": "Les FPS des sous-titres ne sont pas disponibles lorsqu’un sous-titre secondaire est actif.",
+  "Subtitle FPS conversion is only available for text-based subtitles.":
+    "La conversion des FPS n’est disponible que pour les sous-titres au format texte.",
+  "Subtitle FPS is only available with the libmpv player.":
+    "Les FPS des sous-titres ne sont disponibles qu’avec le lecteur libmpv.",
+  "Subtitle FPS is unavailable in this libmpv runtime.":
+    "Les FPS des sous-titres ne sont pas disponibles dans cet environnement d’exécution libmpv.",
+  "Subtitle FPS is unavailable while a secondary subtitle is active.":
+    "Les FPS des sous-titres ne sont pas disponibles lorsqu’un sous-titre secondaire est actif.",
   "Subtitle languages": "Langues des sous-titres",
   "Subtitle source FPS": "FPS de la source des sous-titres",
   "Subtitle track": "Piste de sous-titres",
-  "Subtitles are baked into the picture so they always show. Re-encodes the video.": "Les sous-titres sont incrustés dans l’image et restent donc toujours visibles. La vidéo est réencodée.",
-  "Subtitles haven't been published yet. Try search below or check back in a few days.": "Les sous-titres n’ont pas encore été publiés. Essayez la recherche ci-dessous ou revenez dans quelques jours.",
-  "Subtitles may not appear on the TV.": "Les sous-titres risquent de ne pas apparaître sur le téléviseur.",
+  "Subtitles are baked into the picture so they always show. Re-encodes the video.":
+    "Les sous-titres sont incrustés dans l’image et restent donc toujours visibles. La vidéo est réencodée.",
+  "Subtitles haven't been published yet. Try search below or check back in a few days.":
+    "Les sous-titres n’ont pas encore été publiés. Essayez la recherche ci-dessous ou revenez dans quelques jours.",
+  "Subtitles may not appear on the TV.":
+    "Les sous-titres risquent de ne pas apparaître sur le téléviseur.",
   "Switch stream": "Changer de flux",
-  "Switch to channel list (hide program guide)": "Passer à la liste des chaînes (masquer le guide des programmes)",
+  "Switch to channel list (hide program guide)":
+    "Passer à la liste des chaînes (masquer le guide des programmes)",
   "Switch to program guide": "Passer au guide des programmes",
   "The host starts playback for the whole room.": "L’hôte lance la lecture pour toute la salle.",
   "Thicker outline": "Contour plus épais",
   "Thinner outline": "Contour plus fin",
   "This and next: + {title}": "En cours et à suivre : + {title}",
   "This file has one audio track.": "Ce fichier comporte une piste audio.",
-  "This file is flagged as not web-playable. Try the mpv backend in Settings or pick another stream.": "Ce fichier n’est pas compatible avec la lecture dans le navigateur. Essayez le moteur mpv dans les paramètres ou choisissez un autre flux.",
-  "This is a metadata-based release estimate, not a measured timing score.": "Il s’agit d’une estimation de la date de sortie fondée sur les métadonnées, et non d’un score calculé à partir de délais mesurés.",
+  "This file is flagged as not web-playable. Try the mpv backend in Settings or pick another stream.":
+    "Ce fichier n’est pas compatible avec la lecture dans le navigateur. Essayez le moteur mpv dans les paramètres ou choisissez un autre flux.",
+  "This is a metadata-based release estimate, not a measured timing score.":
+    "Il s’agit d’une estimation de la date de sortie fondée sur les métadonnées, et non d’un score calculé à partir de délais mesurés.",
   "This show: {title}": "Cette série : {title}",
   "This source is slow. Try another.": "Cette source est lente. Essayez-en une autre.",
   "Tighter spacing": "Espacement réduit",
@@ -271,10 +310,12 @@ const player: Record<string, string> = {
   "to close": "pour fermer",
   "Toggle filters": "Afficher ou masquer les filtres",
   "Toggle guide layout": "Changer la disposition du guide",
-  "Track switching isn't supported on the current engine. The file's default audio is playing.": "Le changement de piste n’est pas pris en charge par le moteur actuel. La piste audio par défaut du fichier est en cours de lecture.",
+  "Track switching isn't supported on the current engine. The file's default audio is playing.":
+    "Le changement de piste n’est pas pris en charge par le moteur actuel. La piste audio par défaut du fichier est en cours de lecture.",
   "Try a different source.": "Essayez une autre source.",
   "Try another source.": "Essayez une autre source.",
-  "Turn off Auto Sync before changing subtitle FPS.": "Désactivez la synchronisation automatique avant de modifier le nombre d’images par seconde des sous-titres.",
+  "Turn off Auto Sync before changing subtitle FPS.":
+    "Désactivez la synchronisation automatique avant de modifier le nombre d’images par seconde des sous-titres.",
   "TV Guide": "Guide TV",
   "Unmute · M": "Réactiver le son · M",
   "unsaved changes": "modifications non enregistrées",
@@ -292,14 +333,17 @@ const player: Record<string, string> = {
   "Wider spacing": "Espacement accru",
   "Wrong channel or source?": "Mauvaise chaîne ou source ?",
   "Wrong episode or quality?": "Mauvais épisode ou mauvaise qualité ?",
-  "Your copy runs {guest}, host's runs {host}. Sync may drift.": "Votre copie fonctionne à {guest}, celle de l’hôte à {host}. La synchronisation peut se décaler.",
-  "Your style is overriding the embedded subtitle's own styling": "Votre style remplace celui intégré aux sous-titres",
+  "Your copy runs {guest}, host's runs {host}. Sync may drift.":
+    "Votre copie fonctionne à {guest}, celle de l’hôte à {host}. La synchronisation peut se décaler.",
+  "Your style is overriding the embedded subtitle's own styling":
+    "Votre style remplace celui intégré aux sous-titres",
   "Zoom {pct}%": "Zoom : {pct} %",
   "{langs} only · {n} hidden": "{langs} uniquement · {n} masqués",
   "{start} to {end} · {dur}": "{start} à {end} · {dur}",
   "{watched} of {total} watched ({pct}%).": "{watched} sur {total} visionnés ({pct} %).",
   "{word} {n} seconds": "{word} {n} secondes",
-  "{word} {n} seconds. Hold for options": "{word} {n} secondes. Maintenez pour afficher les options",
+  "{word} {n} seconds. Hold for options":
+    "{word} {n} secondes. Maintenez pour afficher les options",
   "{word} {n}s · hold for options": "{word} {n} s · maintenez pour afficher les options",
 };
 

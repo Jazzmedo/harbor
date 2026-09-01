@@ -29,13 +29,22 @@ function ThemeCard({ item }: { item: ShowcaseItem }) {
         style={{ aspectRatio: "16/10", background: item.swatch?.[1] || undefined }}
       >
         {item.posterUrl && (
-          <img src={item.posterUrl} alt="" draggable={false} className="h-full w-full object-cover" />
+          <img
+            src={item.posterUrl}
+            alt=""
+            draggable={false}
+            className="h-full w-full object-cover"
+          />
         )}
       </div>
       <div className="min-w-0">
-        <div className="text-[11px] uppercase tracking-[0.1em] text-accent">{t(KIND_LABEL.theme)}</div>
+        <div className="text-[11px] uppercase tracking-[0.1em] text-accent">
+          {t(KIND_LABEL.theme)}
+        </div>
         <div className="mt-1 truncate font-display text-[19px] text-ink">{item.title}</div>
-        {item.caption && <div className="mt-1 line-clamp-2 text-[13px] text-ink-muted">{item.caption}</div>}
+        {item.caption && (
+          <div className="mt-1 line-clamp-2 text-[13px] text-ink-muted">{item.caption}</div>
+        )}
         <div className="mt-1.5 flex items-center gap-3 text-[12.5px] tabular-nums text-ink-subtle">
           <span className="inline-flex items-center gap-1">
             <Download size={13} strokeWidth={2.2} /> {compact(item.downloads ?? 0)}
@@ -118,7 +127,14 @@ function ThemePicker({
                 className="h-10 w-16 shrink-0 overflow-hidden rounded-sm bg-raised ring-1 ring-edge-soft"
                 style={{ background: th.swatch?.[1] || undefined }}
               >
-                {th.cover && <img src={th.cover} alt="" className="h-full w-full object-cover" draggable={false} />}
+                {th.cover && (
+                  <img
+                    src={th.cover}
+                    alt=""
+                    className="h-full w-full object-cover"
+                    draggable={false}
+                  />
+                )}
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[13.5px] font-medium text-ink">{th.name}</span>
@@ -202,17 +218,29 @@ export function Showcase({
             <ThemeCard item={item} />
           ) : (
             <button
-              onClick={() => item.metaId && onOpen?.(item.metaId, undefined, { name: item.title, poster: item.posterUrl })}
+              onClick={() =>
+                item.metaId &&
+                onOpen?.(item.metaId, undefined, { name: item.title, poster: item.posterUrl })
+              }
               disabled={!item.metaId}
               className="group flex w-full items-center gap-4 rounded-md p-2 text-start transition-colors hover:bg-elevated disabled:cursor-default"
             >
               <div className="w-24 shrink-0">
-                <Poster src={item.posterUrl} seed={item.title} ratio="portrait" className="rounded-md" />
+                <Poster
+                  src={item.posterUrl}
+                  seed={item.title}
+                  ratio="portrait"
+                  className="rounded-md"
+                />
               </div>
               <div className="min-w-0">
-                <div className="text-[11px] uppercase tracking-[0.1em] text-accent">{t(KIND_LABEL[item.kind])}</div>
+                <div className="text-[11px] uppercase tracking-[0.1em] text-accent">
+                  {t(KIND_LABEL[item.kind])}
+                </div>
                 <div className="mt-1 truncate font-display text-[19px] text-ink">{item.title}</div>
-                {item.caption && <div className="mt-1 line-clamp-2 text-[13px] text-ink-muted">{item.caption}</div>}
+                {item.caption && (
+                  <div className="mt-1 line-clamp-2 text-[13px] text-ink-muted">{item.caption}</div>
+                )}
               </div>
             </button>
           )}
@@ -229,12 +257,18 @@ export function Showcase({
       ) : isOwner ? (
         <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-edge py-10 text-center">
           <p className="text-[14px] text-ink-muted">{t("Nothing on display yet")}</p>
-          <p className="mt-1 text-[12px] text-ink-subtle">{t("A favorite title or one of your themes will appear here")}</p>
+          <p className="mt-1 text-[12px] text-ink-subtle">
+            {t("A favorite title or one of your themes will appear here")}
+          </p>
         </div>
       ) : (
-        <p className="py-6 text-center text-[13px] text-ink-subtle">{t("This user hasn't set a showcase")}</p>
+        <p className="py-6 text-center text-[13px] text-ink-subtle">
+          {t("This user hasn't set a showcase")}
+        </p>
       )}
-      {isOwner && picking && <ThemePicker onPick={pickTheme} onClose={() => setPicking(false)} busy={busy} />}
+      {isOwner && picking && (
+        <ThemePicker onPick={pickTheme} onClose={() => setPicking(false)} busy={busy} />
+      )}
     </section>
   );
 }

@@ -85,12 +85,18 @@ export function DiagnosticsProgress({
       <div className="flex flex-col items-center gap-4 px-6 py-10 text-center">
         <span
           className="grid h-16 w-16 place-items-center rounded-full bg-accent/15 text-accent"
-          style={reducedMotion ? undefined : { animation: "diag-pop 320ms cubic-bezier(0.32,0.72,0.24,1) both" }}
+          style={
+            reducedMotion
+              ? undefined
+              : { animation: "diag-pop 320ms cubic-bezier(0.32,0.72,0.24,1) both" }
+          }
         >
           <PartyPopper size={28} strokeWidth={2} />
         </span>
         <div className="flex flex-col gap-1.5">
-          <span className="font-display text-[19px] font-medium text-ink">{t("Sent. Thanks for the help!")}</span>
+          <span className="font-display text-[19px] font-medium text-ink">
+            {t("Sent. Thanks for the help!")}
+          </span>
           <span className="text-[13px] leading-relaxed text-ink-muted">
             {t("We will reply on Issue #{ticket} on GitHub.", { ticket })}
           </span>
@@ -109,7 +115,9 @@ export function DiagnosticsProgress({
   return (
     <div className="flex flex-col gap-4 px-6 py-6">
       <div className="flex flex-col gap-0.5">
-        <span className="font-display text-[17px] font-medium text-ink">{t("Sharing your diagnostics")}</span>
+        <span className="font-display text-[17px] font-medium text-ink">
+          {t("Sharing your diagnostics")}
+        </span>
         <span className="text-[12.5px] text-ink-subtle">{t("Issue #{ticket}", { ticket })}</span>
       </div>
 
@@ -117,7 +125,14 @@ export function DiagnosticsProgress({
         {DIAG_STEPS.map((step, i) => {
           const failed = error?.stage === i;
           const state = failed ? "failed" : i < stage ? "done" : i === stage ? "active" : "pending";
-          return <StepRow key={step.id} label={t(step.label)} state={state} reducedMotion={reducedMotion} />;
+          return (
+            <StepRow
+              key={step.id}
+              label={t(step.label)}
+              state={state}
+              reducedMotion={reducedMotion}
+            />
+          );
         })}
       </div>
 

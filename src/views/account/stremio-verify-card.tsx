@@ -2,10 +2,7 @@ import { type ReactNode, useState } from "react";
 import { Check, ExternalLink, Loader2 } from "lucide-react";
 import stremioLogo from "@/assets/stremio.png";
 import { verifyWithCurrentStremio, verifyWithStremioBrowser } from "@/lib/account/stremio-link";
-import {
-  accountErrorMessage,
-  type AccountErrorMessage,
-} from "@/lib/account/error-messages";
+import { accountErrorMessage, type AccountErrorMessage } from "@/lib/account/error-messages";
 import { useAuth } from "@/lib/auth";
 import { canStremioWebAuth } from "@/lib/stremio-auth";
 import type { Author } from "@/lib/theme-auth";
@@ -25,7 +22,9 @@ export function StremioVerifyCard({ author }: { author: Author }) {
         <img src={stremioLogo} alt="Stremio" className="h-6 w-6 shrink-0" draggable={false} />
         <div className="flex min-w-0 flex-col">
           <span className="text-[13px] font-semibold text-ink">{t("Ownership verified")}</span>
-          <span className="text-[12px] text-ink-subtle">{t("Linked to a real Stremio account.")}</span>
+          <span className="text-[12px] text-ink-subtle">
+            {t("Linked to a real Stremio account.")}
+          </span>
         </div>
         <span className="ms-auto flex h-6 items-center gap-1 rounded-full bg-accent-soft/50 px-2.5 text-[11px] font-semibold text-accent">
           <Check size={12} strokeWidth={3} /> {t("Verified")}
@@ -97,7 +96,9 @@ export function StremioVerifyCard({ author }: { author: Author }) {
 
       {!hasSession && canBrowser && (
         <p className="text-[11px] leading-snug text-ink-subtle">
-          {t("Opens Stremio in your browser. Works with email, Facebook, and Apple. Harbor never sees your password.")}
+          {t(
+            "Opens Stremio in your browser. Works with email, Facebook, and Apple. Harbor never sees your password.",
+          )}
         </p>
       )}
 

@@ -78,7 +78,7 @@ export function stopEquals(a: AutoDlStop, b: AutoDlStop): boolean {
   return true;
 }
 
-export function InlineChoice<T,>({
+export function InlineChoice<T>({
   label,
   options,
   isActive,
@@ -102,7 +102,10 @@ export function InlineChoice<T,>({
         className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 font-medium text-ink underline decoration-dotted decoration-edge underline-offset-[5px] transition-colors hover:bg-ink/10 hover:decoration-ink-subtle"
       >
         {label}
-        <ChevronDown size={13} className={`text-ink-subtle transition-transform ${open ? "rotate-180" : ""}`} />
+        <ChevronDown
+          size={13}
+          className={`text-ink-subtle transition-transform ${open ? "rotate-180" : ""}`}
+        />
       </button>
       <AnchoredMenu anchorRef={ref} open={open} onClose={close} width={210}>
         <div className="overflow-hidden rounded-xl border border-edge bg-raised py-1 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.7)]">

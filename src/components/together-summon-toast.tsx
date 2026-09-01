@@ -15,8 +15,8 @@ export function TogetherSummonToast() {
   const { from, name, target } = incomingSummon;
   const isSelf = from === clientId;
   const sender = snapshot.participants.find((p) => p.id === from);
-  const avatarSrc = isSelf ? selfAvatar : sender?.avatar ?? null;
-  const avatarColor = isSelf ? selfColor : sender?.color ?? null;
+  const avatarSrc = isSelf ? selfAvatar : (sender?.avatar ?? null);
+  const avatarColor = isSelf ? selfColor : (sender?.color ?? null);
 
   const isViewTarget = target.view != null;
   const headline = target.addonId

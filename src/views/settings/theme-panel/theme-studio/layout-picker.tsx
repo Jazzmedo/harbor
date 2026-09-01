@@ -77,7 +77,7 @@ export function LayoutPicker({
                 : "border-edge-soft bg-canvas hover:border-edge hover:bg-elevated"
             }`}
           >
- <div className="aspect-[4/3] w-full overflow-hidden rounded-md bg-surface">
+            <div className="aspect-[4/3] w-full overflow-hidden rounded-md bg-surface">
               {l.diagram(active)}
             </div>
             <div className="flex items-center justify-between">
@@ -98,13 +98,7 @@ export function LayoutPicker({
   );
 }
 
-function Diagram({
-  active,
-  kind,
-}: {
-  active: boolean;
-  kind: ThemeLayout;
-}) {
+function Diagram({ active, kind }: { active: boolean; kind: ThemeLayout }) {
   const accent = active ? "var(--color-accent)" : "var(--color-ink-subtle)";
   const dim = "var(--color-edge)";
   if (kind === "sidebar") {
@@ -188,7 +182,18 @@ function Diagram({
   }
   return (
     <svg viewBox="0 0 80 60" className="h-full w-full">
-      <rect x="3" y="3" width="74" height="54" rx="2" fill={accent} opacity="0.08" stroke={accent} strokeWidth="0.6" strokeDasharray="2 2" />
+      <rect
+        x="3"
+        y="3"
+        width="74"
+        height="54"
+        rx="2"
+        fill={accent}
+        opacity="0.08"
+        stroke={accent}
+        strokeWidth="0.6"
+        strokeDasharray="2 2"
+      />
       <text
         x="40"
         y="28"
@@ -200,14 +205,7 @@ function Diagram({
       >
         {"<your chrome/>"}
       </text>
-      <text
-        x="40"
-        y="40"
-        textAnchor="middle"
-        fill={dim}
-        fontSize="6.5"
-        fontFamily="monospace"
-      >
+      <text x="40" y="40" textAnchor="middle" fill={dim} fontSize="6.5" fontFamily="monospace">
         HTML · CSS · JS
       </text>
     </svg>

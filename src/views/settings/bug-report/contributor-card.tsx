@@ -14,9 +14,7 @@ export function ContributorCard() {
           <GitPullRequest size={16} strokeWidth={1.9} />
         </span>
         <div className="flex flex-col gap-1">
-          <h3 className="text-[13.5px] font-semibold text-ink">
-            {t("Want to fix it yourself?")}
-          </h3>
+          <h3 className="text-[13.5px] font-semibold text-ink">{t("Want to fix it yourself?")}</h3>
           <p className="text-[12.5px] leading-relaxed text-ink-muted">
             {t(
               "{app} is open source. PRs that reference a bug get reviewed within 48h and ship with credit in the release notes.",

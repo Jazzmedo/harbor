@@ -80,10 +80,13 @@ export async function markMalWatching(harborId: string, title: string): Promise<
       watchingMarked.delete(harborId);
       return;
     }
-    const cur = await malRequest<EntryResponse>(`/anime/${malId}?fields=num_episodes,my_list_status`);
+    const cur = await malRequest<EntryResponse>(
+      `/anime/${malId}?fields=num_episodes,my_list_status`,
+    );
     if (cur?.my_list_status && cur.my_list_status.status !== "plan_to_watch") return;
     const total = cur?.num_episodes ?? 0;
-    if (cur?.my_list_status && total > 0 && cur.my_list_status.num_episodes_watched >= total) return;
+    if (cur?.my_list_status && total > 0 && cur.my_list_status.num_episodes_watched >= total)
+      return;
     await malRequest<SaveResponse>(`/anime/${malId}/my_list_status`, {
       method: "PATCH",
       body: new URLSearchParams({ status: "watching" }),
@@ -120,7 +123,9 @@ export async function syncMalProgress(
     const malId = await resolveMalMediaId(harborId);
     if (malId == null) return;
 
-    const cur = await malRequest<EntryResponse>(`/anime/${malId}?fields=num_episodes,my_list_status`);
+    const cur = await malRequest<EntryResponse>(
+      `/anime/${malId}?fields=num_episodes,my_list_status`,
+    );
 
     const current = cur?.my_list_status?.num_episodes_watched ?? 0;
     const total = cur?.num_episodes ?? 0;

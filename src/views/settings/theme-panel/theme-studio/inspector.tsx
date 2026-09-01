@@ -72,7 +72,10 @@ export function Inspector({
                     : "text-ink-muted hover:bg-surface hover:text-ink"
                 }`}
               >
-                <span key={active ? "on" : "off"} className={active ? "harbor-studio-pop" : undefined}>
+                <span
+                  key={active ? "on" : "off"}
+                  className={active ? "harbor-studio-pop" : undefined}
+                >
                   {t(item.label)}
                 </span>
               </button>
@@ -89,7 +92,13 @@ export function Inspector({
               <div className="h-5" />
               <StudioSection
                 title={t("Start from")}
-                action={<HeaderAction icon={<Shuffle size={14} strokeWidth={2.2} />} label={t("Shuffle")} onClick={shuffle} />}
+                action={
+                  <HeaderAction
+                    icon={<Shuffle size={14} strokeWidth={2.2} />}
+                    label={t("Shuffle")}
+                    onClick={shuffle}
+                  />
+                }
               >
                 <PresetGallery onSeed={onSeed} />
               </StudioSection>
@@ -142,7 +151,10 @@ export function Inspector({
 
           {tab === "layout" && (
             <div className="flex flex-col">
-              <StudioSection title={t("Layout")} hint={t("Where the navigation lives. Pick one to see it live.")}>
+              <StudioSection
+                title={t("Layout")}
+                hint={t("Where the navigation lives. Pick one to see it live.")}
+              >
                 <LayoutPicker value={draft.layout} onChange={(layout) => onPatch({ layout })} />
               </StudioSection>
               {draft.layout === "custom" && (
@@ -155,7 +167,10 @@ export function Inspector({
                 />
               )}
               {draft.layout !== "custom" && (
-                <StudioSection title={t("Navigation items")} hint={t("Reorder, rename, or hide what appears in your nav.")}>
+                <StudioSection
+                  title={t("Navigation items")}
+                  hint={t("Reorder, rename, or hide what appears in your nav.")}
+                >
                   <NavEditor layout={draft.layout} />
                 </StudioSection>
               )}
@@ -166,7 +181,9 @@ export function Inspector({
             <StudioSection
               title={t("Code")}
               collapsible
-              hint={t("CSS, HTML and JS layered over the whole app. Optional for built-in layouts, required for custom chrome.")}
+              hint={t(
+                "CSS, HTML and JS layered over the whole app. Optional for built-in layouts, required for custom chrome.",
+              )}
             >
               <CodeSection css={draft.css} js={draft.js} html={draft.html} onExpand={onExpand} />
             </StudioSection>
@@ -185,7 +202,15 @@ function Hairline() {
   return <div className="mb-6 h-px bg-edge-soft" />;
 }
 
-function HeaderAction({ icon, label, onClick }: { icon: ReactNode; label: string; onClick: () => void }) {
+function HeaderAction({
+  icon,
+  label,
+  onClick,
+}: {
+  icon: ReactNode;
+  label: string;
+  onClick: () => void;
+}) {
   return (
     <button
       type="button"
@@ -210,7 +235,12 @@ function BokehToggle({ value, onChange }: { value: boolean; onChange: (v: boolea
         className="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors"
         style={{ background: value ? "var(--color-accent)" : "var(--color-edge)" }}
       >
-        <input type="checkbox" checked={value} onChange={(e) => onChange(e.target.checked)} className="sr-only" />
+        <input
+          type="checkbox"
+          checked={value}
+          onChange={(e) => onChange(e.target.checked)}
+          className="sr-only"
+        />
         <span
           className="absolute h-5 w-5 rounded-full bg-canvas shadow-[0_2px_6px_-2px_rgba(0,0,0,0.4)] transition-transform"
           style={{ transform: value ? "translateX(22px)" : "translateX(2px)" }}

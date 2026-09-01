@@ -1,4 +1,8 @@
-import { listNotifications, markNotificationsRead, type ThemeNotification } from "@/lib/theme-store";
+import {
+  listNotifications,
+  markNotificationsRead,
+  type ThemeNotification,
+} from "@/lib/theme-store";
 import { t } from "@/lib/i18n";
 import { badgeIconUrl } from "@/views/profile/badge-catalog";
 import { socialGet, socialPost } from "./client";
@@ -68,7 +72,8 @@ function socialToCenter(n: SocialNotif): CenterNotif {
       id: `s:${n.id}`,
       source: "social",
       kind: "badge-received",
-      title: n.title || (name ? t("You earned the {name} badge", { name }) : t("New badge unlocked")),
+      title:
+        n.title || (name ? t("You earned the {name} badge", { name }) : t("New badge unlocked")),
       body: n.body || (name ? t("Congrats! Tap to view your badges.") : undefined),
       cover: badgeIconUrl(icon),
       createdAt: ms(n.createdAt),
@@ -113,9 +118,10 @@ export async function fetchAllNotifications(
 ): Promise<{ items: CenterNotif[]; unread: number }> {
   const [theme, social] = await Promise.all([
     listNotifications().catch(() => ({ notifications: [] as ThemeNotification[], unread: 0 })),
-    socialGet<{ notifications: SocialNotif[]; unread: number }>("/social/me/notifications", signal).catch(
-      () => ({ notifications: [] as SocialNotif[], unread: 0 }),
-    ),
+    socialGet<{ notifications: SocialNotif[]; unread: number }>(
+      "/social/me/notifications",
+      signal,
+    ).catch(() => ({ notifications: [] as SocialNotif[], unread: 0 })),
   ]);
   const items = [
     ...(theme.notifications || []).map(themeToCenter),

@@ -6,7 +6,13 @@ import { useT } from "@/lib/i18n";
 import { useSettings } from "@/lib/settings";
 import { useView } from "@/lib/view";
 
-export function AddonResults({ groups, onClose }: { groups: AddonResultGroup[]; onClose: () => void }) {
+export function AddonResults({
+  groups,
+  onClose,
+}: {
+  groups: AddonResultGroup[];
+  onClose: () => void;
+}) {
   const t = useT();
   if (groups.length === 0) return null;
   return (

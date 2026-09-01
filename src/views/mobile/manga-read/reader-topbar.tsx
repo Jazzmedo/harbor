@@ -34,8 +34,12 @@ export function ReaderTopbar({
           <ChevronLeft size={24} strokeWidth={2.2} />
         </button>
         <div className="flex min-w-0 flex-1 flex-col items-center">
-          <span className="max-w-full truncate text-[14px] font-semibold text-ink">{chapterLabel}</span>
-          {pageLabel && <span className="text-[12px] tabular-nums text-ink-subtle">{pageLabel}</span>}
+          <span className="max-w-full truncate text-[14px] font-semibold text-ink">
+            {chapterLabel}
+          </span>
+          {pageLabel && (
+            <span className="text-[12px] tabular-nums text-ink-subtle">{pageLabel}</span>
+          )}
         </div>
         <div className="h-11 w-11 shrink-0" />
       </div>

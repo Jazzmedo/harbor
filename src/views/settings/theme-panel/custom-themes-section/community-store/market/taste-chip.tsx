@@ -22,7 +22,9 @@ export function TasteChip({
       onClick={onClick}
       aria-pressed={active}
       className={`group inline-flex shrink-0 items-center gap-2.5 rounded-full py-1.5 pe-4 ps-1.5 text-start transition-colors ${
-        active ? "bg-accent-soft ring-1 ring-accent" : "bg-surface ring-1 ring-edge-soft hover:bg-elevated hover:ring-edge"
+        active
+          ? "bg-accent-soft ring-1 ring-accent"
+          : "bg-surface ring-1 ring-edge-soft hover:bg-elevated hover:ring-edge"
       }`}
     >
       <span

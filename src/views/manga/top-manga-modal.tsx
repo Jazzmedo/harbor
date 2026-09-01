@@ -2,11 +2,7 @@ import { Award } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { RankModalShell } from "@/components/rank-modal-shell";
 import { useT } from "@/lib/i18n";
-import {
-  MANGA_COLLECTIONS,
-  streamCollection,
-  type MangaCollection,
-} from "@/lib/manga/collections";
+import { MANGA_COLLECTIONS, streamCollection, type MangaCollection } from "@/lib/manga/collections";
 import { hasAnyMangaSource } from "@/lib/manga/sources";
 import type { MangaSummary } from "@/lib/manga/types";
 import { TopMangaRow } from "./top-manga-row";
@@ -141,9 +137,7 @@ export function TopMangaModal({
         {t("Top Manga")}
       </h2>
       <p className="mt-1 flex items-center gap-1.5 text-[12.5px] text-ink-muted">
-        <span className="truncate">
-          {t(collection.subtitle ?? collection.name)}
-        </span>
+        <span className="truncate">{t(collection.subtitle ?? collection.name)}</span>
         <span className="ms-1 inline-flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden rounded-full bg-canvas ring-1 ring-edge-soft">
           {iconOk ? (
             <img
@@ -187,8 +181,7 @@ export function TopMangaModal({
             onOpenManga={onOpenManga}
           />
         ))}
-        {!done &&
-          Array.from({ length: 3 }).map((_, i) => <GhostRow key={`g${i}`} />)}
+        {!done && Array.from({ length: 3 }).map((_, i) => <GhostRow key={`g${i}`} />)}
       </div>
     );
   } else if (!done) {

@@ -23,11 +23,15 @@ export function AuthorIdentity({ account }: { account: Author }) {
         <div className="flex min-w-0 flex-col">
           <span className="truncate text-[13.5px] font-semibold text-ink">{account.username}</span>
           {account.handle && (
-            <span className="truncate font-display text-[12.5px] text-ink-subtle">@{account.handle}</span>
+            <span className="truncate font-display text-[12.5px] text-ink-subtle">
+              @{account.handle}
+            </span>
           )}
         </div>
       </div>
-      <span className="text-[11.5px] text-ink-subtle">{t("Tied to your account. Manage it in My themes.")}</span>
+      <span className="text-[11.5px] text-ink-subtle">
+        {t("Tied to your account. Manage it in My themes.")}
+      </span>
     </div>
   );
 }

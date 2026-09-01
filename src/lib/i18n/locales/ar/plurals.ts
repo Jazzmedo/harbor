@@ -1,8 +1,12 @@
 const plurals: Record<string, string> = {
-  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.#few": "إضافة {n} عنوان من قائمة مشاهدة Harbor إلى Trakt؟ يتخطّى Trakt أي عنوان موجود لديه بالفعل.",
-  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.#one": "إضافة {n} عنوان من قائمة مشاهدة Harbor إلى Trakt؟ يتخطّى Trakt أي عنوان موجود لديه بالفعل.",
-  "Add {n} titles from your Trakt watchlist to Harbor?#few": "إضافة {n} عنوان من قائمة مشاهدة Trakt إلى Harbor؟",
-  "Add {n} titles from your Trakt watchlist to Harbor?#one": "إضافة {n} عنوان من قائمة مشاهدة Trakt إلى Harbor؟",
+  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.#few":
+    "إضافة {n} عنوان من قائمة مشاهدة Harbor إلى Trakt؟ يتخطّى Trakt أي عنوان موجود لديه بالفعل.",
+  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.#one":
+    "إضافة {n} عنوان من قائمة مشاهدة Harbor إلى Trakt؟ يتخطّى Trakt أي عنوان موجود لديه بالفعل.",
+  "Add {n} titles from your Trakt watchlist to Harbor?#few":
+    "إضافة {n} عنوان من قائمة مشاهدة Trakt إلى Harbor؟",
+  "Add {n} titles from your Trakt watchlist to Harbor?#one":
+    "إضافة {n} عنوان من قائمة مشاهدة Trakt إلى Harbor؟",
   "After {n} episodes#few": "بعد {n} حلقات",
   "After {n} episodes#one": "بعد {n} حلقات",
   "All {n} channels loaded#few": "تم تحميل جميع القنوات ({n})",
@@ -27,20 +31,30 @@ const plurals: Record<string, string> = {
   "Health for {n} services#one": "حالة {n} خدمات",
   "Import {n} JavaScript sources#few": "استيراد {n} مصدر JavaScript",
   "Import {n} JavaScript sources#one": "استيراد {n} مصدر JavaScript",
-  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.#few": "لا شيء لإرساله. جميع عناصر قائمة المشاهدة الـ {n} هي أنمي، وهو ما لا يستطيع Trakt تتبّعه.",
-  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.#one": "لا شيء لإرساله. جميع عناصر قائمة المشاهدة الـ {n} هي أنمي، وهو ما لا يستطيع Trakt تتبّعه.",
-  "Remove this folder and its {n} items? Files on your disk are not deleted.#few": "إزالة هذا المجلد و{n} من عناصره؟ لا تُحذف الملفات الموجودة على قرصك.",
-  "Remove this folder and its {n} items? Files on your disk are not deleted.#one": "إزالة هذا المجلد و{n} من عناصره؟ لا تُحذف الملفات الموجودة على قرصك.",
-  "Remove {n} items from your library? Files on your disk are not deleted.#few": "إزالة {n} عنصرًا من مكتبتك؟ لا تُحذف الملفات الموجودة على قرصك.",
-  "Remove {n} items from your library? Files on your disk are not deleted.#one": "إزالة {n} عنصرًا من مكتبتك؟ لا تُحذف الملفات الموجودة على قرصك.",
+  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.#few":
+    "لا شيء لإرساله. جميع عناصر قائمة المشاهدة الـ {n} هي أنمي، وهو ما لا يستطيع Trakt تتبّعه.",
+  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.#one":
+    "لا شيء لإرساله. جميع عناصر قائمة المشاهدة الـ {n} هي أنمي، وهو ما لا يستطيع Trakt تتبّعه.",
+  "Remove this folder and its {n} items? Files on your disk are not deleted.#few":
+    "إزالة هذا المجلد و{n} من عناصره؟ لا تُحذف الملفات الموجودة على قرصك.",
+  "Remove this folder and its {n} items? Files on your disk are not deleted.#one":
+    "إزالة هذا المجلد و{n} من عناصره؟ لا تُحذف الملفات الموجودة على قرصك.",
+  "Remove {n} items from your library? Files on your disk are not deleted.#few":
+    "إزالة {n} عنصرًا من مكتبتك؟ لا تُحذف الملفات الموجودة على قرصك.",
+  "Remove {n} items from your library? Files on your disk are not deleted.#one":
+    "إزالة {n} عنصرًا من مكتبتك؟ لا تُحذف الملفات الموجودة على قرصك.",
   "Rising · +{n} star in 24h#few": "صاعدة · +{n} نجمة خلال 24 ساعة",
   "Rising · +{n} star in 24h#one": "صاعدة · +{n} نجمة خلال 24 ساعة",
   "Rising · +{n} stars in 24h#few": "صاعدة · +{n} نجوم خلال 24 ساعة",
   "Rising · +{n} stars in 24h#one": "صاعدة · +{n} نجوم خلال 24 ساعة",
-  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.#few": "تم حفظ harbor-anime-diagnostics.txt وفيه {n} إدخال. أرسل إلينا هذا الملف.",
-  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.#one": "تم حفظ harbor-anime-diagnostics.txt وفيه {n} إدخال. أرسل إلينا هذا الملف.",
-  "Saved {n} entries to {path}. Send us that file.#few": "تم حفظ {n} إدخال في {path}. أرسل إلينا هذا الملف.",
-  "Saved {n} entries to {path}. Send us that file.#one": "تم حفظ {n} إدخال في {path}. أرسل إلينا هذا الملف.",
+  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.#few":
+    "تم حفظ harbor-anime-diagnostics.txt وفيه {n} إدخال. أرسل إلينا هذا الملف.",
+  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.#one":
+    "تم حفظ harbor-anime-diagnostics.txt وفيه {n} إدخال. أرسل إلينا هذا الملف.",
+  "Saved {n} entries to {path}. Send us that file.#few":
+    "تم حفظ {n} إدخال في {path}. أرسل إلينا هذا الملف.",
+  "Saved {n} entries to {path}. Send us that file.#one":
+    "تم حفظ {n} إدخال في {path}. أرسل إلينا هذا الملف.",
   "Search {n} EPG channels#few": "البحث في {n} قناة دليل برامج",
   "Search {n} EPG channels#one": "البحث في {n} قناة دليل برامج",
   "Search {n} channels#few": "البحث في {n} قناة",
@@ -67,10 +81,14 @@ const plurals: Record<string, string> = {
   "in {n} weeks#one": "خلال {n} أسابيع",
   "{avg} avg · {n} rated#few": "متوسط {avg} · {n} مقيَّم",
   "{avg} avg · {n} rated#one": "متوسط {avg} · {n} مقيَّم",
-  "{count} community ratings on stremio-addons.net#few": "{count} تقييم من المجتمع على stremio-addons.net",
-  "{count} community ratings on stremio-addons.net#one": "{count} تقييم من المجتمع على stremio-addons.net",
-  "{count} films, in the order you picked them. Nothing plays until you start.#few": "{count} أفلام، بالترتيب الذي اخترته. لن يبدأ التشغيل حتى تضغط ابدأ.",
-  "{count} films, in the order you picked them. Nothing plays until you start.#one": "{count} أفلام، بالترتيب الذي اخترته. لن يبدأ التشغيل حتى تضغط ابدأ.",
+  "{count} community ratings on stremio-addons.net#few":
+    "{count} تقييم من المجتمع على stremio-addons.net",
+  "{count} community ratings on stremio-addons.net#one":
+    "{count} تقييم من المجتمع على stremio-addons.net",
+  "{count} films, in the order you picked them. Nothing plays until you start.#few":
+    "{count} أفلام، بالترتيب الذي اخترته. لن يبدأ التشغيل حتى تضغط ابدأ.",
+  "{count} films, in the order you picked them. Nothing plays until you start.#one":
+    "{count} أفلام، بالترتيب الذي اخترته. لن يبدأ التشغيل حتى تضغط ابدأ.",
   "{count} friends in common#few": "{count} أصدقاء مشتركون",
   "{count} friends in common#one": "{count} أصدقاء مشتركون",
   "{label} · {n} collection#few": "{label} · {n} مجموعة",
@@ -79,8 +97,10 @@ const plurals: Record<string, string> = {
   "{label} · {n} collections#one": "{label} · {n} مجموعات",
   "{n} addon#few": "{n} إضافة",
   "{n} addon#one": "{n} إضافة",
-  "{n} addons don't provide streams and aren't listed.#few": "{n} من الإضافات لا توفّر بثًا ولا تظهر هنا.",
-  "{n} addons don't provide streams and aren't listed.#one": "{n} من الإضافات لا توفّر بثًا ولا تظهر هنا.",
+  "{n} addons don't provide streams and aren't listed.#few":
+    "{n} من الإضافات لا توفّر بثًا ولا تظهر هنا.",
+  "{n} addons don't provide streams and aren't listed.#one":
+    "{n} من الإضافات لا توفّر بثًا ولا تظهر هنا.",
   "{n} addons#few": "{n} إضافة",
   "{n} addons#one": "{n} إضافة",
   "{n} avatars across film, TV, and anime.#few": "{n} صورة رمزية من الأفلام والتلفزيون والأنمي.",
@@ -113,8 +133,10 @@ const plurals: Record<string, string> = {
   "{n} film#one": "{n} فيلم",
   "{n} films#few": "{n} أفلام",
   "{n} films#one": "{n} أفلام",
-  "{n} frame stored. Wiping rebuilds them next time you watch.#few": "{n} إطار مخزّن. يعيد المسح بناءها في المرة القادمة التي تشاهد فيها.",
-  "{n} frame stored. Wiping rebuilds them next time you watch.#one": "{n} إطار مخزّن. يعيد المسح بناءها في المرة القادمة التي تشاهد فيها.",
+  "{n} frame stored. Wiping rebuilds them next time you watch.#few":
+    "{n} إطار مخزّن. يعيد المسح بناءها في المرة القادمة التي تشاهد فيها.",
+  "{n} frame stored. Wiping rebuilds them next time you watch.#one":
+    "{n} إطار مخزّن. يعيد المسح بناءها في المرة القادمة التي تشاهد فيها.",
   "{n} genre#few": "{n} نوع",
   "{n} genre#one": "{n} نوع",
   "{n} genres#few": "{n} أنواع",
@@ -167,14 +189,18 @@ const plurals: Record<string, string> = {
   "{n} tabs#one": "{n} علامات تبويب",
   "{n} title#few": "{n} عنوان",
   "{n} title#one": "{n} عنوان",
-  "{n} titles need review — help us identify them.#few": "{n} عنوانًا تحتاج إلى مراجعة، ساعدنا في التعرّف عليها.",
-  "{n} titles need review — help us identify them.#one": "{n} عنوانًا تحتاج إلى مراجعة، ساعدنا في التعرّف عليها.",
+  "{n} titles need review — help us identify them.#few":
+    "{n} عنوانًا تحتاج إلى مراجعة، ساعدنا في التعرّف عليها.",
+  "{n} titles need review — help us identify them.#one":
+    "{n} عنوانًا تحتاج إلى مراجعة، ساعدنا في التعرّف عليها.",
   "{n} titles together#few": "{n} أعمال مشتركة",
   "{n} titles together#one": "{n} أعمال مشتركة",
   "{n} titles#few": "{n} عنوان",
   "{n} titles#one": "{n} عنوان",
-  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#few": "حُظر {n} طلب تعقّب في هذه الجلسة. ولا يرسل Harbor نفسه أي قياسات.",
-  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#one": "حُظر {n} طلب تعقّب في هذه الجلسة. ولا يرسل Harbor نفسه أي قياسات.",
+  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#few":
+    "حُظر {n} طلب تعقّب في هذه الجلسة. ولا يرسل Harbor نفسه أي قياسات.",
+  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#one":
+    "حُظر {n} طلب تعقّب في هذه الجلسة. ولا يرسل Harbor نفسه أي قياسات.",
   "{n} votes#few": "{n} صوت",
   "{n} votes#one": "{n} صوت",
   "{n} winner#few": "{n} فائز",

@@ -78,7 +78,13 @@ function translateToolPlaceholder(placeholder: string, t: (key: string) => strin
   return placeholder;
 }
 
-export function AboutEditor({ value, onChange }: { value: string; onChange: (next: string) => void }) {
+export function AboutEditor({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (next: string) => void;
+}) {
   const t = useT();
   const ref = useRef<HTMLTextAreaElement>(null);
   const [preview, setPreview] = useState(false);
@@ -141,8 +147,7 @@ export function AboutEditor({ value, onChange }: { value: string; onChange: (nex
           onClick={() => setPreview((p) => !p)}
           className="ms-auto flex h-8 items-center gap-1.5 rounded-sm px-2.5 text-[12px] font-semibold text-ink-subtle transition-colors hover:bg-raised hover:text-ink"
         >
-          {preview ? <Pencil size={13} /> : <Eye size={14} />}{" "}
-          {preview ? t("Edit") : t("Preview")}
+          {preview ? <Pencil size={13} /> : <Eye size={14} />} {preview ? t("Edit") : t("Preview")}
         </button>
       </div>
 

@@ -9,7 +9,11 @@ export function matchPersonForQuery(
 ): SearchPerson | null {
   const p = people?.[0];
   if (!p || !p.profile) return null;
-  const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  const norm = (s: string) =>
+    s
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim();
   const q = norm(query);
   const n = norm(p.name);
   if (q.length < 3 || !n) return null;

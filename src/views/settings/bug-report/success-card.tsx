@@ -2,13 +2,7 @@ import { Check, GitPullRequest } from "lucide-react";
 import { openUrl } from "@/lib/window";
 import { useT } from "@/lib/i18n";
 
-export function SuccessCard({
-  id,
-  onAnother,
-}: {
-  id: string;
-  onAnother: () => void;
-}) {
+export function SuccessCard({ id, onAnother }: { id: string; onAnother: () => void }) {
   const t = useT();
   return (
     <section className="flex flex-col gap-4 rounded-md bg-elevated p-8">

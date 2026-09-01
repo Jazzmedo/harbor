@@ -1,4 +1,14 @@
-import { Clock, Flame, Minus, Moon, Snowflake, Sparkles, Sun, Zap, type LucideIcon } from "lucide-react";
+import {
+  Clock,
+  Flame,
+  Minus,
+  Moon,
+  Snowflake,
+  Sparkles,
+  Sun,
+  Zap,
+  type LucideIcon,
+} from "lucide-react";
 import { t as translate, useT } from "@/lib/i18n";
 import type { StoreTheme } from "@/lib/theme-store";
 import type { Mood } from "./color-rank";
@@ -46,7 +56,14 @@ export function StoreDiscover({
   const t = useT();
   return (
     <div className="flex flex-col gap-10">
-      {data.hero && <StoreHero theme={data.hero} label={t("Featured theme")} tag={heroTag(data)} onOpen={onOpen} />}
+      {data.hero && (
+        <StoreHero
+          theme={data.hero}
+          label={t("Featured theme")}
+          tag={heroTag(data)}
+          onOpen={onOpen}
+        />
+      )}
 
       <StoreCategoryChips rails={data.moodRails} onPick={onPickMood} />
 
@@ -70,7 +87,12 @@ export function StoreDiscover({
         onViewAll={onBrowseAll}
       />
 
-      <StoreTopCharts trending={data.topRated} popular={data.popular} fresh={data.fresh} onOpen={onOpen} />
+      <StoreTopCharts
+        trending={data.topRated}
+        popular={data.popular}
+        fresh={data.fresh}
+        onOpen={onOpen}
+      />
 
       {data.moodRails.map((r) => {
         const Icon = MOOD_ICON[r.mood];

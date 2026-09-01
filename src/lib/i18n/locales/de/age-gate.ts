@@ -1,22 +1,31 @@
 const ageGate: Record<string, string> = {
-  "\"Compound\" interest is calculated on:": "„Zinseszins“ wird berechnet auf:",
-  "A bill is set up via \"direct debit\". The biller can:": "Für eine Rechnung ist die Zahlung per „Lastschrift“ eingerichtet. Der Rechnungssteller kann:",
-  "A charge on your bank app sits as \"pending\" for a day. The merchant is:": "Eine Zahlung wird in deiner Banking-App einen Tag lang als „ausstehend“ angezeigt. Der Händler ist:",
+  '"Compound" interest is calculated on:': "„Zinseszins“ wird berechnet auf:",
+  'A bill is set up via "direct debit". The biller can:':
+    "Für eine Rechnung ist die Zahlung per „Lastschrift“ eingerichtet. Der Rechnungssteller kann:",
+  'A charge on your bank app sits as "pending" for a day. The merchant is:':
+    "Eine Zahlung wird in deiner Banking-App einen Tag lang als „ausstehend“ angezeigt. Der Händler ist:",
   "A complaint to HR": "Eine Beschwerde bei der Personalabteilung",
-  "A document needs to be \"notarised\". You take it to someone who will:": "Ein Dokument muss „notariell beglaubigt“ werden. Du bringst es zu jemandem, der:",
+  'A document needs to be "notarised". You take it to someone who will:':
+    "Ein Dokument muss „notariell beglaubigt“ werden. Du bringst es zu jemandem, der:",
   "A fixed amount every month": "Ein fester Betrag jeden Monat",
-  "A job offer's compensation is described as \"competitive\". That tells you:": "Die Vergütung in einem Stellenangebot wird als „konkurrenzfähig“ bezeichnet. Das sagt dir:",
-  "A laid-off employee receives \"severance\". That's:": "Ein entlassener Mitarbeiter erhält eine „Abfindung“. Das ist:",
-  "A landlord asks for a \"deposit\" before move-in. What's it for?": "Ein Vermieter verlangt vor dem Einzug eine „Kaution“. Wofür ist sie gedacht?",
+  'A job offer\'s compensation is described as "competitive". That tells you:':
+    "Die Vergütung in einem Stellenangebot wird als „konkurrenzfähig“ bezeichnet. Das sagt dir:",
+  'A laid-off employee receives "severance". That\'s:':
+    "Ein entlassener Mitarbeiter erhält eine „Abfindung“. Das ist:",
+  'A landlord asks for a "deposit" before move-in. What\'s it for?':
+    "Ein Vermieter verlangt vor dem Einzug eine „Kaution“. Wofür ist sie gedacht?",
   "A loan tied to the property": "Ein mit der Immobilie besicherter Kredit",
   "A mortgage is essentially:": "Eine Hypothek ist im Wesentlichen:",
-  "A new job's salary is \"pro-rated\" because you start mid-year. You'll receive:": "Das Gehalt in einem neuen Job wird „anteilig“ berechnet, weil du mitten im Jahr anfängst. Du erhältst:",
+  "A new job's salary is \"pro-rated\" because you start mid-year. You'll receive:":
+    "Das Gehalt in einem neuen Job wird „anteilig“ berechnet, weil du mitten im Jahr anfängst. Du erhältst:",
   "A payout when employment ends": "Eine Abfindung bei Beschäftigungsende",
   "A property registration tax": "Eine Steuer auf die Eintragung einer Immobilie",
   "A retirement-fund withdrawal": "Eine Entnahme aus dem Altersvorsorgefonds",
   "A share matching your months worked": "Ein Anteil entsprechend der Anzahl deiner Arbeitsmonate",
-  "A subscription \"auto-renews\" at the end of the term. That means:": "Ein Abonnement „verlängert sich automatisch“ am Ende der Laufzeit. Das bedeutet:",
-  "A will names someone as \"executor\". Their job is to:": "In einem Testament wird jemand als „Testamentsvollstrecker“ benannt. Seine Aufgabe ist:",
+  'A subscription "auto-renews" at the end of the term. That means:':
+    "Ein Abonnement „verlängert sich automatisch“ am Ende der Laufzeit. Das bedeutet:",
+  'A will names someone as "executor". Their job is to:':
+    "In einem Testament wird jemand als „Testamentsvollstrecker“ benannt. Seine Aufgabe ist:",
   "A yearly property tax bill": "Ein jährlicher Grundsteuerbescheid",
   "An agreement between landlord and tenant": "Eine Vereinbarung zwischen Vermieter und Mieter",
   "Approve the will in court": "Das Testament gerichtlich bestätigen",
@@ -31,11 +40,13 @@ const ageGate: Record<string, string> = {
   "Double pay to catch you up": "Das Doppelte zahlen, um den Rückstand auszugleichen",
   "Fee to the listing agent": "Maklerprovision",
   "File it with the government": "Bei der Behörde einreichen",
-  "Friend asks you to \"co-sign\" a loan. You agree to:": "Ein Freund bittet dich, für einen Kredit zu bürgen. Du stimmst zu:",
+  'Friend asks you to "co-sign" a loan. You agree to:':
+    "Ein Freund bittet dich, für einen Kredit zu bürgen. Du stimmst zu:",
   "GDP is shrinking": "Das BIP schrumpft",
   "Get a discount for paying early": "Bei frühzeitiger Zahlung einen Rabatt erhalten",
   "Get all your past payments refunded": "Alle bisherigen Zahlungen erstattet bekommen",
-  "Giving \"two weeks' notice\" at a job means:": "Im Berufsleben bedeutet „zwei Wochen vorher kündigen“:",
+  'Giving "two weeks\' notice" at a job means:':
+    "Im Berufsleben bedeutet „zwei Wochen vorher kündigen“:",
   "Have the policy cancelled automatically": "Die Police automatisch kündigen lassen",
   "Holding the funds before settling": "Das Geld bis zum Abschluss verwahren",
   "Hours you worked this week": "Deine Arbeitsstunden in dieser Woche",
@@ -43,7 +54,8 @@ const ageGate: Record<string, string> = {
   "Inherit the largest share": "Den größten Anteil erben",
   "Inherit their property automatically": "Ihr Eigentum automatisch erben",
   "Insurance that covers the home": "Eine Versicherung, die das Zuhause absichert",
-  "Interest rate on a loan is shown as a percentage. It tells you:": "Der Zinssatz eines Kredits wird als Prozentsatz angegeben. Er zeigt dir:",
+  "Interest rate on a loan is shown as a percentage. It tells you:":
+    "Der Zinssatz eines Kredits wird als Prozentsatz angegeben. Er zeigt dir:",
   "It cancels and refunds": "Es kündigt und veranlasst eine Erstattung",
   "It changes every quarter": "Es ändert sich jedes Quartal",
   "It charges you for another period": "Es stellt dir einen weiteren Zeitraum in Rechnung",
@@ -61,12 +73,15 @@ const ageGate: Record<string, string> = {
   "Only the cash you withdrew": "Nur das Bargeld, das du abgehoben hast",
   "Only the original sum borrowed": "Nur der ursprünglich geliehene Betrag",
   "Override their existing will": "Das bestehende Testament außer Kraft setzen",
-  "Owe more, because interest keeps building on the rest": "Mehr schulden, weil der Restbetrag weiter verzinst wird",
+  "Owe more, because interest keeps building on the rest":
+    "Mehr schulden, weil der Restbetrag weiter verzinst wird",
   "Pay a one-time fee to reserve it": "Eine einmalige Reservierungsgebühr zahlen",
   "Pay a set amount yourself first": "Zuerst selbst einen festen Betrag zahlen",
   "Pay if the friend defaults": "Zahlen, falls dein Freund den Kredit nicht zurückzahlt",
-  "Pay no interest as long as the minimum is met": "Keine Zinsen zahlen, solange die Mindestzahlung geleistet wird",
-  "Pay the total in smaller amounts over time": "Den Gesamtbetrag im Lauf der Zeit in kleineren Teilbeträgen zahlen",
+  "Pay no interest as long as the minimum is met":
+    "Keine Zinsen zahlen, solange die Mindestzahlung geleistet wird",
+  "Pay the total in smaller amounts over time":
+    "Den Gesamtbetrag im Lauf der Zeit in kleineren Teilbeträgen zahlen",
   "Practise law in court for them": "Sie vor Gericht anwaltlich vertreten",
   "Pre-paying the last month's rent": "Die letzte Monatsmiete im Voraus zahlen",
   "Prices are rising overall": "Die Preise steigen allgemein",
@@ -85,7 +100,8 @@ const ageGate: Record<string, string> = {
   "Telling your boss you're quitting": "Deinem Chef sagen, dass du kündigst",
   "The bank's quarterly profit": "Der Quartalsgewinn der Bank",
   "The cost of borrowing per year": "Die jährlichen Kreditkosten",
-  "The economy has \"inflation\". What's happening?": "In der Wirtschaft herrscht „Inflation“. Was passiert da?",
+  'The economy has "inflation". What\'s happening?':
+    "In der Wirtschaft herrscht „Inflation“. Was passiert da?",
   "The full annual amount upfront": "Den vollen Jahresbetrag im Voraus",
   "The hourly rate": "Der Stundensatz",
   "The price drops by half": "Der Preis halbiert sich",
@@ -103,22 +119,30 @@ const ageGate: Record<string, string> = {
   "Whatever's left at year-end": "Was am Jahresende übrig ist",
   "Witness the contract only": "Nur den Vertrag bezeugen",
   "Witness the signing only": "Nur die Unterzeichnung bezeugen",
-  "You buy something \"in installments\". That means you:": "Du kaufst etwas „in Raten“. Das bedeutet für dich:",
+  'You buy something "in installments". That means you:':
+    "Du kaufst etwas „in Raten“. Das bedeutet für dich:",
   "You earned interest above the limit": "Du hast Zinsen über dem Grenzwert verdient",
-  "You file a tax return as a \"sole proprietor\" or self-employed. You owe tax on:": "Du reichst als „Einzelunternehmer“ oder Selbstständiger eine Steuererklärung ein. Du zahlst Steuern auf:",
+  'You file a tax return as a "sole proprietor" or self-employed. You owe tax on:':
+    "Du reichst als „Einzelunternehmer“ oder Selbstständiger eine Steuererklärung ein. Du zahlst Steuern auf:",
   "You hit the savings ceiling": "Du hast die Sparobergrenze erreicht",
-  "You make an insurance claim. Before the insurer pays out, you usually:": "Du reichst einen Versicherungsanspruch ein. Bevor die Versicherung zahlt, musst du normalerweise:",
-  "You only ever pay the minimum on a credit card each month. Over time you:": "Du zahlst jeden Monat nur den Mindestbetrag auf deiner Kreditkartenabrechnung. Mit der Zeit:",
-  "You sign an \"NDA\" with a company. You're agreeing to:": "Du unterzeichnest mit einem Unternehmen eine „NDA“. Du verpflichtest dich:",
+  "You make an insurance claim. Before the insurer pays out, you usually:":
+    "Du reichst einen Versicherungsanspruch ein. Bevor die Versicherung zahlt, musst du normalerweise:",
+  "You only ever pay the minimum on a credit card each month. Over time you:":
+    "Du zahlst jeden Monat nur den Mindestbetrag auf deiner Kreditkartenabrechnung. Mit der Zeit:",
+  'You sign an "NDA" with a company. You\'re agreeing to:':
+    "Du unterzeichnest mit einem Unternehmen eine „NDA“. Du verpflichtest dich:",
   "You spent past your balance": "Du hast mehr als dein Guthaben ausgegeben",
   "You'll compete with peers for it": "Du konkurrierst mit anderen darum",
-  "You're given \"power of attorney\" for a relative. You can:": "Du erhältst eine „Vollmacht“ für einen Verwandten. Du kannst:",
-  "Your account goes \"overdrawn\". What happened?": "Dein Konto ist „überzogen“. Was ist passiert?",
+  'You\'re given "power of attorney" for a relative. You can:':
+    "Du erhältst eine „Vollmacht“ für einen Verwandten. Du kannst:",
+  'Your account goes "overdrawn". What happened?': "Dein Konto ist „überzogen“. Was ist passiert?",
   "Your bank locked the account": "Deine Bank hat das Konto gesperrt",
-  "Your boss says \"submit your timesheet by Friday\". You're recording:": "Dein Chef sagt: „Reiche deinen Stundenzettel bis Freitag ein.“ Du erfasst:",
+  'Your boss says "submit your timesheet by Friday". You\'re recording:':
+    "Dein Chef sagt: „Reiche deinen Stundenzettel bis Freitag ein.“ Du erfasst:",
   "Your business profit": "Dein Unternehmensgewinn",
   "Your holiday plans": "Deine Urlaubspläne",
-  "Your payslip shows \"gross\" and \"net\" pay. Net is:": "Auf deiner Gehaltsabrechnung stehen Brutto- und Nettolohn. Netto ist:",
+  'Your payslip shows "gross" and "net" pay. Net is:':
+    "Auf deiner Gehaltsabrechnung stehen Brutto- und Nettolohn. Netto ist:",
 };
 
 export default ageGate;

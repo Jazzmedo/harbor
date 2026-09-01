@@ -197,11 +197,7 @@ function elegantFinScript(): string {
   );
   let script: string | undefined;
   const visit = (node: ts.Node): void => {
-    if (
-      ts.isFunctionDeclaration(node) &&
-      node.name?.text === "buildElegantFinJs" &&
-      node.body
-    ) {
+    if (ts.isFunctionDeclaration(node) && node.name?.text === "buildElegantFinJs" && node.body) {
       const returned = node.body.statements.find(ts.isReturnStatement)?.expression;
       assert.ok(returned && ts.isTemplateExpression(returned), "ElegantFin generated template");
       script = returned.head.text;

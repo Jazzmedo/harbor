@@ -26,9 +26,7 @@ export function StatusBar({
       >
         {file.lang}
       </span>
-      <span className="tabular-nums">
-        {t("Ln {line}, Col {col}", { line, col })}
-      </span>
+      <span className="tabular-nums">{t("Ln {line}, Col {col}", { line, col })}</span>
       <span className="tabular-nums">{t("{lines} lines", { lines })}</span>
       <span className="tabular-nums">{t("{chars} chars", { chars: chars.toLocaleString() })}</span>
       <span className="ms-auto flex items-center gap-4">

@@ -110,11 +110,15 @@ const rails: Record<string, string> = {
   "Show me more like this": "このような作品をもっと表示",
   "Show me less like this": "このような作品の表示を減らす",
   "Tune your recommendations": "おすすめを調整",
-  "Thumbs down hides this title from Featured. Thumbs up helps surface similar picks.": "低評価にするとこの作品が注目作品から非表示になり、高評価にすると似た作品がおすすめに表示されやすくなります。",
+  "Thumbs down hides this title from Featured. Thumbs up helps surface similar picks.":
+    "低評価にするとこの作品が注目作品から非表示になり、高評価にすると似た作品がおすすめに表示されやすくなります。",
   "Your addons": "あなたのアドオン",
-  "What each addon is actually serving up right now.": "各アドオンが今提供しているコンテンツを確認できます。",
-  "This addon provides streams only. It has no catalog to browse, but it still works behind every title you open.": "このアドオンはストリームのみを提供します。閲覧できるカタログはありませんが、各作品を開いたときに引き続き機能します。",
-  "This catalog came back empty. Try another one, or check the addon in Settings.": "このカタログには何もありません。別のカタログを試すか、設定でアドオンを確認してください。",
+  "What each addon is actually serving up right now.":
+    "各アドオンが今提供しているコンテンツを確認できます。",
+  "This addon provides streams only. It has no catalog to browse, but it still works behind every title you open.":
+    "このアドオンはストリームのみを提供します。閲覧できるカタログはありませんが、各作品を開いたときに引き続き機能します。",
+  "This catalog came back empty. Try another one, or check the addon in Settings.":
+    "このカタログには何もありません。別のカタログを試すか、設定でアドオンを確認してください。",
 };
 
 export default rails;

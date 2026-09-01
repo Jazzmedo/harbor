@@ -1,10 +1,16 @@
 const plurals: Record<string, string> = {
-  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.": "Harborのウォッチリストから{n}件の作品をTraktに追加しますか？Traktにすでにある作品はスキップされます。",
-  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.#one": "Harborのウォッチリストから{n}件をTraktに追加しますか？Traktにすでにあるタイトルはスキップされます。",
-  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.#few": "Harborのウォッチリストから{n}件をTraktに追加しますか？Traktにすでにあるタイトルはスキップされます。",
-  "Add {n} titles from your Trakt watchlist to Harbor?": "Traktのウォッチリストから{n}件の作品をHarborに追加しますか？",
-  "Add {n} titles from your Trakt watchlist to Harbor?#one": "Traktのウォッチリストから{n}件をHarborに追加しますか？",
-  "Add {n} titles from your Trakt watchlist to Harbor?#few": "Traktのウォッチリストから{n}件をHarborに追加しますか？",
+  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.":
+    "Harborのウォッチリストから{n}件の作品をTraktに追加しますか？Traktにすでにある作品はスキップされます。",
+  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.#one":
+    "Harborのウォッチリストから{n}件をTraktに追加しますか？Traktにすでにあるタイトルはスキップされます。",
+  "Add {n} titles from your Harbor watchlist to Trakt? Trakt skips any it already has.#few":
+    "Harborのウォッチリストから{n}件をTraktに追加しますか？Traktにすでにあるタイトルはスキップされます。",
+  "Add {n} titles from your Trakt watchlist to Harbor?":
+    "Traktのウォッチリストから{n}件の作品をHarborに追加しますか？",
+  "Add {n} titles from your Trakt watchlist to Harbor?#one":
+    "Traktのウォッチリストから{n}件をHarborに追加しますか？",
+  "Add {n} titles from your Trakt watchlist to Harbor?#few":
+    "Traktのウォッチリストから{n}件をHarborに追加しますか？",
   "After {n} episodes": "{n}話後",
   "After {n} episodes#one": "{n}話後",
   "After {n} episodes#few": "{n}話後",
@@ -41,27 +47,42 @@ const plurals: Record<string, string> = {
   "Import {n} JavaScript sources": "{n}件のJavaScriptソースをインポート",
   "Import {n} JavaScript sources#one": "{n}件のJavaScriptソースをインポート",
   "Import {n} JavaScript sources#few": "{n}件のJavaScriptソースをインポート",
-  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.": "送信できる項目がありません。ウォッチリストの全{n}件がアニメですが、Traktでは追跡できません。",
-  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.#one": "送信する項目はありません。ウォッチリストの全{n}件が、Traktでは追跡できないアニメです。",
-  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.#few": "送信する項目はありません。ウォッチリストの全{n}件が、Traktでは追跡できないアニメです。",
-  "Remove this folder and its {n} items? Files on your disk are not deleted.": "このフォルダーとその{n}件のアイテムを削除しますか？ディスク上のファイルは削除されません。",
-  "Remove this folder and its {n} items? Files on your disk are not deleted.#one": "このフォルダーと中の{n}件を削除しますか？ディスク上のファイルは削除されません。",
-  "Remove this folder and its {n} items? Files on your disk are not deleted.#few": "このフォルダーと中の{n}件を削除しますか？ディスク上のファイルは削除されません。",
-  "Remove {n} items from your library? Files on your disk are not deleted.": "ライブラリから{n}件を削除しますか？ディスク上のファイルは削除されません。",
-  "Remove {n} items from your library? Files on your disk are not deleted.#one": "ライブラリから{n}件を削除しますか？ディスク上のファイルは削除されません。",
-  "Remove {n} items from your library? Files on your disk are not deleted.#few": "ライブラリから{n}件を削除しますか？ディスク上のファイルは削除されません。",
+  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.":
+    "送信できる項目がありません。ウォッチリストの全{n}件がアニメですが、Traktでは追跡できません。",
+  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.#one":
+    "送信する項目はありません。ウォッチリストの全{n}件が、Traktでは追跡できないアニメです。",
+  "Nothing to send. All {n} watchlist items are anime, which Trakt can't track.#few":
+    "送信する項目はありません。ウォッチリストの全{n}件が、Traktでは追跡できないアニメです。",
+  "Remove this folder and its {n} items? Files on your disk are not deleted.":
+    "このフォルダーとその{n}件のアイテムを削除しますか？ディスク上のファイルは削除されません。",
+  "Remove this folder and its {n} items? Files on your disk are not deleted.#one":
+    "このフォルダーと中の{n}件を削除しますか？ディスク上のファイルは削除されません。",
+  "Remove this folder and its {n} items? Files on your disk are not deleted.#few":
+    "このフォルダーと中の{n}件を削除しますか？ディスク上のファイルは削除されません。",
+  "Remove {n} items from your library? Files on your disk are not deleted.":
+    "ライブラリから{n}件を削除しますか？ディスク上のファイルは削除されません。",
+  "Remove {n} items from your library? Files on your disk are not deleted.#one":
+    "ライブラリから{n}件を削除しますか？ディスク上のファイルは削除されません。",
+  "Remove {n} items from your library? Files on your disk are not deleted.#few":
+    "ライブラリから{n}件を削除しますか？ディスク上のファイルは削除されません。",
   "Rising · +{n} star in 24h": "急上昇 · 24時間で星+{n}個",
   "Rising · +{n} star in 24h#one": "急上昇 · 24時間で+{n}スター",
   "Rising · +{n} star in 24h#few": "急上昇 · 24時間で+{n}スター",
   "Rising · +{n} stars in 24h": "急上昇 · 24時間で星+{n}個",
   "Rising · +{n} stars in 24h#one": "急上昇 · 24時間で+{n}スター",
   "Rising · +{n} stars in 24h#few": "急上昇 · 24時間で+{n}スター",
-  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.": "harbor-anime-diagnostics.txt（{n}件）を保存しました。そのファイルをお送りください。",
-  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.#one": "harbor-anime-diagnostics.txtを保存しました（{n}件）。そのファイルをお送りください。",
-  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.#few": "harbor-anime-diagnostics.txtを保存しました（{n}件）。そのファイルをお送りください。",
-  "Saved {n} entries to {path}. Send us that file.": "{n}件を{path}に保存しました。そのファイルをお送りください。",
-  "Saved {n} entries to {path}. Send us that file.#one": "{n}件を{path}に保存しました。そのファイルをお送りください。",
-  "Saved {n} entries to {path}. Send us that file.#few": "{n}件を{path}に保存しました。そのファイルをお送りください。",
+  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.":
+    "harbor-anime-diagnostics.txt（{n}件）を保存しました。そのファイルをお送りください。",
+  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.#one":
+    "harbor-anime-diagnostics.txtを保存しました（{n}件）。そのファイルをお送りください。",
+  "Saved harbor-anime-diagnostics.txt ({n} entries). Send us that file.#few":
+    "harbor-anime-diagnostics.txtを保存しました（{n}件）。そのファイルをお送りください。",
+  "Saved {n} entries to {path}. Send us that file.":
+    "{n}件を{path}に保存しました。そのファイルをお送りください。",
+  "Saved {n} entries to {path}. Send us that file.#one":
+    "{n}件を{path}に保存しました。そのファイルをお送りください。",
+  "Saved {n} entries to {path}. Send us that file.#few":
+    "{n}件を{path}に保存しました。そのファイルをお送りください。",
   "Search {n} EPG channels": "{n}件のEPGチャンネルを検索",
   "Search {n} EPG channels#one": "{n}件のEPGチャンネルを検索",
   "Search {n} EPG channels#few": "{n}件のEPGチャンネルを検索",
@@ -101,12 +122,18 @@ const plurals: Record<string, string> = {
   "{avg} avg · {n} rated": "平均{avg}・{n}件の評価",
   "{avg} avg · {n} rated#one": "平均{avg} · {n}件の評価",
   "{avg} avg · {n} rated#few": "平均{avg} · {n}件の評価",
-  "{count} community ratings on stremio-addons.net": "stremio-addons.netでのコミュニティ評価{count}件",
-  "{count} community ratings on stremio-addons.net#one": "stremio-addons.netでのコミュニティ評価{count}件",
-  "{count} community ratings on stremio-addons.net#few": "stremio-addons.netでのコミュニティ評価{count}件",
-  "{count} films, in the order you picked them. Nothing plays until you start.": "選んだ順に{count}本の映画を再生します。開始するまで再生されません。",
-  "{count} films, in the order you picked them. Nothing plays until you start.#one": "選択した順に{count}本の映画を再生します。開始するまで何も再生されません。",
-  "{count} films, in the order you picked them. Nothing plays until you start.#few": "選択した順に{count}本の映画を再生します。開始するまで何も再生されません。",
+  "{count} community ratings on stremio-addons.net":
+    "stremio-addons.netでのコミュニティ評価{count}件",
+  "{count} community ratings on stremio-addons.net#one":
+    "stremio-addons.netでのコミュニティ評価{count}件",
+  "{count} community ratings on stremio-addons.net#few":
+    "stremio-addons.netでのコミュニティ評価{count}件",
+  "{count} films, in the order you picked them. Nothing plays until you start.":
+    "選んだ順に{count}本の映画を再生します。開始するまで再生されません。",
+  "{count} films, in the order you picked them. Nothing plays until you start.#one":
+    "選択した順に{count}本の映画を再生します。開始するまで何も再生されません。",
+  "{count} films, in the order you picked them. Nothing plays until you start.#few":
+    "選択した順に{count}本の映画を再生します。開始するまで何も再生されません。",
   "{count} friends in common": "共通の友達{count}人",
   "{count} friends in common#one": "共通の友達{count}人",
   "{count} friends in common#few": "共通の友達{count}人",
@@ -122,9 +149,12 @@ const plurals: Record<string, string> = {
   "{n} addons": "{n}個のアドオン",
   "{n} addons#one": "{n}件のアドオン",
   "{n} addons#few": "{n}件のアドオン",
-  "{n} addons don't provide streams and aren't listed.": "{n}件のアドオンはストリームを提供していないため、一覧に表示されません。",
-  "{n} addons don't provide streams and aren't listed.#one": "{n}件のアドオンはストリームを提供していないため、一覧に表示されません。",
-  "{n} addons don't provide streams and aren't listed.#few": "{n}件のアドオンはストリームを提供していないため、一覧に表示されません。",
+  "{n} addons don't provide streams and aren't listed.":
+    "{n}件のアドオンはストリームを提供していないため、一覧に表示されません。",
+  "{n} addons don't provide streams and aren't listed.#one":
+    "{n}件のアドオンはストリームを提供していないため、一覧に表示されません。",
+  "{n} addons don't provide streams and aren't listed.#few":
+    "{n}件のアドオンはストリームを提供していないため、一覧に表示されません。",
   "{n} avatars across film, TV, and anime.": "映画、テレビ、アニメのアバター{n}個。",
   "{n} avatars across film, TV, and anime.#one": "映画、テレビ、アニメのアバター{n}個。",
   "{n} avatars across film, TV, and anime.#few": "映画、テレビ、アニメのアバター{n}個。",
@@ -170,9 +200,12 @@ const plurals: Record<string, string> = {
   "{n} films": "映画{n}本",
   "{n} films#one": "{n}本の映画",
   "{n} films#few": "{n}本の映画",
-  "{n} frame stored. Wiping rebuilds them next time you watch.": "{n}フレーム保存済み。消去すると、次回の視聴時に再生成されます。",
-  "{n} frame stored. Wiping rebuilds them next time you watch.#one": "{n}フレーム保存済み。消去すると、次回の視聴時に再生成されます。",
-  "{n} frame stored. Wiping rebuilds them next time you watch.#few": "{n}フレームを保存済みです。消去すると、次回の視聴時に再生成されます。",
+  "{n} frame stored. Wiping rebuilds them next time you watch.":
+    "{n}フレーム保存済み。消去すると、次回の視聴時に再生成されます。",
+  "{n} frame stored. Wiping rebuilds them next time you watch.#one":
+    "{n}フレーム保存済み。消去すると、次回の視聴時に再生成されます。",
+  "{n} frame stored. Wiping rebuilds them next time you watch.#few":
+    "{n}フレームを保存済みです。消去すると、次回の視聴時に再生成されます。",
   "{n} genre": "{n}件のジャンル",
   "{n} genre#one": "{n}ジャンル",
   "{n} genre#few": "{n}ジャンル",
@@ -254,14 +287,20 @@ const plurals: Record<string, string> = {
   "{n} titles": "{n}タイトル",
   "{n} titles#one": "{n}作品",
   "{n} titles#few": "{n}作品",
-  "{n} titles need review — help us identify them.": "{n}件の作品を確認してください。作品の特定にご協力ください。",
-  "{n} titles need review — help us identify them.#one": "{n}作品の確認が必要です。特定にご協力ください。",
-  "{n} titles need review — help us identify them.#few": "{n}作品の確認が必要です。特定にご協力ください。",
+  "{n} titles need review — help us identify them.":
+    "{n}件の作品を確認してください。作品の特定にご協力ください。",
+  "{n} titles need review — help us identify them.#one":
+    "{n}作品の確認が必要です。特定にご協力ください。",
+  "{n} titles need review — help us identify them.#few":
+    "{n}作品の確認が必要です。特定にご協力ください。",
   "{n} titles together#one": "{n}作品を一緒に",
   "{n} titles together#few": "{n}作品を一緒に",
-  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.": "このセッションでトラッカーのリクエストを{n}件ブロックしました。Harbor自体はテレメトリを一切送信しません。",
-  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#one": "このセッションでトラッカーのリクエストを{n}件ブロックしました。Harbor自体はテレメトリを一切送信しません。",
-  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#few": "このセッションでトラッカーのリクエストを{n}件ブロックしました。Harbor自体はテレメトリを一切送信しません。",
+  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.":
+    "このセッションでトラッカーのリクエストを{n}件ブロックしました。Harbor自体はテレメトリを一切送信しません。",
+  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#one":
+    "このセッションでトラッカーのリクエストを{n}件ブロックしました。Harbor自体はテレメトリを一切送信しません。",
+  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#few":
+    "このセッションでトラッカーのリクエストを{n}件ブロックしました。Harbor自体はテレメトリを一切送信しません。",
   "{n} votes": "{n}票",
   "{n} votes#one": "{n}票",
   "{n} votes#few": "{n}票",

@@ -25,7 +25,8 @@ const manga: Record<string, string> = {
   "Add {name}": "Agregar {name}",
   "Add a local folder": "Agregar una carpeta local",
   "Add a repository": "Agregar un repositorio",
-  "Add chapter folders of images, or .cbz / .zip files.": "Agrega carpetas de imágenes por capítulo o archivos .cbz / .zip.",
+  "Add chapter folders of images, or .cbz / .zip files.":
+    "Agrega carpetas de imágenes por capítulo o archivos .cbz / .zip.",
   "Add favorite": "Agregar a favoritos",
   "Add source": "Agregar fuente",
   "Add source icon": "Agregar icono de la fuente",
@@ -67,7 +68,8 @@ const manga: Record<string, string> = {
   "Could not save that source.": "No se pudo guardar esa fuente.",
   "Custom source": "Fuente personalizada",
   "Delete download": "Eliminar descarga",
-  "Do it once on a browse page, once on a series page, once in the reader.": "Hazlo una vez en una página de exploración, una vez en la página de una serie y una vez en el lector.",
+  "Do it once on a browse page, once on a series page, once in the reader.":
+    "Hazlo una vez en una página de exploración, una vez en la página de una serie y una vez en el lector.",
   "Double page gap": "Espacio entre páginas dobles",
   "Download chapter": "Descargar capítulo",
   "Download cheat sheet": "Descargar guía rápida",
@@ -84,47 +86,64 @@ const manga: Record<string, string> = {
   "Fit height": "Ajustar a la altura",
   "Fit width": "Ajustar al ancho",
   "Focus mode": "Modo de enfoque",
-  "Folder picker is only available in the desktop app": "El selector de carpetas solo está disponible en la app de escritorio",
-  "For a link or image you usually want an attribute:": "Para un enlace o una imagen, normalmente necesitas un atributo:",
+  "Folder picker is only available in the desktop app":
+    "El selector de carpetas solo está disponible en la app de escritorio",
+  "For a link or image you usually want an attribute:":
+    "Para un enlace o una imagen, normalmente necesitas un atributo:",
   "For an AI agent": "Para un agente de IA",
   "grabs lazy-loaded images.": "obtiene imágenes con carga diferida.",
   "grid view": "vista de cuadrícula",
-  "Harbor does not host any manga or any sources. Connect your own server or open a folder you already have, and mix as many as you like.": "Harbor no aloja ningún manga ni ninguna fuente. Conecta tu propio servidor o abre una carpeta que ya tengas, y combina tantas fuentes como quieras.",
-  "Harbor logs into nothing and bypasses no password, paywall, or access control, and must not be used to attempt it. Point it only at content you are legally allowed to read, and never at official or licensed publisher sites. You alone are responsible for what you connect and for following copyright and each site's terms. Harbor bundles and endorses no sites.": "Harbor no inicia sesión en ningún servicio ni evade contraseñas, muros de pago o controles de acceso, y no debe usarse para intentarlo. Úsalo únicamente con contenido que tengas derecho legal a leer y nunca con sitios oficiales o de editoriales con licencia. Solo tú eres responsable de lo que conectes y de cumplir los derechos de autor y las condiciones de cada sitio. Harbor no incluye ni avala ningún sitio.",
-  "Harbor ships no manga sources and hosts nothing. Extensions come from repositories other people maintain. Paste a repository URL below to browse its plugins, then install the ones you want. Every plugin runs sandboxed in an isolated worker with no access to your files, accounts, or the rest of the app.": "Harbor no incluye fuentes de manga ni aloja contenido. Las extensiones provienen de repositorios mantenidos por otras personas. Pega abajo la URL de un repositorio para explorar sus extensiones e instala las que quieras. Cada extensión se ejecuta en un proceso aislado y restringido, sin acceso a tus archivos, cuentas ni al resto de la app.",
-  "Harbor ships the engine, not the sites. You write a short JSON config that describes a site with CSS selectors, and Harbor reads the site with them. Nothing is bundled: point it only at sites you have the right to read.": "Harbor incluye el motor, no los sitios. Tú creas una breve configuración JSON que describe un sitio mediante selectores CSS, y Harbor los usa para leerlo. No se incluye ningún sitio: úsalo únicamente con sitios que tengas derecho a leer.",
+  "Harbor does not host any manga or any sources. Connect your own server or open a folder you already have, and mix as many as you like.":
+    "Harbor no aloja ningún manga ni ninguna fuente. Conecta tu propio servidor o abre una carpeta que ya tengas, y combina tantas fuentes como quieras.",
+  "Harbor logs into nothing and bypasses no password, paywall, or access control, and must not be used to attempt it. Point it only at content you are legally allowed to read, and never at official or licensed publisher sites. You alone are responsible for what you connect and for following copyright and each site's terms. Harbor bundles and endorses no sites.":
+    "Harbor no inicia sesión en ningún servicio ni evade contraseñas, muros de pago o controles de acceso, y no debe usarse para intentarlo. Úsalo únicamente con contenido que tengas derecho legal a leer y nunca con sitios oficiales o de editoriales con licencia. Solo tú eres responsable de lo que conectes y de cumplir los derechos de autor y las condiciones de cada sitio. Harbor no incluye ni avala ningún sitio.",
+  "Harbor ships no manga sources and hosts nothing. Extensions come from repositories other people maintain. Paste a repository URL below to browse its plugins, then install the ones you want. Every plugin runs sandboxed in an isolated worker with no access to your files, accounts, or the rest of the app.":
+    "Harbor no incluye fuentes de manga ni aloja contenido. Las extensiones provienen de repositorios mantenidos por otras personas. Pega abajo la URL de un repositorio para explorar sus extensiones e instala las que quieras. Cada extensión se ejecuta en un proceso aislado y restringido, sin acceso a tus archivos, cuentas ni al resto de la app.",
+  "Harbor ships the engine, not the sites. You write a short JSON config that describes a site with CSS selectors, and Harbor reads the site with them. Nothing is bundled: point it only at sites you have the right to read.":
+    "Harbor incluye el motor, no los sitios. Tú creas una breve configuración JSON que describe un sitio mediante selectores CSS, y Harbor los usa para leerlo. No se incluye ningún sitio: úsalo únicamente con sitios que tengas derecho a leer.",
   "Hide help": "Ocultar ayuda",
-  "Hide the top and bottom bars while reading. Arrows, page number, and bookmark stay; the bars return when your cursor reaches the screen edge.": "Oculta las barras superior e inferior durante la lectura. Las flechas, el número de página y el marcador permanecen; las barras reaparecen cuando el cursor llega al borde de la pantalla.",
+  "Hide the top and bottom bars while reading. Arrows, page number, and bookmark stay; the bars return when your cursor reaches the screen edge.":
+    "Oculta las barras superior e inferior durante la lectura. Las flechas, el número de página y el marcador permanecen; las barras reaparecen cuando el cursor llega al borde de la pantalla.",
   "Host it with a repo.json": "Alójalo con un repo.json",
   "How it works": "Cómo funciona",
-  "if the first page is 0. Use this when the URL counts pages.": "si la primera página es 0. Úsalo cuando la URL cuente páginas.",
-  "if the reader loads images from the chapter URL plus a suffix (like": "si el lector carga imágenes desde la URL del capítulo más un sufijo (como",
-  "if the series page shows only the latest few chapters and the full list lives on another URL, this rewrites the series URL to it.": "si la página de la serie solo muestra los capítulos más recientes y la lista completa está en otra URL, esto reescribe la URL de la serie para dirigirla allí.",
-  "if the site blocks hotlinked images.": "si el sitio bloquea imágenes enlazadas desde otros sitios.",
-  "Implement the MangaProvider object: popular, search, detail, chapters, pageUrls, and optional tags. Nothing else.": "Implementa el objeto MangaProvider: popular, search, detail, chapters, pageUrls y tags opcional. Nada más.",
-  "Inside it, one folder per manga, named like the title.": "Dentro, una carpeta por manga, con el mismo nombre que el título.",
+  "if the first page is 0. Use this when the URL counts pages.":
+    "si la primera página es 0. Úsalo cuando la URL cuente páginas.",
+  "if the reader loads images from the chapter URL plus a suffix (like":
+    "si el lector carga imágenes desde la URL del capítulo más un sufijo (como",
+  "if the series page shows only the latest few chapters and the full list lives on another URL, this rewrites the series URL to it.":
+    "si la página de la serie solo muestra los capítulos más recientes y la lista completa está en otra URL, esto reescribe la URL de la serie para dirigirla allí.",
+  "if the site blocks hotlinked images.":
+    "si el sitio bloquea imágenes enlazadas desde otros sitios.",
+  "Implement the MangaProvider object: popular, search, detail, chapters, pageUrls, and optional tags. Nothing else.":
+    "Implementa el objeto MangaProvider: popular, search, detail, chapters, pageUrls y tags opcional. Nada más.",
+  "Inside it, one folder per manga, named like the title.":
+    "Dentro, una carpeta por manga, con el mismo nombre que el título.",
   "Install it in Extensions": "Instálalo en Extensiones",
   "is a page number. Add": "es un número de página. Agrega",
   "is a regex for the part to change": "es una expresión regular para la parte que se cambiará",
   "is each chapter row": "es cada fila de capítulo",
-  "is how many items to skip, starting at 0. Harbor auto-detects the site's page size and walks it for you, so you never set a page size. Use this when the URL counts items.": "es la cantidad de elementos que se omitirán, comenzando en 0. Harbor detecta automáticamente el tamaño de página del sitio y lo recorre por ti, así que nunca tienes que definirlo. Usa esto cuando la URL cuente elementos.",
+  "is how many items to skip, starting at 0. Harbor auto-detects the site's page size and walks it for you, so you never set a page size. Use this when the URL counts items.":
+    "es la cantidad de elementos que se omitirán, comenzando en 0. Harbor detecta automáticamente el tamaño de página del sitio y lo recorre por ti, así que nunca tienes que definirlo. Usa esto cuando la URL cuente elementos.",
   "is the box around one manga; inside it": "es el contenedor de un manga; dentro de él",
   "is the manga URL": "es la URL del manga",
   "is the search text (searchPath only).": "es el texto de búsqueda (solo searchPath).",
   "is what to swap in. The example turns": "es el texto que lo reemplazará. El ejemplo convierte",
-  "It may be rate limiting or temporarily down. Try again, or switch to another source.": "Puede que esté limitando la frecuencia de solicitudes o no esté disponible temporalmente. Inténtalo de nuevo o cambia de fuente.",
+  "It may be rate limiting or temporarily down. Try again, or switch to another source.":
+    "Puede que esté limitando la frecuencia de solicitudes o no esté disponible temporalmente. Inténtalo de nuevo o cambia de fuente.",
   "its image.": "su imagen.",
   "its name": "su nombre",
   "its timestamp.": "su marca de tiempo.",
   "its URL": "su URL",
-  "Know a good one? Add a name, its API or site URL, and an icon if you have one. We review every suggestion before it goes live.": "¿Conoces una buena opción? Agrega un nombre, la URL de su API o sitio y un ícono si tienes uno. Revisamos cada sugerencia antes de publicarla.",
+  "Know a good one? Add a name, its API or site URL, and an icon if you have one. We review every suggestion before it goes live.":
+    "¿Conoces una buena opción? Agrega un nombre, la URL de su API o sitio y un ícono si tienes uno. Revisamos cada sugerencia antes de publicarla.",
   "Left to right": "De izquierda a derecha",
   "list view": "vista de lista",
   "Loading chapter...": "Cargando capítulo...",
   "Loading chapters...": "Cargando capítulos...",
   "Loading plugins...": "Cargando plugins...",
   "Loading your manga sources": "Cargando tus fuentes de manga",
-  "Logo URL (optional, auto-detected if blank)": "URL del logo (opcional; se detecta automáticamente si se deja en blanco)",
+  "Logo URL (optional, auto-detected if blank)":
+    "URL del logo (opcional; se detecta automáticamente si se deja en blanco)",
   "Long strip": "Franja larga",
   "Make one folder for your library.": "Crea una carpeta para tu biblioteca.",
   "Make your own source": "Crea tu propia fuente",
@@ -132,26 +151,35 @@ const manga: Record<string, string> = {
   "Manga sources": "Fuentes de manga",
   "matches every page image in order.": "coincide con todas las imágenes de la página en orden.",
   "Mute page-turn sound": "Silenciar el sonido al pasar de página",
-  "Never target official or licensed publisher sites.": "Nunca usar como objetivo sitios oficiales ni de editoriales con licencia.",
-  "New downloads are saved here. Chapters you already saved stay where they are.": "Las nuevas descargas se guardan aquí. Los capítulos que ya guardaste permanecen donde están.",
+  "Never target official or licensed publisher sites.":
+    "Nunca usar como objetivo sitios oficiales ni de editoriales con licencia.",
+  "New downloads are saved here. Chapters you already saved stay where they are.":
+    "Las nuevas descargas se guardan aquí. Los capítulos que ya guardaste permanecen donde están.",
   "Newest first": "Más recientes primero",
   "Next chapter": "Siguiente capítulo",
   "Next page": "Página siguiente",
-  "No bookmarks yet. Save your spot with the button above, in any reading mode.": "Aún no hay marcadores. Guarda tu posición con el botón de arriba, en cualquier modo de lectura.",
-  "No chapters available in {lang} from this source.": "No hay capítulos disponibles en {lang} de esta fuente.",
+  "No bookmarks yet. Save your spot with the button above, in any reading mode.":
+    "Aún no hay marcadores. Guarda tu posición con el botón de arriba, en cualquier modo de lectura.",
+  "No chapters available in {lang} from this source.":
+    "No hay capítulos disponibles en {lang} de esta fuente.",
   "No chapters match your search.": "Ningún capítulo coincide con tu búsqueda.",
   "No favorites yet": "Aún no hay favoritos",
   "No manga found": "No se encontró ningún manga",
-  "No repositories yet. Add one above to start browsing plugins.": "Aún no hay repositorios. Agrega uno arriba para comenzar a explorar complementos.",
+  "No repositories yet. Add one above to start browsing plugins.":
+    "Aún no hay repositorios. Agrega uno arriba para comenzar a explorar complementos.",
   "Not on this source": "No está en esta fuente",
-  "Not sure which? Load page 2 of the site in a browser and watch what changes in the address bar.": "¿No sabes cuál es? Abre la página 2 del sitio en un navegador y observa qué cambia en la barra de direcciones.",
+  "Not sure which? Load page 2 of the site in a browser and watch what changes in the address bar.":
+    "¿No sabes cuál es? Abre la página 2 del sitio en un navegador y observa qué cambia en la barra de direcciones.",
   "Oldest first": "Más antiguos primero",
-  "on your machine, install the sources you want inside it (hundreds are available), then add its address (like": "en tu computadora, instala allí las fuentes que quieras (hay cientos disponibles) y luego agrega su dirección (como",
+  "on your machine, install the sources you want inside it (hundreds are available), then add its address (like":
+    "en tu computadora, instala allí las fuentes que quieras (hay cientos disponibles) y luego agrega su dirección (como",
   "One Piece, Naruto and more worlds": "One Piece, Naruto y más mundos",
-  "Only add repositories you trust. Harbor cannot vouch for third-party plugins.": "Agrega únicamente repositorios de confianza. Harbor no puede garantizar la seguridad de los complementos de terceros.",
+  "Only add repositories you trust. Harbor cannot vouch for third-party plugins.":
+    "Agrega únicamente repositorios de confianza. Harbor no puede garantizar la seguridad de los complementos de terceros.",
   "Only sites you have the right to read.": "Solo sitios que tienes derecho a leer.",
   "Open manga details": "Abrir detalles del manga",
-  "Open the site in a browser. Right-click the thing you want (a cover, a title, a chapter link) and choose Inspect.": "Abre el sitio en un navegador. Haz clic derecho en lo que quieras (una portada, un título o el enlace de un capítulo) y selecciona Inspeccionar.",
+  "Open the site in a browser. Right-click the thing you want (a cover, a title, a chapter link) and choose Inspect.":
+    "Abre el sitio en un navegador. Haz clic derecho en lo que quieras (una portada, un título o el enlace de un capítulo) y selecciona Inspeccionar.",
   "Opening…": "Abriendo…",
   "optional cover": "portada opcional",
   "page {n}": "página {n}",
@@ -159,24 +187,34 @@ const manga: Record<string, string> = {
   "Page {page} of {count}, tap to jump": "Página {page} de {count}; toca para ir",
   "Page failed to load": "No se pudo cargar la página",
   "Page gap": "Espacio entre páginas",
-  "Paste your repo.json URL into Extensions above, then install. That is how you bring any site's sources back.": "Pega la URL de tu repo.json en Extensiones arriba y luego instálalo. Así recuperarás las fuentes de cualquier sitio.",
-  "Paste your scraping config as JSON here, or grab the template above to start.": "Pega aquí tu configuración de extracción en formato JSON o usa la plantilla de arriba para comenzar.",
-  "Pick a world and dive into everything in it.": "Elige un mundo y sumérgete en todo lo que contiene.",
-  "Pick one folder. Each subfolder inside is one manga, so name it exactly like the title. In each, add chapter folders of images or .cbz / .zip files. A cover.jpg sets a custom cover.": "Elige una carpeta. Cada subcarpeta debe contener un manga, así que ponle exactamente el mismo nombre que el título. Dentro de cada una, agrega carpetas de capítulos con imágenes o archivos .cbz / .zip. Un archivo cover.jpg establece una portada personalizada.",
+  "Paste your repo.json URL into Extensions above, then install. That is how you bring any site's sources back.":
+    "Pega la URL de tu repo.json en Extensiones arriba y luego instálalo. Así recuperarás las fuentes de cualquier sitio.",
+  "Paste your scraping config as JSON here, or grab the template above to start.":
+    "Pega aquí tu configuración de extracción en formato JSON o usa la plantilla de arriba para comenzar.",
+  "Pick a world and dive into everything in it.":
+    "Elige un mundo y sumérgete en todo lo que contiene.",
+  "Pick one folder. Each subfolder inside is one manga, so name it exactly like the title. In each, add chapter folders of images or .cbz / .zip files. A cover.jpg sets a custom cover.":
+    "Elige una carpeta. Cada subcarpeta debe contener un manga, así que ponle exactamente el mismo nombre que el título. Dentro de cada una, agrega carpetas de capítulos con imágenes o archivos .cbz / .zip. Un archivo cover.jpg establece una portada personalizada.",
   "Pick up the manga at {label}.": "Continúa el manga en {label}.",
   "Pick up the manga where the anime ends.": "Continúa el manga donde termina el anime.",
-  "Plugins run sandboxed in an isolated worker with no access to your files, accounts, or the rest of Harbor. What a plugin scrapes is between you and the site it targets. Only install plugins from repositories you trust.": "Los plugins se ejecutan en un entorno aislado y restringido, sin acceso a tus archivos, cuentas ni al resto de Harbor. Los datos que extrae un plugin son un asunto entre tú y el sitio al que apunta. Instala plugins únicamente desde repositorios de confianza.",
-  "Point Harbor's built-in scraper at any HTML site with a config": "Dirige el extractor integrado de Harbor a cualquier sitio HTML mediante una configuración",
-  "Point Local folder at CBZ files or folders of images you already own.": "Indica a Carpeta local dónde están los archivos CBZ o las carpetas de imágenes que ya tienes.",
-  "Prefer a server? Run every source through your own Suwayomi and point Harbor at it": "¿Prefieres usar un servidor? Procesa todas las fuentes mediante tu propio Suwayomi y conecta Harbor a él",
+  "Plugins run sandboxed in an isolated worker with no access to your files, accounts, or the rest of Harbor. What a plugin scrapes is between you and the site it targets. Only install plugins from repositories you trust.":
+    "Los plugins se ejecutan en un entorno aislado y restringido, sin acceso a tus archivos, cuentas ni al resto de Harbor. Los datos que extrae un plugin son un asunto entre tú y el sitio al que apunta. Instala plugins únicamente desde repositorios de confianza.",
+  "Point Harbor's built-in scraper at any HTML site with a config":
+    "Dirige el extractor integrado de Harbor a cualquier sitio HTML mediante una configuración",
+  "Point Local folder at CBZ files or folders of images you already own.":
+    "Indica a Carpeta local dónde están los archivos CBZ o las carpetas de imágenes que ya tienes.",
+  "Prefer a server? Run every source through your own Suwayomi and point Harbor at it":
+    "¿Prefieres usar un servidor? Procesa todas las fuentes mediante tu propio Suwayomi y conecta Harbor a él",
   "Previous chapter": "Capítulo anterior",
   "Previous page": "Página anterior",
   "Publicly accessible pages only.": "Solo páginas de acceso público.",
   "Published by {names}": "Publicado por {names}",
-  "Put your plugin file and a repo.json manifest on any static HTTPS host: GitHub Pages, a raw gist, an object store, your own server.": "Coloca el archivo de tu plugin y un manifiesto repo.json en cualquier alojamiento HTTPS estático: GitHub Pages, un gist sin procesar, un almacenamiento de objetos o tu propio servidor.",
+  "Put your plugin file and a repo.json manifest on any static HTTPS host: GitHub Pages, a raw gist, an object store, your own server.":
+    "Coloca el archivo de tu plugin y un manifiesto repo.json en cualquier alojamiento HTTPS estático: GitHub Pages, un gist sin procesar, un almacenamiento de objetos o tu propio servidor.",
   "Rank #{n} this year": "Puesto #{n} este año",
   "Rank on MangaUpdates": "Puesto en MangaUpdates",
-  "Reach the network with harbor.http(url, opts) and parse HTML with harbor.parseHtml(html). There is no fetch, DOM, or storage in the sandbox.": "Accede a la red con harbor.http(url, opts) y analiza HTML con harbor.parseHtml(html). No hay fetch, DOM ni almacenamiento en el entorno aislado.",
+  "Reach the network with harbor.http(url, opts) and parse HTML with harbor.parseHtml(html). There is no fetch, DOM, or storage in the sandbox.":
+    "Accede a la red con harbor.http(url, opts) y analiza HTML con harbor.parseHtml(html). No hay fetch, DOM ni almacenamiento en el entorno aislado.",
   "Read {label}": "Leer {label}",
   "Read latest": "Leer el más reciente",
   "Read now": "Leer ahora",
@@ -216,56 +254,74 @@ const manga: Record<string, string> = {
   "Suggestion sent": "Sugerencia enviada",
   "Suwayomi / Tachidesk walkthrough": "Guía de Suwayomi / Tachidesk",
   "Tap the page to bookmark": "Toca la página para agregar un marcador",
-  "Tap the star on any manga to save it here.": "Toca la estrella de cualquier manga para guardarlo aquí.",
-  "That config is not valid. Check baseUrl, popularPath, list, chapters, and pages.": "Esa configuración no es válida. Revisa baseUrl, popularPath, list, chapters y pages.",
-  "That config is not valid. It needs baseUrl, popularPath, list (item + link), chapters (item + link), and pages (image).": "Esa configuración no es válida. Necesita baseUrl, popularPath, list (item + link), chapters (item + link) y pages (image).",
+  "Tap the star on any manga to save it here.":
+    "Toca la estrella de cualquier manga para guardarlo aquí.",
+  "That config is not valid. Check baseUrl, popularPath, list, chapters, and pages.":
+    "Esa configuración no es válida. Revisa baseUrl, popularPath, list, chapters y pages.",
+  "That config is not valid. It needs baseUrl, popularPath, list (item + link), chapters (item + link), and pages (image).":
+    "Esa configuración no es válida. Necesita baseUrl, popularPath, list (item + link), chapters (item + link) y pages (image).",
   "That is everything from this source.": "Eso es todo lo que hay en esta fuente.",
-  "That is unusual for a popular listing. It is likely a hiccup on their end.": "Eso es inusual en una lista popular. Probablemente sea un problema temporal de su lado.",
+  "That is unusual for a popular listing. It is likely a hiccup on their end.":
+    "Eso es inusual en una lista popular. Probablemente sea un problema temporal de su lado.",
   "The anime adaptation covers ": "La adaptación al anime abarca ",
   "The anime adaptation ends at this chapter": "La adaptación al anime termina en este capítulo",
   "The anime adaptation runs through ": "La adaptación al anime llega hasta ",
   "The anime adaptation starts at ": "La adaptación al anime comienza en ",
-  "the browse and search URLs, with the paging number and search word swapped for tokens (below).": "las URL de exploración y búsqueda, con el número de página y el término de búsqueda sustituidos por tokens (abajo).",
+  "the browse and search URLs, with the paging number and search word swapped for tokens (below).":
+    "las URL de exploración y búsqueda, con el número de página y el término de búsqueda sustituidos por tokens (abajo).",
   "the chapter links on a series page.": "los enlaces de capítulos en la página de una serie.",
   "the chapter number": "el número de capítulo",
   "the folder you pick": "la carpeta que elijas",
-  "The highlighted tag shows its name and class.": "La etiqueta resaltada muestra su nombre y clase.",
+  "The highlighted tag shows its name and class.":
+    "La etiqueta resaltada muestra su nombre y clase.",
   "the reader.": "el lector.",
-  "the series page. title, cover, description, author, status (all optional).": "la página de la serie: título, portada, descripción, autor y estado (todos opcionales).",
+  "the series page. title, cover, description, author, status (all optional).":
+    "la página de la serie: título, portada, descripción, autor y estado (todos opcionales).",
   "the site root, like": "la raíz del sitio, como",
-  "The source returned a bad response for this manga. It may be temporary, or the title may have moved. Try another source, or head back and pick something else.": "La fuente devolvió una respuesta incorrecta para este manga. Puede ser algo temporal o quizá el título se haya movido. Prueba otra fuente o vuelve atrás y elige otra cosa.",
-  "This chapter could not be loaded from this source.": "No se pudo cargar este capítulo desde esta fuente.",
+  "The source returned a bad response for this manga. It may be temporary, or the title may have moved. Try another source, or head back and pick something else.":
+    "La fuente devolvió una respuesta incorrecta para este manga. Puede ser algo temporal o quizá el título se haya movido. Prueba otra fuente o vuelve atrás y elige otra cosa.",
+  "This chapter could not be loaded from this source.":
+    "No se pudo cargar este capítulo desde esta fuente.",
   "This only takes a moment the first time.": "La primera vez, esto solo tarda un momento.",
-  "This reads pages a browser can already load. It does not, and must not be made to, bypass a login, password, paywall, or any access control.": "Esto lee páginas que un navegador ya puede cargar. No elude ni debe modificarse para eludir un inicio de sesión, una contraseña, un muro de pago ni ningún control de acceso.",
+  "This reads pages a browser can already load. It does not, and must not be made to, bypass a login, password, paywall, or any access control.":
+    "Esto lee páginas que un navegador ya puede cargar. No elude ni debe modificarse para eludir un inicio de sesión, una contraseña, un muro de pago ni ningún control de acceso.",
   "This repository lists no plugins.": "Este repositorio no incluye plugins.",
   "This source did not respond": "Esta fuente no respondió",
   "This source returned nothing": "Esta fuente no devolvió nada",
   "This title would not open": "Este título no se pudo abrir",
   "To clipboard": "Al portapapeles",
-  "tries each in order and uses the first with a value.": "prueba cada uno en orden y usa el primero que tenga un valor.",
+  "tries each in order and uses the first with a value.":
+    "prueba cada uno en orden y usa el primero que tenga un valor.",
   "Try a different title or clear your filters.": "Prueba con otro título o borra los filtros.",
   "TV Series": "Series de TV",
   "TV Short": "Corto de TV",
-  "under Your server above. Everything you enable there shows up here.": "en Tu servidor arriba. Todo lo que actives allí aparecerá aquí.",
+  "under Your server above. Everything you enable there shows up here.":
+    "en Tu servidor arriba. Todo lo que actives allí aparecerá aquí.",
   "Uninstall {name}": "Desinstalar {name}",
   "Unmute page-turn sound": "Activar sonido al pasar de página",
   "Update plugin": "Actualizar plugin",
   "update to v{version}": "actualizar a la v{version}",
   "URL or path": "URL o ruta",
   "Use default": "Usar valor predeterminado",
-  "Use the download arrow next to any chapter to save it for reading offline.": "Usa la flecha de descarga junto a cualquier capítulo para guardarlo y leerlo sin conexión.",
+  "Use the download arrow next to any chapter to save it for reading offline.":
+    "Usa la flecha de descarga junto a cualquier capítulo para guardarlo y leerlo sin conexión.",
   "Use the harbor bridge": "Usar el puente de Harbor",
   "Watch the anime": "Ver el anime",
-  "We review every source. Yours will be reviewed and approved shortly if it checks out.": "Revisamos todas las fuentes. Revisaremos la tuya y la aprobaremos pronto si todo está en orden.",
-  "Works on plain server-rendered HTML. Sites that build the page with JavaScript, or hide data inside scripts, need a plugin instead.": "Funciona con HTML simple renderizado por el servidor. Los sitios que generan la página con JavaScript u ocultan datos dentro de scripts necesitan un plugin.",
-  "Write a scraper for any site, host it, and install it like any other plugin": "Escribe un extractor para cualquier sitio, alójalo e instálalo como cualquier otro plugin",
+  "We review every source. Yours will be reviewed and approved shortly if it checks out.":
+    "Revisamos todas las fuentes. Revisaremos la tuya y la aprobaremos pronto si todo está en orden.",
+  "Works on plain server-rendered HTML. Sites that build the page with JavaScript, or hide data inside scripts, need a plugin instead.":
+    "Funciona con HTML simple renderizado por el servidor. Los sitios que generan la página con JavaScript u ocultan datos dentro de scripts necesitan un plugin.",
+  "Write a scraper for any site, host it, and install it like any other plugin":
+    "Escribe un extractor para cualquier sitio, alójalo e instálalo como cualquier otro plugin",
   "Write one JavaScript file": "Escribe un archivo JavaScript",
-  "You are solely responsible for what you connect and for complying with copyright and each site's terms. Harbor bundles and endorses no sites; it only runs the config you supply.": "Eres el único responsable de lo que conectes y de cumplir con los derechos de autor y los términos de cada sitio. Harbor no incluye ni recomienda ningún sitio; solo ejecuta la configuración que proporciones.",
+  "You are solely responsible for what you connect and for complying with copyright and each site's terms. Harbor bundles and endorses no sites; it only runs the config you supply.":
+    "Eres el único responsable de lo que conectes y de cumplir con los derechos de autor y los términos de cada sitio. Harbor no incluye ni recomienda ningún sitio; solo ejecuta la configuración que proporciones.",
   "You have reached the latest chapter available.": "Llegaste al último capítulo disponible.",
   "Your AniList": "Tu AniList",
   "Your config": "Tu configuración",
   "Your sources": "Tus fuentes",
-  "Your sources are saved, we just could not load their details. Check your connection and try again.": "Tus fuentes están guardadas, pero no pudimos cargar sus detalles. Revisa tu conexión e inténtalo de nuevo.",
+  "Your sources are saved, we just could not load their details. Check your connection and try again.":
+    "Tus fuentes están guardadas, pero no pudimos cargar sus detalles. Revisa tu conexión e inténtalo de nuevo.",
 };
 
 export default manga;

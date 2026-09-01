@@ -72,7 +72,12 @@ export function StremioLayout({
     () =>
       FACET_DIMS.map((dim) => {
         const base = addonFiltered.filter((s) => matchesFacets(s, facet, dim.key));
-        return { dim, options: facetOptions(base, dim), total: base.length, value: facet[dim.key] ?? "all" };
+        return {
+          dim,
+          options: facetOptions(base, dim),
+          total: base.length,
+          value: facet[dim.key] ?? "all",
+        };
       }),
     [addonFiltered, facet],
   );
@@ -112,8 +117,8 @@ export function StremioLayout({
     });
   }, [addonFiltered, facet, filter, addonRank, preserveOrder]);
   const filterLabel =
-    filter === "all" ? t("All") : addonOptions.find((o) => o.id === filter)?.name ?? t("All");
-  const filterLogo = filter === "all" ? null : addonLogoMap.get(filter) ?? null;
+    filter === "all" ? t("All") : (addonOptions.find((o) => o.id === filter)?.name ?? t("All"));
+  const filterLogo = filter === "all" ? null : (addonLogoMap.get(filter) ?? null);
   return (
     <div className="flex flex-col gap-3">
       <div className="relative">
@@ -224,11 +229,7 @@ export function StremioLayout({
         </div>
       )}
       {!pipelineDone && (
-        <PendingAddonsPill
-          addons={addons}
-          streams={streams}
-          fallbackCount={loadingAddonCount}
-        />
+        <PendingAddonsPill addons={addons} streams={streams} fallbackCount={loadingAddonCount} />
       )}
       <FilterBuilder
         open={builderOpen}
@@ -362,10 +363,46 @@ function CircleLogo({
     return (
       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-elevated ring-1 ring-edge-soft">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-          <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2" className="text-ink-muted" />
-          <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2" className="text-ink-muted" />
-          <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2" className="text-ink-muted" />
-          <rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2" className="text-ink-muted" />
+          <rect
+            x="3"
+            y="3"
+            width="7"
+            height="7"
+            rx="1.5"
+            stroke="currentColor"
+            strokeWidth="2"
+            className="text-ink-muted"
+          />
+          <rect
+            x="14"
+            y="3"
+            width="7"
+            height="7"
+            rx="1.5"
+            stroke="currentColor"
+            strokeWidth="2"
+            className="text-ink-muted"
+          />
+          <rect
+            x="3"
+            y="14"
+            width="7"
+            height="7"
+            rx="1.5"
+            stroke="currentColor"
+            strokeWidth="2"
+            className="text-ink-muted"
+          />
+          <rect
+            x="14"
+            y="14"
+            width="7"
+            height="7"
+            rx="1.5"
+            stroke="currentColor"
+            strokeWidth="2"
+            className="text-ink-muted"
+          />
         </svg>
       </div>
     );

@@ -109,8 +109,17 @@ export function useCastPick(params: {
   pickCastDevice: CastSession["pickCastDevice"];
   setCastErrorInfo: CastSession["setCastErrorInfo"];
 }) {
-  const { src, debrids, snapRef, bridgeRef, settings, burnSubsOnTv, closeCastMenu, pickCastDevice, setCastErrorInfo } =
-    params;
+  const {
+    src,
+    debrids,
+    snapRef,
+    bridgeRef,
+    settings,
+    burnSubsOnTv,
+    closeCastMenu,
+    pickCastDevice,
+    setCastErrorInfo,
+  } = params;
   const [castIncompatError, setCastIncompatError] = useState<string | null>(null);
   const [castTranscoding, setCastTranscoding] = useState(false);
 
@@ -204,9 +213,7 @@ export function useCastPick(params: {
             ? "application/x-mpegURL"
             : guessContentType(resolved.url, src.streamRef?.title ?? src.title),
           startTimeSec: isLiveIptv ? 0 : getPlaybackPosition(),
-          headers: isLiveIptv
-            ? { "user-agent": "VLC/3.0.20 LibVLC/3.0.20" }
-            : undefined,
+          headers: isLiveIptv ? { "user-agent": "VLC/3.0.20 LibVLC/3.0.20" } : undefined,
           transcode: forceTranscode,
           profile,
           subtitle: burnSub,
@@ -215,8 +222,24 @@ export function useCastPick(params: {
         () => bridgeRef.current?.pause(),
       );
     },
-    [src, debrids, snapRef, bridgeRef, settings, burnSubsOnTv, closeCastMenu, pickCastDevice, setCastErrorInfo],
+    [
+      src,
+      debrids,
+      snapRef,
+      bridgeRef,
+      settings,
+      burnSubsOnTv,
+      closeCastMenu,
+      pickCastDevice,
+      setCastErrorInfo,
+    ],
   );
 
-  return { castIncompatError, setCastIncompatError, castTranscoding, setCastTranscoding, onPickDevice };
+  return {
+    castIncompatError,
+    setCastIncompatError,
+    castTranscoding,
+    setCastTranscoding,
+    onPickDevice,
+  };
 }

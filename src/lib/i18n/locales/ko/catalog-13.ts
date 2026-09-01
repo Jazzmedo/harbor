@@ -16,19 +16,26 @@ const catalog13: Record<string, string> = {
   "{n} title#few": "작품 {n}개#few",
   "{n} title#one": "작품 {n}개#one",
   "{n} titles": "작품 {n}개",
-  "{n} titles need review — help us identify them.": "검토가 필요한 제목이 {n}개 있습니다. 식별을 도와주세요.",
-  "{n} titles need review — help us identify them.#few": "검토가 필요한 작품이 {n}개 있습니다. 식별을 도와주세요.#few",
-  "{n} titles need review — help us identify them.#one": "검토가 필요한 작품이 {n}개 있습니다. 식별을 도와주세요.#one",
+  "{n} titles need review — help us identify them.":
+    "검토가 필요한 제목이 {n}개 있습니다. 식별을 도와주세요.",
+  "{n} titles need review — help us identify them.#few":
+    "검토가 필요한 작품이 {n}개 있습니다. 식별을 도와주세요.#few",
+  "{n} titles need review — help us identify them.#one":
+    "검토가 필요한 작품이 {n}개 있습니다. 식별을 도와주세요.#one",
   "{n} titles together": "함께한 작품 {n}개",
   "{n} titles together#few": "작품 {n}개 함께 보기#few",
   "{n} titles together#one": "작품 {n}개 함께 보기#one",
   "{n} titles you like": "좋아하는 작품 {n}개",
   "{n} titles#few": "작품 {n}개#few",
   "{n} titles#one": "작품 {n}개#one",
-  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.": "이번 세션에서 추적기 요청 {n}개를 차단했습니다. Harbor는 원격 측정 데이터를 전혀 전송하지 않습니다.",
-  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#few": "이번 세션에서 추적기 요청 {n}건을 차단했습니다. Harbor 자체는 원격 측정 데이터를 전혀 전송하지 않습니다.#few",
-  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#one": "이번 세션에서 추적기 요청 {n}건을 차단했습니다. Harbor 자체는 원격 측정 데이터를 전혀 전송하지 않습니다.#one",
-  "{n} tracker requests blocked this session. Harbor itself sends zero telemetry.": "이번 세션에서 추적기 요청 {n}개를 차단했습니다. Harbor는 원격 측정 데이터를 전혀 전송하지 않습니다.",
+  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.":
+    "이번 세션에서 추적기 요청 {n}개를 차단했습니다. Harbor는 원격 측정 데이터를 전혀 전송하지 않습니다.",
+  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#few":
+    "이번 세션에서 추적기 요청 {n}건을 차단했습니다. Harbor 자체는 원격 측정 데이터를 전혀 전송하지 않습니다.#few",
+  "{n} tracker request blocked this session. Harbor itself sends zero telemetry.#one":
+    "이번 세션에서 추적기 요청 {n}건을 차단했습니다. Harbor 자체는 원격 측정 데이터를 전혀 전송하지 않습니다.#one",
+  "{n} tracker requests blocked this session. Harbor itself sends zero telemetry.":
+    "이번 세션에서 추적기 요청 {n}개를 차단했습니다. Harbor는 원격 측정 데이터를 전혀 전송하지 않습니다.",
   "{n} tracks": "트랙 {n}개",
   "{n} uncached hidden": "캐시되지 않은 항목 {n}개 숨김",
   "{n} versions": "버전 {n}개",
@@ -73,15 +80,18 @@ const catalog13: Record<string, string> = {
   "{quota} available": "{quota} 사용 가능",
   "{rating}/5 ({count})": "{rating}/5 ({count})",
   "{repaired} fixed, {clean} already clean": "{repaired}개 수정, {clean}개 이미 정상",
-  "{resolution}p above device max {maxResolution}p": "기기 최대 {maxResolution}p를 초과하는 {resolution}p",
+  "{resolution}p above device max {maxResolution}p":
+    "기기 최대 {maxResolution}p를 초과하는 {resolution}p",
   "{selected}/{max} selected": "{selected}/{max}개 선택됨",
-  "{sharing} of {total} friends are sharing what they watch.": "친구 {total}명 중 {sharing}명이 시청 활동을 공유하고 있습니다.",
+  "{sharing} of {total} friends are sharing what they watch.":
+    "친구 {total}명 중 {sharing}명이 시청 활동을 공유하고 있습니다.",
   "{shown} of {total}": "{total}개 중 {shown}개",
   "{shown} of {total} file from your computer": "컴퓨터의 파일 {total}개 중 {shown}개",
   "{shown} of {total} files from your computer": "컴퓨터의 파일 {total}개 중 {shown}개",
   "{shown} of {total} sources": "전체 {total}개 소스 중 {shown}개",
   "{sign}{n}s": "{sign}{n}초",
-  "{site} should be reachable in a moment. They're deploying right now. Refresh once their docs go live.": "{site}에 곧 접속할 수 있습니다. 현재 배포 중입니다. 문서가 공개되면 새로고침하세요.",
+  "{site} should be reachable in a moment. They're deploying right now. Refresh once their docs go live.":
+    "{site}에 곧 접속할 수 있습니다. 현재 배포 중입니다. 문서가 공개되면 새로고침하세요.",
   "{size} saved": "{size} 저장됨",
   "{source} list detected": "{source} 목록 감지됨",
   "{staff} requested your diagnostics": "{staff}님이 진단 정보를 요청했습니다",
@@ -94,7 +104,8 @@ const catalog13: Record<string, string> = {
   "{time} left": "{time} 남음",
   "{title} actions": "{title} 작업",
   "{title} adaptation poster": "{title} 각색 작품 포스터",
-  "{title} blocks embedding from outside its site.": "{title}에서 외부 사이트의 콘텐츠 삽입을 차단했습니다.",
+  "{title} blocks embedding from outside its site.":
+    "{title}에서 외부 사이트의 콘텐츠 삽입을 차단했습니다.",
   "{title} cover": "{title} 표지",
   "{title} image viewer": "{title} 이미지 뷰어",
   "{title} internal cover": "{title} 내부 표지",
@@ -102,7 +113,8 @@ const catalog13: Record<string, string> = {
   "{title} overview": "{title} 개요",
   "{title} poster": "{title} 포스터",
   "{title} trailer": "{title} 예고편",
-  "{title} will not come back in the Discovery Queue.": "{title} 작품은 탐색 대기열에 다시 표시되지 않습니다.",
+  "{title} will not come back in the Discovery Queue.":
+    "{title} 작품은 탐색 대기열에 다시 표시되지 않습니다.",
   "{title} won't load inside Harbor.": "Harbor 내에서 {title}을(를) 불러올 수 없습니다.",
   "{title} · Episode {episode}": "{title} · 에피소드 {episode}",
   "{total} found across 1 source": "1개 소스에서 총 {total}개 발견",
@@ -120,11 +132,16 @@ const catalog13: Record<string, string> = {
   "{word} {n} seconds. Hold for options#one": "{word} {n}초. 길게 눌러 옵션 열기#one",
   "{word} {n}s · hold for options": "{word} {n}초 · 길게 눌러 옵션 열기",
   "{w} wins, {n} nominations": "{w}회 수상, {n}회 후보",
-  "· A debrid key (TorBox, Real-Debrid, etc.) is missing or expired.": "· debrid 키(TorBox, Real-Debrid 등)가 없거나 만료되었습니다.",
-  "· Add a debrid key (TorBox, Real-Debrid, AllDebrid, Premiumize, Debrid-Link).": "· debrid 키(TorBox, Real-Debrid, AllDebrid, Premiumize, Debrid-Link)를 추가하세요.",
-  "· Install a stream addon (Torrentio, Comet, MediaFusion).": "· 스트림 애드온(Torrentio, Comet, MediaFusion)을 설치하세요.",
-  "· No stream addon is installed yet (Torrentio, MediaFusion, Comet).": "· 아직 스트림 애드온(Torrentio, MediaFusion, Comet)이 설치되지 않았습니다.",
-  "· This title is too new and no source has it cached yet.": "· 이 작품은 너무 최신이라 아직 캐시된 소스가 없습니다.",
+  "· A debrid key (TorBox, Real-Debrid, etc.) is missing or expired.":
+    "· debrid 키(TorBox, Real-Debrid 등)가 없거나 만료되었습니다.",
+  "· Add a debrid key (TorBox, Real-Debrid, AllDebrid, Premiumize, Debrid-Link).":
+    "· debrid 키(TorBox, Real-Debrid, AllDebrid, Premiumize, Debrid-Link)를 추가하세요.",
+  "· Install a stream addon (Torrentio, Comet, MediaFusion).":
+    "· 스트림 애드온(Torrentio, Comet, MediaFusion)을 설치하세요.",
+  "· No stream addon is installed yet (Torrentio, MediaFusion, Comet).":
+    "· 아직 스트림 애드온(Torrentio, MediaFusion, Comet)이 설치되지 않았습니다.",
+  "· This title is too new and no source has it cached yet.":
+    "· 이 작품은 너무 최신이라 아직 캐시된 소스가 없습니다.",
   "· currently hidden": "· 현재 숨김",
   "· {n} nom": "· 후보 {n}회",
   "· {n} noms": "· 후보 {n}회",
@@ -133,7 +150,8 @@ const catalog13: Record<string, string> = {
   "التنس (WTA)": "테니스(WTA)",
   "بطولة PGA": "PGA 챔피언십",
   "دوري MLS": "MLS 리그",
-  "“Cached” just means your addon thinks that file is already saved on your debrid, ready to play instantly. That flag isn’t always right: sometimes the file isn’t actually there yet. When that happens the source won’t start, or it plays a short broken clip. It’s not a Harbor problem: pick another source, or give it a minute to finish caching and try again.": "‘캐시됨’은 애드온에서 해당 파일이 디브리드에 이미 저장되어 즉시 재생할 수 있다고 판단한다는 의미일 뿐입니다. 이 표시는 항상 정확하지 않으며, 실제로는 파일이 아직 없을 수도 있습니다. 이 경우 소스가 시작되지 않거나 짧고 손상된 클립이 재생됩니다. Harbor의 문제가 아닙니다. 다른 소스를 선택하거나 캐시가 완료되도록 잠시 기다린 후 다시 시도하세요.",
+  "“Cached” just means your addon thinks that file is already saved on your debrid, ready to play instantly. That flag isn’t always right: sometimes the file isn’t actually there yet. When that happens the source won’t start, or it plays a short broken clip. It’s not a Harbor problem: pick another source, or give it a minute to finish caching and try again.":
+    "‘캐시됨’은 애드온에서 해당 파일이 디브리드에 이미 저장되어 즉시 재생할 수 있다고 판단한다는 의미일 뿐입니다. 이 표시는 항상 정확하지 않으며, 실제로는 파일이 아직 없을 수도 있습니다. 이 경우 소스가 시작되지 않거나 짧고 손상된 클립이 재생됩니다. Harbor의 문제가 아닙니다. 다른 소스를 선택하거나 캐시가 완료되도록 잠시 기다린 후 다시 시도하세요.",
   "← folder or .cbz / .zip": "← 폴더 또는 .cbz / .zip",
   "← name it like the manga": "← 만화와 같은 이름으로 지정",
   "≈{count}m left": "약 {count}분 남음",

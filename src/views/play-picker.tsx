@@ -983,7 +983,9 @@ export function PlayPicker({
 
         {stubBanner && (
           <div className="rounded-2xl border border-amber-300/30 bg-amber-400/10 px-5 py-4 text-[13.5px] text-amber-100">
-            {t("Last source wasn't actually cached on your debrid yet. Pick another from the list.")}
+            {t(
+              "Last source wasn't actually cached on your debrid yet. Pick another from the list.",
+            )}
           </div>
         )}
 

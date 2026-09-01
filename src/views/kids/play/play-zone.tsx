@@ -92,7 +92,10 @@ export function KidsPlayZone({ onClose }: { onClose: () => void }) {
   return createPortal(
     <div className="fixed inset-0 z-[150] flex flex-col overflow-hidden animate-in fade-in duration-200">
       <UnderwaterScene />
-      <header data-tauri-drag-region className="relative z-10 flex shrink-0 items-center gap-4 px-8 pt-7">
+      <header
+        data-tauri-drag-region
+        className="relative z-10 flex shrink-0 items-center gap-4 px-8 pt-7"
+      >
         <button
           type="button"
           onClick={goBack}
@@ -106,7 +109,9 @@ export function KidsPlayZone({ onClose }: { onClose: () => void }) {
             {active ? t(active.name) : t("Play Zone")}
           </h1>
           {!active && (
-            <p className="text-[15px] font-semibold text-white/75">{t("Games, coloring and ocean wonders")}</p>
+            <p className="text-[15px] font-semibold text-white/75">
+              {t("Games, coloring and ocean wonders")}
+            </p>
           )}
         </div>
         <img

@@ -125,7 +125,9 @@ export function MagnetCard({ raw, onClose }: { raw: string; onClose: () => void 
       const ready = await awaitCastServerReady(8000);
       if (!ready) {
         setMode("error");
-        setError(t("Your remote streaming server is not reachable. Check its address in Settings."));
+        setError(
+          t("Your remote streaming server is not reachable. Check its address in Settings."),
+        );
         return;
       }
       const created = await createAndListFiles(parsed.infoHash, parsed.trackers);
@@ -160,7 +162,9 @@ export function MagnetCard({ raw, onClose }: { raw: string; onClose: () => void 
     }
     if (!status?.ready) {
       setMode("error");
-      setError(t("The streaming engine is still starting up. Give it a moment and press Play again."));
+      setError(
+        t("The streaming engine is still starting up. Give it a moment and press Play again."),
+      );
       return;
     }
 
@@ -171,7 +175,9 @@ export function MagnetCard({ raw, onClose }: { raw: string; onClose: () => void 
       const e = lastEngineAddError();
       setError(
         e && /peer|timed out|timeout/i.test(e)
-          ? t("Could not find any peers for this torrent yet. It may be dead or very low on seeders.")
+          ? t(
+              "Could not find any peers for this torrent yet. It may be dead or very low on seeders.",
+            )
           : t("Could not start this torrent."),
       );
       return;

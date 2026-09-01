@@ -87,11 +87,14 @@ export function DetailActions({
   );
 }
 
-function inList(list: RemoteLibraryItem[] | undefined, id: string, imdbId?: string | null): boolean {
+function inList(
+  list: RemoteLibraryItem[] | undefined,
+  id: string,
+  imdbId?: string | null,
+): boolean {
   if (!list) return false;
   return list.some((it) => it.id === id || (!!imdbId && it.id === imdbId));
 }
-
 
 function ActionsSheet({
   meta,
@@ -153,7 +156,8 @@ function ActionsSheet({
     syncServices.length === 2
       ? t("{first} and {second}", { first: syncServices[0], second: syncServices[1] })
       : syncServices[0];
-  const sync = online && syncList ? t("Syncs to your {services}", { services: syncList }) : undefined;
+  const sync =
+    online && syncList ? t("Syncs to your {services}", { services: syncList }) : undefined;
 
   const sheet = (
     <div className="fixed inset-0 z-[70] flex flex-col justify-end" role="dialog" aria-modal="true">
@@ -176,7 +180,11 @@ function ActionsSheet({
 
         <div className="flex flex-col px-3 pb-1">
           {trailerId && (
-            <SheetRow icon={<Film size={20} strokeWidth={2} />} label={t("Play trailer")} onClick={onPlayTrailer} />
+            <SheetRow
+              icon={<Film size={20} strokeWidth={2} />}
+              label={t("Play trailer")}
+              onClick={onPlayTrailer}
+            />
           )}
           <SheetRow
             icon={<Monitor size={20} strokeWidth={2} />}
@@ -196,7 +204,9 @@ function ActionsSheet({
             sublabel={isFav ? t("Saved to your favorites") : t("Save to your favorites")}
             active={isFav}
             disabled={!online}
-            trailing={isFav ? <Check size={18} strokeWidth={2.6} className="text-accent" /> : undefined}
+            trailing={
+              isFav ? <Check size={18} strokeWidth={2.6} className="text-accent" /> : undefined
+            }
             onClick={() => {
               const next = !isFav;
               setFavOpt(next);
@@ -204,13 +214,19 @@ function ActionsSheet({
             }}
           />
           <SheetRow
-            icon={<Bookmark size={20} strokeWidth={2} fill={inWatchlist ? "currentColor" : "none"} />}
+            icon={
+              <Bookmark size={20} strokeWidth={2} fill={inWatchlist ? "currentColor" : "none"} />
+            }
             label={t("Watchlist")}
             sublabel={inWatchlist ? t("In your watchlist") : t("Add to your watchlist")}
             hint={sync}
             active={inWatchlist}
             disabled={!online}
-            trailing={inWatchlist ? <Check size={18} strokeWidth={2.6} className="text-accent" /> : undefined}
+            trailing={
+              inWatchlist ? (
+                <Check size={18} strokeWidth={2.6} className="text-accent" />
+              ) : undefined
+            }
             onClick={() => {
               const next = !inWatchlist;
               setWatchlistOpt(next);
@@ -224,7 +240,9 @@ function ActionsSheet({
             hint={sync}
             active={isWatched}
             disabled={!online}
-            trailing={isWatched ? <Check size={18} strokeWidth={2.6} className="text-accent" /> : undefined}
+            trailing={
+              isWatched ? <Check size={18} strokeWidth={2.6} className="text-accent" /> : undefined
+            }
             onClick={() => {
               const next = !isWatched;
               setHistoryOpt(next);

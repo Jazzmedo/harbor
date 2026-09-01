@@ -77,7 +77,9 @@ export function ErrorView() {
         | string
         | undefined;
       const message =
-        typeof reason === "string" ? reason : (reason?.message ?? translate("Unhandled promise rejection."));
+        typeof reason === "string"
+          ? reason
+          : (reason?.message ?? translate("Unhandled promise rejection."));
       const name = typeof reason === "object" ? (reason?.name ?? "Rejection") : "Rejection";
       if (isNoisyError(reason, message)) return;
       showHarborError({

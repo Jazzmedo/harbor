@@ -47,7 +47,10 @@ function emptyDb(): ProfileDb {
 }
 
 function isValidIconDataUrl(s: unknown): s is string {
-  return typeof s === "string" && /^data:image\/(png|jpe?g|webp|gif|svg\+xml);(?:base64,|[^,]*,)/i.test(s);
+  return (
+    typeof s === "string" &&
+    /^data:image\/(png|jpe?g|webp|gif|svg\+xml);(?:base64,|[^,]*,)/i.test(s)
+  );
 }
 
 function baselineFor(theme: ThemeId): PlayerChromeConfig {
@@ -86,9 +89,10 @@ function sanitizeConfig(input: unknown, theme: ThemeId): PlayerChromeConfig {
   const panels: Partial<Record<PanelId, PanelConfig>> = {};
   for (const pid of PANELS) {
     const stored = partial.panels?.[pid];
-    const corner: PanelCorner = stored && PANEL_CORNERS.includes(stored.corner)
-      ? stored.corner
-      : PANEL_META[pid].defaultCorner;
+    const corner: PanelCorner =
+      stored && PANEL_CORNERS.includes(stored.corner)
+        ? stored.corner
+        : PANEL_META[pid].defaultCorner;
     panels[pid] = { corner, hidden: !!stored?.hidden };
   }
   return {
@@ -109,7 +113,9 @@ function readDbRaw(): ProfileDb {
     const parsed = JSON.parse(raw) as ProfileDb;
     if (!parsed || !Array.isArray(parsed.profiles)) return emptyDb();
     parsed.profiles = parsed.profiles
-      .filter((p): p is LayoutProfile => !!p && typeof p.id === "string" && typeof p.name === "string")
+      .filter(
+        (p): p is LayoutProfile => !!p && typeof p.id === "string" && typeof p.name === "string",
+      )
       .map((p) => ({
         ...p,
         themeId: p.themeId === "stremio" ? "stremio" : "default",
@@ -149,7 +155,10 @@ function writeDb(db: ProfileDb): SaveResult {
     const mb = (bytes / 1024 / 1024).toFixed(2);
     return {
       ok: false,
-      error: t("Profile data is too large ({mb} MB). Remove unused custom icons or delete an old profile, then try again.", { mb }),
+      error: t(
+        "Profile data is too large ({mb} MB). Remove unused custom icons or delete an old profile, then try again.",
+        { mb },
+      ),
     };
   }
   try {
@@ -160,14 +169,17 @@ function writeDb(db: ProfileDb): SaveResult {
     if (name === "QuotaExceededError" || name === "NS_ERROR_DOM_QUOTA_REACHED") {
       return {
         ok: false,
-        error: t("Your browser's storage is full. Remove custom icons or delete profiles to free up space, then try again."),
+        error: t(
+          "Your browser's storage is full. Remove custom icons or delete profiles to free up space, then try again.",
+        ),
       };
     }
     return {
       ok: false,
-      error: err instanceof Error
-        ? t("Save failed: {error}", { error: err.message })
-        : t("Save failed for an unknown reason."),
+      error:
+        err instanceof Error
+          ? t("Save failed: {error}", { error: err.message })
+          : t("Save failed for an unknown reason."),
     };
   }
 }
@@ -227,7 +239,12 @@ export function setActiveProfile(theme: ThemeId, profileId: string): SaveResult 
   return writeDb(db);
 }
 
-function dedupeProfileName(db: ProfileDb, theme: ThemeId, baseName: string, excludeId?: string): string {
+function dedupeProfileName(
+  db: ProfileDb,
+  theme: ThemeId,
+  baseName: string,
+  excludeId?: string,
+): string {
   const trimmed = baseName.trim() || t("Untitled");
   const existing = new Set(
     db.profiles

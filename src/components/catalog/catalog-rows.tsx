@@ -83,7 +83,15 @@ function isBuiltInCatalogRow(key: string): boolean {
   );
 }
 
-function RowTitle({ row, title, kids = false }: { row: CatalogRow; title: string; kids?: boolean }) {
+function RowTitle({
+  row,
+  title,
+  kids = false,
+}: {
+  row: CatalogRow;
+  title: string;
+  kids?: boolean;
+}) {
   const t = useT();
   const { openGrid } = useView();
   if (!row.fetcher) return <>{title}</>;
@@ -140,44 +148,48 @@ export function CatalogRows({
         if (hidden && !editMode) return null;
         const idx = orderKeys.indexOf(row.key);
         const title =
-          row.key in custom.renamed || !isBuiltInCatalogRow(row.key)
-            ? row.title
-            : t(row.title);
+          row.key in custom.renamed || !isBuiltInCatalogRow(row.key) ? row.title : t(row.title);
         const eager = i < 2;
         const viewAll = row.fetcher
           ? () => openGrid({ title, fetcher: row.fetcher!, initial: row.metas })
           : undefined;
-        const rowEl = row.variant === "rank" ? (
-          <Row
-            title={<RowTitle row={row} title={title} kids={kids} />}
-            titleClassName={kids ? "text-[#0e3a43]" : "text-ink"}
-            titleScale={kids ? 1.28 : 1}
-            min={216}
-            shape="rank"
-            scrollKey={`${scrollPrefix}:${row.key}`}
-            onViewAll={viewAll}
-            viewAllClassName={kids ? "text-[#0e3a43]/70 hover:text-[#1f8f88]" : undefined}
-          >
-            {row.metas.slice(0, 10).map((m, ri) => (
-              <TopRankCard key={m.id} meta={m} rank={ri + 1} />
-            ))}
-          </Row>
-        ) : (
-          <Row
-            title={<RowTitle row={row} title={title} kids={kids} />}
-            titleClassName={kids ? "text-[#0e3a43]" : "text-ink"}
-            titleScale={kids ? 1.28 : 1}
-            {...posterRow}
-            scrollKey={`${scrollPrefix}:${row.key}`}
-            onEndReached={row.hasMore ? () => onLoadMore(row.key) : undefined}
-            onViewAll={viewAll}
-            viewAllClassName={kids ? "text-[#0e3a43]/70 hover:text-[#1f8f88]" : undefined}
-          >
-            {row.metas.map((m) => (
-              <PickCard key={m.id} meta={m} flagRerun={flagRerunKeys?.includes(row.key)} kids={kids} />
-            ))}
-          </Row>
-        );
+        const rowEl =
+          row.variant === "rank" ? (
+            <Row
+              title={<RowTitle row={row} title={title} kids={kids} />}
+              titleClassName={kids ? "text-[#0e3a43]" : "text-ink"}
+              titleScale={kids ? 1.28 : 1}
+              min={216}
+              shape="rank"
+              scrollKey={`${scrollPrefix}:${row.key}`}
+              onViewAll={viewAll}
+              viewAllClassName={kids ? "text-[#0e3a43]/70 hover:text-[#1f8f88]" : undefined}
+            >
+              {row.metas.slice(0, 10).map((m, ri) => (
+                <TopRankCard key={m.id} meta={m} rank={ri + 1} />
+              ))}
+            </Row>
+          ) : (
+            <Row
+              title={<RowTitle row={row} title={title} kids={kids} />}
+              titleClassName={kids ? "text-[#0e3a43]" : "text-ink"}
+              titleScale={kids ? 1.28 : 1}
+              {...posterRow}
+              scrollKey={`${scrollPrefix}:${row.key}`}
+              onEndReached={row.hasMore ? () => onLoadMore(row.key) : undefined}
+              onViewAll={viewAll}
+              viewAllClassName={kids ? "text-[#0e3a43]/70 hover:text-[#1f8f88]" : undefined}
+            >
+              {row.metas.map((m) => (
+                <PickCard
+                  key={m.id}
+                  meta={m}
+                  flagRerun={flagRerunKeys?.includes(row.key)}
+                  kids={kids}
+                />
+              ))}
+            </Row>
+          );
         const node = (
           <div key={row.key} data-scroll-anchor={`row:${row.key}`}>
             {editMode && (

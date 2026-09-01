@@ -74,7 +74,9 @@ export function CodePopout({
           <span className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-ink-subtle">
             {t("Code")}
           </span>
-          <h2 className="truncate text-[17px] font-semibold tracking-tight text-ink">{themeName}</h2>
+          <h2 className="truncate text-[17px] font-semibold tracking-tight text-ink">
+            {themeName}
+          </h2>
         </div>
         <button
           type="button"
@@ -166,7 +168,11 @@ export function CodePopout({
                   copied ? "text-success" : "text-ink-subtle hover:text-ink"
                 }`}
               >
-                {copied ? <Check size={16} strokeWidth={2.6} /> : <Copy size={16} strokeWidth={2.2} />}
+                {copied ? (
+                  <Check size={16} strokeWidth={2.6} />
+                ) : (
+                  <Copy size={16} strokeWidth={2.2} />
+                )}
                 {copied ? t("Copied") : t("Copy")}
               </button>
               <button

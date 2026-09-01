@@ -32,8 +32,7 @@ export function TvRowControl({
   profileId: string;
 }) {
   const t = useT();
-  const set = (v: boolean | string | string[]) =>
-    writeTvValue(profileId, group.wire, row.key, v);
+  const set = (v: boolean | string | string[]) => writeTvValue(profileId, group.wire, row.key, v);
 
   if (row.kind === "toggle") {
     const lockReason = lockOf(group, row, doc);

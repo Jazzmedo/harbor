@@ -1,5 +1,6 @@
 const awards: Record<string, string> = {
-  "No data shipped for this award yet. Re-run": "Chưa có dữ liệu đi kèm cho giải thưởng này. Chạy lại",
+  "No data shipped for this award yet. Re-run":
+    "Chưa có dữ liệu đi kèm cho giải thưởng này. Chạy lại",
   "to refresh the bundled dataset.": "để làm mới bộ dữ liệu đi kèm.",
   "No data shipped for this award yet.": "Chưa có dữ liệu đi kèm cho giải thưởng này.",
   "No winners match these filters.": "Không có tác phẩm đoạt giải nào khớp với các bộ lọc này.",
@@ -16,8 +17,10 @@ const awards: Record<string, string> = {
   "Acclaimed directors": "Đạo diễn được ca ngợi",
   "Honored writers": "Biên kịch được vinh danh",
   "{n} wins": "{n} lần thắng",
-  "Add a TMDB key in Settings to unlock posters and the artists behind this award.": "Thêm khóa TMDB trong Cài đặt để hiển thị áp phích và các nghệ sĩ đứng sau giải thưởng này.",
-  "No winners are catalogued for this award yet.": "Chưa có tác phẩm đoạt giải nào được lập danh mục cho giải thưởng này.",
+  "Add a TMDB key in Settings to unlock posters and the artists behind this award.":
+    "Thêm khóa TMDB trong Cài đặt để hiển thị áp phích và các nghệ sĩ đứng sau giải thưởng này.",
+  "No winners are catalogued for this award yet.":
+    "Chưa có tác phẩm đoạt giải nào được lập danh mục cho giải thưởng này.",
   "Anime award": "Giải thưởng anime",
   "recorded winners": "tác phẩm đoạt giải đã ghi nhận",
   "Search winners or categories…": "Tìm tác phẩm đoạt giải hoặc hạng mục…",

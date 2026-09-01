@@ -50,7 +50,9 @@ export function CustomizationCode({
       <CodeField
         label={t("Custom HTML")}
         value={form.customHtml}
-        placeholder={'<div class="card">\n  <h2>Welcome to my corner</h2>\n  <p>Late-night sci-fi and slow mornings.</p>\n</div>'}
+        placeholder={
+          '<div class="card">\n  <h2>Welcome to my corner</h2>\n  <p>Late-night sci-fi and slow mornings.</p>\n</div>'
+        }
         onChange={(v) => set("customHtml", v)}
       />
       <CodeField

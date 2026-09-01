@@ -110,7 +110,9 @@ function DownloadLocation({
   const t = useT();
   return (
     <section className="flex flex-col gap-3">
-      <h3 className="text-[12px] font-semibold uppercase tracking-[0.16em] text-ink-muted">{title}</h3>
+      <h3 className="text-[12px] font-semibold uppercase tracking-[0.16em] text-ink-muted">
+        {title}
+      </h3>
       {children}
       <div className="flex items-center justify-between gap-3 rounded-md bg-canvas px-4 py-3">
         <div className="flex min-w-0 flex-col gap-0.5">
@@ -125,7 +127,7 @@ function DownloadLocation({
           <button
             type="button"
             onClick={onReveal}
- className="flex h-9 shrink-0 items-center gap-1.5 rounded-md px-3 text-[12.5px] font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink"
+            className="flex h-9 shrink-0 items-center gap-1.5 rounded-md px-3 text-[12.5px] font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink"
           >
             <FolderOpen size={14} strokeWidth={2.2} />
             {t("Open")}
@@ -144,7 +146,7 @@ function DownloadLocation({
           <button
             type="button"
             onClick={onReset}
- className="flex h-10 items-center gap-1.5 rounded-md px-3 text-[12.5px] font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink"
+            className="flex h-10 items-center gap-1.5 rounded-md px-3 text-[12.5px] font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink"
           >
             <RotateCcw size={14} strokeWidth={2.2} />
             {t("Reset to default")}

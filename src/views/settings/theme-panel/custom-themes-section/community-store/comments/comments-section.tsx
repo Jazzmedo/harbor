@@ -31,7 +31,9 @@ export function CommentsSection({ themeId }: { themeId: string }) {
       <h3 className="flex items-center gap-2 text-[15px] font-semibold tracking-tight text-ink">
         <MessageSquare size={16} className="text-ink-subtle" />
         {t("Comments")}
-        {comments.length > 0 && <span className="text-ink-subtle tabular-nums">{comments.length}</span>}
+        {comments.length > 0 && (
+          <span className="text-ink-subtle tabular-nums">{comments.length}</span>
+        )}
       </h3>
 
       {author ? (
@@ -49,7 +51,9 @@ export function CommentsSection({ themeId }: { themeId: string }) {
       ) : error ? (
         <p className="text-[13px] text-danger">{error}</p>
       ) : comments.length === 0 ? (
-        <p className="py-4 text-center text-[13px] text-ink-subtle">{t("No comments yet. Start the conversation.")}</p>
+        <p className="py-4 text-center text-[13px] text-ink-subtle">
+          {t("No comments yet. Start the conversation.")}
+        </p>
       ) : (
         <div className="flex flex-col gap-4">
           {roots.map((c) => (

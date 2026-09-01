@@ -36,7 +36,11 @@ export function MarketCta({
 }) {
   const t = useT();
   if (variant === "browse") {
-    const meta = sublabel ?? (count != null ? t("{count} {noun} · updated weekly", { count: fmtCount(count), noun: t(noun ?? "packs") }) : "");
+    const meta =
+      sublabel ??
+      (count != null
+        ? t("{count} {noun} · updated weekly", { count: fmtCount(count), noun: t(noun ?? "packs") })
+        : "");
     return (
       <button
         type="button"
@@ -45,7 +49,9 @@ export function MarketCta({
       >
         <IconFan icons={preview ?? []} />
         <span className="min-w-0 flex-1">
-          <span className="block text-[13.5px] font-semibold text-ink">{label ? t(label) : t("Browse community")}</span>
+          <span className="block text-[13.5px] font-semibold text-ink">
+            {label ? t(label) : t("Browse community")}
+          </span>
           {meta && <span className="block text-[12.5px] text-ink-subtle tabular-nums">{meta}</span>}
         </span>
         <ChevronRight
@@ -74,7 +80,14 @@ export function MarketCta({
       : state === "error"
         ? "bg-danger text-white"
         : "bg-ink text-canvas";
-  const text = state === "done" ? t("Added") : state === "error" ? t("Try again") : (label ? t(label) : t("Get"));
+  const text =
+    state === "done"
+      ? t("Added")
+      : state === "error"
+        ? t("Try again")
+        : label
+          ? t(label)
+          : t("Get");
   return (
     <button
       type="button"

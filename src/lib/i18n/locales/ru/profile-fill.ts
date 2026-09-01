@@ -1,7 +1,7 @@
 const profileFill: Record<string, string> = {
-  "General": "Общие",
-  "Look": "Оформление",
-  "optional": "необязательно",
+  General: "Общие",
+  Look: "Оформление",
+  optional: "необязательно",
   "Your name and the details shown at the top of your profile.":
     "Ваше имя и данные, которые показываются вверху профиля.",
   "Your avatar, banner, and how the whole profile is styled.":

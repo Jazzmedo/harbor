@@ -16,7 +16,9 @@ export function BetaThemesCard({ count, onClick }: { count: number; onClick: () 
       <div className="relative h-40 w-full overflow-hidden bg-canvas p-4">
         <div
           className="grid h-full w-full gap-1.5"
-          style={{ gridTemplateColumns: `repeat(${preview.length <= 2 ? preview.length : preview.length <= 6 ? 2 : 4}, minmax(0, 1fr))` }}
+          style={{
+            gridTemplateColumns: `repeat(${preview.length <= 2 ? preview.length : preview.length <= 6 ? 2 : 4}, minmax(0, 1fr))`,
+          }}
         >
           {preview.map((p) => (
             <span key={p.id} className="flex overflow-hidden rounded-[3px]">
@@ -31,7 +33,9 @@ export function BetaThemesCard({ count, onClick }: { count: number; onClick: () 
         </span>
       </div>
       <div className="flex flex-col gap-1 p-4">
-        <span className="text-[16px] font-semibold tracking-tight text-ink">{t("Beta themes")}</span>
+        <span className="text-[16px] font-semibold tracking-tight text-ink">
+          {t("Beta themes")}
+        </span>
         <span className="text-[12.5px] leading-relaxed text-ink-muted">
           {count === 1 ? t("1 experimental port") : t("{count} experimental ports", { count })}
         </span>
@@ -71,7 +75,7 @@ export function BetaThemesModal({
           <button
             type="button"
             onClick={close}
- className="flex h-11 items-center gap-2 rounded-full bg-canvas px-4 text-[13px] font-semibold text-ink-muted transition hover:-translate-x-0.5 hover:bg-surface hover:text-ink"
+            className="flex h-11 items-center gap-2 rounded-full bg-canvas px-4 text-[13px] font-semibold text-ink-muted transition hover:-translate-x-0.5 hover:bg-surface hover:text-ink"
           >
             <ArrowLeft size={16} strokeWidth={2.2} />
             {t("Back")}
@@ -129,7 +133,8 @@ function BetaCard({
 }) {
   const t = useT();
   const hasImage = !!theme.previewImage;
-  const bg = theme.background?.image ?? `linear-gradient(135deg, ${theme.swatch[0]}, ${theme.swatch[1]})`;
+  const bg =
+    theme.background?.image ?? `linear-gradient(135deg, ${theme.swatch[0]}, ${theme.swatch[1]})`;
   return (
     <div
       className={`flex flex-col overflow-hidden rounded-[4px] border transition ${
@@ -167,7 +172,9 @@ function BetaCard({
         <div className="flex min-w-0 flex-col gap-1">
           <span className="text-[16px] font-semibold tracking-tight text-ink">{theme.name}</span>
           {blurb && (
-            <span className="line-clamp-2 text-[12.5px] leading-relaxed text-ink-muted">{blurb}</span>
+            <span className="line-clamp-2 text-[12.5px] leading-relaxed text-ink-muted">
+              {blurb}
+            </span>
           )}
         </div>
         <button

@@ -57,7 +57,9 @@ export function MyLibraryFilters({
             }`}
           >
             {t(c.label)}
-            <span className={`tabular-nums ${on ? "text-canvas/70" : "text-ink-subtle"}`}>{count}</span>
+            <span className={`tabular-nums ${on ? "text-canvas/70" : "text-ink-subtle"}`}>
+              {count}
+            </span>
           </button>
         );
       })}

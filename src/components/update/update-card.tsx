@@ -197,8 +197,7 @@ export function UpdateCard() {
           )}
           {u.status === "downloading" && (
             <span className="flex items-center gap-1.5 text-[12px] text-ink-subtle">
-              <Check size={14} strokeWidth={2.4} className="text-accent" />{" "}
-              {t("update.keepUsing")}
+              <Check size={14} strokeWidth={2.4} className="text-accent" /> {t("update.keepUsing")}
             </span>
           )}
         </div>

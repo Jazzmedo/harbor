@@ -1,5 +1,15 @@
 import { useEffect, useState } from "react";
-import { ChevronDown, Eye, EyeOff, History, Loader2, PencilLine, RefreshCw, Star, Trash2 } from "lucide-react";
+import {
+  ChevronDown,
+  Eye,
+  EyeOff,
+  History,
+  Loader2,
+  PencilLine,
+  RefreshCw,
+  Star,
+  Trash2,
+} from "lucide-react";
 import { authToken } from "@/lib/theme-auth";
 import { deleteUpload, setVisibility, themeVersions, type StoreTheme } from "@/lib/theme-store";
 import { useT } from "@/lib/i18n";
@@ -94,7 +104,11 @@ export function MyThemeRow({
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <div className="flex flex-wrap items-center gap-2">
             <span className="truncate text-[15px] font-semibold text-ink">{t.name}</span>
-            <span className={`rounded-full px-2 py-0.5 text-[11.5px] font-semibold ${badge.className}`}>{tr(badge.label)}</span>
+            <span
+              className={`rounded-full px-2 py-0.5 text-[11.5px] font-semibold ${badge.className}`}
+            >
+              {tr(badge.label)}
+            </span>
             {t.hasPendingUpdate && (
               <span className="inline-flex items-center gap-1 rounded-full bg-accent-soft px-2 py-0.5 text-[11.5px] font-semibold text-accent">
                 <RefreshCw size={12} strokeWidth={2.4} /> {tr("Update in review")}
@@ -137,8 +151,12 @@ export function MyThemeRow({
           onClick={openVersions}
           className="flex h-9 items-center gap-1.5 rounded-md bg-canvas px-3 text-[12.5px] font-medium text-ink-muted transition-colors hover:text-ink hover:ring-edge"
         >
-          <History size={14} /> {versionsCount > 0 ? tr("Versions ({count})", { count: versionsCount }) : tr("Versions")}
-          <ChevronDown size={14} className={`transition-transform ${versionsOpen ? "rotate-180" : ""}`} />
+          <History size={14} />{" "}
+          {versionsCount > 0 ? tr("Versions ({count})", { count: versionsCount }) : tr("Versions")}
+          <ChevronDown
+            size={14}
+            className={`transition-transform ${versionsOpen ? "rotate-180" : ""}`}
+          />
         </button>
         <div className="ms-auto flex items-center gap-1.5">
           {confirmDel ? (
@@ -188,12 +206,16 @@ export function MyThemeRow({
                   </span>
                   <div className="flex min-w-0 flex-col">
                     <span className="text-[12.5px] text-ink">{v.changelog || tr("No notes")}</span>
-                    <span className="text-[11.5px] text-ink-subtle">{new Date(v.createdAt).toLocaleDateString()}</span>
+                    <span className="text-[11.5px] text-ink-subtle">
+                      {new Date(v.createdAt).toLocaleDateString()}
+                    </span>
                   </div>
                 </div>
               ))
           ) : (
-            <span className="text-[12.5px] text-ink-subtle">{tr("No previous versions yet. Your next update starts the history.")}</span>
+            <span className="text-[12.5px] text-ink-subtle">
+              {tr("No previous versions yet. Your next update starts the history.")}
+            </span>
           )}
         </div>
       )}

@@ -94,13 +94,7 @@ function TopBar({ title, onBack }: { title: string; onBack: () => void }) {
   );
 }
 
-function ServiceCard({
-  service,
-  onSelect,
-}: {
-  service: StreamingService;
-  onSelect: () => void;
-}) {
+function ServiceCard({ service, onSelect }: { service: StreamingService; onSelect: () => void }) {
   const [failed, setFailed] = useState(false);
   const t = useT();
   const meta = SERVICES[service];

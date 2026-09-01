@@ -188,7 +188,13 @@ export function FloatingInspector({
 
         <Group label={t(control.hidden ? "Hidden" : "Visible")}>
           <IconBtn
-            icon={control.hidden ? <EyeOff size={14} strokeWidth={2.3} /> : <Eye size={14} strokeWidth={2.3} />}
+            icon={
+              control.hidden ? (
+                <EyeOff size={14} strokeWidth={2.3} />
+              ) : (
+                <Eye size={14} strokeWidth={2.3} />
+              )
+            }
             onClick={onToggleHidden}
             variant={control.hidden ? "active" : "default"}
             title={t(control.hidden ? "Show this control" : "Hide this control")}
@@ -211,7 +217,10 @@ export function FloatingInspector({
 
       {crowded && (
         <div className="pointer-events-auto rounded-full border border-accent/30 bg-accent/10 px-3.5 py-1.5 text-[11.5px] font-medium text-accent/90 backdrop-blur-xl">
-          {t("Slot is getting crowded ({count}/{limit}). May overflow on narrow screens.", { count: peers.length, limit })}
+          {t("Slot is getting crowded ({count}/{limit}). May overflow on narrow screens.", {
+            count: peers.length,
+            limit,
+          })}
         </div>
       )}
     </div>
@@ -371,7 +380,13 @@ function PanelInspector({
 
         <Group label={t(cfg.hidden ? "Hidden" : "Visible")}>
           <IconBtn
-            icon={cfg.hidden ? <EyeOff size={14} strokeWidth={2.3} /> : <Eye size={14} strokeWidth={2.3} />}
+            icon={
+              cfg.hidden ? (
+                <EyeOff size={14} strokeWidth={2.3} />
+              ) : (
+                <Eye size={14} strokeWidth={2.3} />
+              )
+            }
             onClick={() => onToggleHidden(panelId)}
             variant={cfg.hidden ? "active" : "default"}
             title={t(cfg.hidden ? "Show this panel" : "Hide this panel")}

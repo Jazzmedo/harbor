@@ -31,7 +31,8 @@ const catalog: Record<string, string> = {
   "Show on home": "ホームに表示",
   "Hide from home": "ホームから非表示",
   "Feature this catalog in the hero carousel": "このカタログをヒーローカルーセルに表示",
-  "Stop feeding the hero carousel (back to automatic)": "ヒーローカルーセルへの表示をやめる（自動選択に戻す）",
+  "Stop feeding the hero carousel (back to automatic)":
+    "ヒーローカルーセルへの表示をやめる（自動選択に戻す）",
   "Needs artwork-rich titles to feed the hero": "ヒーロー表示には画像が豊富な作品が必要です",
   "Needs at least 10 titles for the Top 10 look": "トップ10表示には10作品以上が必要です",
   "Customize home": "ホームをカスタマイズ",
@@ -40,15 +41,21 @@ const catalog: Record<string, string> = {
   "How the Home page assembles its rails.": "ホーム画面にコンテンツ列を配置する方法を設定します。",
   "Card overlays": "カードのオーバーレイ",
   "Hover preview": "ホバーでプレビュー",
-  "Rest the cursor on a poster to peek at the rating, runtime, and story without opening it.": "ポスターにカーソルを合わせると、開かずに評価、再生時間、あらすじを確認できます。",
-  "Cleaner grid when your poster service already prints the title on the artwork.": "ポスター画像にタイトルが入っている場合、グリッドをすっきり表示できます。",
+  "Rest the cursor on a poster to peek at the rating, runtime, and story without opening it.":
+    "ポスターにカーソルを合わせると、開かずに評価、再生時間、あらすじを確認できます。",
+  "Cleaner grid when your poster service already prints the title on the artwork.":
+    "ポスター画像にタイトルが入っている場合、グリッドをすっきり表示できます。",
   "Hide titles under posters": "ポスター下のタイトルを非表示",
   "No matches for these filters.": "このフィルターに一致する作品はありません。",
   "No more found for this category.": "このカテゴリーの作品は以上です。",
-  "Cinemeta didn't return anything for {genre}. Try a different genre or add a TMDB key.": "Cinemetaで{genre}の作品が見つかりませんでした。別のジャンルを試すか、TMDBキーを追加してください。",
-  "That's everything Cinemeta has for {genre}. Add a TMDB key for deeper rails.": "Cinemetaにある{genre}の作品は以上です。さらに多くのコンテンツ列を表示するには、TMDBキーを追加してください。",
-  "Year, runtime, language, and country filters need TMDB. Genre browsing falls back to Cinemeta automatically.": "年、再生時間、言語、国のフィルターにはTMDBが必要です。ジャンルの閲覧では自動的にCinemetaが使用されます。",
-  "The best {genre} {media}, layered by mood. Browse trending, dive into a director's run, sort by decade, find quiet gems.": "ムード別にまとめた、おすすめの{genre}{media}。トレンドをチェックしたり、監督の作品をたどったり、年代順に並べたり、隠れた名作を見つけたりできます。",
+  "Cinemeta didn't return anything for {genre}. Try a different genre or add a TMDB key.":
+    "Cinemetaで{genre}の作品が見つかりませんでした。別のジャンルを試すか、TMDBキーを追加してください。",
+  "That's everything Cinemeta has for {genre}. Add a TMDB key for deeper rails.":
+    "Cinemetaにある{genre}の作品は以上です。さらに多くのコンテンツ列を表示するには、TMDBキーを追加してください。",
+  "Year, runtime, language, and country filters need TMDB. Genre browsing falls back to Cinemeta automatically.":
+    "年、再生時間、言語、国のフィルターにはTMDBが必要です。ジャンルの閲覧では自動的にCinemetaが使用されます。",
+  "The best {genre} {media}, layered by mood. Browse trending, dive into a director's run, sort by decade, find quiet gems.":
+    "ムード別にまとめた、おすすめの{genre}{media}。トレンドをチェックしたり、監督の作品をたどったり、年代順に並べたり、隠れた名作を見つけたりできます。",
 };
 
 export default catalog;

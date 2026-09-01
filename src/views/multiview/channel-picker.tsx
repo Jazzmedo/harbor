@@ -172,12 +172,16 @@ export function ChannelPicker({
               {groupKey === FAVS ? (
                 <>
                   <Star size={26} className="text-ink-subtle" />
-                  <p className="text-[13.5px]">{t("No favorites yet. Star channels to pin them here.")}</p>
+                  <p className="text-[13.5px]">
+                    {t("No favorites yet. Star channels to pin them here.")}
+                  </p>
                 </>
               ) : (
                 <>
                   <Tv size={26} className="text-ink-subtle" />
-                  <p className="text-[13.5px]">{t("No channels match. Try another group or paste a URL.")}</p>
+                  <p className="text-[13.5px]">
+                    {t("No channels match. Try another group or paste a URL.")}
+                  </p>
                 </>
               )}
             </div>
@@ -294,7 +298,7 @@ function PlaylistDropdown({
   const activeLabel =
     value === ALL_PLAYLISTS
       ? t("All playlists")
-      : sources.find((s) => s.id === value)?.name ?? t("Playlist");
+      : (sources.find((s) => s.id === value)?.name ?? t("Playlist"));
 
   return (
     <div ref={wrapRef} className="relative">

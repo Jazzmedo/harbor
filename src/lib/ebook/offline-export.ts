@@ -174,12 +174,17 @@ async function makeEpub(
   cover?: CoverAsset | null,
 ): Promise<Uint8Array> {
   const modified = new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
-  const chapterFiles = chapters.map((_, index) => `chapter-${String(index + 1).padStart(5, "0")}.xhtml`);
+  const chapterFiles = chapters.map(
+    (_, index) => `chapter-${String(index + 1).padStart(5, "0")}.xhtml`,
+  );
   const nav = chapters
     .map((chapter, index) => `<li><a href="${chapterFiles[index]}">${xml(chapter.title)}</a></li>`)
     .join("");
   const manifest = chapterFiles
-    .map((path, index) => `<item id="c${index + 1}" href="${path}" media-type="application/xhtml+xml"/>`)
+    .map(
+      (path, index) =>
+        `<item id="c${index + 1}" href="${path}" media-type="application/xhtml+xml"/>`,
+    )
     .join("\n");
   const spine = chapterFiles.map((_, index) => `<itemref idref="c${index + 1}"/>`).join("\n");
   const files: Zippable = {
@@ -227,7 +232,9 @@ async function saveBytes(
     const { writeFile } = await import("@tauri-apps/plugin-fs");
     const path =
       destinationPath ??
-      (await (await import("@tauri-apps/plugin-dialog")).save({
+      (await (
+        await import("@tauri-apps/plugin-dialog")
+      ).save({
         defaultPath: name,
         filters: [{ name: t("EPUB eBook"), extensions: ["epub"] }],
       }));
@@ -257,8 +264,11 @@ async function coverAsset(ebook: EBook, signal?: AbortSignal): Promise<CoverAsse
     const mediaType = response.headers.get("content-type")?.split(";")[0] || "image/jpeg";
     if (!mediaType.startsWith("image/")) return null;
     const bytes = new Uint8Array(await response.arrayBuffer());
-    const extension =
-      mediaType.includes("png") ? "png" : mediaType.includes("webp") ? "webp" : "jpg";
+    const extension = mediaType.includes("png")
+      ? "png"
+      : mediaType.includes("webp")
+        ? "webp"
+        : "jpg";
     const blob = new Blob([bytes], { type: mediaType });
     const dataUrl = await new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
@@ -459,13 +469,12 @@ async function eBookExportPath(ebook: EBook, format: EBookExportFormat): Promise
     await mkdir(directory, { recursive: true });
   }
   const name = `${fileName(ebook.title)}.${format}`;
-  return uniqueExportPath(directory ? `${directory}${directory.endsWith(separator) ? "" : separator}${name}` : name);
+  return uniqueExportPath(
+    directory ? `${directory}${directory.endsWith(separator) ? "" : separator}${name}` : name,
+  );
 }
 
-export async function enqueueEBookExport(
-  ebook: EBook,
-  format: EBookExportFormat,
-): Promise<string> {
+export async function enqueueEBookExport(ebook: EBook, format: EBookExportFormat): Promise<string> {
   const path = await eBookExportPath(ebook, format);
   return enqueueManagedDownload({
     metaId: ebook.id,

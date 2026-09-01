@@ -16,7 +16,10 @@ const readerState = readFileSync(
   new URL("../src/lib/ebook/reader-state.ts", import.meta.url),
   "utf8",
 );
-const downloads = readFileSync(new URL("../src/views/downloads/download-row.tsx", import.meta.url), "utf8");
+const downloads = readFileSync(
+  new URL("../src/views/downloads/download-row.tsx", import.meta.url),
+  "utf8",
+);
 const providers = readFileSync(new URL("../src/lib/ebook/providers.ts", import.meta.url), "utf8");
 
 test("eBook cards and the featured book open the dedicated wheel menu", () => {

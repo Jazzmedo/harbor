@@ -74,7 +74,9 @@ export function SeekImageUpload({
           />
           <img
             key={value || "empty"}
-            src={value || "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="}
+            src={
+              value || "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+            }
             alt=""
             className={`h-12 w-12 object-contain transition duration-300 ease-out ${
               value ? "translate-y-0 scale-100 opacity-100" : "translate-y-2 scale-75 opacity-0"
@@ -163,9 +165,12 @@ async function processSeekImage(file: File, maxDim: number, quality: number): Pr
   if (isSvg) {
     if (file.size > MAX_SVG_SIZE) {
       return {
-        error: t("That SVG is {size} (max 512 KB). Optimize it at svgomg or save it smaller and try again.", {
-          size: formatBytes(file.size),
-        }),
+        error: t(
+          "That SVG is {size} (max 512 KB). Optimize it at svgomg or save it smaller and try again.",
+          {
+            size: formatBytes(file.size),
+          },
+        ),
       };
     }
     const text = await file.text();
@@ -176,9 +181,12 @@ async function processSeekImage(file: File, maxDim: number, quality: number): Pr
   if (isGif) {
     if (file.size > MAX_GIF_SIZE) {
       return {
-        error: t("Animated GIFs are kept as-is to preserve animation, but this one is {size} and the cap is 2 MB. Try a shorter or lower-frame-rate version.", {
-          size: formatBytes(file.size),
-        }),
+        error: t(
+          "Animated GIFs are kept as-is to preserve animation, but this one is {size} and the cap is 2 MB. Try a shorter or lower-frame-rate version.",
+          {
+            size: formatBytes(file.size),
+          },
+        ),
       };
     }
     const url = await readAsDataUrl(file);
@@ -200,7 +208,9 @@ async function processSeekImage(file: File, maxDim: number, quality: number): Pr
     const tighter = await downsizeRaster(sourceUrl, Math.round(maxDim / 2), 0.82);
     if (tighter && tighter.length <= MAX_STORED_BYTES) return { url: tighter };
     return {
-      error: t("Even after auto-shrinking this image is still too big to store. Try one with a tighter crop."),
+      error: t(
+        "Even after auto-shrinking this image is still too big to store. Try one with a tighter crop.",
+      ),
     };
   }
   return { url: downsized };
@@ -218,7 +228,11 @@ function readAsDataUrl(file: File): Promise<string> {
   });
 }
 
-async function downsizeRaster(dataUrl: string, maxDim: number, quality: number): Promise<string | null> {
+async function downsizeRaster(
+  dataUrl: string,
+  maxDim: number,
+  quality: number,
+): Promise<string | null> {
   return new Promise((resolve) => {
     const img = new Image();
     img.onload = () => {

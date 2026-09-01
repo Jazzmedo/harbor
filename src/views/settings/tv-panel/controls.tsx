@@ -14,15 +14,7 @@ function TvOnly() {
   );
 }
 
-function RowLabel({
-  label,
-  tvOnly,
-  newId,
-}: {
-  label: string;
-  tvOnly?: boolean;
-  newId?: string;
-}) {
+function RowLabel({ label, tvOnly, newId }: { label: string; tvOnly?: boolean; newId?: string }) {
   const t = useT();
   return (
     <>
@@ -93,11 +85,7 @@ export function StepRow({
       label={<RowLabel label={label} tvOnly={tvOnly} newId={newId} />}
       desc={sub ? t(sub) : undefined}
     >
-      <StepButton
-        glyph="minus"
-        label={t("Minus")}
-        onClick={() => onChange(clamp(value - step))}
-      />
+      <StepButton glyph="minus" label={t("Minus")} onClick={() => onChange(clamp(value - step))} />
       <input
         type="range"
         min={min}
@@ -108,11 +96,7 @@ export function StepRow({
         className="harbor-slider min-w-0 flex-1"
         style={fillStyle(value, min, max)}
       />
-      <StepButton
-        glyph="plus"
-        label={t("Plus")}
-        onClick={() => onChange(clamp(value + step))}
-      />
+      <StepButton glyph="plus" label={t("Plus")} onClick={() => onChange(clamp(value + step))} />
       <span className="w-12 shrink-0 text-end text-[13px] font-semibold tabular-nums text-ink">
         {value}
         {unit ?? ""}

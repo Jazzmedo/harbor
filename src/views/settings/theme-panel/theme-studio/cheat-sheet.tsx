@@ -20,7 +20,12 @@ import {
 import { RECIPES } from "./cheat-sheet-recipes";
 import { SUITE_CHROME } from "./suite-theme";
 
-const RECIPE_EXT: Record<string, string> = { css: "css", js: "js", harborstyle: "harborstyle", html: "html" };
+const RECIPE_EXT: Record<string, string> = {
+  css: "css",
+  js: "js",
+  harborstyle: "harborstyle",
+  html: "html",
+};
 
 function slug(s: string): string {
   return (
@@ -99,10 +104,7 @@ export function CheatSheet({ onClose }: { onClose: () => void }) {
       role="dialog"
       aria-label={t("Theme cheat sheet")}
     >
-      <header
-        data-tauri-drag-region
-        className="flex shrink-0 items-start gap-4 px-6 pb-5 pt-6"
-      >
+      <header data-tauri-drag-region className="flex shrink-0 items-start gap-4 px-6 pb-5 pt-6">
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <h2 className="flex items-center gap-2 text-[17px] font-semibold tracking-tight text-ink">
             <BookOpen size={16} strokeWidth={2.2} className="shrink-0 text-ink-subtle" />
@@ -148,19 +150,37 @@ export function CheatSheet({ onClose }: { onClose: () => void }) {
 
         <div ref={scrollRef} className="flex-1 overflow-y-auto">
           <div className="mx-auto flex max-w-[960px] flex-col gap-12 px-6 pb-16 pt-2 lg:px-10">
-            <Section id="tokens-color" title={t("Color tokens")} sub={t("Every surface in Harbor maps to one of these 12 variables.")}>
+            <Section
+              id="tokens-color"
+              title={t("Color tokens")}
+              sub={t("Every surface in Harbor maps to one of these 12 variables.")}
+            >
               <TokenTable rows={COLOR_TOKENS} swatch />
             </Section>
 
-            <Section id="tokens-font" title={t("Font tokens")} sub={t("Set on the root. Override any to swap typography.")}>
+            <Section
+              id="tokens-font"
+              title={t("Font tokens")}
+              sub={t("Set on the root. Override any to swap typography.")}
+            >
               <TokenTable rows={FONT_TOKENS} />
             </Section>
 
-            <Section id="tokens-easing" title={t("Easing tokens")} sub={t("Shared transition curves. Use anywhere you transition.")}>
+            <Section
+              id="tokens-easing"
+              title={t("Easing tokens")}
+              sub={t("Shared transition curves. Use anywhere you transition.")}
+            >
               <TokenTable rows={EASING_TOKENS} />
             </Section>
 
-            <Section id="api" title={t("window.harbor API")} sub={t("Call these from onclick handlers or your theme JS. They are stable and safe: each one drives the real Harbor feature, so your chrome never goes stale when Harbor adds menu items.")}>
+            <Section
+              id="api"
+              title={t("window.harbor API")}
+              sub={t(
+                "Call these from onclick handlers or your theme JS. They are stable and safe: each one drives the real Harbor feature, so your chrome never goes stale when Harbor adds menu items.",
+              )}
+            >
               <div className="flex flex-col gap-1.5">
                 {WINDOW_HARBOR.map((a) => (
                   <div key={a.call} className="rounded-md bg-canvas px-3.5 py-2.5">
@@ -171,7 +191,13 @@ export function CheatSheet({ onClose }: { onClose: () => void }) {
               </div>
             </Section>
 
-            <Section id="data-attrs" title={t("Root data attributes")} sub={t("Set on <html>. Use them to scope styles to a specific layout/card/button choice.")}>
+            <Section
+              id="data-attrs"
+              title={t("Root data attributes")}
+              sub={t(
+                "Set on <html>. Use them to scope styles to a specific layout/card/button choice.",
+              )}
+            >
               <div className="flex flex-col gap-2.5">
                 {ROOT_DATA_ATTRS.map((d) => (
                   <div key={d.attr} className="rounded-md bg-canvas p-4">
@@ -196,21 +222,37 @@ export function CheatSheet({ onClose }: { onClose: () => void }) {
               </div>
             </Section>
 
-            <Section id="utilities" title={t("Tailwind utility shortcuts")} sub={t("The Tailwind classes that already exist on every component. Override one of these in CSS and you change everywhere it's used.")}>
+            <Section
+              id="utilities"
+              title={t("Tailwind utility shortcuts")}
+              sub={t(
+                "The Tailwind classes that already exist on every component. Override one of these in CSS and you change everywhere it's used.",
+              )}
+            >
               <div className="grid gap-1.5 sm:grid-cols-2">
                 {TAILWIND_UTILITIES.map((u) => (
                   <div
                     key={u.class}
                     className="flex items-center justify-between gap-3 rounded-md bg-canvas px-3 py-1.5"
                   >
-                    <code className="font-mono text-[11.5px] font-semibold text-ink">.{u.class}</code>
-                    <code className="truncate text-end font-mono text-[11.5px] text-ink-subtle">{u.mapsTo}</code>
+                    <code className="font-mono text-[11.5px] font-semibold text-ink">
+                      .{u.class}
+                    </code>
+                    <code className="truncate text-end font-mono text-[11.5px] text-ink-subtle">
+                      {u.mapsTo}
+                    </code>
                   </div>
                 ))}
               </div>
             </Section>
 
-            <Section id="selectors" title={t("Stable selectors")} sub={t("Class names and data attributes that won't change between releases. Safe to target from your CSS.")}>
+            <Section
+              id="selectors"
+              title={t("Stable selectors")}
+              sub={t(
+                "Class names and data attributes that won't change between releases. Safe to target from your CSS.",
+              )}
+            >
               <div className="flex flex-col gap-1.5">
                 {STABLE_SELECTORS.map((s) => (
                   <div key={s.selector} className="rounded-md bg-canvas px-3.5 py-2.5">
@@ -226,10 +268,17 @@ export function CheatSheet({ onClose }: { onClose: () => void }) {
               </div>
             </Section>
 
-            <Section id="z-index" title={t("Z-index map")} sub={t("Pick a z-index for your overlays that sits where you want it.")}>
+            <Section
+              id="z-index"
+              title={t("Z-index map")}
+              sub={t("Pick a z-index for your overlays that sits where you want it.")}
+            >
               <div className="flex flex-col gap-1">
                 {Z_INDEX_MAP.map((l) => (
-                  <div key={l.name} className="flex items-center gap-3 rounded-md bg-canvas px-3.5 py-2">
+                  <div
+                    key={l.name}
+                    className="flex items-center gap-3 rounded-md bg-canvas px-3.5 py-2"
+                  >
                     <code className="w-12 shrink-0 text-center font-mono text-[12.5px] font-bold text-accent">
                       {l.z}
                     </code>
@@ -242,7 +291,13 @@ export function CheatSheet({ onClose }: { onClose: () => void }) {
               </div>
             </Section>
 
-            <Section id="events" title={t("Window events")} sub={t("Dispatched on window. Listen from your theme JS to react to Harbor's lifecycle.")}>
+            <Section
+              id="events"
+              title={t("Window events")}
+              sub={t(
+                "Dispatched on window. Listen from your theme JS to react to Harbor's lifecycle.",
+              )}
+            >
               <div className="flex flex-col gap-1.5">
                 {WINDOW_EVENTS.map((e) => (
                   <div key={e.name} className="rounded-md bg-canvas px-3.5 py-2.5">
@@ -260,7 +315,11 @@ export function CheatSheet({ onClose }: { onClose: () => void }) {
               </div>
             </Section>
 
-            <Section id="views" title={t("View identifiers")} sub={t("Use these strings if you wire a custom navbar that needs to navigate.")}>
+            <Section
+              id="views"
+              title={t("View identifiers")}
+              sub={t("Use these strings if you wire a custom navbar that needs to navigate.")}
+            >
               <div className="flex flex-wrap gap-1.5">
                 {VIEW_NAMES.map((v) => (
                   <span
@@ -276,7 +335,11 @@ export function CheatSheet({ onClose }: { onClose: () => void }) {
               </div>
             </Section>
 
-            <Section id="recipes" title={t("Recipes")} sub={t("Copy-paste starters for common customizations.")}>
+            <Section
+              id="recipes"
+              title={t("Recipes")}
+              sub={t("Copy-paste starters for common customizations.")}
+            >
               <div className="flex flex-col gap-3">
                 {RECIPES.map((r) => (
                   <div key={r.title} className="rounded-md bg-canvas p-4">
@@ -324,7 +387,17 @@ export function CheatSheet({ onClose }: { onClose: () => void }) {
   );
 }
 
-function Section({ id, title, sub, children }: { id: string; title: string; sub?: string; children: ReactNode }) {
+function Section({
+  id,
+  title,
+  sub,
+  children,
+}: {
+  id: string;
+  title: string;
+  sub?: string;
+  children: ReactNode;
+}) {
   return (
     <section id={`cs-${id}`} className="flex flex-col gap-4 scroll-mt-4">
       <div className="flex flex-col gap-0.5">
@@ -355,7 +428,9 @@ function TokenTable({ rows, swatch }: { rows: TokenRow[]; swatch?: boolean }) {
           )}
           <div className="flex min-w-0 flex-col">
             <CopyName text={r.name} />
-            <code className="truncate font-mono text-[12.5px] text-ink-subtle">{r.defaultValue}</code>
+            <code className="truncate font-mono text-[12.5px] text-ink-subtle">
+              {r.defaultValue}
+            </code>
           </div>
           <span className="text-[13px] leading-snug text-ink-muted">{t(r.desc)}</span>
         </div>

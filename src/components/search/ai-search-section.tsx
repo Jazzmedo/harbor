@@ -85,7 +85,9 @@ export function AiSearchSection({
         </div>
       )}
 
-      {status === "loading" && <AiThinking provider={provider} label={label} phrases={thinkingPhrases} />}
+      {status === "loading" && (
+        <AiThinking provider={provider} label={label} phrases={thinkingPhrases} />
+      )}
 
       {status === "error" && (
         <button

@@ -30,9 +30,13 @@ export function RecoveryReveal({ code, onDone }: { code: string; onDone: () => v
         className={`${closing ? "animate-dialog-out" : "animate-dialog-in"} flex max-h-[86vh] w-[min(560px,100%)] flex-col overflow-hidden rounded-md bg-surface`}
       >
         <div className="flex flex-col gap-1 px-6 pt-6">
-          <h2 className="text-[17px] font-semibold tracking-tight text-ink">{t("Save your recovery code")}</h2>
+          <h2 className="text-[17px] font-semibold tracking-tight text-ink">
+            {t("Save your recovery code")}
+          </h2>
           <p className="text-[12.5px] leading-relaxed text-ink-subtle">
-            {t("This is the only time you'll see it. If you ever forget your password, this code is the only way back into your account. Store it somewhere safe.")}
+            {t(
+              "This is the only time you'll see it. If you ever forget your password, this code is the only way back into your account. Store it somewhere safe.",
+            )}
           </p>
         </div>
 
@@ -45,7 +49,8 @@ export function RecoveryReveal({ code, onDone }: { code: string; onDone: () => v
               onClick={copy}
               className="harbor-press-pop flex h-9 items-center justify-center gap-1.5 rounded-md bg-elevated text-[12.5px] font-semibold text-ink-muted transition-colors hover:text-ink"
             >
-              {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? t("Copied") : t("Copy code")}
+              {copied ? <Check size={14} /> : <Copy size={14} />}{" "}
+              {copied ? t("Copied") : t("Copy code")}
             </button>
           </div>
 

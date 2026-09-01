@@ -1,7 +1,11 @@
 import { t } from "@/lib/i18n";
 
 function htmlAttribute(value: string): string {
-  return value.replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
 }
 
 export type Recipe = { title: string; lang: "css" | "html" | "js"; code: string; why: string };

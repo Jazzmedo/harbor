@@ -34,9 +34,13 @@ export function AutoDownloadAdd() {
       void (async () => {
         const [tmdb, cine] = await Promise.all([
           settings.tmdbKey
-            ? searchAll(settings.tmdbKey, trimmed).then((r) => r.series).catch(() => [])
+            ? searchAll(settings.tmdbKey, trimmed)
+                .then((r) => r.series)
+                .catch(() => [])
             : Promise.resolve<Meta[]>([]),
-          searchCinemeta(trimmed).then((r) => r.series).catch(() => []),
+          searchCinemeta(trimmed)
+            .then((r) => r.series)
+            .catch(() => []),
         ]);
         if (id !== reqRef.current) return;
         const seen = new Set<string>();

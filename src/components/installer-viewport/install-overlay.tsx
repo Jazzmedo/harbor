@@ -56,7 +56,7 @@ function InstallBoat({ logo }: { logo: string | null }) {
 export function InstallOverlay({ phase, logo }: { phase: OverlayPhase; logo: string | null }) {
   const t = useT();
   const installing = phase.kind === "installing";
-  const name = phase.kind === "success" ? phase.name : phase.name ?? t("Resolving manifest");
+  const name = phase.kind === "success" ? phase.name : (phase.name ?? t("Resolving manifest"));
   const cargoLogo = logo ?? (phase.kind === "success" ? phase.logo : null);
   return (
     <div className="absolute inset-0 z-20 flex items-center justify-center bg-canvas/92 backdrop-blur-xl animate-in fade-in duration-200">
@@ -75,8 +75,12 @@ export function InstallOverlay({ phase, logo }: { phase: OverlayPhase; logo: str
               {t("Added to Harbor")}
             </span>
           )}
-          <span className="font-display text-[24px] leading-none tracking-tight text-ink">{name}</span>
-          {!installing && <span className="text-[12.5px] text-ink-muted">{t("Saved to your library.")}</span>}
+          <span className="font-display text-[24px] leading-none tracking-tight text-ink">
+            {name}
+          </span>
+          {!installing && (
+            <span className="text-[12.5px] text-ink-muted">{t("Saved to your library.")}</span>
+          )}
         </div>
       </div>
     </div>

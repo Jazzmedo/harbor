@@ -5,18 +5,27 @@ const appFill: Record<string, string> = {
   "1 file": "1 Datei",
   "1 new episode since you last watched": "1 neue Folge, seit du zuletzt geschaut hast",
   "1 selected": "1 ausgewählt",
-  "1 title needs review — help us identify it.": "1 Titel muss überprüft werden: Hilf uns, ihn zu identifizieren.",
+  "1 title needs review — help us identify it.":
+    "1 Titel muss überprüft werden: Hilf uns, ihn zu identifizieren.",
   "24/7": "24/7",
   "4 digits": "4 Ziffern",
-  "A browser tab opened on AniList. Approve Harbor there, then copy the text it shows and paste it below.": "Ein Browser-Tab mit AniList wurde geöffnet. Autorisiere dort Harbor, kopiere dann den angezeigten Text und füge ihn unten ein.",
-  "A browser tab opened on MyAnimeList. Approve Harbor there, then copy the code or the page URL and paste it below.": "Ein Browser-Tab mit MyAnimeList wurde geöffnet. Genehmige dort den Zugriff für Harbor, kopiere dann den Code oder die Seiten-URL und füge ihn unten ein.",
-  "A grown-up can enter the parent PIN to keep watching.": "Ein Erwachsener kann die Eltern-PIN eingeben, um weiterzuschauen.",
-  "A name people can find you by across Harbor.": "Ein Name, unter dem andere dich überall in Harbor finden können.",
-  "A public profile with your stats, lists, badges, and custom styling.": "Ein öffentliches Profil mit deinen Statistiken, Listen, Abzeichen und individuellen Designs.",
-  "A safe, simple space: kid-friendly titles, big art, one-tap play, and a watch-time limit.": "Ein sicherer, einfacher Bereich: kinderfreundliche Titel, große Bilder, Wiedergabe mit einmaligem Tippen und ein Zeitlimit.",
-  "A short run of films you'll actually finish. You pick every stop.": "Eine kurze Filmreihe, die du tatsächlich zu Ende sehen wirst. Du wählst jede Station selbst.",
+  "A browser tab opened on AniList. Approve Harbor there, then copy the text it shows and paste it below.":
+    "Ein Browser-Tab mit AniList wurde geöffnet. Autorisiere dort Harbor, kopiere dann den angezeigten Text und füge ihn unten ein.",
+  "A browser tab opened on MyAnimeList. Approve Harbor there, then copy the code or the page URL and paste it below.":
+    "Ein Browser-Tab mit MyAnimeList wurde geöffnet. Genehmige dort den Zugriff für Harbor, kopiere dann den Code oder die Seiten-URL und füge ihn unten ein.",
+  "A grown-up can enter the parent PIN to keep watching.":
+    "Ein Erwachsener kann die Eltern-PIN eingeben, um weiterzuschauen.",
+  "A name people can find you by across Harbor.":
+    "Ein Name, unter dem andere dich überall in Harbor finden können.",
+  "A public profile with your stats, lists, badges, and custom styling.":
+    "Ein öffentliches Profil mit deinen Statistiken, Listen, Abzeichen und individuellen Designs.",
+  "A safe, simple space: kid-friendly titles, big art, one-tap play, and a watch-time limit.":
+    "Ein sicherer, einfacher Bereich: kinderfreundliche Titel, große Bilder, Wiedergabe mit einmaligem Tippen und ein Zeitlimit.",
+  "A short run of films you'll actually finish. You pick every stop.":
+    "Eine kurze Filmreihe, die du tatsächlich zu Ende sehen wirst. Du wählst jede Station selbst.",
   "A-Z": "A-Z",
-  "AI didn't find anything for that. Try rephrasing.": "Die KI hat dazu nichts gefunden. Formuliere deine Anfrage anders.",
+  "AI didn't find anything for that. Try rephrasing.":
+    "Die KI hat dazu nichts gefunden. Formuliere deine Anfrage anders.",
   "AI model": "KI-Modell",
   "AI picks": "KI-Tipps",
   "AI search failed. Tap to retry.": "KI-Suche fehlgeschlagen. Zum Wiederholen klicken.",
@@ -24,17 +33,26 @@ const appFill: Record<string, string> = {
   "Access denied": "Zugriff verweigert",
   "Action failed": "Aktion fehlgeschlagen",
   "Ad {n}": "Werbung {n}",
-  "Add a TMDB key in Settings to see the cast, crew and recommendations for every title.": "Füge in den Einstellungen einen TMDB-Schlüssel hinzu, um Besetzung, Mitwirkende und Empfehlungen für jeden Titel zu sehen.",
-  "Add a TMDB key in Settings to see the cast, crew, and details.": "Füge in den Einstellungen einen TMDB-Schlüssel hinzu, um Besetzung, Mitwirkende und Details zu sehen.",
-  "Add a TMDB key in Settings → Library to power this view.": "Füge unter Einstellungen → Mediathek einen TMDB-Schlüssel hinzu, um diese Ansicht zu aktivieren.",
-  "Add a TMDB key in Settings → Library to search.": "Füge unter Einstellungen → Mediathek einen TMDB-Schlüssel hinzu, um zu suchen.",
-  "Add a TMDB key to export metadata.": "Füge einen TMDB-Schlüssel hinzu, um Metadaten zu exportieren.",
-  "Add a few friends and their watching, ratings, and favorites land here.": "Füge ein paar Freunde hinzu. Dann siehst du hier, was sie ansehen, sowie ihre Bewertungen und Favoriten.",
+  "Add a TMDB key in Settings to see the cast, crew and recommendations for every title.":
+    "Füge in den Einstellungen einen TMDB-Schlüssel hinzu, um Besetzung, Mitwirkende und Empfehlungen für jeden Titel zu sehen.",
+  "Add a TMDB key in Settings to see the cast, crew, and details.":
+    "Füge in den Einstellungen einen TMDB-Schlüssel hinzu, um Besetzung, Mitwirkende und Details zu sehen.",
+  "Add a TMDB key in Settings → Library to power this view.":
+    "Füge unter Einstellungen → Mediathek einen TMDB-Schlüssel hinzu, um diese Ansicht zu aktivieren.",
+  "Add a TMDB key in Settings → Library to search.":
+    "Füge unter Einstellungen → Mediathek einen TMDB-Schlüssel hinzu, um zu suchen.",
+  "Add a TMDB key to export metadata.":
+    "Füge einen TMDB-Schlüssel hinzu, um Metadaten zu exportieren.",
+  "Add a few friends and their watching, ratings, and favorites land here.":
+    "Füge ein paar Freunde hinzu. Dann siehst du hier, was sie ansehen, sowie ihre Bewertungen und Favoriten.",
   "Add a manga source": "Manga-Quelle hinzufügen",
   "Add a movie or show to this list...": "Einen Film oder eine Serie zu dieser Liste hinzufügen...",
-  "Add an ad starting at the current time": "Werbung ab der aktuellen Wiedergabeposition hinzufügen",
-  "Add anime to your MyAnimeList and they show up here, grouped by status and ready to edit.": "Füge Anime zu deiner MyAnimeList hinzu. Sie erscheinen dann hier, nach Status gruppiert und direkt bearbeitbar.",
-  "Add every addon below to your Stremio account": "Alle unten aufgeführten Add-ons zu deinem Stremio-Konto hinzufügen",
+  "Add an ad starting at the current time":
+    "Werbung ab der aktuellen Wiedergabeposition hinzufügen",
+  "Add anime to your MyAnimeList and they show up here, grouped by status and ready to edit.":
+    "Füge Anime zu deiner MyAnimeList hinzu. Sie erscheinen dann hier, nach Status gruppiert und direkt bearbeitbar.",
+  "Add every addon below to your Stremio account":
+    "Alle unten aufgeführten Add-ons zu deinem Stremio-Konto hinzufügen",
   "Add from lists": "Aus Listen hinzufügen",
   "Add server": "Server hinzufügen",
   "Add someone by their handle": "Jemanden über den Benutzernamen hinzufügen",
@@ -44,12 +62,15 @@ const appFill: Record<string, string> = {
   "Add to my list": "Zu meiner Liste hinzufügen",
   "Add to queue": "Zur Warteschlange hinzufügen",
   "Add to watchlist": "Zur Merkliste hinzufügen",
-  "Add your Groq API key in Settings, AI search to use this model.": "Füge deinen Groq-API-Schlüssel unter „Einstellungen“ > „KI-Suche“ hinzu, um dieses Modell zu verwenden.",
-  "Add your OpenRouter API key in Settings, AI search to use this model.": "Füge deinen OpenRouter-API-Schlüssel unter „Einstellungen“ > „KI-Suche“ hinzu, um dieses Modell zu verwenden.",
+  "Add your Groq API key in Settings, AI search to use this model.":
+    "Füge deinen Groq-API-Schlüssel unter „Einstellungen“ > „KI-Suche“ hinzu, um dieses Modell zu verwenden.",
+  "Add your OpenRouter API key in Settings, AI search to use this model.":
+    "Füge deinen OpenRouter-API-Schlüssel unter „Einstellungen“ > „KI-Suche“ hinzu, um dieses Modell zu verwenden.",
   "Add {title} to MyAnimeList": "{title} zu MyAnimeList hinzufügen",
   "Added to My List": "Zu meiner Liste hinzugefügt",
   "Added to new list": "Zu neuer Liste hinzugefügt",
-  "Added to stremio-addons.net in the last 14 days": "In den letzten 14 Tagen zu stremio-addons.net hinzugefügt",
+  "Added to stremio-addons.net in the last 14 days":
+    "In den letzten 14 Tagen zu stremio-addons.net hinzugefügt",
   "Added {count} more subtitles.": "{count} weitere Untertitel hinzugefügt.",
   "Adjusted timing by": "Zeitversatz angepasst um",
   "After the one playing ends": "Nach Ende der aktuellen Wiedergabe",
@@ -62,11 +83,14 @@ const appFill: Record<string, string> = {
   "All genres": "Alle Genres",
   "All reviews": "Alle Rezensionen",
   "Almost there": "Fast geschafft",
-  "Already on the closest match for this release": "Für diese Veröffentlichung ist bereits die beste Übereinstimmung ausgewählt",
+  "Already on the closest match for this release":
+    "Für diese Veröffentlichung ist bereits die beste Übereinstimmung ausgewählt",
   "An error occurred": "Ein Fehler ist aufgetreten",
   "Animation speed": "Animationsgeschwindigkeit",
-  "Anime4K isn't set up yet. Turn it on in Settings under Anime.": "Anime4K ist noch nicht eingerichtet. Aktiviere es in den Einstellungen unter „Anime“.",
-  "Anything you install here saves to your Stremio account, so your addons are ready when you open Stremio on your phone.": "Alles, was du hier installierst, wird in deinem Stremio-Konto gespeichert, sodass deine Add-ons bereitstehen, wenn du Stremio auf deinem Smartphone öffnest.",
+  "Anime4K isn't set up yet. Turn it on in Settings under Anime.":
+    "Anime4K ist noch nicht eingerichtet. Aktiviere es in den Einstellungen unter „Anime“.",
+  "Anything you install here saves to your Stremio account, so your addons are ready when you open Stremio on your phone.":
+    "Alles, was du hier installierst, wird in deinem Stremio-Konto gespeichert, sodass deine Add-ons bereitstehen, wenn du Stremio auf deinem Smartphone öffnest.",
   "Apply it, then nudge if it's off.": "Anwenden und anschließend bei Bedarf feinjustieren.",
   "Ask AI": "KI fragen",
   "Ask AI to find an episode by vibe": "KI bitten, eine Episode nach Stimmung zu finden",
@@ -79,12 +103,14 @@ const appFill: Record<string, string> = {
   "Authorize Harbor on Trakt": "Harbor bei Trakt autorisieren",
   "Auto-download new episodes": "Neue Folgen automatisch herunterladen",
   "Auto-downloading new episodes": "Neue Folgen werden automatisch heruntergeladen",
-  "Avatars display as squares, so square images fill the tile cleanly. Others are center-cropped.": "Avatare werden quadratisch angezeigt, daher füllen quadratische Bilder die Kachel vollständig aus. Andere werden mittig zugeschnitten.",
+  "Avatars display as squares, so square images fill the tile cleanly. Others are center-cropped.":
+    "Avatare werden quadratisch angezeigt, daher füllen quadratische Bilder die Kachel vollständig aus. Andere werden mittig zugeschnitten.",
   "Average /10": "Durchschnitt /10",
   "Average time": "Durchschnittliche Zeit",
   "Avg ★ {rating}": "Ø ★ {rating}",
   "Awards & Recognition": "Auszeichnungen & Anerkennung",
-  "BBCode works: [b] [url] [img] [youtube] [video] [quote]": "BBCode funktioniert: [b] [url] [img] [youtube] [video] [quote]",
+  "BBCode works: [b] [url] [img] [youtube] [video] [quote]":
+    "BBCode funktioniert: [b] [url] [img] [youtube] [video] [quote]",
   "Back 10s": "10 s zurück",
   "Back to lists": "Zurück zu den Listen",
   "Back to results": "Zurück zu den Ergebnissen",
@@ -93,14 +119,16 @@ const appFill: Record<string, string> = {
   "Back {n}s": "{n} s zurück",
   "Backdrop reset to default": "Hintergrundbild auf Standard zurückgesetzt",
   "Background color": "Hintergrundfarbe",
-  "Background color must be a hex or rgb/hsl value.": "Die Hintergrundfarbe muss ein Hexadezimal- oder rgb/hsl-Wert sein.",
+  "Background color must be a hex or rgb/hsl value.":
+    "Die Hintergrundfarbe muss ein Hexadezimal- oder rgb/hsl-Wert sein.",
   "Background image must be an https URL.": "Das Hintergrundbild muss eine https-URL sein.",
   "Basic authentication": "Basisauthentifizierung",
   "Because you watched": "Weil du Folgendes angesehen hast",
   "Best guess": "Beste Vermutung",
   "Best match": "Beste Übereinstimmung",
   "Better match": "Bessere Übereinstimmung",
-  "Blended across TMDB, Trakt, Simkl and Cinemeta.": "Kombiniert aus TMDB, Trakt, Simkl und Cinemeta.",
+  "Blended across TMDB, Trakt, Simkl and Cinemeta.":
+    "Kombiniert aus TMDB, Trakt, Simkl und Cinemeta.",
   "Bottom end": "Unten am Ende",
   "Bottom start": "Unten am Anfang",
   "Bring your own avatars into the library.": "Verwende deine eigenen Avatare in der Mediathek.",
@@ -109,7 +137,7 @@ const appFill: Record<string, string> = {
   "Browse groups": "Gruppen durchsuchen",
   "Browse manga": "Manga durchsuchen",
   "Browse sources": "Quellen durchsuchen",
-  "Browsing": "Browsen",
+  Browsing: "Browsen",
   "Building your voyage": "Deine Reise wird vorbereitet",
   "Canvas height": "Zeichenflächenhöhe",
   "Change your handle?": "Deinen Benutzernamen ändern?",
@@ -125,10 +153,12 @@ const appFill: Record<string, string> = {
   "Choose 1 of 3": "1 von 3 auswählen",
   "Choose another source": "Andere Quelle auswählen",
   "Choose subtitles": "Untertitel auswählen",
-  "Choose up to 5 movies or shows you already like. Harbor uses them to tune your featured picks and recommendations. Totally optional.": "Wähle bis zu 5 Filme oder Serien aus, die dir bereits gefallen. Harbor nutzt sie, um deine Top-Auswahl und Empfehlungen anzupassen. Völlig optional.",
-  "Choose what shows, what stays hidden, and what sits up top.": "Wähle aus, was angezeigt wird, was verborgen bleibt und was ganz oben steht.",
+  "Choose up to 5 movies or shows you already like. Harbor uses them to tune your featured picks and recommendations. Totally optional.":
+    "Wähle bis zu 5 Filme oder Serien aus, die dir bereits gefallen. Harbor nutzt sie, um deine Top-Auswahl und Empfehlungen anzupassen. Völlig optional.",
+  "Choose what shows, what stays hidden, and what sits up top.":
+    "Wähle aus, was angezeigt wird, was verborgen bleibt und was ganz oben steht.",
   "Choose your starting film": "Wähle deinen ersten Film",
-  "Claim": "Beanspruchen",
+  Claim: "Beanspruchen",
   "Claim your @handle": "Sichere dir deinen @Namen",
   "Clear drawings": "Zeichnungen löschen",
   "Clear history": "Verlauf löschen",
@@ -140,10 +170,13 @@ const appFill: Record<string, string> = {
   "Code expired": "Code abgelaufen",
   "Collapse filters": "Filter einklappen",
   "Confirm remove from history": "Entfernen aus dem Verlauf bestätigen",
-  "Connect Trakt or Simkl, or start watching, and your stats will build themselves.": "Verbinde Trakt oder Simkl oder fang an zu schauen. Deine Statistiken werden dann automatisch erstellt.",
+  "Connect Trakt or Simkl, or start watching, and your stats will build themselves.":
+    "Verbinde Trakt oder Simkl oder fang an zu schauen. Deine Statistiken werden dann automatisch erstellt.",
   "Connect a Suwayomi server": "Einen Suwayomi-Server verbinden",
-  "Connect a controller: every press and stick move shows up here, live.": "Schließe einen Controller an: Jeder Tastendruck und jede Stickbewegung wird hier live angezeigt.",
-  "Connect your Trakt account to see comments and reviews.": "Verbinde dein Trakt-Konto, um Kommentare und Rezensionen zu sehen.",
+  "Connect a controller: every press and stick move shows up here, live.":
+    "Schließe einen Controller an: Jeder Tastendruck und jede Stickbewegung wird hier live angezeigt.",
+  "Connect your Trakt account to see comments and reviews.":
+    "Verbinde dein Trakt-Konto, um Kommentare und Rezensionen zu sehen.",
   "Connected as @{username}": "Verbunden als @{username}",
   "Connected as {username}": "Verbunden als {username}",
   "Connected to AniList": "Mit AniList verbunden",
@@ -161,7 +194,8 @@ const appFill: Record<string, string> = {
   "Control from your phone": "Vom Smartphone aus steuern",
   "Copy magnet link": "Magnet-Link kopieren",
   "Copy stream link": "Stream-Link kopieren",
-  "Could not identify this title on Trakt.": "Dieser Titel konnte auf Trakt nicht identifiziert werden.",
+  "Could not identify this title on Trakt.":
+    "Dieser Titel konnte auf Trakt nicht identifiziert werden.",
   "Could not load activity": "Aktivitäten konnten nicht geladen werden",
   "Could not load groups.": "Gruppen konnten nicht geladen werden.",
   "Could not load results": "Ergebnisse konnten nicht geladen werden",
@@ -169,7 +203,8 @@ const appFill: Record<string, string> = {
   "Could not load your themes": "Deine Designs konnten nicht geladen werden",
   "Could not post.": "Veröffentlichen fehlgeschlagen.",
   "Could not reach this server": "Dieser Server ist nicht erreichbar",
-  "Could not read this subtitle track. Pick a different subtitle, then try again.": "Diese Untertitelspur konnte nicht gelesen werden. Wähle andere Untertitel und versuche es erneut.",
+  "Could not read this subtitle track. Pick a different subtitle, then try again.":
+    "Diese Untertitelspur konnte nicht gelesen werden. Wähle andere Untertitel und versuche es erneut.",
   "Could not save changes.": "Änderungen konnten nicht gespeichert werden.",
   "Could not save this server": "Dieser Server konnte nicht gespeichert werden",
   "Could not send. Try again.": "Senden fehlgeschlagen. Versuche es erneut.",
@@ -177,14 +212,20 @@ const appFill: Record<string, string> = {
   "Couldn't auto-sync": "Automatische Synchronisierung fehlgeschlagen",
   "Couldn't connect to AniList": "Verbindung zu AniList fehlgeschlagen",
   "Couldn't connect to MyAnimeList": "Verbindung zu MyAnimeList nicht möglich",
-  "Couldn't connect to any peers for this torrent. It may be unreachable on your network (some ISPs and VPNs block torrent traffic).": "Es konnte keine Verbindung zu Peers für diesen Torrent hergestellt werden. Möglicherweise ist er in deinem Netzwerk nicht erreichbar (einige Internetanbieter und VPNs blockieren Torrent-Datenverkehr).",
-  "Couldn't detect your Wi-Fi address. Connect this computer to Wi-Fi, or find the phone remote link under Settings, Playback.": "Deine WLAN-Adresse konnte nicht erkannt werden. Verbinde diesen Computer mit dem WLAN oder suche unter „Einstellungen“, „Wiedergabe“ nach dem Link zur Smartphone-Fernbedienung.",
-  "Couldn't line up these subtitles automatically.": "Diese Untertitel konnten nicht automatisch synchronisiert werden.",
-  "Couldn't load subtitles. You can start anyway and add one later in the player.": "Untertitel konnten nicht geladen werden. Du kannst trotzdem starten und später im Player welche hinzufügen.",
+  "Couldn't connect to any peers for this torrent. It may be unreachable on your network (some ISPs and VPNs block torrent traffic).":
+    "Es konnte keine Verbindung zu Peers für diesen Torrent hergestellt werden. Möglicherweise ist er in deinem Netzwerk nicht erreichbar (einige Internetanbieter und VPNs blockieren Torrent-Datenverkehr).",
+  "Couldn't detect your Wi-Fi address. Connect this computer to Wi-Fi, or find the phone remote link under Settings, Playback.":
+    "Deine WLAN-Adresse konnte nicht erkannt werden. Verbinde diesen Computer mit dem WLAN oder suche unter „Einstellungen“, „Wiedergabe“ nach dem Link zur Smartphone-Fernbedienung.",
+  "Couldn't line up these subtitles automatically.":
+    "Diese Untertitel konnten nicht automatisch synchronisiert werden.",
+  "Couldn't load subtitles. You can start anyway and add one later in the player.":
+    "Untertitel konnten nicht geladen werden. Du kannst trotzdem starten und später im Player welche hinzufügen.",
   "Couldn't load this collection right now.": "Diese Sammlung konnte gerade nicht geladen werden.",
-  "Couldn't reach MyAnimeList. Try refreshing.": "MyAnimeList konnte nicht erreicht werden. Versuche, die Ansicht zu aktualisieren.",
+  "Couldn't reach MyAnimeList. Try refreshing.":
+    "MyAnimeList konnte nicht erreicht werden. Versuche, die Ansicht zu aktualisieren.",
   "Couldn't reach Trakt": "Trakt konnte nicht erreicht werden",
-  "Couldn't reach {names}, so they stayed on this device.": "Verbindung zu {names} fehlgeschlagen, daher blieben sie auf diesem Gerät.",
+  "Couldn't reach {names}, so they stayed on this device.":
+    "Verbindung zu {names} fehlgeschlagen, daher blieben sie auf diesem Gerät.",
   "Create a group": "Gruppe erstellen",
   "Create new list": "Neue Liste erstellen",
   "Create your first list": "Deine erste Liste erstellen",
@@ -196,32 +237,37 @@ const appFill: Record<string, string> = {
   "Customize page": "Seite anpassen",
   "Daily watch time": "Tägliche Wiedergabezeit",
   "Date added": "Hinzugefügt am",
-  "Delay": "Verzögerung",
+  Delay: "Verzögerung",
   "Delete all": "Alle löschen",
   "Delete custom source": "Benutzerdefinierte Quelle löschen",
   "Delete list": "Liste löschen",
   "Delete this group": "Diese Gruppe löschen",
   "Delete this list?": "Diese Liste löschen?",
-  "Deletes every episode cached for this source": "Löscht alle für diese Quelle zwischengespeicherten Folgen",
+  "Deletes every episode cached for this source":
+    "Löscht alle für diese Quelle zwischengespeicherten Folgen",
   "Deselect all": "Alle abwählen",
   "Different subtitle version": "Andere Untertitelversion",
   "Discover more": "Mehr entdecken",
-  "Dismiss": "Schließen",
+  Dismiss: "Schließen",
   "Don't ask me again": "Nicht mehr nachfragen",
   "Download all": "Alle herunterladen",
-  "Download and run the installer to finish updating. If it keeps failing, run it as administrator once.": "Lade das Installationsprogramm herunter und führe es aus, um das Update abzuschließen. Falls es weiterhin fehlschlägt, führe es einmal als Administrator aus.",
+  "Download and run the installer to finish updating. If it keeps failing, run it as administrator once.":
+    "Lade das Installationsprogramm herunter und führe es aus, um das Update abzuschließen. Falls es weiterhin fehlschlägt, führe es einmal als Administrator aus.",
   "Download installer": "Installationsprogramm herunterladen",
   "Download subtitle": "Untertitel herunterladen",
   "Download this season": "Diese Staffel herunterladen",
   "Download this subtitle": "Diesen Untertitel herunterladen",
   "Downloading speech model": "Sprachmodell wird heruntergeladen",
   "Downloading speech model {pct}%": "Sprachmodell wird heruntergeladen: {pct}%",
-  "Drift correction is on (2 points). Fine-tune with the buttons, or fix a stray section.": "Die Driftkorrektur ist aktiviert (2 Punkte). Nimm mit den Schaltflächen Feineinstellungen vor oder korrigiere einen fehlerhaften Abschnitt.",
+  "Drift correction is on (2 points). Fine-tune with the buttons, or fix a stray section.":
+    "Die Driftkorrektur ist aktiviert (2 Punkte). Nimm mit den Schaltflächen Feineinstellungen vor oder korrigiere einen fehlerhaften Abschnitt.",
   "Drop images to add them": "Bilder zum Hinzufügen hier ablegen",
   "Edit reminder": "Erinnerung bearbeiten",
   "Edit row": "Zeile bearbeiten",
-  "Edit your profile and reorder it your way: pick a font, a background, and drag your cards into the order you like.": "Bearbeite dein Profil und ordne es nach deinen Wünschen: Wähle eine Schriftart und einen Hintergrund und ziehe deine Karten in die gewünschte Reihenfolge.",
-  "Embedded subtitles changing size between titles, or showing empty boxes? Switch to Use my style for a consistent size. For boxes, also choose Arabic under Font.": "Ändert sich die Größe eingebetteter Untertitel je nach Titel oder werden leere Kästchen angezeigt? Aktiviere „Meinen Stil verwenden“, um eine einheitliche Größe zu erhalten. Wähle bei Kästchen unter „Schriftart“ außerdem Arabisch aus.",
+  "Edit your profile and reorder it your way: pick a font, a background, and drag your cards into the order you like.":
+    "Bearbeite dein Profil und ordne es nach deinen Wünschen: Wähle eine Schriftart und einen Hintergrund und ziehe deine Karten in die gewünschte Reihenfolge.",
+  "Embedded subtitles changing size between titles, or showing empty boxes? Switch to Use my style for a consistent size. For boxes, also choose Arabic under Font.":
+    "Ändert sich die Größe eingebetteter Untertitel je nach Titel oder werden leere Kästchen angezeigt? Aktiviere „Meinen Stil verwenden“, um eine einheitliche Größe zu erhalten. Wähle bei Kästchen unter „Schriftart“ außerdem Arabisch aus.",
   "Enable manga sources": "Manga-Quellen aktivieren",
   "End voyage": "Reise beenden",
   "Ends at": "Endet um",
@@ -229,10 +275,13 @@ const appFill: Record<string, string> = {
   "Ep {n}": "Folge {n}",
   "Episode details": "Episodendetails",
   "Episode {n} airs {when}": "Folge {n} wird {when} ausgestrahlt",
-  "Estimated from your local history. Connect Trakt or Simkl for the full picture.": "Geschätzt anhand deines lokalen Verlaufs. Verbinde Trakt oder Simkl, um das vollständige Bild zu erhalten.",
-  "Everyone loses access. This cannot be undone.": "Alle verlieren den Zugriff. Dies kann nicht rückgängig gemacht werden.",
+  "Estimated from your local history. Connect Trakt or Simkl for the full picture.":
+    "Geschätzt anhand deines lokalen Verlaufs. Verbinde Trakt oder Simkl, um das vollständige Bild zu erhalten.",
+  "Everyone loses access. This cannot be undone.":
+    "Alle verlieren den Zugriff. Dies kann nicht rückgängig gemacht werden.",
   "Everything here is already in your account.": "Alles hier ist bereits in deinem Konto.",
-  "Everything your addons offer, shown as posters. Scroll, search, or filter to what you want.": "Alles, was deine Add-ons anbieten, als Poster dargestellt. Scrolle, suche oder filtere nach deinen Wünschen.",
+  "Everything your addons offer, shown as posters. Scroll, search, or filter to what you want.":
+    "Alles, was deine Add-ons anbieten, als Poster dargestellt. Scrolle, suche oder filtere nach deinen Wünschen.",
   "Exit AI mode": "KI-Modus beenden",
   "Exit this video?": "Wiedergabe dieses Videos beenden?",
   "Export .nfo and artwork": ".nfo und Coverbilder exportieren",
@@ -253,10 +302,13 @@ const appFill: Record<string, string> = {
   "Filter countries": "Länder filtern",
   "Filter genres": "Genres filtern",
   "Filter sources": "Quellen filtern",
-  "Find a movie, show, or person and jump straight to it without leaving the player.": "Suche einen Film, eine Serie oder eine Person und springe direkt dorthin, ohne den Player zu verlassen.",
+  "Find a movie, show, or person and jump straight to it without leaving the player.":
+    "Suche einen Film, eine Serie oder eine Person und springe direkt dorthin, ohne den Player zu verlassen.",
   "Find episodes by describing them": "Episoden anhand einer Beschreibung finden",
-  "Find people who watch what you watch. Join a group to share lists, post, and watch together.": "Finde Menschen, die dasselbe schauen wie du. Tritt einer Gruppe bei, um Listen zu teilen, Beiträge zu veröffentlichen und gemeinsam zu schauen.",
-  "Find the line you hear right now, then Sync from here. Everything shifts to match.": "Suche die Zeile, die du gerade hörst, und wähle dann „Ab hier synchronisieren“. Alles wird passend verschoben.",
+  "Find people who watch what you watch. Join a group to share lists, post, and watch together.":
+    "Finde Menschen, die dasselbe schauen wie du. Tritt einer Gruppe bei, um Listen zu teilen, Beiträge zu veröffentlichen und gemeinsam zu schauen.",
+  "Find the line you hear right now, then Sync from here. Everything shifts to match.":
+    "Suche die Zeile, die du gerade hörst, und wähle dann „Ab hier synchronisieren“. Alles wird passend verschoben.",
   "Finding peers": "Peers werden gesucht",
   "Finding subtitles…": "Untertitel werden gesucht…",
   "Finding the one": "Die große Liebe finden",
@@ -264,41 +316,61 @@ const appFill: Record<string, string> = {
   "Fix a section": "Einen Bereich korrigieren",
   "Fix match": "Zuordnung korrigieren",
   "Fix one section": "Einen Abschnitt korrigieren",
-  "Folders Harbor imported your movies and shows from. Rescan to pick up new files.": "Ordner, aus denen Harbor deine Filme und Serien importiert hat. Erneut durchsuchen, um neue Dateien zu erfassen.",
-  "Font name can only use letters, numbers, and spaces.": "Der Schriftname darf nur Buchstaben, Zahlen und Leerzeichen enthalten.",
-  "For reliable HDR on this display, switch to True HDR, separate window in Settings.": "Wechsle für zuverlässiges HDR auf diesem Bildschirm in den Einstellungen zu „True HDR, separates Fenster“.",
-  "Force your size, font, and color onto styled subs so every file looks consistent. Best fix if embedded sizes keep changing, or for Arabic and subs showing boxes. Can affect karaoke and signs.": "Erzwingt deine Einstellungen für Größe, Schriftart und Farbe bei formatierten Untertiteln, damit jede Datei einheitlich aussieht. Die beste Lösung, wenn sich eingebettete Größen ständig ändern, oder für arabische Untertitel und Untertitel, bei denen Kästchen statt Zeichen angezeigt werden. Kann Karaoke und Schilder beeinträchtigen.",
+  "Folders Harbor imported your movies and shows from. Rescan to pick up new files.":
+    "Ordner, aus denen Harbor deine Filme und Serien importiert hat. Erneut durchsuchen, um neue Dateien zu erfassen.",
+  "Font name can only use letters, numbers, and spaces.":
+    "Der Schriftname darf nur Buchstaben, Zahlen und Leerzeichen enthalten.",
+  "For reliable HDR on this display, switch to True HDR, separate window in Settings.":
+    "Wechsle für zuverlässiges HDR auf diesem Bildschirm in den Einstellungen zu „True HDR, separates Fenster“.",
+  "Force your size, font, and color onto styled subs so every file looks consistent. Best fix if embedded sizes keep changing, or for Arabic and subs showing boxes. Can affect karaoke and signs.":
+    "Erzwingt deine Einstellungen für Größe, Schriftart und Farbe bei formatierten Untertiteln, damit jede Datei einheitlich aussieht. Die beste Lösung, wenn sich eingebettete Größen ständig ändern, oder für arabische Untertitel und Untertitel, bei denen Kästchen statt Zeichen angezeigt werden. Kann Karaoke und Schilder beeinträchtigen.",
   "Forward 10s": "10 Sek. vorspulen",
   "Forward {n} seconds": "{n} Sekunden vorspulen",
   "Forward {n}s": "{n} s vorspulen",
-  "Found peers but no data yet. The torrent may be slow.": "Peers gefunden, aber noch keine Daten. Der Torrent könnte langsam sein.",
+  "Found peers but no data yet. The torrent may be slow.":
+    "Peers gefunden, aber noch keine Daten. Der Torrent könnte langsam sein.",
   "Found {n} .nfo file in this folder.": "{n} .nfo-Datei in diesem Ordner gefunden.",
-  "From the very top of a detail page, keep scrolling up to open the trailer. Off by default.": "Scrolle ganz oben auf einer Detailseite weiter nach oben, um den Trailer zu öffnen. Standardmäßig ausgeschaltet.",
+  "From the very top of a detail page, keep scrolling up to open the trailer. Off by default.":
+    "Scrolle ganz oben auf einer Detailseite weiter nach oben, um den Trailer zu öffnen. Standardmäßig ausgeschaltet.",
   "Full Roster": "Vollständige Besetzung",
   "Full details": "Alle Details",
   "Full list": "Vollständige Liste",
   "Fully downloaded": "Vollständig heruntergeladen",
   "Genres you want more of": "Genres, von denen du mehr sehen möchtest",
-  "Grab each new episode as it airs": "Jede neue Folge herunterladen, sobald sie ausgestrahlt wird.",
+  "Grab each new episode as it airs":
+    "Jede neue Folge herunterladen, sobald sie ausgestrahlt wird.",
   "Group font": "Schriftart der Gruppe",
-  "Group the movies and shows you love. Rewatch shelf, weekend picks, whatever keeps them close.": "Gruppiere die Filme und Serien, die du liebst. Ein Regal zum Wiederansehen, Wochenendtipps oder was auch immer du griffbereit haben möchtest.",
-  "Group the movies and shows you want to keep close.": "Fasse die Filme und Serien zusammen, die du griffbereit halten möchtest.",
-  "Groups are where people watch and read together. Start one and invite your friends.": "In Gruppen können Menschen gemeinsam schauen und lesen. Erstelle eine und lade deine Freunde ein.",
+  "Group the movies and shows you love. Rewatch shelf, weekend picks, whatever keeps them close.":
+    "Gruppiere die Filme und Serien, die du liebst. Ein Regal zum Wiederansehen, Wochenendtipps oder was auch immer du griffbereit haben möchtest.",
+  "Group the movies and shows you want to keep close.":
+    "Fasse die Filme und Serien zusammen, die du griffbereit halten möchtest.",
+  "Groups are where people watch and read together. Start one and invite your friends.":
+    "In Gruppen können Menschen gemeinsam schauen und lesen. Erstelle eine und lade deine Freunde ein.",
   "Grown-ups only": "Nur für Erwachsene",
   "HDR to SDR: Off": "HDR zu SDR: Aus",
   "HDR to SDR: On": "HDR zu SDR: Ein",
-  "Harbor Setup did not finish updating Harbor. Nothing was changed.": "Harbor Setup konnte die Aktualisierung von Harbor nicht abschließen. Es wurde nichts geändert.",
+  "Harbor Setup did not finish updating Harbor. Nothing was changed.":
+    "Harbor Setup konnte die Aktualisierung von Harbor nicht abschließen. Es wurde nichts geändert.",
   "Harbor Voyages": "Harbor-Reisen",
   "Harbor account": "Harbor-Konto",
-  "Harbor checks a few times a day while it's open and lets you know here.": "Harbor prüft mehrmals täglich, solange es geöffnet ist, und benachrichtigt dich hier.",
-  "Harbor couldn't analyze the audio for this source. Try again or adjust it manually.": "Harbor konnte den Ton dieser Quelle nicht analysieren. Versuche es erneut oder passe ihn manuell an.",
-  "Harbor couldn't find a reliable timing correction for this subtitle.": "Harbor konnte keine zuverlässige Zeitkorrektur für diesen Untertitel finden.",
-  "Harbor does not host any manga or any sources. Connect a self-hosted server you run, install a source plugin from a repository you trust, or open a folder you already have.": "Harbor hostet weder Manga noch Quellen. Verbinde einen selbst gehosteten Server, den du betreibst, installiere ein Quellen-Plug-in aus einem vertrauenswürdigen Repository oder öffne einen bereits vorhandenen Ordner.",
-  "Harbor does not host any manga. Add a source plugin from a repository you trust, connect your own server, or open a local folder. You can turn this off anytime in Settings.": "Harbor hostet keine Manga. Füge ein Quellen-Plug-in aus einem vertrauenswürdigen Repository hinzu, verbinde deinen eigenen Server oder öffne einen lokalen Ordner. Du kannst dies jederzeit in den Einstellungen deaktivieren.",
-  "Harbor is closing. Harbor Setup will finish and reopen it.": "Harbor wird geschlossen. Harbor Setup schließt den Vorgang ab und öffnet Harbor erneut.",
-  "Harbor {version} downloaded but did not install on its own.": "Harbor {version} wurde heruntergeladen, aber nicht automatisch installiert.",
-  "Heads up: most IPTV providers cap how many streams an account can run at the same time. If other devices or players are using these credentials, close them and try again.": "Hinweis: Die meisten IPTV-Anbieter begrenzen, wie viele Streams über ein Konto gleichzeitig laufen können. Wenn diese Zugangsdaten auf anderen Geräten oder in anderen Playern verwendet werden, beende dort die Wiedergabe und versuche es erneut.",
-  "Heads up: this is a large file for peer-to-peer streaming, so it can take a while to start. A 1080p source or a debrid service will load faster.": "Hinweis: Dies ist eine große Datei für P2P-Streaming, daher kann der Start eine Weile dauern. Eine 1080p-Quelle oder ein Debrid-Dienst lädt schneller.",
+  "Harbor checks a few times a day while it's open and lets you know here.":
+    "Harbor prüft mehrmals täglich, solange es geöffnet ist, und benachrichtigt dich hier.",
+  "Harbor couldn't analyze the audio for this source. Try again or adjust it manually.":
+    "Harbor konnte den Ton dieser Quelle nicht analysieren. Versuche es erneut oder passe ihn manuell an.",
+  "Harbor couldn't find a reliable timing correction for this subtitle.":
+    "Harbor konnte keine zuverlässige Zeitkorrektur für diesen Untertitel finden.",
+  "Harbor does not host any manga or any sources. Connect a self-hosted server you run, install a source plugin from a repository you trust, or open a folder you already have.":
+    "Harbor hostet weder Manga noch Quellen. Verbinde einen selbst gehosteten Server, den du betreibst, installiere ein Quellen-Plug-in aus einem vertrauenswürdigen Repository oder öffne einen bereits vorhandenen Ordner.",
+  "Harbor does not host any manga. Add a source plugin from a repository you trust, connect your own server, or open a local folder. You can turn this off anytime in Settings.":
+    "Harbor hostet keine Manga. Füge ein Quellen-Plug-in aus einem vertrauenswürdigen Repository hinzu, verbinde deinen eigenen Server oder öffne einen lokalen Ordner. Du kannst dies jederzeit in den Einstellungen deaktivieren.",
+  "Harbor is closing. Harbor Setup will finish and reopen it.":
+    "Harbor wird geschlossen. Harbor Setup schließt den Vorgang ab und öffnet Harbor erneut.",
+  "Harbor {version} downloaded but did not install on its own.":
+    "Harbor {version} wurde heruntergeladen, aber nicht automatisch installiert.",
+  "Heads up: most IPTV providers cap how many streams an account can run at the same time. If other devices or players are using these credentials, close them and try again.":
+    "Hinweis: Die meisten IPTV-Anbieter begrenzen, wie viele Streams über ein Konto gleichzeitig laufen können. Wenn diese Zugangsdaten auf anderen Geräten oder in anderen Playern verwendet werden, beende dort die Wiedergabe und versuche es erneut.",
+  "Heads up: this is a large file for peer-to-peer streaming, so it can take a while to start. A 1080p source or a debrid service will load faster.":
+    "Hinweis: Dies ist eine große Datei für P2P-Streaming, daher kann der Start eine Weile dauern. Eine 1080p-Quelle oder ein Debrid-Dienst lädt schneller.",
   "Hidden sections": "Ausgeblendete Abschnitte",
   "Hide anime I've already watched": "Bereits angesehene Anime ausblenden",
   "Hide from your picks": "Aus deinen Empfehlungen ausblenden",
@@ -311,7 +383,8 @@ const appFill: Record<string, string> = {
   "How many films?": "Wie viele Filme?",
   "How packs work": "So funktionieren Pakete",
   "How should we import this folder?": "Wie soll dieser Ordner importiert werden?",
-  "Identify every file by its name and pull fresh titles and artwork from TMDB.": "Jede Datei anhand ihres Namens erkennen und aktuelle Titel sowie Bilder von TMDB abrufen.",
+  "Identify every file by its name and pull fresh titles and artwork from TMDB.":
+    "Jede Datei anhand ihres Namens erkennen und aktuelle Titel sowie Bilder von TMDB abrufen.",
   "Identify this title before exporting.": "Erkenne diesen Titel vor dem Export.",
   "Image {n}": "Bild {n}",
   "Import JavaScript sources": "JavaScript-Quellen importieren",
@@ -322,40 +395,51 @@ const appFill: Record<string, string> = {
   "Import images": "Bilder importieren",
   "Import {n} JavaScript sources": "{n} JavaScript-Quellen importieren",
   "Imported {n} sources": "{n} Quellen importiert",
-  "Imported {n} sources, {f} could not load": "{n} Quellen importiert, {f} konnten nicht geladen werden",
+  "Imported {n} sources, {f} could not load":
+    "{n} Quellen importiert, {f} konnten nicht geladen werden",
   "Importing {done} of {total}": "{done} von {total} werden importiert",
   "In a watch party of {count}": "In einer Watchparty mit {count}",
   "In scene": "In Szene",
   "In your local library": "In deiner lokalen Mediathek",
   "In your queue": "In deiner Warteschlange",
-  "Install a Stremio addon and its catalogs show up here as poster rails, ready to browse.": "Installiere ein Stremio-Add-on. Seine Kataloge erscheinen dann hier als durchsuchbare Posterreihen.",
-  "Install an extension above to get sources": "Installiere oben eine Erweiterung, um Quellen zu erhalten",
+  "Install a Stremio addon and its catalogs show up here as poster rails, ready to browse.":
+    "Installiere ein Stremio-Add-on. Seine Kataloge erscheinen dann hier als durchsuchbare Posterreihen.",
+  "Install an extension above to get sources":
+    "Installiere oben eine Erweiterung, um Quellen zu erhalten",
   "Install and reopen": "Installieren und erneut öffnen",
   "Invite a member": "Mitglied einladen",
   "Invite only": "Nur auf Einladung",
-  "It looks offline right now. Free playlists often include channels that have gone dark, so another one is usually a click away.": "Der Sender scheint derzeit offline zu sein. Kostenlose Wiedergabelisten enthalten oft Sender, die nicht mehr senden. Meist ist eine Alternative nur einen Klick entfernt.",
-  "It manages profiles and can't be deleted. Hand primary to another profile to delete this one.": "Dieses Profil verwaltet die anderen Profile und kann nicht gelöscht werden. Übertrage die Rolle als Hauptprofil auf ein anderes Profil, um dieses Profil zu löschen.",
-  "It may be invite only, or it no longer exists.": "Möglicherweise ist der Zugriff nur per Einladung möglich oder das Element existiert nicht mehr.",
-  "Join this group to post and see what everyone is watching.": "Tritt dieser Gruppe bei, um zu posten und zu sehen, was alle ansehen.",
+  "It looks offline right now. Free playlists often include channels that have gone dark, so another one is usually a click away.":
+    "Der Sender scheint derzeit offline zu sein. Kostenlose Wiedergabelisten enthalten oft Sender, die nicht mehr senden. Meist ist eine Alternative nur einen Klick entfernt.",
+  "It manages profiles and can't be deleted. Hand primary to another profile to delete this one.":
+    "Dieses Profil verwaltet die anderen Profile und kann nicht gelöscht werden. Übertrage die Rolle als Hauptprofil auf ein anderes Profil, um dieses Profil zu löschen.",
+  "It may be invite only, or it no longer exists.":
+    "Möglicherweise ist der Zugriff nur per Einladung möglich oder das Element existiert nicht mehr.",
+  "Join this group to post and see what everyone is watching.":
+    "Tritt dieser Gruppe bei, um zu posten und zu sehen, was alle ansehen.",
   "Jump here": "Hierhin springen",
   "Jump to now": "Zu „Jetzt“ springen",
   "Just for kids": "Nur für Kinder",
   "Keep Watching": "Weiterschauen",
   "Keep anyway": "Trotzdem behalten",
   "Keep controlling Harbor in the background": "Harbor im Hintergrund weiter steuern",
-  "Keep going in the manga behind the anime you've been watching": "Im Manga über den Stand des Animes hinaus weiterlesen, den du gerade ansiehst",
+  "Keep going in the manga behind the anime you've been watching":
+    "Im Manga über den Stand des Animes hinaus weiterlesen, den du gerade ansiehst",
   "Keep it": "Behalten",
   "Keep picking": "Weiter auswählen",
-  "Keep the original look, scaled by your size. It multiplies the built-in size, so different releases can still differ.": "Behalte das ursprüngliche Erscheinungsbild bei und skaliere es auf die von dir gewählte Größe. Diese wird mit der integrierten Größe multipliziert, sodass sich verschiedene Veröffentlichungen weiterhin unterscheiden können.",
+  "Keep the original look, scaled by your size. It multiplies the built-in size, so different releases can still differ.":
+    "Behalte das ursprüngliche Erscheinungsbild bei und skaliere es auf die von dir gewählte Größe. Diese wird mit der integrierten Größe multipliziert, sodass sich verschiedene Veröffentlichungen weiterhin unterscheiden können.",
   "Keep watching": "Weiterschauen",
   "Kids profile": "Kinderprofil",
   "Know More": "Mehr erfahren",
-  "Label the subfolders inside the folder you pick, and each one becomes its own set (like Heroes or Cats). Loose images in the folder go to Uploads.": "Benenne die Unterordner im ausgewählten Ordner. Jeder wird zu einem eigenen Set, etwa „Helden“ oder „Katzen“. Lose Bilder im Ordner werden unter „Hochgeladene Bilder“ abgelegt.",
+  "Label the subfolders inside the folder you pick, and each one becomes its own set (like Heroes or Cats). Loose images in the folder go to Uploads.":
+    "Benenne die Unterordner im ausgewählten Ordner. Jeder wird zu einem eigenen Set, etwa „Helden“ oder „Katzen“. Lose Bilder im Ordner werden unter „Hochgeladene Bilder“ abgelegt.",
   "Last updated {ago}": "Zuletzt aktualisiert {ago}",
   "Leave the show?": "Wiedergabe verlassen?",
   "Letterboxd Reviews": "Letterboxd-Rezensionen",
   "Letterboxd unavailable right now.": "Letterboxd ist derzeit nicht verfügbar.",
-  "Library is everything from Stremio, Trakt, and this device. Watchlist is only titles you haven't watched yet. History is what you've watched. Local is files on your computer.": "Die Mediathek enthält alles aus Stremio, Trakt und von diesem Gerät. Die Merkliste enthält nur Titel, die du noch nicht angesehen hast. Im Verlauf siehst du, was du angesehen hast. Unter „Lokal“ findest du Dateien auf deinem Computer.",
+  "Library is everything from Stremio, Trakt, and this device. Watchlist is only titles you haven't watched yet. History is what you've watched. Local is files on your computer.":
+    "Die Mediathek enthält alles aus Stremio, Trakt und von diesem Gerät. Die Merkliste enthält nur Titel, die du noch nicht angesehen hast. Im Verlauf siehst du, was du angesehen hast. Unter „Lokal“ findest du Dateien auf deinem Computer.",
   "List name": "Listenname",
   "List renamed": "Liste umbenannt",
   "List settings": "Listeneinstellungen",
@@ -398,9 +482,12 @@ const appFill: Record<string, string> = {
   "More options": "Weitere Optionen",
   "More to explore": "Mehr zu entdecken",
   "Move all to account": "Alle ins Konto verschieben",
-  "Moved 1 addon to your Stremio account. It now syncs everywhere you sign in.": "1 Add-on wurde in dein Stremio-Konto verschoben. Es wird jetzt überall synchronisiert, wo du dich anmeldest.",
-  "Moved {n} addons to your Stremio account. They now sync everywhere you sign in.": "{n} Add-ons wurden in dein Stremio-Konto verschoben. Sie werden jetzt überall synchronisiert, wo du dich anmeldest.",
-  "Moved, but Harbor couldn't confirm the result. Reload to see the current state.": "Verschoben, aber Harbor konnte das Ergebnis nicht bestätigen. Lade die Seite neu, um den aktuellen Stand zu sehen.",
+  "Moved 1 addon to your Stremio account. It now syncs everywhere you sign in.":
+    "1 Add-on wurde in dein Stremio-Konto verschoben. Es wird jetzt überall synchronisiert, wo du dich anmeldest.",
+  "Moved {n} addons to your Stremio account. They now sync everywhere you sign in.":
+    "{n} Add-ons wurden in dein Stremio-Konto verschoben. Sie werden jetzt überall synchronisiert, wo du dich anmeldest.",
+  "Moved, but Harbor couldn't confirm the result. Reload to see the current state.":
+    "Verschoben, aber Harbor konnte das Ergebnis nicht bestätigen. Lade die Seite neu, um den aktuellen Stand zu sehen.",
   "Movies & Specials": "Filme & Specials",
   "Movies on {name}": "Filme auf {name}",
   "Mute trailer": "Trailer stummschalten",
@@ -417,7 +504,8 @@ const appFill: Record<string, string> = {
   "Next image": "Nächstes Bild",
   "Next review": "Nächste Rezension",
   "Next {time}": "Als Nächstes in {time}",
-  "No .nfo files detected. TMDB matching is recommended.": "Keine .nfo-Dateien erkannt. Der Abgleich mit TMDB wird empfohlen.",
+  "No .nfo files detected. TMDB matching is recommended.":
+    "Keine .nfo-Dateien erkannt. Der Abgleich mit TMDB wird empfohlen.",
   "No .nfo files here": "Hier gibt es keine .nfo-Dateien",
   "No Suwayomi server at this address": "Unter dieser Adresse gibt es keinen Suwayomi-Server",
   "No approved themes yet": "Noch keine freigegebenen Themes",
@@ -439,15 +527,19 @@ const appFill: Record<string, string> = {
   "No local episodes in this season.": "Keine lokalen Episoden in dieser Staffel.",
   "No matches. Try a different search.": "Keine Treffer. Versuche eine andere Suche.",
   "No matches. Try another title.": "Keine Treffer. Versuche einen anderen Titel.",
-  "No metadata addon detected. Harbor is falling back to Cinemeta so titles still load, but turn this back on unless you are installing one.": "Kein Metadaten-Add-on erkannt. Harbor verwendet ersatzweise Cinemeta, damit Titel weiterhin geladen werden. Aktiviere das Add-on wieder, sofern du nicht gerade ein anderes installierst.",
-  "No more films to add. Start with what you picked.": "Keine weiteren Filme zum Hinzufügen. Beginne mit deiner Auswahl.",
-  "No new subtitles found beyond what is already listed.": "Über die bereits aufgeführten hinaus wurden keine neuen Untertitel gefunden.",
+  "No metadata addon detected. Harbor is falling back to Cinemeta so titles still load, but turn this back on unless you are installing one.":
+    "Kein Metadaten-Add-on erkannt. Harbor verwendet ersatzweise Cinemeta, damit Titel weiterhin geladen werden. Aktiviere das Add-on wieder, sofern du nicht gerade ein anderes installierst.",
+  "No more films to add. Start with what you picked.":
+    "Keine weiteren Filme zum Hinzufügen. Beginne mit deiner Auswahl.",
+  "No new subtitles found beyond what is already listed.":
+    "Über die bereits aufgeführten hinaus wurden keine neuen Untertitel gefunden.",
   "No one recognized on screen right now.": "Derzeit wird niemand auf dem Bildschirm erkannt.",
   "No peers found": "Keine Peers gefunden",
   "No people found": "Keine Personen gefunden",
   "No public groups yet": "Noch keine öffentlichen Gruppen",
   "No recent activity": "Keine neueren Aktivitäten",
-  "No reminders yet. Use the clock on a show's page to get told about new episodes and seasons.": "Noch keine Erinnerungen. Verwende die Uhr auf der Seite einer Serie, um über neue Folgen und Staffeln benachrichtigt zu werden.",
+  "No reminders yet. Use the clock on a show's page to get told about new episodes and seasons.":
+    "Noch keine Erinnerungen. Verwende die Uhr auf der Seite einer Serie, um über neue Folgen und Staffeln benachrichtigt zu werden.",
   "No response": "Keine Antwort",
   "No results found.": "Keine Ergebnisse gefunden.",
   "No reviews from your friends for this film.": "Keine Rezensionen deiner Freunde zu diesem Film.",
@@ -457,9 +549,12 @@ const appFill: Record<string, string> = {
   "No sources match your filter": "Keine Quellen entsprechen deinem Filter",
   "No streams match": "Keine passenden Streams",
   "No subtitles": "Keine Untertitel",
-  "No subtitles found. Start anyway, Harbor keeps looking while you watch.": "Keine Untertitel gefunden. Starte trotzdem. Harbor sucht während der Wiedergabe weiter.",
-  "No subtitles found. Try another title above, or adjust the season and episode.": "Keine Untertitel gefunden. Probiere oben einen anderen Titel aus oder passe Staffel und Folge an.",
-  "No timing change was needed. This subtitle already matches the audio.": "Keine Zeitanpassung erforderlich. Dieser Untertitel ist bereits mit dem Ton synchron.",
+  "No subtitles found. Start anyway, Harbor keeps looking while you watch.":
+    "Keine Untertitel gefunden. Starte trotzdem. Harbor sucht während der Wiedergabe weiter.",
+  "No subtitles found. Try another title above, or adjust the season and episode.":
+    "Keine Untertitel gefunden. Probiere oben einen anderen Titel aus oder passe Staffel und Folge an.",
+  "No timing change was needed. This subtitle already matches the audio.":
+    "Keine Zeitanpassung erforderlich. Dieser Untertitel ist bereits mit dem Ton synchron.",
   "No titles found for {genre}": "Keine Titel für {genre} gefunden",
   "No titles found in this collection.": "Keine Titel in dieser Sammlung gefunden.",
   "No titles match these filters.": "Keine Titel entsprechen diesen Filtern.",
@@ -471,17 +566,22 @@ const appFill: Record<string, string> = {
   "Not the one? Search every source again": "Nicht das Richtige? Alle Quellen erneut durchsuchen",
   "Nothing found here": "Hier wurde nichts gefunden",
   "Nothing here yet!": "Hier ist noch nichts!",
-  "Nothing is uploaded and nothing ships with Harbor. Everything stays on this device and you are responsible for the images you add.": "Es wird nichts hochgeladen und Harbor enthält keine Bilder. Alles bleibt auf diesem Gerät und du bist für die hinzugefügten Bilder verantwortlich.",
-  "Nothing matched this filter. Try another category or change your region in Settings.": "Für diesen Filter wurden keine Treffer gefunden. Probiere eine andere Kategorie aus oder ändere deine Region in den Einstellungen.",
+  "Nothing is uploaded and nothing ships with Harbor. Everything stays on this device and you are responsible for the images you add.":
+    "Es wird nichts hochgeladen und Harbor enthält keine Bilder. Alles bleibt auf diesem Gerät und du bist für die hinzugefügten Bilder verantwortlich.",
+  "Nothing matched this filter. Try another category or change your region in Settings.":
+    "Für diesen Filter wurden keine Treffer gefunden. Probiere eine andere Kategorie aus oder ändere deine Region in den Einstellungen.",
   "Nothing posted yet": "Noch nichts veröffentlicht",
   "Nothing to show yet": "Noch nichts anzuzeigen",
   "Nothing yet": "Noch nichts",
-  "Off by default, so your controller only drives Harbor while it is the focused window. Leave it off if you play games with the same controller.": "Standardmäßig deaktiviert, damit dein Controller Harbor nur steuert, wenn das Fenster im Fokus ist. Lass dies deaktiviert, wenn du mit demselben Controller spielst.",
-  "Off keeps your font, background, and canvas as a private preview.": "Bei „Aus“ sind deine Schriftart, dein Hintergrund und deine Arbeitsfläche nur in deiner privaten Vorschau zu sehen.",
+  "Off by default, so your controller only drives Harbor while it is the focused window. Leave it off if you play games with the same controller.":
+    "Standardmäßig deaktiviert, damit dein Controller Harbor nur steuert, wenn das Fenster im Fokus ist. Lass dies deaktiviert, wenn du mit demselben Controller spielst.",
+  "Off keeps your font, background, and canvas as a private preview.":
+    "Bei „Aus“ sind deine Schriftart, dein Hintergrund und deine Arbeitsfläche nur in deiner privaten Vorschau zu sehen.",
   "On a voyage": "Auf einer Reise",
   "On your disk": "Auf deiner Festplatte",
   "On. New episodes grab themselves.": "Ein. Neue Episoden werden automatisch heruntergeladen.",
-  "Only turn this off if you already have a metadata addon installed, such as AIOMetadata or AIOStreams. Without one, titles and collections can open completely blank. Cinemeta can go stale and show released episodes as TBA, which is the reason to replace it.": "Schalte dies nur aus, wenn du bereits ein Metadaten-Add-on wie AIOMetadata oder AIOStreams installiert hast. Ohne ein solches Add-on können Titel und Sammlungen beim Öffnen völlig leer sein. Die Daten von Cinemeta können veraltet sein und bereits veröffentlichte Folgen als TBA anzeigen. Das ist der Grund, es zu ersetzen.",
+  "Only turn this off if you already have a metadata addon installed, such as AIOMetadata or AIOStreams. Without one, titles and collections can open completely blank. Cinemeta can go stale and show released episodes as TBA, which is the reason to replace it.":
+    "Schalte dies nur aus, wenn du bereits ein Metadaten-Add-on wie AIOMetadata oder AIOStreams installiert hast. Ohne ein solches Add-on können Titel und Sammlungen beim Öffnen völlig leer sein. Die Daten von Cinemeta können veraltet sein und bereits veröffentlichte Folgen als TBA anzeigen. Das ist der Grund, es zu ersetzen.",
   "Open AniList again": "AniList erneut öffnen",
   "Open MyAnimeList again": "MyAnimeList erneut öffnen",
   "Open Voyages": "Voyages öffnen",
@@ -490,12 +590,14 @@ const appFill: Record<string, string> = {
   "Open on Letterboxd": "Auf Letterboxd öffnen",
   "Open review source": "Rezensionsquelle öffnen",
   "Open stream in browser": "Stream im Browser öffnen",
-  "Open this link on a phone on the same Wi-Fi to flip pages, zoom, and pick chapters with gestures. Keep this reader open.": "Öffne diesen Link auf einem Smartphone im selben WLAN, um mit Gesten umzublättern, zu zoomen und Kapitel auszuwählen. Lass dieses Lesefenster geöffnet.",
+  "Open this link on a phone on the same Wi-Fi to flip pages, zoom, and pick chapters with gestures. Keep this reader open.":
+    "Öffne diesen Link auf einem Smartphone im selben WLAN, um mit Gesten umzublättern, zu zoomen und Kapitel auszuwählen. Lass dieses Lesefenster geöffnet.",
   "Open to load episodes": "Öffnen, um Episoden zu laden",
   "Open {title}": "{title} öffnen",
   "Opening AniList...": "AniList wird geöffnet...",
   "Opening MyAnimeList...": "MyAnimeList wird geöffnet...",
-  "Opens Stremio in your browser. Works with email, Facebook, and Apple accounts.": "Öffnet Stremio in deinem Browser. Funktioniert mit E-Mail-, Facebook- und Apple-Konten.",
+  "Opens Stremio in your browser. Works with email, Facebook, and Apple accounts.":
+    "Öffnet Stremio in deinem Browser. Funktioniert mit E-Mail-, Facebook- und Apple-Konten.",
   "PIN set": "PIN festgelegt",
   "Parent PIN": "Eltern-PIN",
   "Paste the code or page URL": "Füge den Code oder die Seiten-URL ein",
@@ -505,28 +607,35 @@ const appFill: Record<string, string> = {
   "Pausing when this one ends": "Pausieren, wenn dieser Titel endet",
   "People you watch": "Personen, die du ansiehst",
   "Pick a World": "Welt auswählen",
-  "Pick a direction. You steer from there, one film at a time.": "Wähle eine Richtung. Von dort aus steuerst du weiter, Film für Film.",
+  "Pick a direction. You steer from there, one film at a time.":
+    "Wähle eine Richtung. Von dort aus steuerst du weiter, Film für Film.",
   "Pick a few you love": "Wähle ein paar deiner Favoriten aus",
   "Pick a video": "Video auswählen",
   "Pick an avatar": "Avatar auswählen",
   "Pick film {n} of {total}": "Film {n} von {total} auswählen",
-  "Pick one or many images. They collect in an Uploads set in your library. PNG, JPG, WebP, and GIF all work.": "Wähle ein oder mehrere Bilder aus. Sie werden in deiner Mediathek in einer Sammlung namens „Uploads“ gespeichert. PNG, JPG, WebP und GIF werden unterstützt.",
+  "Pick one or many images. They collect in an Uploads set in your library. PNG, JPG, WebP, and GIF all work.":
+    "Wähle ein oder mehrere Bilder aus. Sie werden in deiner Mediathek in einer Sammlung namens „Uploads“ gespeichert. PNG, JPG, WebP und GIF werden unterstützt.",
   "Pick the subtitle that fits this release": "Wähle den Untertitel, der zu diesem Release passt",
   "Pick up where you left off.": "Dort weitermachen, wo du aufgehört hast.",
   "Pick your source": "Quelle auswählen",
   "Picking…": "Auswahl läuft…",
-  "Pin the catalogs you want up top, hide the ones you never open, and reorder your pinned rails. Your browse view updates instantly.": "Hefte die gewünschten Kataloge oben an, blende nie verwendete aus und sortiere deine angehefteten Reihen neu. Deine Entdecken-Ansicht wird sofort aktualisiert.",
+  "Pin the catalogs you want up top, hide the ones you never open, and reorder your pinned rails. Your browse view updates instantly.":
+    "Hefte die gewünschten Kataloge oben an, blende nie verwendete aus und sortiere deine angehefteten Reihen neu. Deine Entdecken-Ansicht wird sofort aktualisiert.",
   "Pinned to top": "Oben angeheftet",
   "Play a random episode": "Zufällige Episode abspielen",
-  "Play to where the ad starts and add it, then play to the end and tap Now. You can also type the times. Add more than one if there are several.": "Spiele bis zum Beginn der Werbung und füge den Zeitpunkt hinzu. Spiele dann bis zum Ende und tippe auf „Jetzt“. Du kannst die Zeiten auch eingeben. Füge mehrere Bereiche hinzu, wenn es mehrere Werbeblöcke gibt.",
-  "Playback pauses when the timer runs out. Works for movies too: one movie counts as one episode.": "Die Wiedergabe pausiert, wenn der Timer abläuft. Funktioniert auch bei Filmen: Ein Film zählt als eine Folge.",
+  "Play to where the ad starts and add it, then play to the end and tap Now. You can also type the times. Add more than one if there are several.":
+    "Spiele bis zum Beginn der Werbung und füge den Zeitpunkt hinzu. Spiele dann bis zum Ende und tippe auf „Jetzt“. Du kannst die Zeiten auch eingeben. Füge mehrere Bereiche hinzu, wenn es mehrere Werbeblöcke gibt.",
+  "Playback pauses when the timer runs out. Works for movies too: one movie counts as one episode.":
+    "Die Wiedergabe pausiert, wenn der Timer abläuft. Funktioniert auch bei Filmen: Ein Film zählt als eine Folge.",
   "Playing now": "Wird gerade abgespielt",
-  "Point Harbor at your self-hosted library to browse and install sources": "Verbinde Harbor mit deiner selbst gehosteten Mediathek, um Quellen zu durchsuchen und zu installieren",
+  "Point Harbor at your self-hosted library to browse and install sources":
+    "Verbinde Harbor mit deiner selbst gehosteten Mediathek, um Quellen zu durchsuchen und zu installieren",
   "Popular on": "Beliebt auf",
   "Poster reset to default": "Poster auf Standard zurückgesetzt",
   "Posts are not available yet": "Beiträge sind noch nicht verfügbar",
   "Preparing your images": "Deine Bilder werden vorbereitet",
-  "Press buttons and move the sticks. This mirrors your controller in real time.": "Drücke die Tasten und bewege die Sticks. Dein Controller wird hier in Echtzeit abgebildet.",
+  "Press buttons and move the sticks. This mirrors your controller in real time.":
+    "Drücke die Tasten und bewege die Sticks. Dein Controller wird hier in Echtzeit abgebildet.",
   "Previous featured": "Vorheriges Highlight",
   "Previous image": "Vorheriges Bild",
   "Previous review": "Vorherige Rezension",
@@ -544,7 +653,8 @@ const appFill: Record<string, string> = {
   "Read manga in Harbor": "Manga in Harbor lesen",
   "Read more": "Weiterlesen",
   "Read the Manga": "Manga lesen",
-  "Read titles, ids, and any poster/logo/backdrop already saved next to your files. Missing images are filled from TMDB.": "Lies Titel, IDs und alle bereits neben deinen Dateien gespeicherten Poster, Logos und Hintergrundbilder ein. Fehlende Bilder werden von TMDB ergänzt.",
+  "Read titles, ids, and any poster/logo/backdrop already saved next to your files. Missing images are filled from TMDB.":
+    "Lies Titel, IDs und alle bereits neben deinen Dateien gespeicherten Poster, Logos und Hintergrundbilder ein. Fehlende Bilder werden von TMDB ergänzt.",
   "Reader review": "Leserrezension",
   "Reading subtitles...": "Untertitel werden gelesen...",
   "Reading the cast": "Besetzung wird gelesen",
@@ -575,8 +685,10 @@ const appFill: Record<string, string> = {
   "Remove from showcase": "Aus der Präsentation entfernen",
   "Remove from watchlist": "Von der Merkliste entfernen",
   "Remove reminder": "Erinnerung entfernen",
-  "Remove this folder and its {n} items? Files on your disk are not deleted.": "Diesen Ordner und seine {n} Elemente entfernen? Dateien auf deiner Festplatte werden nicht gelöscht.",
-  "Remove {n} items from your library? Files on your disk are not deleted.": "{n} Elemente aus deiner Mediathek entfernen? Dateien auf deinem Datenträger werden nicht gelöscht.",
+  "Remove this folder and its {n} items? Files on your disk are not deleted.":
+    "Diesen Ordner und seine {n} Elemente entfernen? Dateien auf deiner Festplatte werden nicht gelöscht.",
+  "Remove {n} items from your library? Files on your disk are not deleted.":
+    "{n} Elemente aus deiner Mediathek entfernen? Dateien auf deinem Datenträger werden nicht gelöscht.",
   "Removed folder from your library": "Ordner aus deiner Mediathek entfernt",
   "Removed from My List": "Aus „Meine Liste“ entfernt",
   "Removed from showcase": "Aus der Präsentation entfernt",
@@ -595,11 +707,13 @@ const appFill: Record<string, string> = {
   "Reviews are hidden": "Rezensionen sind ausgeblendet",
   "Reviews couldn't be loaded right now.": "Rezensionen konnten gerade nicht geladen werden.",
   "Row card style": "Kartenstil in Reihen",
-  "SVP couldn't start, playing without smoothing": "SVP konnte nicht gestartet werden. Wiedergabe ohne Glättung.",
+  "SVP couldn't start, playing without smoothing":
+    "SVP konnte nicht gestartet werden. Wiedergabe ohne Glättung.",
   "Same file as host": "Dieselbe Datei wie beim Host",
   "Save customization": "Anpassungen speichern",
   "Save for later": "Für später speichern",
-  "Save or discard your order changes first": "Speichere oder verwirf zuerst deine Änderungen an der Reihenfolge",
+  "Save or discard your order changes first":
+    "Speichere oder verwirf zuerst deine Änderungen an der Reihenfolge",
   "Save the last 30 seconds": "Die letzten 30 Sekunden speichern",
   "Saved .nfo and artwork": ".nfo und Grafiken gespeichert",
   "Saving clip…": "Clip wird gespeichert…",
@@ -614,7 +728,8 @@ const appFill: Record<string, string> = {
   "Scroll up for the trailer": "Für den Trailer nach oben scrollen",
   "Search TMDB…": "TMDB durchsuchen…",
   "Search a line by its words": "Nach einer Zeile anhand ihrer Wörter suchen",
-  "Search all sources again for more subtitles": "Alle Quellen erneut nach weiteren Untertiteln durchsuchen",
+  "Search all sources again for more subtitles":
+    "Alle Quellen erneut nach weiteren Untertiteln durchsuchen",
   "Search any show or movie": "Nach einer Serie oder einem Film suchen",
   "Search by episode number or title": "Nach Episodennummer oder Titel suchen",
   "Search catalogs": "Kataloge durchsuchen",
@@ -622,24 +737,27 @@ const appFill: Record<string, string> = {
   "Search episodes across all seasons": "Episoden in allen Staffeln suchen",
   "Search extensions": "Erweiterungen durchsuchen",
   "Search groups by name or tag": "Gruppen nach Name oder Tag durchsuchen",
-  "Search movies, shows, people, genres, years...": "Filme, Serien, Personen, Genres, Jahre suchen ...",
+  "Search movies, shows, people, genres, years...":
+    "Filme, Serien, Personen, Genres, Jahre suchen ...",
   "Search movies, shows, people...": "Filme, Serien, Personen suchen...",
   "Search {name}": "{name} durchsuchen",
   "Searches when you stop typing": "Sucht, sobald du aufhörst zu tippen",
   "Searching every source again": "Alle Quellen werden erneut durchsucht",
-  "Searching every source for more subtitles…": "Alle Quellen werden nach weiteren Untertiteln durchsucht…",
+  "Searching every source for more subtitles…":
+    "Alle Quellen werden nach weiteren Untertiteln durchsucht…",
   "Searching titles…": "Titel werden gesucht…",
   "Season saved offline": "Staffel offline gespeichert",
   "Season {n} has started": "Staffel {n} hat begonnen",
   "Season {s}": "Staffel {s}",
   "See an injected ad? Report it": "Eingeschleuste Werbung entdeckt? Melde sie",
-  "Select": "Auswählen",
+  Select: "Auswählen",
   "Select a subtitle track to sync": "Untertitelspur zum Synchronisieren auswählen",
   "Select all": "Alle auswählen",
   "Select identified titles to export.": "Erkannte Titel zum Exportieren auswählen.",
   "Sequels & Prequels": "Fortsetzungen und Vorgeschichten",
   "Series on {name}": "Serien auf {name}",
-  "Service-specific browsing needs a TMDB key. Pick All / Movies / Shows to browse via Cinemeta.": "Zum dienstspezifischen Durchsuchen ist ein TMDB-Schlüssel erforderlich. Wähle „Alle“ / „Filme“ / „Serien“, um über Cinemeta zu stöbern.",
+  "Service-specific browsing needs a TMDB key. Pick All / Movies / Shows to browse via Cinemeta.":
+    "Zum dienstspezifischen Durchsuchen ist ein TMDB-Schlüssel erforderlich. Wähle „Alle“ / „Filme“ / „Serien“, um über Cinemeta zu stöbern.",
   "Set a course": "Kurs setzen",
   "Set as default speed": "Als Standardgeschwindigkeit festlegen",
   "Set as primary": "Als primär festlegen",
@@ -652,10 +770,12 @@ const appFill: Record<string, string> = {
   "Set status": "Status festlegen",
   "Set to where the video is right now": "Auf die aktuelle Stelle im Video setzen",
   "Set up a source": "Quelle einrichten",
-  "Set. If the subtitles drift later on, play ahead and Sync from here again at a later line to fix the drift.": "Festgelegt. Falls die Untertitel später asynchron werden, spule vor und wähle bei einer späteren Zeile erneut „Ab hier synchronisieren“, um die Abweichung zu korrigieren.",
+  "Set. If the subtitles drift later on, play ahead and Sync from here again at a later line to fix the drift.":
+    "Festgelegt. Falls die Untertitel später asynchron werden, spule vor und wähle bei einer späteren Zeile erneut „Ab hier synchronisieren“, um die Abweichung zu korrigieren.",
   "Shape your anime feed.": "Gestalte deinen Anime-Feed.",
   "Share something with {group}": "Etwas mit {group} teilen",
-  "Share what you're watching, drop a recommendation, or announce a watch night.": "Teile, was du gerade ansiehst, gib eine Empfehlung ab oder kündige einen gemeinsamen Filmabend an.",
+  "Share what you're watching, drop a recommendation, or announce a watch night.":
+    "Teile, was du gerade ansiehst, gib eine Empfehlung ab oder kündige einen gemeinsamen Filmabend an.",
   "Show backdrop": "Hintergrundbild anzeigen",
   "Show customization to members": "Mitgliedern Anpassungsoptionen anzeigen",
   "Show filters": "Filter anzeigen",
@@ -670,18 +790,23 @@ const appFill: Record<string, string> = {
   "Show {n} more reviews": "{n} weitere Rezensionen anzeigen",
   "Showing all sources.": "Alle Quellen werden angezeigt.",
   "Showing keyword matches instead": "Stattdessen werden Treffer für Schlüsselwörter angezeigt",
-  "Showing {shown} of {total} movies. Scroll to load more.": "{shown} von {total} Filmen werden angezeigt. Scrolle, um mehr zu laden.",
-  "Showing {shown} of {total} shows. Scroll to load more.": "{shown} von {total} Serien werden angezeigt. Scrolle, um mehr zu laden.",
-  "Shows titles suitable up to age {age}.": "Zeigt Titel, die für Zuschauer bis {age} Jahre geeignet sind.",
+  "Showing {shown} of {total} movies. Scroll to load more.":
+    "{shown} von {total} Filmen werden angezeigt. Scrolle, um mehr zu laden.",
+  "Showing {shown} of {total} shows. Scroll to load more.":
+    "{shown} von {total} Serien werden angezeigt. Scrolle, um mehr zu laden.",
+  "Shows titles suitable up to age {age}.":
+    "Zeigt Titel, die für Zuschauer bis {age} Jahre geeignet sind.",
   "Sign in with Stremio": "Mit Stremio anmelden",
   "Sign in with email": "Mit E-Mail anmelden",
   "Skip injected ad?": "Eingefügte Werbung überspringen?",
   "Skip, let Harbor choose": "Überspringen, Harbor auswählen lassen",
   "Sleep at end": "Am Ende in den Ruhemodus wechseln",
-  "Some copies of new releases have ads spliced into the video itself. This is experimental: the community marks where those ads are so others can skip them.": "Bei manchen Kopien neuer Veröffentlichungen sind Werbeclips direkt in das Video geschnitten. Diese Funktion ist experimentell: Die Community markiert die Stellen mit Werbung, damit andere sie überspringen können.",
+  "Some copies of new releases have ads spliced into the video itself. This is experimental: the community marks where those ads are so others can skip them.":
+    "Bei manchen Kopien neuer Veröffentlichungen sind Werbeclips direkt in das Video geschnitten. Diese Funktion ist experimentell: Die Community markiert die Stellen mit Werbung, damit andere sie überspringen können.",
   "Sort episodes": "Episoden sortieren",
   "Source said": "Laut Quelle",
-  "Sources cached in the background for the streams you are watching": "Quellen für die Streams, die du ansiehst, werden im Hintergrund zwischengespeichert",
+  "Sources cached in the background for the streams you are watching":
+    "Quellen für die Streams, die du ansiehst, werden im Hintergrund zwischengespeichert",
   "Spotlight {n}": "Im Rampenlicht {n}",
   "Square looks best": "Quadratisch sieht am besten aus",
   "Start a voyage": "Eine Reise beginnen",
@@ -694,7 +819,8 @@ const appFill: Record<string, string> = {
   "Start with these {count}": "Mit diesen {count} beginnen",
   "Started at {time}": "Begonnen um {time}",
   "Starts at": "Beginnt um",
-  "Steer your Top Picks and hero toward what you love, and hide what you don't.": "Richte deine Top-Empfehlungen und den Hauptbereich nach deinen Vorlieben aus und blende aus, was dir nicht gefällt.",
+  "Steer your Top Picks and hero toward what you love, and hide what you don't.":
+    "Richte deine Top-Empfehlungen und den Hauptbereich nach deinen Vorlieben aus und blende aus, was dir nicht gefällt.",
   "Step 1 · Open Simkl": "Schritt 1 · Simkl öffnen",
   "Step 1 · Open Trakt": "Schritt 1 · Trakt öffnen",
   "Step 2 · Enter this code": "Schritt 2 · Diesen Code eingeben",
@@ -705,8 +831,10 @@ const appFill: Record<string, string> = {
   "Stream / addons": "Stream / Add-ons",
   "Stream / addons instead": "Stattdessen Stream / Add-ons verwenden",
   "Streaming now": "Jetzt im Stream",
-  "Stremio didn't confirm the move. Your collection may be unchanged. Reload to see the current state.": "Stremio hat das Verschieben nicht bestätigt. Deine Sammlung ist möglicherweise unverändert. Lade sie neu, um den aktuellen Stand zu sehen.",
-  "Styled (ASS) subs keep their own font, color, and size. Truest to the release, but the size can vary a lot between files.": "Formatierte Untertitel (ASS) behalten ihre eigene Schriftart, Farbe und Größe. So bleibt die ursprüngliche Gestaltung am besten erhalten, aber die Größe kann je nach Datei stark variieren.",
+  "Stremio didn't confirm the move. Your collection may be unchanged. Reload to see the current state.":
+    "Stremio hat das Verschieben nicht bestätigt. Deine Sammlung ist möglicherweise unverändert. Lade sie neu, um den aktuellen Stand zu sehen.",
+  "Styled (ASS) subs keep their own font, color, and size. Truest to the release, but the size can vary a lot between files.":
+    "Formatierte Untertitel (ASS) behalten ihre eigene Schriftart, Farbe und Größe. So bleibt die ursprüngliche Gestaltung am besten erhalten, aber die Größe kann je nach Datei stark variieren.",
   "Submit report": "Bericht senden",
   "Subtitle sync": "Untertitelsynchronisierung",
   "Subtitle timing": "Zeitsteuerung der Untertitel",
@@ -725,65 +853,99 @@ const appFill: Record<string, string> = {
   "Sync to the audio": "Mit der Tonspur synchronisieren",
   "S{s} E{e} is out now": "S{s} F{e} ist jetzt verfügbar",
   "S{s} · E{e}": "S{s} · F{e}",
-  "TMDB is temporarily unavailable, so these results may be incomplete.": "TMDB ist vorübergehend nicht verfügbar, daher sind diese Ergebnisse möglicherweise unvollständig.",
-  "TMDB is temporarily unavailable. Try your search again shortly.": "TMDB ist vorübergehend nicht verfügbar. Versuche deine Suche in Kürze erneut.",
-  "TV uses wide rounded cards with the logo on the art, like a TV home screen. Poster is the classic grid.": "„TV“ verwendet breite, abgerundete Karten mit dem Logo auf dem Bild, wie auf dem Startbildschirm eines Fernsehers. „Poster“ ist das klassische Raster.",
-  "Tags": "Tags",
+  "TMDB is temporarily unavailable, so these results may be incomplete.":
+    "TMDB ist vorübergehend nicht verfügbar, daher sind diese Ergebnisse möglicherweise unvollständig.",
+  "TMDB is temporarily unavailable. Try your search again shortly.":
+    "TMDB ist vorübergehend nicht verfügbar. Versuche deine Suche in Kürze erneut.",
+  "TV uses wide rounded cards with the logo on the art, like a TV home screen. Poster is the classic grid.":
+    "„TV“ verwendet breite, abgerundete Karten mit dem Logo auf dem Bild, wie auf dem Startbildschirm eines Fernsehers. „Poster“ ist das klassische Raster.",
+  Tags: "Tags",
   "Tap again to remove all {n} extensions": "Erneut tippen, um alle {n} Add-ons zu entfernen",
-  "Tap one until your show plays nice and clear!": "Tippe auf eine Option, bis deine Serie flüssig und klar läuft!",
-  "Tap the first and last line of the section, then tap the line playing now and Sync from here.": "Tippe auf die erste und letzte Zeile des Abschnitts, dann auf die gerade wiedergegebene Zeile und auf „Ab hier synchronisieren“.",
-  "Tap the star on any movie, show, or manga, or the heart on a character, to save it here.": "Tippe bei Filmen, Serien oder Manga auf den Stern oder bei Figuren auf das Herz, um sie hier zu speichern.",
+  "Tap one until your show plays nice and clear!":
+    "Tippe auf eine Option, bis deine Serie flüssig und klar läuft!",
+  "Tap the first and last line of the section, then tap the line playing now and Sync from here.":
+    "Tippe auf die erste und letzte Zeile des Abschnitts, dann auf die gerade wiedergegebene Zeile und auf „Ab hier synchronisieren“.",
+  "Tap the star on any movie, show, or manga, or the heart on a character, to save it here.":
+    "Tippe bei Filmen, Serien oder Manga auf den Stern oder bei Figuren auf das Herz, um sie hier zu speichern.",
   "Text Sync": "Untertitelsynchronisierung",
   "Thanks. Sent for review.": "Danke. Zur Überprüfung gesendet.",
   "That does not look like a repository URL": "Das sieht nicht nach einer Repository-URL aus",
-  "That route wouldn't chart. Try a different direction.": "Diese Route lässt sich nicht darstellen. Probiere eine andere Richtung.",
-  "The authorization code timed out before you finished. Try again.": "Der Autorisierungscode ist abgelaufen, bevor du fertig warst. Versuche es erneut.",
+  "That route wouldn't chart. Try a different direction.":
+    "Diese Route lässt sich nicht darstellen. Probiere eine andere Richtung.",
+  "The authorization code timed out before you finished. Try again.":
+    "Der Autorisierungscode ist abgelaufen, bevor du fertig warst. Versuche es erneut.",
   "The end time has to be after the start.": "Die Endzeit muss nach der Startzeit liegen.",
-  "The most-watched movies and series on {name} right now in {region}.": "Die derzeit meistgesehenen Filme und Serien auf {name} in {region}.",
-  "The primary manages profiles and can't be deleted. Transfer it here to delete the old one.": "Das primäre Profil verwaltet Profile und kann nicht gelöscht werden. Übertrage den Primärstatus hierher, um das alte zu löschen.",
+  "The most-watched movies and series on {name} right now in {region}.":
+    "Die derzeit meistgesehenen Filme und Serien auf {name} in {region}.",
+  "The primary manages profiles and can't be deleted. Transfer it here to delete the old one.":
+    "Das primäre Profil verwaltet Profile und kann nicht gelöscht werden. Übertrage den Primärstatus hierher, um das alte zu löschen.",
   "The server could not load that repository": "Der Server konnte dieses Repository nicht laden",
-  "The ship is sailing away. Thanks for watching with Harbor, it's time to listen to your grown-ups.": "Das Schiff segelt davon. Danke, dass du mit Harbor zugesehen hast. Jetzt ist es Zeit, auf die Erwachsenen zu hören.",
-  "The timing checks disagreed, so Harbor left the subtitle unchanged.": "Die Timing-Prüfungen kamen zu unterschiedlichen Ergebnissen, daher ließ Harbor den Untertitel unverändert.",
-  "The timing difference was too large to correct safely. Try another subtitle.": "Der Zeitunterschied war zu groß, um ihn sicher zu korrigieren. Probiere einen anderen Untertitel aus.",
-  "There isn't enough readable dialogue in this subtitle to measure its timing.": "Dieser Untertitel enthält nicht genügend lesbare Dialogzeilen, um sein Timing zu messen.",
-  "There wasn't enough matching dialogue to make a safe correction.": "Es gab nicht genügend übereinstimmende Dialogstellen für eine zuverlässige Korrektur.",
-  "These avatars are Harbor originals. Imported packs are stored only on this device: you choose what goes in them, and you are responsible for that content.": "Diese Avatare sind Originale von Harbor. Importierte Pakete werden nur auf diesem Gerät gespeichert: Du entscheidest, was sie enthalten, und bist für diese Inhalte verantwortlich.",
+  "The ship is sailing away. Thanks for watching with Harbor, it's time to listen to your grown-ups.":
+    "Das Schiff segelt davon. Danke, dass du mit Harbor zugesehen hast. Jetzt ist es Zeit, auf die Erwachsenen zu hören.",
+  "The timing checks disagreed, so Harbor left the subtitle unchanged.":
+    "Die Timing-Prüfungen kamen zu unterschiedlichen Ergebnissen, daher ließ Harbor den Untertitel unverändert.",
+  "The timing difference was too large to correct safely. Try another subtitle.":
+    "Der Zeitunterschied war zu groß, um ihn sicher zu korrigieren. Probiere einen anderen Untertitel aus.",
+  "There isn't enough readable dialogue in this subtitle to measure its timing.":
+    "Dieser Untertitel enthält nicht genügend lesbare Dialogzeilen, um sein Timing zu messen.",
+  "There wasn't enough matching dialogue to make a safe correction.":
+    "Es gab nicht genügend übereinstimmende Dialogstellen für eine zuverlässige Korrektur.",
+  "These avatars are Harbor originals. Imported packs are stored only on this device: you choose what goes in them, and you are responsible for that content.":
+    "Diese Avatare sind Originale von Harbor. Importierte Pakete werden nur auf diesem Gerät gespeichert: Du entscheidest, was sie enthalten, und bist für diese Inhalte verantwortlich.",
   "This channel isn't responding": "Dieser Kanal reagiert nicht",
-  "This doesn't look like a Harbor plugin repo. Harbor expects a JSON file shaped { name, plugins: [ ... ] }.": "Dies scheint kein Harbor-Plugin-Repository zu sein. Harbor erwartet eine JSON-Datei im Format { name, plugins: [ ... ] }.",
-  "This group has not written a description yet.": "Diese Gruppe hat noch keine Beschreibung verfasst.",
-  "This group's feed could not be loaded. Try again in a moment.": "Der Feed dieser Gruppe konnte nicht geladen werden. Versuche es gleich noch einmal.",
-  "This is a Mangayomi repo, but its sources use Dart or are not manga, so Harbor can't import them.": "Dies ist ein Mangayomi-Repository, aber seine Quellen verwenden Dart oder sind keine Manga-Quellen, daher kann Harbor sie nicht importieren.",
-  "This is a Mangayomi repo. Harbor runs its JavaScript sources natively. Import them to add these sources to your manga library.": "Dies ist ein Mangayomi-Repository. Harbor führt dessen JavaScript-Quellen nativ aus. Importiere sie, um diese Quellen zu deiner Manga-Mediathek hinzuzufügen.",
-  "This is a Mangayomi repo. Native import isn't supported yet. For the largest catalog today, run a Suwayomi server and connect Harbor to it from the Servers section.": "Dies ist ein Mangayomi-Repository. Der native Import wird noch nicht unterstützt. Für den derzeit größten Katalog kannst du einen Suwayomi-Server betreiben und Harbor im Bereich „Server“ damit verbinden.",
-  "This is a Paperback (iOS) repo, which Harbor can't use. For desktop sources, connect a Suwayomi server from the Servers section.": "Dies ist ein Paperback-Repository (iOS), das Harbor nicht verwenden kann. Verbinde für Desktop-Quellen im Bereich „Server“ einen Suwayomi-Server.",
-  "This is a Tachiyomi / Mihon repo. Those are Android (APK) extensions, so Harbor can't run them directly. To use these sources on desktop, run a Suwayomi server and connect Harbor to it from the Servers section.": "Dies ist ein Tachiyomi-/Mihon-Repository. Es enthält Android-Erweiterungen (APK), die Harbor nicht direkt ausführen kann. Um diese Quellen auf dem Desktop zu verwenden, starte einen Suwayomi-Server und verbinde Harbor im Bereich „Server“ damit.",
+  "This doesn't look like a Harbor plugin repo. Harbor expects a JSON file shaped { name, plugins: [ ... ] }.":
+    "Dies scheint kein Harbor-Plugin-Repository zu sein. Harbor erwartet eine JSON-Datei im Format { name, plugins: [ ... ] }.",
+  "This group has not written a description yet.":
+    "Diese Gruppe hat noch keine Beschreibung verfasst.",
+  "This group's feed could not be loaded. Try again in a moment.":
+    "Der Feed dieser Gruppe konnte nicht geladen werden. Versuche es gleich noch einmal.",
+  "This is a Mangayomi repo, but its sources use Dart or are not manga, so Harbor can't import them.":
+    "Dies ist ein Mangayomi-Repository, aber seine Quellen verwenden Dart oder sind keine Manga-Quellen, daher kann Harbor sie nicht importieren.",
+  "This is a Mangayomi repo. Harbor runs its JavaScript sources natively. Import them to add these sources to your manga library.":
+    "Dies ist ein Mangayomi-Repository. Harbor führt dessen JavaScript-Quellen nativ aus. Importiere sie, um diese Quellen zu deiner Manga-Mediathek hinzuzufügen.",
+  "This is a Mangayomi repo. Native import isn't supported yet. For the largest catalog today, run a Suwayomi server and connect Harbor to it from the Servers section.":
+    "Dies ist ein Mangayomi-Repository. Der native Import wird noch nicht unterstützt. Für den derzeit größten Katalog kannst du einen Suwayomi-Server betreiben und Harbor im Bereich „Server“ damit verbinden.",
+  "This is a Paperback (iOS) repo, which Harbor can't use. For desktop sources, connect a Suwayomi server from the Servers section.":
+    "Dies ist ein Paperback-Repository (iOS), das Harbor nicht verwenden kann. Verbinde für Desktop-Quellen im Bereich „Server“ einen Suwayomi-Server.",
+  "This is a Tachiyomi / Mihon repo. Those are Android (APK) extensions, so Harbor can't run them directly. To use these sources on desktop, run a Suwayomi server and connect Harbor to it from the Servers section.":
+    "Dies ist ein Tachiyomi-/Mihon-Repository. Es enthält Android-Erweiterungen (APK), die Harbor nicht direkt ausführen kann. Um diese Quellen auf dem Desktop zu verwenden, starte einen Suwayomi-Server und verbinde Harbor im Bereich „Server“ damit.",
   "This is in your local library": "Dies befindet sich in deiner lokalen Mediathek",
   "This is the primary profile": "Dies ist das Hauptprofil",
   "This list is full ({max} items)": "Diese Liste ist voll ({max} Elemente)",
-  "This one also replaces Harbor's bundled players and tools, so it installs through Harbor Setup. Harbor closes, the installer finishes, then Harbor reopens.": "Diese Aktualisierung ersetzt auch die in Harbor enthaltenen Player und Werkzeuge und wird daher über Harbor Setup installiert. Harbor wird geschlossen, das Installationsprogramm schließt die Installation ab und Harbor wird anschließend wieder geöffnet.",
-  "This one installs through Harbor Setup, but the update manifest carries no signature for it. Harbor will not run an installer it cannot verify. Download it and run it yourself.": "Diese Version wird über Harbor Setup installiert, aber das Update-Manifest enthält keine Signatur dafür. Harbor führt kein Installationsprogramm aus, das nicht verifiziert werden kann. Lade es herunter und führe es selbst aus.",
-  "This server is too old to add repos from Harbor": "Dieser Server ist zu alt, um Repositories über Harbor hinzuzufügen.",
+  "This one also replaces Harbor's bundled players and tools, so it installs through Harbor Setup. Harbor closes, the installer finishes, then Harbor reopens.":
+    "Diese Aktualisierung ersetzt auch die in Harbor enthaltenen Player und Werkzeuge und wird daher über Harbor Setup installiert. Harbor wird geschlossen, das Installationsprogramm schließt die Installation ab und Harbor wird anschließend wieder geöffnet.",
+  "This one installs through Harbor Setup, but the update manifest carries no signature for it. Harbor will not run an installer it cannot verify. Download it and run it yourself.":
+    "Diese Version wird über Harbor Setup installiert, aber das Update-Manifest enthält keine Signatur dafür. Harbor führt kein Installationsprogramm aus, das nicht verifiziert werden kann. Lade es herunter und führe es selbst aus.",
+  "This server is too old to add repos from Harbor":
+    "Dieser Server ist zu alt, um Repositories über Harbor hinzuzufügen.",
   "This server lists no extensions": "Dieser Server listet keine Add-ons auf",
-  "This server needs a username and password": "Dieser Server benötigt einen Benutzernamen und ein Passwort",
-  "This server responded but is not supported": "Dieser Server hat geantwortet, wird aber nicht unterstützt",
+  "This server needs a username and password":
+    "Dieser Server benötigt einen Benutzernamen und ein Passwort",
+  "This server responded but is not supported":
+    "Dieser Server hat geantwortet, wird aber nicht unterstützt",
   "This show": "Diese Serie",
-  "This subtitle appears to be for a different cut. Try another match.": "Dieser Untertitel scheint für eine andere Schnittfassung zu sein. Probiere einen anderen Treffer aus.",
-  "This subtitle looks like a different version of the video.": "Dieser Untertitel scheint zu einer anderen Version des Videos zu gehören.",
+  "This subtitle appears to be for a different cut. Try another match.":
+    "Dieser Untertitel scheint für eine andere Schnittfassung zu sein. Probiere einen anderen Treffer aus.",
+  "This subtitle looks like a different version of the video.":
+    "Dieser Untertitel scheint zu einer anderen Version des Videos zu gehören.",
   "This trailer plays on YouTube.": "Dieser Trailer wird auf YouTube abgespielt.",
   "Time's up!": "Zeit abgelaufen!",
   "Timing looks aligned": "Timing scheint synchron zu sein",
   "Timing rate": "Timing-Rate",
   "Toggle Fullscreen": "Vollbild umschalten",
   "Toggle HDR to SDR": "HDR-zu-SDR-Konvertierung ein-/ausschalten",
-  "Too new. Subtitles haven't been published yet.": "Zu neu. Untertitel wurden noch nicht veröffentlicht.",
+  "Too new. Subtitles haven't been published yet.":
+    "Zu neu. Untertitel wurden noch nicht veröffentlicht.",
   "Top 10 Movies on {name}": "Top 10 Filme auf {name}",
   "Top 10 Series on {name}": "Top 10 Serien auf {name}",
   "Top genres": "Top-Genres",
   "Top rated on {site}": "Bestbewertet auf {site}",
   "Top titles": "Top-Titel",
   "Track people": "Personen folgen",
-  "Trakt comments are not available for anime titles.": "Trakt-Kommentare sind für Anime-Titel nicht verfügbar.",
-  "Trakt reported that authorization was denied. Try again if this was unintentional.": "Trakt meldet, dass die Autorisierung abgelehnt wurde. Versuche es erneut, falls dies unbeabsichtigt war.",
+  "Trakt comments are not available for anime titles.":
+    "Trakt-Kommentare sind für Anime-Titel nicht verfügbar.",
+  "Trakt reported that authorization was denied. Try again if this was unintentional.":
+    "Trakt meldet, dass die Autorisierung abgelehnt wurde. Versuche es erneut, falls dies unbeabsichtigt war.",
   "Transfer primary": "Primärstatus übertragen",
   "Transfer to another profile": "Auf ein anderes Profil übertragen",
   "Trending movies": "Angesagte Filme",
@@ -792,8 +954,10 @@ const appFill: Record<string, string> = {
   "Trending shows": "Serien im Trend",
   "Try a genre": "Genre ausprobieren",
   "Tune anime": "Anime anpassen",
-  "Turn on controller support to light up your inputs here.": "Aktiviere die Controller-Unterstützung, damit deine Eingaben hier aufleuchten.",
-  "Turn this off to take Cinemeta out entirely and use only your own metadata addons, such as AIOMetadata or AIOStreams. Cinemeta can go stale and show already released episodes as TBA. Leave it on unless you have a metadata addon installed, or titles will have no details.": "Schalte dies aus, um Cinemeta vollständig zu entfernen und ausschließlich eigene Metadaten-Add-ons wie AIOMetadata oder AIOStreams zu verwenden. Die Daten von Cinemeta können veraltet sein und bereits veröffentlichte Folgen als TBA anzeigen. Lass es eingeschaltet, sofern du kein Metadaten-Add-on installiert hast, da Titel sonst keine Details enthalten.",
+  "Turn on controller support to light up your inputs here.":
+    "Aktiviere die Controller-Unterstützung, damit deine Eingaben hier aufleuchten.",
+  "Turn this off to take Cinemeta out entirely and use only your own metadata addons, such as AIOMetadata or AIOStreams. Cinemeta can go stale and show already released episodes as TBA. Leave it on unless you have a metadata addon installed, or titles will have no details.":
+    "Schalte dies aus, um Cinemeta vollständig zu entfernen und ausschließlich eigene Metadaten-Add-ons wie AIOMetadata oder AIOStreams zu verwenden. Die Daten von Cinemeta können veraltet sein und bereits veröffentlichte Folgen als TBA anzeigen. Lass es eingeschaltet, sofern du kein Metadaten-Add-on installiert hast, da Titel sonst keine Details enthalten.",
   "Two columns": "Zwei Spalten",
   "Undo All": "Alles rückgängig machen",
   "Unknown release": "Unbekannte Veröffentlichung",
@@ -812,7 +976,8 @@ const appFill: Record<string, string> = {
   "View my profile": "Mein Profil anzeigen",
   "View on Letterboxd": "Auf Letterboxd ansehen",
   "Voyage complete": "Reise abgeschlossen",
-  "Waiting for you to authorize on simkl.com…": "Warte darauf, dass du die Autorisierung auf simkl.com abschließt…",
+  "Waiting for you to authorize on simkl.com…":
+    "Warte darauf, dass du die Autorisierung auf simkl.com abschließt…",
   "Waiting for you to authorize on trakt.tv…": "Warte auf deine Autorisierung auf trakt.tv…",
   "Warming up": "Wird vorbereitet",
   "Watch from the beginning": "Von Anfang an ansehen",
@@ -820,7 +985,8 @@ const appFill: Record<string, string> = {
   "Watch on YouTube": "Auf YouTube ansehen",
   "Watched by {name}": "Von {name} angesehen",
   "Watching right now": "Wird gerade angesehen",
-  "We'll save your spot so you can pick up right where you left off.": "Wir speichern deine Position, damit du genau dort weitermachen kannst, wo du aufgehört hast.",
+  "We'll save your spot so you can pick up right where you left off.":
+    "Wir speichern deine Position, damit du genau dort weitermachen kannst, wo du aufgehört hast.",
   "Weekend watchlist": "Wochenend-Merkliste",
   "What is this group about?": "Worum geht es in dieser Gruppe?",
   "What is this title?": "Um welchen Titel handelt es sich?",
@@ -829,7 +995,8 @@ const appFill: Record<string, string> = {
   "What you watched": "Was du angesehen hast",
   "When a new episode airs": "Wenn eine neue Folge ausgestrahlt wird",
   "When a new season premieres": "Wenn eine neue Staffel startet",
-  "When time's up, the ship sails away until a parent unlocks it.": "Wenn die Zeit abgelaufen ist, legt das Schiff ab, bis ein Elternteil es entsperrt.",
+  "When time's up, the ship sails away until a parent unlocks it.":
+    "Wenn die Zeit abgelaufen ist, legt das Schiff ab, bis ein Elternteil es entsperrt.",
   "Where do you want to start?": "Wo möchtest du anfangen?",
   "Where it started": "Wo alles begann",
   "Where to next?": "Wohin als Nächstes?",
@@ -842,30 +1009,41 @@ const appFill: Record<string, string> = {
   "X-Ray": "X-Ray",
   "X-Ray unavailable": "X-Ray nicht verfügbar",
   "You already have a group with this name.": "Du hast bereits eine Gruppe mit diesem Namen.",
-  "You have reached {max} lists. Remove one to make room.": "Du hast {max} Listen erreicht. Entferne eine, um Platz zu schaffen.",
+  "You have reached {max} lists. Remove one to make room.":
+    "Du hast {max} Listen erreicht. Entferne eine, um Platz zu schaffen.",
   "You own the content": "Du besitzt den Inhalt",
   "You saw the whole run through.": "Du hast alles bis zum Ende angesehen.",
   "You watched": "Von dir angesehen",
   "You ★ {rating}": "Du ★ {rating}",
-  "You'll leave the player and open the full details page.": "Du verlässt die Wiedergabeansicht und öffnest die vollständige Detailseite.",
+  "You'll leave the player and open the full details page.":
+    "Du verlässt die Wiedergabeansicht und öffnest die vollständige Detailseite.",
   "You've hidden every catalog that matched.": "Du hast alle passenden Kataloge ausgeblendet.",
-  "You've hidden the one catalog that matched.": "Du hast den einzigen passenden Katalog ausgeblendet.",
+  "You've hidden the one catalog that matched.":
+    "Du hast den einzigen passenden Katalog ausgeblendet.",
   "You've reached the end · {count} titles": "Du hast das Ende erreicht · {count} Titel",
   "You've sailed these waters dry.": "Du hast diese Gewässer vollständig erkundet.",
   "Your MAL: {name}": "Dein MAL: {name}",
   "Your MyAnimeList is empty": "Dein MyAnimeList ist leer",
   "Your Streaming": "Dein Streaming",
-  "Your canvas runs in a sandbox with no scripts, so use HTML and CSS for layout and art.": "Deine Zeichenfläche läuft ohne Skripte in einer Sandbox. Verwende daher HTML und CSS für Layout und Gestaltung.",
+  "Your canvas runs in a sandbox with no scripts, so use HTML and CSS for layout and art.":
+    "Deine Zeichenfläche läuft ohne Skripte in einer Sandbox. Verwende daher HTML und CSS für Layout und Gestaltung.",
   "Your folders": "Deine Ordner",
-  "Your friends have not shared anything yet. Activity sharing is off by default.": "Deine Freunde haben noch nichts geteilt. Das Teilen von Aktivitäten ist standardmäßig deaktiviert.",
+  "Your friends have not shared anything yet. Activity sharing is off by default.":
+    "Deine Freunde haben noch nichts geteilt. Das Teilen von Aktivitäten ist standardmäßig deaktiviert.",
   "Your groups": "Deine Gruppen",
-  "Your handle across Harbor, and your verified status.": "Dein Benutzername in Harbor und dein Verifizierungsstatus.",
+  "Your handle across Harbor, and your verified status.":
+    "Dein Benutzername in Harbor und dein Verifizierungsstatus.",
   "Your queue": "Deine Warteschlange",
-  "Your queue is empty. Add movies or shows and they'll play back-to-back here.": "Deine Warteschlange ist leer. Füge Filme oder Serien hinzu, damit sie hier nacheinander wiedergegeben werden.",
-  "Your queue is full. Start whenever you're ready.": "Deine Warteschlange ist voll. Starte, wann immer du bereit bist.",
-  "Your queue is saved until you clear it.": "Deine Warteschlange bleibt gespeichert, bis du sie leerst.",
-  "Your report is sent for review before it ever skips anything for anyone. Nothing about the video is uploaded, just the timestamps you mark. It is off by default and you can turn it off anytime in Settings.": "Deine Meldung wird geprüft, bevor dadurch jemals bei irgendjemandem etwas übersprungen wird. Vom Video wird nichts hochgeladen, sondern nur die von dir markierten Zeitstempel. Die Funktion ist standardmäßig deaktiviert und kann jederzeit in den Einstellungen ausgeschaltet werden.",
-  "Your themes, lists, and profile follow you to any device.": "Deine Designs, Listen und dein Profil sind auf jedem Gerät verfügbar.",
+  "Your queue is empty. Add movies or shows and they'll play back-to-back here.":
+    "Deine Warteschlange ist leer. Füge Filme oder Serien hinzu, damit sie hier nacheinander wiedergegeben werden.",
+  "Your queue is full. Start whenever you're ready.":
+    "Deine Warteschlange ist voll. Starte, wann immer du bereit bist.",
+  "Your queue is saved until you clear it.":
+    "Deine Warteschlange bleibt gespeichert, bis du sie leerst.",
+  "Your report is sent for review before it ever skips anything for anyone. Nothing about the video is uploaded, just the timestamps you mark. It is off by default and you can turn it off anytime in Settings.":
+    "Deine Meldung wird geprüft, bevor dadurch jemals bei irgendjemandem etwas übersprungen wird. Vom Video wird nichts hochgeladen, sondern nur die von dir markierten Zeitstempel. Die Funktion ist standardmäßig deaktiviert und kann jederzeit in den Einstellungen ausgeschaltet werden.",
+  "Your themes, lists, and profile follow you to any device.":
+    "Deine Designs, Listen und dein Profil sind auf jedem Gerät verfügbar.",
   "Your voyage is ready": "Deine Reise kann beginnen",
   "Your watch year": "Dein Wiedergabejahr",
   "Zoom In": "Vergrößern",
@@ -876,7 +1054,8 @@ const appFill: Record<string, string> = {
   "day streak": "Tage in Folge",
   "e.g. 1.35": "z. B. 1,35",
   "e.g. 20": "z. B. 20",
-  "films, start to finish. Start another whenever you like.": "Filme, von Anfang bis Ende. Starte einen weiteren, wann immer du möchtest.",
+  "films, start to finish. Start another whenever you like.":
+    "Filme, von Anfang bis Ende. Starte einen weiteren, wann immer du möchtest.",
   "hours watched": "Wiedergabestunden",
   "https:// API or site URL": "https://-URL der API oder Website",
   "in {n}wks": "in {n} Wochen",
@@ -887,12 +1066,14 @@ const appFill: Record<string, string> = {
   "once every 14 days": "alle 14 Tage",
   "or use email": "oder E-Mail verwenden",
   "out of 5": "von 5",
-  "soon": "bald",
+  soon: "bald",
   "to search now": "um jetzt zu suchen",
   "unknown error": "unbekannter Fehler",
   "update available": "Update verfügbar",
-  "{count} community ratings on stremio-addons.net": "{count} Community-Bewertungen auf stremio-addons.net",
-  "{count} films, in the order you picked them. Nothing plays until you start.": "{count} Filme in der von dir gewählten Reihenfolge. Die Wiedergabe beginnt erst, wenn du sie startest.",
+  "{count} community ratings on stremio-addons.net":
+    "{count} Community-Bewertungen auf stremio-addons.net",
+  "{count} films, in the order you picked them. Nothing plays until you start.":
+    "{count} Filme in der von dir gewählten Reihenfolge. Die Wiedergabe beginnt erst, wenn du sie startest.",
   "{count} in queue": "{count} in der Warteschlange",
   "{count} in queue · {time}": "{count} in der Warteschlange · {time}",
   "{count} selected": "{count} ausgewählt",
@@ -917,17 +1098,21 @@ const appFill: Record<string, string> = {
   "{n} in a day": "{n} an einem Tag",
   "{n} in your library": "{n} in deiner Mediathek",
   "{n} new episodes are out": "{n} neue Folgen sind verfügbar",
-  "{n} new episodes since you last watched": "{n} neue Folgen, seit du zuletzt etwas angesehen hast",
+  "{n} new episodes since you last watched":
+    "{n} neue Folgen, seit du zuletzt etwas angesehen hast",
   "{n} seasons": "{n} Staffeln",
   "{n} section fixes. Reset all": "Korrekturen in {n} Bereichen. Alle zurücksetzen",
   "{n} selected": "{n} ausgewählt",
-  "{n} titles need review — help us identify them.": "{n} Titel müssen geprüft werden. Hilf uns, sie zu identifizieren.",
+  "{n} titles need review — help us identify them.":
+    "{n} Titel müssen geprüft werden. Hilf uns, sie zu identifizieren.",
   "{n} uncached hidden": "{n} nicht zwischengespeicherte Quellen ausgeblendet",
-  "{sharing} of {total} friends are sharing what they watch.": "{sharing} von {total} Freunden teilen, was sie ansehen.",
+  "{sharing} of {total} friends are sharing what they watch.":
+    "{sharing} von {total} Freunden teilen, was sie ansehen.",
   "{time} left": "Noch {time}",
   "{title} image viewer": "Bildanzeige für {title}",
   "{title} overview": "Übersicht zu {title}",
-  "“Cached” just means your addon thinks that file is already saved on your debrid, ready to play instantly. That flag isn’t always right: sometimes the file isn’t actually there yet. When that happens the source won’t start, or it plays a short broken clip. It’s not a Harbor problem: pick another source, or give it a minute to finish caching and try again.": "„Zwischengespeichert“ bedeutet lediglich, dass dein Add-on davon ausgeht, dass die Datei bereits bei deinem Debrid-Dienst gespeichert ist und sofort abgespielt werden kann. Diese Kennzeichnung stimmt nicht immer: Manchmal ist die Datei tatsächlich noch nicht vorhanden. Dann startet die Quelle nicht oder spielt nur einen kurzen, fehlerhaften Clip ab. Das ist kein Problem von Harbor: Wähle eine andere Quelle oder warte eine Minute, bis die Zwischenspeicherung abgeschlossen ist, und versuche es erneut.",
+  "“Cached” just means your addon thinks that file is already saved on your debrid, ready to play instantly. That flag isn’t always right: sometimes the file isn’t actually there yet. When that happens the source won’t start, or it plays a short broken clip. It’s not a Harbor problem: pick another source, or give it a minute to finish caching and try again.":
+    "„Zwischengespeichert“ bedeutet lediglich, dass dein Add-on davon ausgeht, dass die Datei bereits bei deinem Debrid-Dienst gespeichert ist und sofort abgespielt werden kann. Diese Kennzeichnung stimmt nicht immer: Manchmal ist die Datei tatsächlich noch nicht vorhanden. Dann startet die Quelle nicht oder spielt nur einen kurzen, fehlerhaften Clip ab. Das ist kein Problem von Harbor: Wähle eine andere Quelle oder warte eine Minute, bis die Zwischenspeicherung abgeschlossen ist, und versuche es erneut.",
   "○ Mark watched": "○ Als gesehen markieren",
   "★ Rate": "★ Bewerten",
   "★ {rating} — Change": "★ {rating} - Ändern",

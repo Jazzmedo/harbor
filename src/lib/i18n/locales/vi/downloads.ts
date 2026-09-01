@@ -5,7 +5,8 @@ const downloads: Record<string, string> = {
   "{count} downloading": "Đang tải xuống {count} mục",
   "{size} saved": "Đã lưu {size}",
   "No downloads yet": "Chưa có nội dung tải xuống",
-  "Open any movie or show, hover an episode, and click the download icon. Pick the exact source you want and it saves here for offline watching.": "Mở phim hoặc phim bộ bất kỳ, di chuột lên một tập rồi nhấp vào biểu tượng tải xuống. Chọn đúng nguồn bạn muốn để lưu tại đây và xem ngoại tuyến.",
+  "Open any movie or show, hover an episode, and click the download icon. Pick the exact source you want and it saves here for offline watching.":
+    "Mở phim hoặc phim bộ bất kỳ, di chuột lên một tập rồi nhấp vào biểu tượng tải xuống. Chọn đúng nguồn bạn muốn để lưu tại đây và xem ngoại tuyến.",
   "Interrupted: re-download to finish": "Đã gián đoạn: tải lại để hoàn tất",
   "Cancel download": "Hủy tải xuống",
   "Delete download and file": "Xóa nội dung tải xuống và tệp",
@@ -27,11 +28,13 @@ const downloads: Record<string, string> = {
   "Reset to default folder": "Đặt lại về thư mục mặc định",
   "{shown} of {total} file from your computer": "{shown}/{total} tệp từ máy tính",
   "{shown} of {total} files from your computer": "{shown}/{total} tệp từ máy tính",
-  "Point Harbor at a folder. We scan it for movies and shows, parse titles from filenames, and enrich them with TMDB so they look the same as everything else here. We just remember the path; nothing is copied or moved.": "Chọn một thư mục cho Harbor. Chúng tôi sẽ quét phim và phim bộ trong đó, nhận diện tiêu đề từ tên tệp rồi bổ sung dữ liệu từ TMDB để chúng hiển thị giống các nội dung khác tại đây. Chúng tôi chỉ ghi nhớ đường dẫn; không sao chép hay di chuyển bất kỳ nội dung nào.",
+  "Point Harbor at a folder. We scan it for movies and shows, parse titles from filenames, and enrich them with TMDB so they look the same as everything else here. We just remember the path; nothing is copied or moved.":
+    "Chọn một thư mục cho Harbor. Chúng tôi sẽ quét phim và phim bộ trong đó, nhận diện tiêu đề từ tên tệp rồi bổ sung dữ liệu từ TMDB để chúng hiển thị giống các nội dung khác tại đây. Chúng tôi chỉ ghi nhớ đường dẫn; không sao chép hay di chuyển bất kỳ nội dung nào.",
   "No video files found in that folder.": "Không tìm thấy tệp video nào trong thư mục đó.",
   "Couldn't scan that folder.": "Không thể quét thư mục đó.",
   "You're offline": "Bạn đang ngoại tuyến",
-  "You're offline. Your downloads still play.": "Bạn đang ngoại tuyến. Nội dung đã tải xuống vẫn phát được.",
+  "You're offline. Your downloads still play.":
+    "Bạn đang ngoại tuyến. Nội dung đã tải xuống vẫn phát được.",
   "Continue Watching screenshots": "Ảnh chụp màn hình Tiếp tục xem",
   "Go to show": "Đi đến phim bộ",
 };

@@ -54,11 +54,7 @@ export function SidePanel({
     return Array.from({ length: 4 }, (_, i) => sample[i] ?? fallbackBackdrop);
   }, [stills, fallbackBackdrop]);
 
-  const lightboxImages = stills.length > 0
-    ? stills
-    : fallbackBackdrop
-      ? [fallbackBackdrop]
-      : [];
+  const lightboxImages = stills.length > 0 ? stills : fallbackBackdrop ? [fallbackBackdrop] : [];
 
   const openAt = (tileSrc: string | undefined) => {
     if (!tileSrc || lightboxImages.length === 0) return;
@@ -88,16 +84,18 @@ export function SidePanel({
         ))}
       </div>
       {description && (
-        <p className="text-[12.5px] leading-snug text-ink-muted line-clamp-3">
-          {description}
-        </p>
+        <p className="text-[12.5px] leading-snug text-ink-muted line-clamp-3">{description}</p>
       )}
       {live.value && (
         <div className="mt-auto flex items-center gap-1.5 rounded-full border border-edge-soft bg-canvas/40 px-2.5 py-1 text-[12px] font-semibold text-ink self-start">
           {live.isImdb ? (
             <ImdbIcon className="h-[12px] w-auto rounded-[2px]" />
           ) : (
-            <Star className="h-[12px] w-[12px] text-amber-400" fill="currentColor" strokeWidth={0} />
+            <Star
+              className="h-[12px] w-[12px] text-amber-400"
+              fill="currentColor"
+              strokeWidth={0}
+            />
           )}
           <span>{live.value}</span>
           <span className="text-ink-subtle">· {t("Top Rated")}</span>

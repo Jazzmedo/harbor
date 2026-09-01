@@ -44,7 +44,7 @@ export function SaveLocationChip() {
 
   const current = settings.downloadDir || systemDefault;
   const isCustom = !!settings.downloadDir;
-  const folderName = current ? current.split(/[\\/]/).filter(Boolean).pop() ?? current : "";
+  const folderName = current ? (current.split(/[\\/]/).filter(Boolean).pop() ?? current) : "";
 
   const pick = async () => {
     try {

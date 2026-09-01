@@ -12,7 +12,14 @@ export function CanvasFrame({ html, css, height }: { html: string; css: string; 
       referrerPolicy="no-referrer"
       loading="lazy"
       srcDoc={doc}
-      style={{ width: "100%", height: h, border: 0, borderRadius: 14, display: "block", background: "transparent" }}
+      style={{
+        width: "100%",
+        height: h,
+        border: 0,
+        borderRadius: 14,
+        display: "block",
+        background: "transparent",
+      }}
     />
   );
 }

@@ -42,8 +42,14 @@ export function DiagnosticsCard({ diag }: { diag: Diagnostics | null }) {
         open={open}
         onClose={() => setOpen(false)}
         title={t("What gets sent")}
-        sub={t("Auto-included. No keys, no library, no URLs. Just structural flags so reproductions go faster.")}
-        actions={<ModalButton ghost onClick={() => setOpen(false)}>{t("Close")}</ModalButton>}
+        sub={t(
+          "Auto-included. No keys, no library, no URLs. Just structural flags so reproductions go faster.",
+        )}
+        actions={
+          <ModalButton ghost onClick={() => setOpen(false)}>
+            {t("Close")}
+          </ModalButton>
+        }
       >
         <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 rounded-md bg-elevated px-4 py-3.5 font-mono text-[11.5px] text-ink-muted">
           <Pair k={t("App")} v={diag.appVersion} />

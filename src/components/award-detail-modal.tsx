@@ -8,7 +8,6 @@ import type { AwardEntry, AwardType } from "@/lib/providers/wikidata";
 import { useView } from "@/lib/view";
 import { meta as cinemetaMeta, type Meta } from "@/lib/cinemeta";
 
-
 const TOOLTIP_WIDTH = 360;
 const TOOLTIP_MAX_HEIGHT = 420;
 const GAP = 10;
@@ -27,7 +26,9 @@ export function AwardDetailModal({
   const t = useT();
   const { openMeta } = useView();
   const ref = useRef<HTMLDivElement>(null);
-  const [pos, setPos] = useState<{ top: number; left: number; place: "below" | "above" } | null>(null);
+  const [pos, setPos] = useState<{ top: number; left: number; place: "below" | "above" } | null>(
+    null,
+  );
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -61,7 +62,10 @@ export function AwardDetailModal({
     const spaceAbove = anchor.top;
     const place: "below" | "above" =
       spaceBelow >= 220 || spaceBelow >= spaceAbove ? "below" : "above";
-    const desiredHeight = Math.min(TOOLTIP_MAX_HEIGHT, place === "below" ? spaceBelow - GAP - 12 : spaceAbove - GAP - 12);
+    const desiredHeight = Math.min(
+      TOOLTIP_MAX_HEIGHT,
+      place === "below" ? spaceBelow - GAP - 12 : spaceAbove - GAP - 12,
+    );
     const top = place === "below" ? anchor.bottom + GAP : anchor.top - GAP - desiredHeight;
     let left = anchor.left + anchor.width / 2 - TOOLTIP_WIDTH / 2;
     left = Math.max(12, Math.min(left, vw - TOOLTIP_WIDTH - 12));
@@ -75,25 +79,44 @@ export function AwardDetailModal({
   const tint = laurelColorFor(type);
   const typeTitle = (() => {
     switch (type) {
-      case "oscar": return t("Academy Awards");
-      case "emmy": return t("Primetime Emmys");
-      case "bafta": return t("BAFTA Awards");
-      case "golden_globe": return t("Golden Globes");
-      case "sag": return t("Screen Actors Guild Awards");
-      case "critics_choice": return t("Critics' Choice Awards");
-      case "cannes": return t("Cannes Film Festival");
-      case "venice": return t("Venice Film Festival");
-      case "berlin": return t("Berlin Film Festival");
-      case "bafta_tv": return t("BAFTA Television Awards");
-      case "annie": return t("Annie Awards");
-      case "spirit": return t("Independent Spirit Awards");
-      case "saturn": return t("Saturn Awards");
-      case "cesar": return t("César Awards");
-      case "goya": return t("Goya Awards");
-      case "blue_dragon": return t("Blue Dragon Film Awards");
-      case "baeksang": return t("Baeksang Arts Awards");
-      case "bifa": return t("British Independent Film Awards");
-      case "other": return t("Awards");
+      case "oscar":
+        return t("Academy Awards");
+      case "emmy":
+        return t("Primetime Emmys");
+      case "bafta":
+        return t("BAFTA Awards");
+      case "golden_globe":
+        return t("Golden Globes");
+      case "sag":
+        return t("Screen Actors Guild Awards");
+      case "critics_choice":
+        return t("Critics' Choice Awards");
+      case "cannes":
+        return t("Cannes Film Festival");
+      case "venice":
+        return t("Venice Film Festival");
+      case "berlin":
+        return t("Berlin Film Festival");
+      case "bafta_tv":
+        return t("BAFTA Television Awards");
+      case "annie":
+        return t("Annie Awards");
+      case "spirit":
+        return t("Independent Spirit Awards");
+      case "saturn":
+        return t("Saturn Awards");
+      case "cesar":
+        return t("César Awards");
+      case "goya":
+        return t("Goya Awards");
+      case "blue_dragon":
+        return t("Blue Dragon Film Awards");
+      case "baeksang":
+        return t("Baeksang Arts Awards");
+      case "bifa":
+        return t("British Independent Film Awards");
+      case "other":
+        return t("Awards");
     }
   })();
 
@@ -118,13 +141,13 @@ export function AwardDetailModal({
             {typeTitle}
           </h3>
           <p className="text-[10.5px] text-ink-muted">
-            {wins > 0 && (wins === 1
-              ? t("{count} win", { count: wins })
-              : t("{count} wins", { count: wins }))}
+            {wins > 0 &&
+              (wins === 1 ? t("{count} win", { count: wins }) : t("{count} wins", { count: wins }))}
             {wins > 0 && noms > 0 && " · "}
-            {noms > 0 && (noms === 1
-              ? t("{count} nomination", { count: noms })
-              : t("{count} nominations", { count: noms }))}
+            {noms > 0 &&
+              (noms === 1
+                ? t("{count} nomination", { count: noms })
+                : t("{count} nominations", { count: noms }))}
           </p>
         </div>
         <button
@@ -227,7 +250,12 @@ function AwardRow({
     >
       <span className="relative h-[48px] w-[34px] shrink-0 overflow-hidden rounded-md bg-canvas/60 ring-1 ring-edge-soft/60">
         {poster ? (
-          <img src={poster} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+          <img
+            src={poster}
+            alt=""
+            loading="lazy"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
         ) : (
           <span
             className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-canvas to-elevated text-ink-muted"
@@ -242,7 +270,9 @@ function AwardRow({
 
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="flex items-center gap-1.5">
-          {group.year && <span className="font-mono text-[10px] tabular-nums text-ink-subtle">{group.year}</span>}
+          {group.year && (
+            <span className="font-mono text-[10px] tabular-nums text-ink-subtle">{group.year}</span>
+          )}
           <span
             className={`rounded-full px-1.5 py-0.5 text-[8.5px] font-bold uppercase tracking-[0.16em] ${
               won ? "bg-accent/15 text-accent" : "bg-canvas/60 text-ink-muted"
@@ -254,9 +284,7 @@ function AwardRow({
         <span className="truncate text-[12px] font-semibold text-ink">
           {title ?? (cats || group.awardName)}
         </span>
-        {title && cats && (
-          <span className="truncate text-[10.5px] text-ink-muted">{cats}</span>
-        )}
+        {title && cats && <span className="truncate text-[10.5px] text-ink-muted">{cats}</span>}
       </div>
 
       {interactive && (
@@ -270,7 +298,7 @@ const CINEMETA = "https://v3-cinemeta.strem.io";
 const workCache = new Map<string, Meta | null>();
 const workInflight = new Map<string, Promise<Meta | null>>();
 
-function workKey(entry: WorkLike):string {
+function workKey(entry: WorkLike): string {
   return entry.workImdb ?? `t:${(entry.workTitle ?? "").toLowerCase()}:${entry.year ?? ""}`;
 }
 
@@ -291,15 +319,24 @@ function pickByYear(metas: Meta[], year?: number): Meta | null {
 }
 
 function normMatch(s: string): string {
-  return s.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  return s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
 }
 
-async function cinemetaSearch(title: string, year: number | undefined, preferSeries: boolean): Promise<Meta | null> {
+async function cinemetaSearch(
+  title: string,
+  year: number | undefined,
+  preferSeries: boolean,
+): Promise<Meta | null> {
   const order = preferSeries ? (["series", "movie"] as const) : (["movie", "series"] as const);
   const want = normMatch(title);
   for (const type of order) {
     try {
-      const res = await fetch(`${CINEMETA}/catalog/${type}/top/search=${encodeURIComponent(title)}.json`);
+      const res = await fetch(
+        `${CINEMETA}/catalog/${type}/top/search=${encodeURIComponent(title)}.json`,
+      );
       if (!res.ok) continue;
       const json = await res.json();
       const metas: Meta[] = json?.metas ?? [];

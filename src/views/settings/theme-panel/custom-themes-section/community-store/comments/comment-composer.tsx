@@ -1,5 +1,17 @@
 import { useRef, useState } from "react";
-import { Bold, Code, Eye, Image as ImageIcon, Italic, Link2, Loader2, Pencil, Quote, Strikethrough, Underline } from "lucide-react";
+import {
+  Bold,
+  Code,
+  Eye,
+  Image as ImageIcon,
+  Italic,
+  Link2,
+  Loader2,
+  Pencil,
+  Quote,
+  Strikethrough,
+  Underline,
+} from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { MAX_COMMENT_LEN, cleanCommentText, stripUnsafeUrls } from "./comment-filter";
 import { CommentBody } from "./comment-render";
@@ -63,7 +75,7 @@ export function CommentComposer({ onSubmit }: { onSubmit: (text: string) => Prom
   const over = text.length > MAX_COMMENT_LEN;
 
   return (
- <div className="flex flex-col gap-2 rounded-sm bg-surface p-3">
+    <div className="flex flex-col gap-2 rounded-sm bg-surface p-3">
       <div className="flex items-center gap-0.5">
         {TOOLS.map(({ tag, icon: Icon, label }) => (
           <button
@@ -100,14 +112,18 @@ export function CommentComposer({ onSubmit }: { onSubmit: (text: string) => Prom
           value={text}
           onChange={(e) => setText(e.target.value)}
           rows={3}
-          placeholder={t("Share what you think. [b]bold[/b], [img]https://...[/img], and links welcome.")}
+          placeholder={t(
+            "Share what you think. [b]bold[/b], [img]https://...[/img], and links welcome.",
+          )}
           className="min-h-[76px] resize-y rounded-[4px] bg-canvas p-3 text-[13.5px] leading-relaxed text-ink placeholder:text-ink-subtle focus:outline-none focus:ring-1 focus:ring-edge"
         />
       )}
 
       <div className="flex items-center gap-3">
         {err && <span className="text-[12.5px] text-danger">{err}</span>}
-        <span className={`ms-auto text-[11.5px] tabular-nums ${over ? "text-danger" : "text-ink-subtle"}`}>
+        <span
+          className={`ms-auto text-[11.5px] tabular-nums ${over ? "text-danger" : "text-ink-subtle"}`}
+        >
           {text.length}/{MAX_COMMENT_LEN}
         </span>
         <button

@@ -1,7 +1,8 @@
 const discover: Record<string, string> = {
   "A name you keep watching": "Ein Name, den du immer wieder siehst",
   "AI & The Future": "KI und die Zukunft",
-  "Add a TMDB key in Settings to browse collections.": "Füge in den Einstellungen einen TMDB-Schlüssel hinzu, um Sammlungen zu durchsuchen.",
+  "Add a TMDB key in Settings to browse collections.":
+    "Füge in den Einstellungen einen TMDB-Schlüssel hinzu, um Sammlungen zu durchsuchen.",
   "An actor you keep watching": "Ein Schauspieler, den du immer wieder siehst",
   "Ancient Civilizations": "Antike Zivilisationen",
   "Animated, For Grown-Ups": "Animation, für Erwachsene",
@@ -11,14 +12,15 @@ const discover: Record<string, string> = {
   "Beyond the kids' shelf": "Mehr als nur das Kinderregal",
   "Browse your catalogs": "Deine Kataloge durchsuchen",
   "Can't decide?": "Du kannst dich nicht entscheiden?",
-  "Collection": "Sammlung",
-  "Collections": "Sammlungen",
-  "Come back tomorrow, or clear what you skipped in Settings.": "Komm morgen wieder oder setze unter Einstellungen zurück, was du übersprungen hast.",
+  Collection: "Sammlung",
+  Collections: "Sammlungen",
+  "Come back tomorrow, or clear what you skipped in Settings.":
+    "Komm morgen wieder oder setze unter Einstellungen zurück, was du übersprungen hast.",
   "Concert Films": "Konzertfilme",
-  "Crime": "Krimi",
+  Crime: "Krimi",
   "Critically Loved": "Bei Kritikern beliebt",
   "Featured & Recommended": "Highlights & Empfehlungen",
-  "Films": "Filme",
+  Films: "Filme",
   "Front row seat": "Platz in der ersten Reihe",
   "Hide section": "Abschnitt ausblenden",
   "Hide this permanently?": "Dauerhaft ausblenden?",
@@ -32,7 +34,8 @@ const discover: Record<string, string> = {
   "Music Documentaries": "Musikdokumentationen",
   "No films found in this collection.": "In dieser Sammlung wurden keine Filme gefunden.",
   "Nothing left in today's picks": "Von den heutigen Empfehlungen ist nichts mehr übrig",
-  "One pick at a time, full screen, until something lands.": "Jeweils ein Vorschlag im Vollbild, bis einer passt.",
+  "One pick at a time, full screen, until something lands.":
+    "Jeweils ein Vorschlag im Vollbild, bis einer passt.",
   "Open the queue": "Warteschlange öffnen",
   "Outlaws & Bounty Hunters": "Gesetzlose & Kopfgeldjäger",
   "Paranormal Cases": "Paranormale Fälle",
@@ -41,7 +44,7 @@ const discover: Record<string, string> = {
   "Real journeys beyond Earth": "Echte Reisen über die Erde hinaus",
   "Reportedly real": "Angeblich echt",
   "Revisionist Westerns": "Revisionistische Western",
-  "Sagas": "Sagas",
+  Sagas: "Sagas",
   "Series, Critically Acclaimed": "Serien, von Kritikern gefeiert",
   "Show section": "Abschnitt anzeigen",
   "Showing now": "Läuft jetzt",
@@ -49,7 +52,7 @@ const discover: Record<string, string> = {
   "Space Exploration": "Weltraumforschung",
   "Spaghetti Westerns": "Spaghettiwestern",
   "Starring a Favorite": "Mit einem Favoriten in der Hauptrolle",
-  "Superheroes": "Superhelden",
+  Superheroes: "Superhelden",
   "Surprise me": "Überrasche mich",
   "The myth, reconsidered": "Der Mythos, neu betrachtet",
   "The real footage": "Die echten Aufnahmen",
@@ -66,7 +69,8 @@ const discover: Record<string, string> = {
   "Where machines are taking us": "Wohin uns Maschinen führen",
   "{count} films": "{count} Filme",
   "{n} waiting": "{n} warten",
-  "{title} will not come back in the Discovery Queue.": "{title} wird nicht mehr in der Entdeckungswarteschlange angezeigt.",
+  "{title} will not come back in the Discovery Queue.":
+    "{title} wird nicht mehr in der Entdeckungswarteschlange angezeigt.",
 };
 
 export default discover;

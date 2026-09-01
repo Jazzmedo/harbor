@@ -80,7 +80,9 @@ export function StremioRow({
             <EditionChip stream={stream} />
           </div>
         )}
-        {failed && <p className="text-[13px] font-medium text-danger">{t("Unavailable, try another.")}</p>}
+        {failed && (
+          <p className="text-[13px] font-medium text-danger">{t("Unavailable, try another.")}</p>
+        )}
       </div>
       <div className="flex shrink-0 items-center gap-2 self-center">
         {link && <CopyLinkButton url={link} size={16} className="h-9 w-9" />}

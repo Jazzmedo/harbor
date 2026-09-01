@@ -7,8 +7,7 @@ import { useMobileRemote } from "./mobile-remote";
 type TileState = "idle" | "chosen" | "dimmed";
 
 const prefersReducedMotion = () =>
-  typeof window !== "undefined" &&
-  window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
 const SWITCH_CSS = `
 .harbor-ring-lock {
@@ -92,12 +91,16 @@ export function MobileWhosWatching({ onClose }: { onClose: () => void }) {
 
       <div className="relative flex flex-1 flex-col overflow-y-auto px-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <div className="my-auto flex w-full flex-col items-center py-8">
-          <div className={`mb-9 flex flex-col items-center gap-1.5 ${reduced ? "" : "harbor-step"}`}>
+          <div
+            className={`mb-9 flex flex-col items-center gap-1.5 ${reduced ? "" : "harbor-step"}`}
+          >
             <h1 className="font-display text-[26px] font-medium tracking-tight text-ink">
               {t("Who's watching?")}
             </h1>
             <p className="text-[13.5px] text-ink-muted">
-              {profiles.length ? t("Tap a profile to switch") : t("Connect to your computer to switch")}
+              {profiles.length
+                ? t("Tap a profile to switch")
+                : t("Connect to your computer to switch")}
             </p>
           </div>
 
@@ -168,7 +171,12 @@ function ProfileTile({
           style={{ background: profile.avatar ? undefined : profile.color }}
         >
           {profile.avatar ? (
-            <img src={profile.avatar} alt="" draggable={false} className="h-full w-full object-cover" />
+            <img
+              src={profile.avatar}
+              alt=""
+              draggable={false}
+              className="h-full w-full object-cover"
+            />
           ) : (
             initial
           )}

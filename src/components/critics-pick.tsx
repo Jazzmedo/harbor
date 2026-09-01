@@ -7,7 +7,13 @@ import { useImdbRating } from "@/lib/imdb-rating";
 import { peekCachedLogo, resolveLogo } from "@/lib/logo";
 import { useOmdbScores } from "@/lib/providers/omdb";
 import { rpdbPoster } from "@/lib/providers/rpdb";
-import { tmdbCriticData, tmdbMovieImages, useTmdbImdbId, type CriticData, type CriticReview } from "@/lib/providers/tmdb";
+import {
+  tmdbCriticData,
+  tmdbMovieImages,
+  useTmdbImdbId,
+  type CriticData,
+  type CriticReview,
+} from "@/lib/providers/tmdb";
 import { useT } from "@/lib/i18n";
 import { useSettings } from "@/lib/settings";
 import { useView } from "@/lib/view";
@@ -42,9 +48,7 @@ export function CriticsPick({ meta }: { meta: Meta }) {
   const [logo, setLogo] = useState<string | null>(
     () => peekCachedLogo(settings.tmdbKey, meta) ?? null,
   );
-  const [logoLoaded, setLogoLoaded] = useState<boolean>(
-    !!peekCachedLogo(settings.tmdbKey, meta),
-  );
+  const [logoLoaded, setLogoLoaded] = useState<boolean>(!!peekCachedLogo(settings.tmdbKey, meta));
 
   useEffect(() => {
     const cached = peekCachedLogo(settings.tmdbKey, meta);
@@ -279,9 +283,21 @@ export function CriticsPick({ meta }: { meta: Meta }) {
               {meta.releaseInfo && <span>{meta.releaseInfo}</span>}
               {imdbRating && (
                 <>
-                  {meta.releaseInfo && <span aria-hidden className="text-ink/40">·</span>}
+                  {meta.releaseInfo && (
+                    <span aria-hidden className="text-ink/40">
+                      ·
+                    </span>
+                  )}
                   <span className="inline-flex items-center gap-1.5">
-                    {hasImdbIdentity ? <ImdbIcon className="h-[12px] w-auto rounded-[2px]" /> : <Star className="h-[12px] w-[12px] text-amber-400" fill="currentColor" strokeWidth={0} />}
+                    {hasImdbIdentity ? (
+                      <ImdbIcon className="h-[12px] w-auto rounded-[2px]" />
+                    ) : (
+                      <Star
+                        className="h-[12px] w-[12px] text-amber-400"
+                        fill="currentColor"
+                        strokeWidth={0}
+                      />
+                    )}
                     {imdbRating}
                   </span>
                 </>
@@ -313,7 +329,11 @@ export function CriticsPick({ meta }: { meta: Meta }) {
               }`}
               style={reviewFade}
             >
-              <LinkedReview text={quote} people={linkablePeople} onPersonClick={handlePersonClick} />
+              <LinkedReview
+                text={quote}
+                people={linkablePeople}
+                onPersonClick={handlePersonClick}
+              />
             </p>
             {activeReview ? (
               <div className="flex items-center justify-between gap-2">
@@ -377,7 +397,15 @@ export function CriticsPick({ meta }: { meta: Meta }) {
                 <div className="flex items-center gap-3">
                   {imdbRating && (
                     <span className="inline-flex items-center gap-1.5">
-                      {hasImdbIdentity ? <ImdbIcon className="h-[12px] w-auto rounded-[2px]" /> : <Star className="h-[12px] w-[12px] text-amber-400" fill="currentColor" strokeWidth={0} />}
+                      {hasImdbIdentity ? (
+                        <ImdbIcon className="h-[12px] w-auto rounded-[2px]" />
+                      ) : (
+                        <Star
+                          className="h-[12px] w-[12px] text-amber-400"
+                          fill="currentColor"
+                          strokeWidth={0}
+                        />
+                      )}
                       {imdbRating}
                     </span>
                   )}
@@ -389,7 +417,9 @@ export function CriticsPick({ meta }: { meta: Meta }) {
                   )}
                   {omdb?.metascore != null && (
                     <span className="inline-flex items-center gap-1.5">
-                      <span className="rounded-[3px] bg-[#ffcc33] px-1 text-[9.5px] font-bold tracking-wider text-black">M</span>
+                      <span className="rounded-[3px] bg-[#ffcc33] px-1 text-[9.5px] font-bold tracking-wider text-black">
+                        M
+                      </span>
                       {omdb.metascore}
                     </span>
                   )}
@@ -421,7 +451,9 @@ export function CriticsPick({ meta }: { meta: Meta }) {
           {data && data.cast.length > 0 && (
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <span className="text-[10.5px] uppercase tracking-[0.2em] text-ink-subtle">{t("Cast")}</span>
+                <span className="text-[10.5px] uppercase tracking-[0.2em] text-ink-subtle">
+                  {t("Cast")}
+                </span>
                 {data.cast.length > 4 && (
                   <div className="flex gap-1">
                     <button
@@ -461,7 +493,9 @@ export function CriticsPick({ meta }: { meta: Meta }) {
             <div className="flex flex-col gap-2 text-[12.5px]">
               {data.director && (
                 <div className="flex items-baseline justify-between gap-3">
-                  <span className="text-[10.5px] uppercase tracking-[0.2em] text-ink-subtle">{t("Director")}</span>
+                  <span className="text-[10.5px] uppercase tracking-[0.2em] text-ink-subtle">
+                    {t("Director")}
+                  </span>
                   <button
                     type="button"
                     onClick={() => openPerson(data.director!.id)}

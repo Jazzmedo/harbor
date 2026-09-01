@@ -155,7 +155,8 @@ export function ThemeStudio({ seed, onClose }: { seed?: ThemePreset; onClose: ()
       }
       if ((e.metaKey || e.ctrlKey) && (e.key === "z" || e.key === "Z")) {
         const el = e.target as HTMLElement | null;
-        if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable)) return;
+        if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable))
+          return;
         e.preventDefault();
         if (e.shiftKey) redo();
         else undo();
@@ -229,7 +230,12 @@ export function ThemeStudio({ seed, onClose }: { seed?: ThemePreset; onClose: ()
       fontPair: draft.fontPair,
       bokeh: draft.bokeh,
       ...(settings.theme.backgroundImage
-        ? { background: { image: settings.theme.backgroundImage, dim: settings.theme.backgroundDim } }
+        ? {
+            background: {
+              image: settings.theme.backgroundImage,
+              dim: settings.theme.backgroundDim,
+            },
+          }
         : {}),
       ...(draft.customFontId ? { customFontId: draft.customFontId } : {}),
       ...(draft.layout === "custom" ? { chrome: draft.chrome } : {}),
@@ -243,7 +249,8 @@ export function ThemeStudio({ seed, onClose }: { seed?: ThemePreset; onClose: ()
   const onSave = () => {
     if (!canSave) return;
     const theme = buildTheme();
-    const previous = settings.theme.preset !== "custom" ? getThemeById(settings.theme.preset) : null;
+    const previous =
+      settings.theme.preset !== "custom" ? getThemeById(settings.theme.preset) : null;
     const image = nextBackgroundImage(settings.theme.backgroundImage, previous, theme);
     saveCustomTheme(theme);
     update({
@@ -351,7 +358,9 @@ export function ThemeStudio({ seed, onClose }: { seed?: ThemePreset; onClose: ()
                 {t("Leave without saving?")}
               </h2>
               <p className="mt-1.5 text-[13.5px] leading-relaxed text-ink-muted">
-                {t("Your changes to this theme aren't saved yet. They'll be lost if you leave now.")}
+                {t(
+                  "Your changes to this theme aren't saved yet. They'll be lost if you leave now.",
+                )}
               </p>
               <div className="mt-5 flex items-center justify-end gap-2.5">
                 <button

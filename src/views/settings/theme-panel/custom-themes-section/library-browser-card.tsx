@@ -64,7 +64,11 @@ export function BrowserCard({
             disabled={busy}
             className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-1.5 bg-canvas/70 text-[12.5px] font-semibold text-ink-muted opacity-0 transition-opacity hover:text-ink group-hover/card:opacity-100"
           >
-            {busy ? <Loader2 size={18} className="animate-spin" /> : <ImagePlus size={18} strokeWidth={1.9} />}
+            {busy ? (
+              <Loader2 size={18} className="animate-spin" />
+            ) : (
+              <ImagePlus size={18} strokeWidth={1.9} />
+            )}
             {busy ? t("Adding") : t("Add image")}
           </button>
         )}
@@ -74,8 +78,14 @@ export function BrowserCard({
       </div>
       <div className="flex flex-col gap-3 p-4">
         <div className="flex min-w-0 flex-col gap-1">
-          <span className="truncate text-[14.5px] font-semibold tracking-tight text-ink">{theme.name}</span>
-          {localizedBlurb && <span className="line-clamp-2 text-[12.5px] leading-relaxed text-ink-muted">{localizedBlurb}</span>}
+          <span className="truncate text-[14.5px] font-semibold tracking-tight text-ink">
+            {theme.name}
+          </span>
+          {localizedBlurb && (
+            <span className="line-clamp-2 text-[12.5px] leading-relaxed text-ink-muted">
+              {localizedBlurb}
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-1.5">
           <button

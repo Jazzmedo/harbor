@@ -53,7 +53,9 @@ export function AutoDownloadRow({ series }: { series: AutoDlSeries }) {
                 {statusText}
               </span>
               {grabbed && series.lastGrabbed && (
-                <span className="text-ink-muted">· {t("last {episode}", { episode: series.lastGrabbed })}</span>
+                <span className="text-ink-muted">
+                  · {t("last {episode}", { episode: series.lastGrabbed })}
+                </span>
               )}
               {grabbed && series.lastError && (
                 <span className="text-ink-muted">· {series.lastError}</span>

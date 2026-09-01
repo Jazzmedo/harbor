@@ -9,41 +9,61 @@ type Step = { icon: typeof Tag; title: string; body: string };
 type Translate = (key: string, vars?: Record<string, string | number>) => string;
 
 function stepsFor(kind: BundleKind, t: Translate): Step[] {
-  const example = kind === "badge" ? "4k.png, hdr.png, atmos.png" : "oscar.png, emmy.png, cannes.png";
+  const example =
+    kind === "badge" ? "4k.png, hdr.png, atmos.png" : "oscar.png, emmy.png, cannes.png";
   return [
     {
       icon: Tag,
       title: t("Name each file after its slot"),
-      body: t("That is the whole trick. A file called {example} drops straight into the matching slot. The name before .png is all that matters, capitals and spaces are ignored.", { example }),
+      body: t(
+        "That is the whole trick. A file called {example} drops straight into the matching slot. The name before .png is all that matters, capitals and spaces are ignored.",
+        { example },
+      ),
     },
     {
       icon: Wand2,
       title: t("Any size works, we optimize it"),
-      body: t("Drop in art at any resolution. Harbor resizes and compresses anything oversized for you, so nothing gets skipped for being too big. Square PNGs with a transparent background look best."),
+      body: t(
+        "Drop in art at any resolution. Harbor resizes and compresses anything oversized for you, so nothing gets skipped for being too big. Square PNGs with a transparent background look best.",
+      ),
     },
     {
       icon: Film,
       title: t("Animated GIFs are welcome"),
-      body: t("Want a badge that moves? Drop in a GIF up to 8 MB. Harbor shrinks it down and converts it to a lightweight animated format so it stays crisp and loads fast. Keep it small and looping."),
+      body: t(
+        "Want a badge that moves? Drop in a GIF up to 8 MB. Harbor shrinks it down and converts it to a lightweight animated format so it stays crisp and loads fast. Keep it small and looping.",
+      ),
     },
     {
       icon: FolderArchive,
       title: t("Three ways to add art"),
-      body: t("Click any single slot to pick one file, select many PNGs at once, or drop a whole .zip of them. Named files land in their slots automatically, the rest you can place by hand."),
+      body: t(
+        "Click any single slot to pick one file, select many PNGs at once, or drop a whole .zip of them. Named files land in their slots automatically, the rest you can place by hand.",
+      ),
     },
     ...(kind === "award"
       ? [
           {
             icon: Sparkles,
             title: t("Invent your own award types"),
-            body: t("Awards are not a fixed list. Add a custom award type, name it anything, and give it its own art. It shows up alongside the built-in trophies."),
+            body: t(
+              "Awards are not a fixed list. Add a custom award type, name it anything, and give it its own art. It shows up alongside the built-in trophies.",
+            ),
           },
         ]
       : []),
   ];
 }
 
-export function NamingGuideModal({ kind, open, onClose }: { kind: BundleKind; open: boolean; onClose: () => void }) {
+export function NamingGuideModal({
+  kind,
+  open,
+  onClose,
+}: {
+  kind: BundleKind;
+  open: boolean;
+  onClose: () => void;
+}) {
   const t = useT();
   const { closing, close } = useModalExit(onClose, open);
   const [copied, setCopied] = useState<string | null>(null);
@@ -76,7 +96,10 @@ export function NamingGuideModal({ kind, open, onClose }: { kind: BundleKind; op
   };
 
   return createPortal(
-    <div className={`${closing ? "animate-scrim-out" : "animate-scrim-in"} fixed inset-0 z-[250] flex items-center justify-center p-6`} onClick={close}>
+    <div
+      className={`${closing ? "animate-scrim-out" : "animate-scrim-in"} fixed inset-0 z-[250] flex items-center justify-center p-6`}
+      onClick={close}
+    >
       <div
         className="flex max-h-[86vh] w-[min(640px,100%)] flex-col overflow-hidden rounded-md bg-surface shadow-2xl animate-popover-in"
         onClick={(e) => e.stopPropagation()}
@@ -86,7 +109,9 @@ export function NamingGuideModal({ kind, open, onClose }: { kind: BundleKind; op
             <h2 className="text-[17px] font-semibold tracking-tight text-ink">
               {kind === "badge" ? t("How badge packs work") : t("How award packs work")}
             </h2>
-            <p className="text-[12.5px] text-ink-subtle">{t("Name your files, drop them in, done.")}</p>
+            <p className="text-[12.5px] text-ink-subtle">
+              {t("Name your files, drop them in, done.")}
+            </p>
           </div>
           <button
             onClick={close}
@@ -116,8 +141,11 @@ export function NamingGuideModal({ kind, open, onClose }: { kind: BundleKind; op
 
           <div className="flex flex-col gap-2.5 rounded-md bg-canvas p-4">
             <span className="flex items-center gap-2 text-[12.5px] font-semibold text-ink">
-              <FileType2 size={14} strokeWidth={2.2} className="text-accent" /> {t("Every slot name")}
-              <span className="text-[11.5px] font-normal text-ink-subtle">{t("tap a name to copy")}</span>
+              <FileType2 size={14} strokeWidth={2.2} className="text-accent" />{" "}
+              {t("Every slot name")}
+              <span className="text-[11.5px] font-normal text-ink-subtle">
+                {t("tap a name to copy")}
+              </span>
             </span>
             <div className="flex flex-col gap-3.5">
               {groups.map((g) => (
@@ -136,7 +164,9 @@ export function NamingGuideModal({ kind, open, onClose }: { kind: BundleKind; op
                           onClick={() => copyName(file)}
                           title={it.label}
                           className={`flex items-center gap-1.5 rounded-md px-2 py-1 text-[11.5px] transition-colors ${
-                            isCopied ? "bg-accent-soft text-accent" : "bg-elevated text-ink-muted hover:text-ink"
+                            isCopied
+                              ? "bg-accent-soft text-accent"
+                              : "bg-elevated text-ink-muted hover:text-ink"
                           }`}
                         >
                           {isCopied && <Check size={12} strokeWidth={2.8} />}
@@ -149,7 +179,9 @@ export function NamingGuideModal({ kind, open, onClose }: { kind: BundleKind; op
               ))}
               {kind === "award" && (
                 <p className="text-[12.5px] leading-relaxed text-ink-subtle">
-                  {t("Not here? Add a custom award type on the previous screen and name its file anything you like.")}
+                  {t(
+                    "Not here? Add a custom award type on the previous screen and name its file anything you like.",
+                  )}
                 </p>
               )}
             </div>
