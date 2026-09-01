@@ -307,7 +307,13 @@ export type Settings = {
   subStyle: "shadow" | "outline" | "box";
   subFontFamily: string;
   subBold: boolean;
-  customFonts: Array<{ id: string; name: string; format: string; family?: string; dataUrl?: string }>;
+  customFonts: Array<{
+    id: string;
+    name: string;
+    format: string;
+    family?: string;
+    dataUrl?: string;
+  }>;
   subBoxOpacity: number;
   subBoxColor: string;
   subOpacity: number;
@@ -355,6 +361,8 @@ export type Settings = {
   showLocalLibraryBadge: boolean;
   showWatchedBadge: boolean;
   localPlaybackMode: "ask" | "local" | "stream";
+  playbackSourcePreference: "ask" | "local" | "online" | "home-server";
+  preferredMediaServerId: string | null;
   localMinFileSizeMb: number;
   catalogsPinned: string[];
   catalogsHidden: string[];
@@ -609,7 +617,8 @@ export type Settings = {
   downloadCreateFolders: boolean;
   ebookDownloadDir: string;
   ebookDownloadCreateFolders: boolean;
-  stremioDeeplinkInstall: boolean;  iptvPlaylists: Array<{
+  stremioDeeplinkInstall: boolean;
+  iptvPlaylists: Array<{
     id: string;
     name: string;
     url: string;

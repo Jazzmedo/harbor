@@ -21,7 +21,13 @@ import { EpisodeSection } from "./episodes";
 import { CastRow, CastSkeleton, CrewSection } from "./cast";
 import { RecRail } from "./recommendations";
 import { AwardsSection } from "./awards";
-import { dedupeCharacters, dedupeMeta, dedupeRelated, isAnimeId, useAnimeDetail } from "./anime-data";
+import {
+  dedupeCharacters,
+  dedupeMeta,
+  dedupeRelated,
+  isAnimeId,
+  useAnimeDetail,
+} from "./anime-data";
 import {
   AnimeInfo,
   AnimeRelatedRow,
@@ -96,7 +102,7 @@ function DetailBody({
   onOpenMeta: (m: Meta) => void;
 }) {
   const { settings } = useSettings();
-  const { playOnHost, openOnHost } = useMobileRemote();
+  const { playOnHost, openOnHost, snapshot } = useMobileRemote();
   const key = settings.tmdbKey;
   const isAnime = isAnimeId(meta.id);
   const full = useCinemetaFull(meta);
@@ -128,6 +134,34 @@ function DetailBody({
   const runtime = detail?.runtime;
   const genres = (detail?.genres?.length ? detail.genres : meta.genres) ?? [];
   const overview = detail?.overview || full?.description || meta.description || "";
+
+  const availability = useMemo(() => {
+    const ids = new Set(
+      [meta.id, detail ? `tmdb:${detail.kind}:${detail.id}` : "", detail?.imdbId ?? ""]
+        .filter(Boolean)
+        .map((id) => id.toLowerCase()),
+    );
+    const tmdbId =
+      detail?.id ??
+      (() => {
+        const match = meta.id.match(/^tmdb:(?:movie|tv|series):(\d+)$/i);
+        return match ? Number(match[1]) : undefined;
+      })();
+    const imdbId = (
+      detail?.imdbId ?? (meta.id.startsWith("tt") ? meta.id : undefined)
+    )?.toLowerCase();
+    const matches = (item: NonNullable<typeof snapshot.library>["local"][number]) =>
+      ids.has(item.id.toLowerCase()) ||
+      (tmdbId != null && item.tmdbId === tmdbId) ||
+      (!!imdbId && item.imdbId?.toLowerCase() === imdbId);
+    const local = snapshot.library?.local?.some(matches) ?? false;
+    const providers = new Set<"jellyfin" | "emby" | "plex">();
+    for (const item of snapshot.library?.mediaServers ?? []) {
+      if (!matches(item)) continue;
+      for (const provider of item.mediaServerProviders ?? []) providers.add(provider);
+    }
+    return { local, providers: [...providers] };
+  }, [meta.id, detail, snapshot.library]);
 
   const imdbId = detail?.imdbId ?? (meta.id.startsWith("tt") ? meta.id : null);
   const releaseYear = Number(year) || undefined;
@@ -175,6 +209,7 @@ function DetailBody({
         runtime={runtime}
         genres={genres}
         awardSummary={heroAwardSummary}
+        availability={availability}
         onBack={onBack}
       />
 
@@ -182,7 +217,13 @@ function DetailBody({
         className="flex flex-col gap-8 px-5 pt-5"
         style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 44px)" }}
       >
-        <DetailActions meta={meta} detail={detail} title={title} trailerId={trailerId} onPlay={onPlay} />
+        <DetailActions
+          meta={meta}
+          detail={detail}
+          title={title}
+          trailerId={trailerId}
+          onPlay={onPlay}
+        />
 
         {overview ? (
           <Overview text={overview} />

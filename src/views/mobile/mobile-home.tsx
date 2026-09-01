@@ -60,7 +60,15 @@ export function MobileHome() {
     return () => {
       alive = false;
     };
-  }, [settings.tmdbKey, settings.homeMode, reloadKey]);
+  }, [
+    settings.tmdbKey,
+    settings.homeMode,
+    settings.tmdbLanguage,
+    settings.tmdbImageLangs,
+    settings.translateTitles,
+    settings.translateDescriptions,
+    reloadKey,
+  ]);
 
   const shownHero = useHideAnimeMetas(hero);
   const shownRows = useHideAnimeRows(rows);
@@ -92,10 +100,19 @@ export function MobileHome() {
       <MobileHero slides={shownHero} onOpenDetail={setDetailMeta} />
       {cw.length > 0 && <MobileCwRow items={cw} onOpenDetail={setDetailMeta} />}
       {shownRows[0] && shownRows[0].metas.length >= 6 && (
-        <MobileRankRail title="Top 10 Today" metas={dedupeMetas(shownRows[0].metas)} onOpenDetail={setDetailMeta} />
+        <MobileRankRail
+          title="Top 10 Today"
+          metas={dedupeMetas(shownRows[0].metas)}
+          onOpenDetail={setDetailMeta}
+        />
       )}
       {shownRows.slice(1).map((r) => (
-        <MobileRail key={r.key} title={r.name} metas={dedupeMetas(r.metas).slice(0, 18)} onOpenDetail={setDetailMeta} />
+        <MobileRail
+          key={r.key}
+          title={r.name}
+          metas={dedupeMetas(r.metas).slice(0, 18)}
+          onOpenDetail={setDetailMeta}
+        />
       ))}
       <div className="h-4" />
       {detailMeta && <MobileDetail meta={detailMeta} onClose={() => setDetailMeta(null)} />}
