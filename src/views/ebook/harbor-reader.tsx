@@ -546,6 +546,13 @@ export function HarborReader({
   const narrationRun = useRef(0);
   const narrationRequestId = useRef("");
   const narrationLine = useRef(-1);
+  const narrationStep = useRef(0);
+  const narrationAhead = useRef<{
+    start: number;
+    end: number;
+    voice: string;
+    promise: ReturnType<typeof synthesizeNarration>;
+  } | null>(null);
   const [readerText, setReaderText] = useState(content.text ?? "");
   const originalTitle = chapter.title || bookTitle;
   const originalText = content.originalText ?? content.text ?? "";
@@ -1228,7 +1235,21 @@ export function HarborReader({
     onSelectChapter(target);
   };
 
-  const NARRATION_WINDOW_CHARS = 4000;
+  const NARRATION_BUDGETS = [700, 1500, 3000, 4000];
+  const narrationBudget = (step: number) =>
+    NARRATION_BUDGETS[Math.min(step, NARRATION_BUDGETS.length - 1)];
+
+  const narrationWindowEnd = (start: number, budget: number) => {
+    let end = start;
+    let chars = 0;
+    while (end < paragraphs.length) {
+      const size = paragraphs[end].length + 2;
+      if (chars && chars + size > budget) break;
+      chars += size;
+      end += 1;
+    }
+    return end;
+  };
 
   const speakWithDevice = (index = current) => {
     if (!("speechSynthesis" in window) || !paragraphs.length) return;
@@ -1258,14 +1279,12 @@ export function HarborReader({
     const run = ++narrationRun.current;
     const requestId = globalThis.crypto?.randomUUID?.() ?? `reader-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     narrationRequestId.current = requestId;
-    let windowEnd = index;
-    let windowChars = 0;
-    while (windowEnd < paragraphs.length) {
-      const size = paragraphs[windowEnd].length + 2;
-      if (windowChars && windowChars + size > NARRATION_WINDOW_CHARS) break;
-      windowChars += size;
-      windowEnd += 1;
-    }
+    const ready = narrationAhead.current;
+    const usePrefetched = !!ready && ready.start === index;
+    if (!usePrefetched) narrationStep.current = 0;
+    const windowEnd = usePrefetched
+      ? ready!.end
+      : narrationWindowEnd(index, narrationBudget(0));
     const chapterText = paragraphs.slice(index, windowEnd).join("\n\n").trim();
     if (!chapterText) {
       setNarrationNotice("There is nothing to read aloud on this page.");
@@ -1318,13 +1337,19 @@ export function HarborReader({
     setGenerationPercent(1);
     setNarrationNotice("");
     try {
-      const { blob, boundaries } = await synthesizeNarration(
-        requestId,
-        chapterText,
-        selectedVoice.id,
-        selectedVoice.locale,
-        (progress) => setGenerationPercent(progress.percent),
-      );
+      const ahead = narrationAhead.current;
+      narrationAhead.current = null;
+      const pending =
+        ahead && ahead.start === index && ahead.voice === selectedVoice.id
+          ? ahead.promise
+          : synthesizeNarration(
+              requestId,
+              chapterText,
+              selectedVoice.id,
+              selectedVoice.locale,
+              (progress) => setGenerationPercent(progress.percent),
+            );
+      const { blob, boundaries } = await pending;
       if (run !== narrationRun.current) return;
       if (narrationRequestId.current === requestId) narrationRequestId.current = "";
       setGenerationPercent(100);
@@ -1346,6 +1371,28 @@ export function HarborReader({
       };
       goTo(index);
       setNarrationLoading(false);
+      if (windowEnd < paragraphs.length) {
+        const aheadEnd = narrationWindowEnd(windowEnd, narrationBudget(narrationStep.current + 1));
+        const aheadText = paragraphs.slice(windowEnd, aheadEnd).join("\n\n").trim();
+        if (aheadText) {
+          const promise = synthesizeNarration(
+            `${requestId}-ahead`,
+            aheadText,
+            selectedVoice.id,
+            selectedVoice.locale,
+            () => {},
+          );
+          promise.catch(() => {
+            if (narrationAhead.current?.promise === promise) narrationAhead.current = null;
+          });
+          narrationAhead.current = {
+            start: windowEnd,
+            end: aheadEnd,
+            voice: selectedVoice.id,
+            promise,
+          };
+        }
+      }
       await new Promise<void>((resolve, reject) => {
         player.onended = () => resolve();
         player.onerror = () => reject(new Error("The generated audio could not be played"));
@@ -1354,7 +1401,8 @@ export function HarborReader({
       URL.revokeObjectURL(url);
       audioUrl.current = "";
       if (run === narrationRun.current && windowEnd < paragraphs.length) {
-        void speakFrom(windowEnd);
+        narrationStep.current += 1;
+        void speakFrom(windowEnd).catch(() => setSpeaking(false));
         return;
       }
       if (run === narrationRun.current) {
@@ -1368,10 +1416,14 @@ export function HarborReader({
       setSpeaking(false);
       setNarrationLoading(false);
       setGenerationPercent(0);
-      setNarrationNotice(
-        `${error instanceof Error ? error.message : "Edge TTS failed"}. Using the device voice.`,
-      );
-      speakWithDevice(current);
+      narrationAhead.current = null;
+      const message = error instanceof Error ? error.message : "Edge TTS failed";
+      if (/desktop app/i.test(message)) {
+        setNarrationNotice("Edge voices need the Harbor desktop app. Reading with the device voice.");
+        speakWithDevice(index);
+        return;
+      }
+      setNarrationNotice(`${selectedVoice?.label ?? "That voice"} could not be generated. ${message}`);
     }
   };
 
@@ -1965,11 +2017,12 @@ export function HarborReader({
         </button>
         {narrationLoading && (
           <div
-            className="flex min-w-[62px] items-center gap-1 pe-2 text-[11px] font-semibold tabular-nums"
+            className="flex items-center gap-1.5 pe-2 text-[11px] font-semibold tabular-nums"
             style={{ color: colors.muted }}
-            title="Complete-chapter generation progress"
+            title="Preparing narration audio"
           >
-            <span>≈{generationPercent}%</span>
+            <Loader2 size={13} className="animate-spin motion-reduce:animate-none" />
+            <span>{generationPercent > 1 ? `${generationPercent}%` : "Preparing"}</span>
           </div>
         )}
         {(speaking || audioDuration > 0) && (
